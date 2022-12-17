@@ -1,0 +1,36 @@
+/*
+ * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
+ * Copyright (c) 2022 Michal Szczepanski.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { BusMessageType } from '@common/model/bus.model';
+import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { fnConsoleLog } from '@common/fn/console.fn';
+import { sendTabMessage } from '@common/message/tab.message';
+import ICommand = Pinmenote.Common.ICommand;
+import LinkDto = Pinmenote.Pin.LinkDto;
+
+export class ContentLinkAddCommand implements ICommand<void> {
+  constructor(private data: LinkDto) {}
+  async execute(): Promise<void> {
+    try {
+      fnConsoleLog('ContentLinkAddCommand', this.data);
+      await BrowserStorageWrapper.set(PinStoreKeys.PIN_LINK, this.data);
+      await sendTabMessage<LinkDto | undefined>({ type: BusMessageType.CONTENT_LINK_ADD, data: this.data });
+    } catch (e) {
+      fnConsoleLog('Error', this.data, e);
+    }
+  }
+}

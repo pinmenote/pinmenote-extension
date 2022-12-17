@@ -1,0 +1,77 @@
+/*
+ * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
+ * Copyright (c) 2022 Michal Szczepanski.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+interface QueryParam {
+  key: string;
+  value: string;
+}
+
+export const fnNormalizeHref = (value: string): string => {
+  const url = new URL(value);
+  if (url.search) {
+    const query = url.search.slice(1);
+    const result: QueryParam[] = [];
+    query.split('&').forEach(function (part) {
+      const item = part.split('=');
+      result.push({
+        key: item[0],
+        value: decodeURIComponent(item[1])
+      });
+    });
+    const search = trimParams(url.host, result);
+    if (search) {
+      return `${url.origin}${url.pathname}?${search}`;
+    }
+    return `${url.origin}${url.pathname}`;
+  }
+  return `${url.origin}${url.pathname}`;
+};
+
+const trimParams = (host: string, queryParams: QueryParam[]): string => {
+  let out = '';
+  const toDelete = ['referre'];
+  if (host.startsWith('www.')) {
+    host = host.slice(4);
+  }
+  if (host.startsWith('youtube')) {
+    toDelete.push('t', 'start_radio', 'list');
+  }
+  if (host.startsWith('twitter')) {
+    toDelete.push('src');
+  }
+  for (const param of queryParams) {
+    // skip utm_ args https://en.wikipedia.org/wiki/UTM_parameters
+    if (param.key.startsWith('utm_')) continue;
+    // allegro.pl details
+    if (param.key.startsWith('bi_')) continue;
+    if (!toDelete.includes(param.key)) {
+      out += `&${param.key}=${encodeURIComponent(param.value)}`;
+    }
+  }
+  return out.slice(1);
+};
+
+export const fnNormalizeOrigin = (value: string): string => {
+  if (value.startsWith('https')) {
+    value = value.substring(8);
+  } else if (value.startsWith('http')) {
+    value = value.substring(7);
+  }
+  if (value.startsWith('www')) {
+    value = value.substring(4);
+  }
+  return value;
+};

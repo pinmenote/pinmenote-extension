@@ -1,0 +1,9 @@
+#!/bin/bash
+# swap manifests
+mv src/manifest.json src/manifest.ch.json
+mv src/manifest.ff.json src/manifest.json
+# build
+npm run build:ff
+# swap manifests back
+mv src/manifest.json src/manifest.ff.json
+mv src/manifest.ch.json src/manifest.json
