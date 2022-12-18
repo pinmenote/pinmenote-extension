@@ -19,6 +19,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { ContentSettingsComponent } from './content/content-settings.component';
 import { CryptoSettingsCommand } from './crypto/crypto-settings.command';
 import { IconButton } from '@mui/material';
+import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import { ServerSettingsComponent } from './server/server-settings.component';
 import { SyncSettingsComponent } from './sync/sync-settings.component';
 import Typography from '@mui/material/Typography';
@@ -47,6 +48,9 @@ export const SettingsComponent: FunctionComponent = () => {
         </IconButton>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto', height: '90vh', marginBottom: 50 }}>
+        <div style={containerStyle}>
+          <ScreenshotSettingsComponent></ScreenshotSettingsComponent>
+        </div>
         <div style={containerStyle}>
           <ContentSettingsComponent></ContentSettingsComponent>
         </div>
