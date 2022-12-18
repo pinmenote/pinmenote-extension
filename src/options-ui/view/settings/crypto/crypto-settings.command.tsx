@@ -34,7 +34,7 @@ export const CryptoSettingsCommand: FunctionComponent = () => {
         <IconButton>
           <ContentCopyIcon />
         </IconButton>
-        <IconButton title="regenerate private key">
+        <IconButton title="rotate private key">
           <RestartAltIcon />
         </IconButton>
       </div>

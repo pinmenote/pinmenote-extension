@@ -28,10 +28,10 @@ export class ApiSharePinCommand implements ICommand<Promise<ShareUrlDto>> {
   constructor(private data: PinObject) {}
   async execute(): Promise<ShareUrlDto> {
     const authHeaders = await ApiStore.getAuthHeaders();
-    const { locator, url, value } = this.data;
+    const { locator, url, value, updatedAt, createdAt } = this.data;
     const data: NewShareDto = {
       type: ObjectTypeDto.Pin,
-      data: { locator, url, value }
+      data: { locator, url, value, updatedAt, createdAt }
     };
     fnConsoleLog('Send share', data);
     const resp = await FetchService.post<ShareUrlDto>(`${environmentConfig.apiUrl}/api/v1/share`, data, authHeaders);

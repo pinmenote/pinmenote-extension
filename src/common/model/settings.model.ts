@@ -27,7 +27,10 @@ export interface ContentExtensionData {
 }
 
 export interface ContentSettingsData {
+  version: number;
   borderStyle: string;
   borderRadius: string;
+  screenshotFormat: string;
+  screenshotQuality: number;
   link?: LinkDto;
 }

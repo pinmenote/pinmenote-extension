@@ -57,7 +57,7 @@ export class OptionsPinSearchCommand implements ICommand<void> {
   private search(searchValue: string, pin: PinObject): boolean {
     if (pin.value.toLowerCase().indexOf(searchValue) > -1) return true;
     if (pin.url.href.indexOf(searchValue) > -1) return true;
-    if (pin.createdDate.indexOf(searchValue) > -1) return true;
+    if (pin.createdAt.indexOf(searchValue) > -1) return true;
     if (pin.content.title.toLowerCase().indexOf(searchValue) > -1) return true;
     if (pin.content.elementText && pin.content.elementText.toLowerCase().indexOf(searchValue) > -1) return true;
     return false;

@@ -82,7 +82,7 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
 
   return (
     <Card variant="outlined" style={{ margin: 5 }}>
-      <CardHeader title={<PinValueElement pin={pin} />} subheader={formatPinDate(pin.createdDate)} />
+      <CardHeader title={<PinValueElement pin={pin} />} subheader={formatPinDate(pin.createdAt)} />
       <CardContent>
         <div style={{ overflow: 'auto', maxHeight: window.innerHeight, maxWidth: window.innerWidth - 350 }}>
           <div ref={divRef}></div>

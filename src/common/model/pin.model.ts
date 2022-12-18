@@ -36,8 +36,6 @@ export interface PinPopupInitData {
 export interface PinObject extends HtmlObject {
   id: number;
   version: number;
-  createdDate: string;
-  updatedDate: string;
   visible: boolean;
   screenshot?: string;
   content: HtmlContent;

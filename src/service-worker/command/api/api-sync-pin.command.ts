@@ -74,7 +74,7 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
     for (const id of ids) {
       const pin = await this.pinGetId({ id });
       if (pin) {
-        const ms = fnIsoDateToUtcMiliseconds(pin.updatedDate);
+        const ms = fnIsoDateToUtcMiliseconds(pin.updatedAt);
         if (ms <= maxMs) {
           fnConsoleLog('Sync - sendAll - skip', id, ms, maxMs, dt);
           continue;
@@ -113,12 +113,12 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
     if (syncPin.data) {
       // Check if pin local time is less than remote time and update
       const serverMs = fnIsoDateToUtcMiliseconds(syncPin.updatedAt);
-      const clientMs = fnIsoDateToUtcMiliseconds(pin.updatedDate);
+      const clientMs = fnIsoDateToUtcMiliseconds(pin.updatedAt);
       if (clientMs < serverMs) {
         const data = await new CryptoDecryptCommand<PinObject>(syncPin.data, false).execute();
         if (data) {
           fnConsoleLog('Sync - updateFromServer - ok', pin.id);
-          await new PinUpdateCommand(data).execute();
+          await new PinUpdateCommand({ pin: data }).execute();
           return fnIsoDateToUtcMiliseconds(syncPin.updatedAt);
         } else {
           fnConsoleLog('Sync - updateFromServer - no - decrypted', pin.id);
@@ -162,8 +162,8 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
     const dto: EncryptedObjectDto = {
       id: pin.id,
       type: ObjectTypeDto.Pin as unknown as Pinmenote.Sync.ObjectTypeDto,
-      createdAt: pin.createdDate,
-      updatedAt: pin.updatedDate || pin.createdDate,
+      createdAt: pin.createdAt,
+      updatedAt: pin.updatedDAt,
       data
     };
     fnConsoleLog('sendNote->dto', dto);
