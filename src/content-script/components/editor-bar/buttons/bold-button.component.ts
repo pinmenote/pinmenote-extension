@@ -61,18 +61,22 @@ export class BoldButtonComponent {
   }
 
   select(force = false): void {
-    if (this.clicked && !force) return;
+    if (this.clicked && !force) {
+      this.clicked = false;
+      return;
+    }
     this.boldButton.style.backgroundColor = '#000000';
     this.boldButton.style.color = '#ffffff';
-    this.clicked = false;
     this.selected = true;
   }
 
   unselect(force = false): void {
-    if (this.clicked && !force) return;
+    if (this.clicked && !force) {
+      this.clicked = false;
+      return;
+    }
     this.boldButton.style.backgroundColor = '#ffffff';
     this.boldButton.style.color = '#000000';
-    this.clicked = false;
     this.selected = false;
   }
 

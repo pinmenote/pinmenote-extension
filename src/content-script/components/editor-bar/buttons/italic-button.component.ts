@@ -61,18 +61,22 @@ export class ItalicButtonComponent {
   }
 
   select(force = false): void {
-    if (this.clicked && !force) return;
+    if (this.clicked && !force) {
+      this.clicked = false;
+      return;
+    }
     this.italicButton.style.backgroundColor = '#000000';
     this.italicButton.style.color = '#ffffff';
-    this.clicked = false;
     this.selected = true;
   }
 
   unselect(force = false): void {
-    if (this.clicked && !force) return;
+    if (this.clicked && !force) {
+      this.clicked = false;
+      return;
+    }
     this.italicButton.style.backgroundColor = '#ffffff';
     this.italicButton.style.color = '#000000';
-    this.clicked = false;
     this.selected = false;
   }
 
