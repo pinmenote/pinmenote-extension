@@ -25,6 +25,17 @@ import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
 import { pinStyles } from './styles/pin.styles';
 import PinPoint = Pinmenote.Pin.PinPoint;
 
+const pinContainerStyles = {
+  'box-sizing': 'border-box',
+  'background-color': '#ffffff',
+  'border-alpha': '0.5',
+  padding: '5px',
+  minWidth: '200px',
+  minHeight: '50px',
+  border: BorderStore.borderStyle,
+  'border-radius': BorderStore.borderRadius
+};
+
 export class PinComponent implements HtmlComponent {
   private readonly el = document.createElement('div');
   private readonly pinContainer = document.createElement('div');
@@ -65,17 +76,6 @@ export class PinComponent implements HtmlComponent {
       },
       pinStyles
     );
-
-    const pinContainerStyles = {
-      'box-sizing': 'border-box',
-      'background-color': '#ffffff',
-      'border-alpha': '0.5',
-      padding: '5px',
-      minWidth: '200px',
-      minHeight: '50px',
-      border: BorderStore.borderStyle,
-      'border-radius': BorderStore.borderRadius
-    };
 
     applyStylesToElement(this.el, styles);
     this.el.appendChild(this.editorbar.render());
