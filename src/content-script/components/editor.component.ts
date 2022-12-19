@@ -17,6 +17,7 @@
 import { PIN_HASHTAG_REGEX, PinObject, PinUpdateObject } from '@common/model/pin.model';
 import { BusMessageType } from '@common/model/bus.model';
 import { EditorView } from 'prosemirror-view';
+import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { createTextEditorState } from '@common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnConsoleLog } from '@common/fn/console.fn';
@@ -29,6 +30,10 @@ export class EditorComponent {
   private editorView?: EditorView;
 
   constructor(private pin: PinObject) {}
+
+  get editor(): EditorView | undefined {
+    return this.editorView;
+  }
 
   render(): HTMLElement {
     this.el.style.width = `${this.pin.size.width}px`;
@@ -52,11 +57,10 @@ export class EditorComponent {
     this.editorView?.focus();
   }
 
-  private deferredResize = () => {
+  private deferredResize = async () => {
     const div: HTMLDivElement = this.el.getElementsByClassName('ProseMirror')[0] as HTMLDivElement;
     if (!div) return;
-    div.style.width = `${this.pin.size.width}px`;
-    div.style.height = `${this.pin.size.height}px`;
+    await this.resizeTextArea();
   };
 
   private handleMouseUp = async () => {
@@ -75,10 +79,8 @@ export class EditorComponent {
         this.editorView?.updateState(state);
         await this.resizeTextArea();
         const value = defaultMarkdownSerializer.serialize(state.doc);
-        /// TODO calculate old -> new hash list here
         const oldMatch = this.pin.value.match(PIN_HASHTAG_REGEX);
         const newMatch = value.match(PIN_HASHTAG_REGEX);
-        fnConsoleLog('old', oldMatch, 'new', newMatch);
         this.pin.value = value;
         try {
           await sendRuntimeMessage<PinUpdateObject>({
@@ -92,6 +94,7 @@ export class EditorComponent {
         } catch (e) {
           fnConsoleLog('ERROR UPDATE PIN', e);
         }
+        TinyEventDispatcher.dispatch(BusMessageType.CNT_EDITOR_MARKS, state);
       }
     });
   }

@@ -29,6 +29,7 @@ export interface TimeoutMessage {
 export enum BusMessageType {
   // Internal content script
   CNT_SETTINGS = 'cnt.settings',
+  CNT_EDITOR_MARKS = 'cnt.editor.marks',
   // Internal options tab
   OPT_PIN_EDIT = 'opt.pin.edit',
   OPT_PIN_CANCEL_EDIT = 'opt.pin.cancel.edit',
@@ -85,6 +86,7 @@ export enum BusMessageType {
   CONTENT_SETTINGS = 'content.settings',
   // Options
   OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
+  OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',
   OPTIONS_GET_SETTINGS = 'options.get.settings',
   OPTIONS_SET_SETTINGS = 'options.set.settings',
   OPTIONS_PIN_GET_HASH_LIST = 'options.pin.get.hash.list',

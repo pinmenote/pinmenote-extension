@@ -15,12 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 export const pinStyles = {
-  'box-sizing': 'border-box',
-  'background-color': '#ffffff',
-  'border-alpha': '0.5',
-  padding: '5px',
-  minWidth: '200px',
-  minHeight: '50px',
   position: 'absolute',
   'font-family': 'Roboto,serif',
   'z-index': 'calc(9e999)', // https://stackoverflow.com/questions/1118198/how-can-you-figure-out-the-highest-z-index-in-your-document

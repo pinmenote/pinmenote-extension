@@ -24,6 +24,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { PinPopOver } from './pin.popover.component';
 import { PinShareComponent } from './pin-share.component';
+import RemoveMarkdown from 'remove-markdown';
 import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -93,8 +94,8 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
   ) : (
     ''
   );
-
-  const title = pin.value.length > 30 ? `${pin.value.substring(0, 30)}...` : pin.value;
+  const value = RemoveMarkdown(pin.value);
+  const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (
     <div key={pin.uid} style={{ width: '100%', marginBottom: 15 }}>

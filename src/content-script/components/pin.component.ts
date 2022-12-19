@@ -16,6 +16,7 @@
  */
 import { ActionBarComponent } from './action-bar/action-bar.component';
 import { BorderStore } from '../store/border.store';
+import { EditorBarComponent } from './editor-bar/editor-bar.component';
 import { EditorComponent } from './editor.component';
 import { HtmlComponent } from '@common/model/html.model';
 import { PinObject } from '@common/model/pin.model';
@@ -25,13 +26,17 @@ import { pinStyles } from './styles/pin.styles';
 import PinPoint = Pinmenote.Pin.PinPoint;
 
 export class PinComponent implements HtmlComponent {
-  private el = document.createElement('div');
-  private editor: EditorComponent;
-  private actionbar: ActionBarComponent;
+  private readonly el = document.createElement('div');
+  private readonly pinContainer = document.createElement('div');
+
+  private readonly actionbar: ActionBarComponent;
+  private readonly editorbar: EditorBarComponent;
+  private readonly editor: EditorComponent;
+
   private xy: PinPoint;
   private drag = false;
 
-  ref: HTMLElement;
+  readonly ref: HTMLElement;
   readonly object: PinObject;
 
   constructor(ref: HTMLElement, pin: PinObject) {
@@ -41,6 +46,7 @@ export class PinComponent implements HtmlComponent {
     this.xy = contentCalculatePinPoint(this.ref, pin.size, pin.locator.elementSize, pin.locator.offset);
     this.actionbar = new ActionBarComponent(pin, ref);
     this.editor = new EditorComponent(this.object);
+    this.editorbar = new EditorBarComponent();
   }
 
   focus(goto = false): void {
@@ -55,17 +61,35 @@ export class PinComponent implements HtmlComponent {
     const styles = Object.assign(
       {
         left: `${this.xy.x}px`,
-        top: `${this.xy.y}px`,
-        border: BorderStore.borderStyle,
-        'border-radius': BorderStore.borderRadius
+        top: `${this.xy.y}px`
       },
       pinStyles
     );
 
-    applyStylesToElement(this.el, styles);
-    this.el.appendChild(this.actionbar.render());
+    const pinContainerStyles = {
+      'box-sizing': 'border-box',
+      'background-color': '#ffffff',
+      'border-alpha': '0.5',
+      padding: '5px',
+      minWidth: '200px',
+      minHeight: '50px',
+      border: BorderStore.borderStyle,
+      'border-radius': BorderStore.borderRadius
+    };
 
-    this.el.appendChild(this.editor.render());
+    applyStylesToElement(this.el, styles);
+    this.el.appendChild(this.editorbar.render());
+    this.pinContainer.appendChild(this.actionbar.render());
+    applyStylesToElement(this.pinContainer, pinContainerStyles);
+
+    this.pinContainer.appendChild(this.editor.render());
+
+    this.el.appendChild(this.pinContainer);
+
+    this.el.addEventListener('mouseover', this.handleMouseOver);
+    this.el.addEventListener('mouseout', this.handleMouseOut);
+
+    this.editorbar.setEditor(this.editor.editor);
 
     return this.el;
   }
@@ -102,10 +126,22 @@ export class PinComponent implements HtmlComponent {
   }
 
   cleanup(): void {
+    this.el.removeEventListener('mouseover', this.handleMouseOver);
+    this.el.removeEventListener('mouseout', this.handleMouseOut);
+
     this.ref.style.border = this.object.border.style;
     this.ref.style.borderRadius = this.object.border.radius;
+
     this.actionbar.cleanup();
     this.editor.cleanup();
     this.el.remove();
   }
+
+  private handleMouseOver = () => {
+    this.editorbar.focusIn();
+  };
+
+  private handleMouseOut = () => {
+    this.editorbar.focusOut();
+  };
 }

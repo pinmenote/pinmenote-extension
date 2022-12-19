@@ -39,14 +39,34 @@ export const SyncSettingsComponent: FunctionComponent = () => {
     await sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_DATA });
   };
 
+  const handleClear = async () => {
+    await sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_CLEAR });
+  };
+
   return (
     <div>
       <Typography fontSize="2.5em" style={{ marginBottom: 10 }}>
         synchronization
       </Typography>
-      <Button variant="outlined" onClick={handleSynchronize}>
-        Synchronize
-      </Button>
+      <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 20 }}>
+        <Typography fontSize="2em" style={{ marginRight: 10 }}>
+          last time
+        </Typography>
+        <Button variant="outlined" onClick={handleSynchronize} style={{ marginRight: 10 }}>
+          Synchronize
+        </Button>
+        <Button variant="outlined" onClick={handleClear}>
+          Clear
+        </Button>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography fontSize="2em" style={{ marginRight: 10 }}>
+          quota
+        </Typography>
+        <Typography fontSize="2em" style={{ marginRight: 10 }}>
+          1000MB
+        </Typography>
+      </div>
     </div>
   );
 };

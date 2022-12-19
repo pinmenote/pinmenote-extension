@@ -114,13 +114,13 @@ export function buildKeymap(schema: Schema, mapKeys?: { [key: string]: false | s
   if ((type = schema.nodes.code_block)) bind('Shift-Ctrl-\\', setBlockType(type));
   if ((type = schema.nodes.heading))
     for (let i = 1; i <= 6; i++) bind(`Shift-Ctrl-${i}`, setBlockType(type, { level: i }));
-  if ((type = schema.nodes.horizontal_rule)) {
+  /*if ((type = schema.nodes.horizontal_rule)) {
     const hr = type;
     bind('Mod-_', (state, dispatch) => {
       if (dispatch) dispatch(state.tr.replaceSelectionWith(hr.create()).scrollIntoView());
       return true;
     });
-  }
+  }*/
 
   return keys;
 }
