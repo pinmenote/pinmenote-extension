@@ -22,7 +22,7 @@ import { schema } from 'prosemirror-markdown';
 import { wrapInList } from 'prosemirror-schema-list';
 
 export class BulletListButtonComponent {
-  private listButton = document.createElement('div');
+  private el = document.createElement('div');
   private listCommand?: Command;
 
   private editor?: EditorView;
@@ -35,28 +35,19 @@ export class BulletListButtonComponent {
     const li = document.createElement('li');
     li.style.paddingLeft = '5px';
     li.style.paddingBottom = '10px';
-    this.listButton.appendChild(li);
-    this.listButton.addEventListener('mousedown', this.handleMouseDown);
-    this.listButton.addEventListener('click', this.handleListClick);
-    applyStylesToElement(this.listButton, editorBarButtonStyles);
-    this.listButton.style.display = 'none';
+    this.el.appendChild(li);
+    this.el.addEventListener('mousedown', this.handleMouseDown);
+    this.el.addEventListener('click', this.handleListClick);
+    applyStylesToElement(this.el, editorBarButtonStyles);
 
     this.listCommand = wrapInList(schema.nodes.bullet_list);
 
-    return this.listButton;
+    return this.el;
   }
 
   cleanup(): void {
-    this.listButton.removeEventListener('click', this.handleListClick);
-    this.listButton.removeEventListener('mousedown', this.handleMouseDown);
-  }
-
-  focusIn(): void {
-    this.listButton.style.display = 'table-cell';
-  }
-
-  focusOut(): void {
-    this.listButton.style.display = 'none';
+    this.el.removeEventListener('click', this.handleListClick);
+    this.el.removeEventListener('mousedown', this.handleMouseDown);
   }
 
   private handleListClick = (e: MouseEvent) => {

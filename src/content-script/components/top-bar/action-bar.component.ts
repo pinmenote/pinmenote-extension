@@ -14,12 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoldButtonComponent } from './buttons/bold-button.component';
-import { BulletListButtonComponent } from './buttons/bullet-list-button.component';
+import { BoldButtonComponent } from './editor-buttons/bold-button.component';
+import { BulletListButtonComponent } from './editor-buttons/bullet-list-button.component';
 import { BusMessageType } from '@common/model/bus.model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { ItalicButtonComponent } from './buttons/italic-button.component';
+import { ItalicButtonComponent } from './editor-buttons/italic-button.component';
+import { MoveIconComponent } from './action-buttons/move-icon.component';
+import { ParentIconComponent } from './action-buttons/parent-icon.component';
+import { PinObject } from '@common/model/pin.model';
+import { RemoveIconComponent } from './action-buttons/remove-icon.component';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { applyStylesToElement } from '@common/style.utils';
 import { fnConsoleLog } from '@common/fn/console.fn';
@@ -28,17 +32,36 @@ const elStyles = {
   'background-color': '#ffffff00',
   display: 'flex',
   'flex-direction': 'row',
-  height: '17px',
-  'padding-bottom': '2px',
+  'justify-content': 'space-between',
+  height: '22px',
+  padding: '10px 5px 10px 5px',
   'align-items': 'center'
 };
 
-export class EditorBarComponent {
+const toolsStyles = {
+  display: 'flex',
+  'flex-direction': 'row',
+  'align-items': 'center'
+};
+
+const editorStyles = {
+  display: 'flex',
+  'flex-direction': 'row',
+  'align-items': 'center'
+};
+
+export class ActionBarComponent {
   private el = document.createElement('div');
+  private editbar = document.createElement('div');
+  private toolbar = document.createElement('div');
 
   private bold: BoldButtonComponent = new BoldButtonComponent();
   private italic: ItalicButtonComponent = new ItalicButtonComponent();
   private bulletList: BulletListButtonComponent = new BulletListButtonComponent();
+
+  private moveIcon: MoveIconComponent;
+  private parentIcon: ParentIconComponent;
+  private removeIcon: RemoveIconComponent;
 
   private marksChangeKey?: string;
   private marks = {
@@ -47,6 +70,12 @@ export class EditorBarComponent {
   };
 
   private editor?: EditorView;
+
+  constructor(private pin: PinObject, private ref: HTMLElement) {
+    this.moveIcon = new MoveIconComponent(pin);
+    this.parentIcon = new ParentIconComponent(pin, ref);
+    this.removeIcon = new RemoveIconComponent(pin);
+  }
 
   setEditor(editor: EditorView | undefined): void {
     this.editor = editor;
@@ -58,9 +87,21 @@ export class EditorBarComponent {
   render(): HTMLElement {
     applyStylesToElement(this.el, elStyles);
 
-    this.el.appendChild(this.bold.render());
-    this.el.appendChild(this.italic.render());
-    this.el.appendChild(this.bulletList.render());
+    applyStylesToElement(this.editbar, editorStyles);
+    this.editbar.appendChild(this.bold.render());
+    this.editbar.appendChild(this.italic.render());
+    this.editbar.appendChild(this.bulletList.render());
+
+    applyStylesToElement(this.toolbar, toolsStyles);
+    this.toolbar.appendChild(this.moveIcon.render());
+    this.toolbar.appendChild(this.parentIcon.render());
+    this.toolbar.appendChild(this.removeIcon.render());
+
+    this.el.appendChild(this.editbar);
+    this.el.appendChild(this.toolbar);
+
+    this.editbar.style.display = 'none';
+    this.toolbar.style.display = 'none';
 
     this.marksChangeKey = TinyEventDispatcher.addListener<EditorState>(
       BusMessageType.CNT_EDITOR_MARKS,
@@ -72,15 +113,13 @@ export class EditorBarComponent {
 
   focusIn(): void {
     this.el.style.backgroundColor = '#ffffffff';
-    this.bold.focusIn();
-    this.italic.focusIn();
-    this.bulletList.focusIn();
+    this.editbar.style.display = 'flex';
+    this.toolbar.style.display = 'flex';
   }
 
   focusOut(): void {
-    this.bold.focusOut();
-    this.italic.focusOut();
-    this.bulletList.focusOut();
+    this.editbar.style.display = 'none';
+    this.toolbar.style.display = 'none';
     this.el.style.backgroundColor = '#ffffff00';
   }
 
@@ -88,6 +127,11 @@ export class EditorBarComponent {
     this.bold.cleanup();
     this.italic.cleanup();
     this.bulletList.cleanup();
+
+    this.moveIcon.cleanup();
+    this.parentIcon.cleanup();
+    this.removeIcon.cleanup();
+
     if (this.marksChangeKey) TinyEventDispatcher.removeListener(BusMessageType.CNT_EDITOR_MARKS, this.marksChangeKey);
   }
 

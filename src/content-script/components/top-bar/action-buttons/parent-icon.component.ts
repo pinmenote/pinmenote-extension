@@ -15,14 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PinObject } from '@common/model/pin.model';
-import { PinStore } from '../../store/pin.store';
+import { PinStore } from '../../../store/pin.store';
 import { applyStylesToElement } from '@common/style.utils';
 import { fnConsoleLog } from '@common/fn/console.fn';
-import { iconButtonStyles } from '../styles/icon-button.styles';
+import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ParentIconComponent {
   private el = document.createElement('div');
   constructor(private pin: PinObject, private ref: HTMLElement) {}
+
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 0 24 24" width="12">
     <path d="M0 0h24v24H0z" fill="none"/>
@@ -38,6 +39,10 @@ export class ParentIconComponent {
     return this.el;
   }
 
+  cleanup(): void {
+    this.el.removeEventListener('click', this.handleClick);
+  }
+
   private handleClick = async (): Promise<void> => {
     if (this.ref.parentElement?.tagName === 'BODY') {
       fnConsoleLog(`No parent for note ${this.pin.uid}`);
@@ -48,8 +53,4 @@ export class ParentIconComponent {
       this.ref = this.ref.parentElement;
     }
   };
-
-  cleanup(): void {
-    this.el.removeEventListener('click', this.handleClick);
-  }
 }

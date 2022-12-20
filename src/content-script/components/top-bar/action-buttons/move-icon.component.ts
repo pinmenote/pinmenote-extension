@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinDragStore } from '../../store/pin-drag.store';
+import { PinDragStore } from '../../../store/pin-drag.store';
 import { PinObject } from '@common/model/pin.model';
 import { applyStylesToElement } from '@common/style.utils';
-import { iconButtonStyles } from '../styles/icon-button.styles';
+import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class MoveIconComponent {
   private start = { x: 0, y: 0 };
@@ -35,6 +35,12 @@ export class MoveIconComponent {
     applyStylesToElement(this.el, iconButtonStyles);
     this.el.style.marginRight = '5px';
     return this.el;
+  }
+
+  cleanup(): void {
+    this.el.removeEventListener('mousedown', this.handleMouseDown);
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.handleMouseUp);
   }
 
   private handleMouseDown = (e: MouseEvent) => {
@@ -58,10 +64,4 @@ export class MoveIconComponent {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
   };
-
-  cleanup(): void {
-    this.el.removeEventListener('mousedown', this.handleMouseDown);
-    document.removeEventListener('mousemove', this.handleMouseMove);
-    document.removeEventListener('mouseup', this.handleMouseUp);
-  }
 }

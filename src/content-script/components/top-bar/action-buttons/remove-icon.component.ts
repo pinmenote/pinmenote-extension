@@ -17,7 +17,7 @@
 import { BusMessageType } from '@common/model/bus.model';
 import { PinObject } from '@common/model/pin.model';
 import { applyStylesToElement } from '@common/style.utils';
-import { iconButtonStyles } from '../styles/icon-button.styles';
+import { iconButtonStyles } from '../../styles/icon-button.styles';
 import { sendRuntimeMessage } from '@common/message/runtime.message';
 
 export class RemoveIconComponent {

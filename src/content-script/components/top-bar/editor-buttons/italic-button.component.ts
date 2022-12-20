@@ -21,9 +21,9 @@ import { editorBarButtonStyles } from './editor-bar-button.styles';
 import { schema } from 'prosemirror-markdown';
 import { toggleMark } from 'prosemirror-commands';
 
-export class BoldButtonComponent {
-  private boldButton = document.createElement('div');
-  private boldCommand?: Command;
+export class ItalicButtonComponent {
+  private el = document.createElement('div');
+  private italicCommand?: Command;
 
   private clicked = false;
   private selected = false;
@@ -35,29 +35,20 @@ export class BoldButtonComponent {
   }
 
   render(): HTMLDivElement {
-    this.boldButton.innerText = 'B';
-    this.boldButton.addEventListener('mousedown', this.handleMouseDown);
-    this.boldButton.addEventListener('click', this.handleBoldClick);
-    applyStylesToElement(this.boldButton, editorBarButtonStyles);
-    this.boldButton.style.fontWeight = 'bold';
-    this.boldButton.style.display = 'none';
+    this.el.innerText = 'I';
+    this.el.addEventListener('mousedown', this.handleMouseDown);
+    this.el.addEventListener('click', this.handleItalicClick);
+    applyStylesToElement(this.el, editorBarButtonStyles);
+    this.el.style.fontStyle = 'italic';
 
-    this.boldCommand = toggleMark(schema.marks.strong);
+    this.italicCommand = toggleMark(schema.marks.em);
 
-    return this.boldButton;
+    return this.el;
   }
 
   cleanup(): void {
-    this.boldButton.removeEventListener('click', this.handleBoldClick);
-    this.boldButton.removeEventListener('mousedown', this.handleMouseDown);
-  }
-
-  focusIn(): void {
-    this.boldButton.style.display = 'table-cell';
-  }
-
-  focusOut(): void {
-    this.boldButton.style.display = 'none';
+    this.el.removeEventListener('click', this.handleItalicClick);
+    this.el.removeEventListener('mousedown', this.handleMouseDown);
   }
 
   select(force = false): void {
@@ -65,8 +56,8 @@ export class BoldButtonComponent {
       this.clicked = false;
       return;
     }
-    this.boldButton.style.backgroundColor = '#000000';
-    this.boldButton.style.color = '#ffffff';
+    this.el.style.backgroundColor = '#000000';
+    this.el.style.color = '#ffffff';
     this.selected = true;
   }
 
@@ -75,17 +66,17 @@ export class BoldButtonComponent {
       this.clicked = false;
       return;
     }
-    this.boldButton.style.backgroundColor = '#ffffff';
-    this.boldButton.style.color = '#000000';
+    this.el.style.backgroundColor = '#ffffff';
+    this.el.style.color = '#000000';
     this.selected = false;
   }
 
-  private handleBoldClick = (e: MouseEvent) => {
+  private handleItalicClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopImmediatePropagation();
 
     //eslint-disable-next-line @typescript-eslint/unbound-method
-    if (this.editor && this.boldCommand) this.boldCommand(this.editor.state, this.editor.dispatch, this.editor);
+    if (this.editor && this.italicCommand) this.italicCommand(this.editor.state, this.editor.dispatch, this.editor);
 
     this.selected ? this.unselect(true) : this.select(true);
     this.clicked = true;

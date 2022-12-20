@@ -163,7 +163,7 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
       id: pin.id,
       type: ObjectTypeDto.Pin as unknown as Pinmenote.Sync.ObjectTypeDto,
       createdAt: pin.createdAt,
-      updatedAt: pin.updatedDAt,
+      updatedAt: pin.updatedAt,
       data
     };
     fnConsoleLog('sendNote->dto', dto);
