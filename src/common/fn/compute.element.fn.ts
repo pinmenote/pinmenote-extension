@@ -84,7 +84,8 @@ export const fnComputeHtmlContent = (ref: Element): HtmlIntermediateData => {
     // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
     videoTime.push({
       xpath: fnXpath(ref as HTMLElement),
-      currentTime: (ref as HTMLVideoElement).currentTime
+      currentTime: (ref as HTMLVideoElement).currentTime,
+      displayTime: 5
     });
     // SET SECONDS (el as HTMLVideoElement).currentTime = 148;
   }

@@ -33,8 +33,9 @@ const elStyles = {
   display: 'flex',
   'flex-direction': 'row',
   'justify-content': 'space-between',
-  height: '22px',
-  padding: '10px 5px 10px 5px',
+  height: '18px',
+  margin: '0',
+  padding: '5px 5px 5px 5px',
   'align-items': 'center'
 };
 
@@ -50,14 +51,14 @@ const editorStyles = {
   'align-items': 'center'
 };
 
-export class ActionBarComponent {
+export class TopBarComponent {
   private el = document.createElement('div');
   private editbar = document.createElement('div');
   private toolbar = document.createElement('div');
 
-  private bold: BoldButtonComponent = new BoldButtonComponent();
-  private italic: ItalicButtonComponent = new ItalicButtonComponent();
-  private bulletList: BulletListButtonComponent = new BulletListButtonComponent();
+  private bold: BoldButtonComponent;
+  private italic: ItalicButtonComponent;
+  private bulletList: BulletListButtonComponent;
 
   private moveIcon: MoveIconComponent;
   private parentIcon: ParentIconComponent;
@@ -72,6 +73,10 @@ export class ActionBarComponent {
   private editor?: EditorView;
 
   constructor(private pin: PinObject, private ref: HTMLElement) {
+    this.bold = new BoldButtonComponent();
+    this.italic = new ItalicButtonComponent();
+    this.bulletList = new BulletListButtonComponent();
+
     this.moveIcon = new MoveIconComponent(pin);
     this.parentIcon = new ParentIconComponent(pin, ref);
     this.removeIcon = new RemoveIconComponent(pin);
@@ -111,13 +116,13 @@ export class ActionBarComponent {
     return this.el;
   }
 
-  focusIn(): void {
+  focusin(): void {
     this.el.style.backgroundColor = '#ffffffff';
     this.editbar.style.display = 'flex';
     this.toolbar.style.display = 'flex';
   }
 
-  focusOut(): void {
+  focusout(): void {
     this.editbar.style.display = 'none';
     this.toolbar.style.display = 'none';
     this.el.style.backgroundColor = '#ffffff00';

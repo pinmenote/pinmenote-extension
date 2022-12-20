@@ -35,6 +35,7 @@ export interface CssData {
 
 export interface ContentVideoTime {
   currentTime: number;
+  displayTime: number;
   xpath: string;
 }
 

@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ActionBarComponent } from './top-bar/action-bar.component';
 import { BorderStore } from '../store/border.store';
+import { BottomBarComponent } from './bottom-bar/bottom-bar.component';
 import { EditorComponent } from './editor.component';
 import { HtmlComponent } from '@common/model/html.model';
 import { PinObject } from '@common/model/pin.model';
+import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '@common/style.utils';
 import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
 import { pinStyles } from './styles/pin.styles';
@@ -39,7 +40,8 @@ export class PinComponent implements HtmlComponent {
   private readonly el = document.createElement('div');
   private readonly pinContainer = document.createElement('div');
 
-  private readonly actionbar: ActionBarComponent;
+  private readonly topbar: TopBarComponent;
+  private readonly bottombar: BottomBarComponent;
   private readonly editor: EditorComponent;
 
   private xy: PinPoint;
@@ -54,7 +56,8 @@ export class PinComponent implements HtmlComponent {
     this.object = pin;
     this.xy = contentCalculatePinPoint(this.ref, pin.size, pin.locator.elementSize, pin.locator.offset);
     this.editor = new EditorComponent(this.object);
-    this.actionbar = new ActionBarComponent(pin, ref);
+    this.topbar = new TopBarComponent(pin, ref);
+    this.bottombar = new BottomBarComponent(pin);
   }
 
   focus(goto = false): void {
@@ -75,17 +78,19 @@ export class PinComponent implements HtmlComponent {
     );
 
     applyStylesToElement(this.el, styles);
-    this.el.appendChild(this.actionbar.render());
+    this.el.appendChild(this.topbar.render());
     applyStylesToElement(this.pinContainer, pinContainerStyles);
 
     this.pinContainer.appendChild(this.editor.render());
 
     this.el.appendChild(this.pinContainer);
 
+    this.el.appendChild(this.bottombar.render());
+
     this.el.addEventListener('mouseover', this.handleMouseOver);
     this.el.addEventListener('mouseout', this.handleMouseOut);
 
-    this.actionbar.setEditor(this.editor.editor);
+    this.topbar.setEditor(this.editor.editor);
 
     return this.el;
   }
@@ -129,14 +134,18 @@ export class PinComponent implements HtmlComponent {
     this.ref.style.borderRadius = this.object.border.radius;
 
     this.editor.cleanup();
+    this.topbar.cleanup();
+    this.bottombar.cleanup();
     this.el.remove();
   }
 
   private handleMouseOver = () => {
-    this.actionbar.focusIn();
+    this.topbar.focusin();
+    this.bottombar.focusin();
   };
 
   private handleMouseOut = () => {
-    this.actionbar.focusOut();
+    this.topbar.focusout();
+    this.bottombar.focusout();
   };
 }

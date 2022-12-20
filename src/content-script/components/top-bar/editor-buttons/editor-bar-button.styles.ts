@@ -15,6 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 export const editorBarButtonStyles = {
+  display: 'flex',
+  'justify-content': 'center',
+  'align-items': 'center',
   color: '#000000',
   userSelect: 'none',
   cursor: 'pointer',
@@ -23,7 +26,11 @@ export const editorBarButtonStyles = {
   'vertical-align': 'middle',
   width: '15px',
   height: '15px',
-  'font-size': '0.8em',
+  'font-size': '12px',
+  'font-family': 'Roboto,serif',
+  'font-weight': 'normal',
+  'text-transform': 'none',
+  'line-height': '100%',
   'text-align': 'center',
   border: '1px solid #000000',
   'border-radius': '2px'
