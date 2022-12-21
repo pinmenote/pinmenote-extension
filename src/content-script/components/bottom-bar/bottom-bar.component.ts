@@ -17,9 +17,11 @@ export class BottomBarComponent {
   private el = document.createElement('div');
 
   private videoTime: VideoTimeComponent;
+  private shouldDisplay = false;
 
   constructor(private pin: PinObject) {
     this.videoTime = new VideoTimeComponent(pin.content.videoTime);
+    this.shouldDisplay = pin.content.videoTime.length > 0;
   }
 
   render(): HTMLDivElement {
@@ -35,10 +37,10 @@ export class BottomBarComponent {
   }
 
   focusin(): void {
-    this.el.style.display = 'inline-block';
+    if (this.shouldDisplay) this.el.style.display = 'inline-block';
   }
 
   focusout(): void {
-    this.el.style.display = 'none';
+    if (this.shouldDisplay) this.el.style.display = 'none';
   }
 }

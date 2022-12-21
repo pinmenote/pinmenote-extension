@@ -31,9 +31,7 @@ const pinContainerStyles = {
   'border-alpha': '0.5',
   padding: '5px',
   minWidth: '200px',
-  minHeight: '50px',
-  border: BorderStore.borderStyle,
-  'border-radius': BorderStore.borderRadius
+  minHeight: '50px'
 };
 
 export class PinComponent implements HtmlComponent {
@@ -79,7 +77,10 @@ export class PinComponent implements HtmlComponent {
 
     applyStylesToElement(this.el, styles);
     this.el.appendChild(this.topbar.render());
+
     applyStylesToElement(this.pinContainer, pinContainerStyles);
+    this.pinContainer.style.border = BorderStore.borderStyle;
+    this.pinContainer.style.borderRadius = BorderStore.borderRadius;
 
     this.pinContainer.appendChild(this.editor.render());
 
