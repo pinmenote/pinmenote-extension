@@ -33,13 +33,13 @@ export class ContentSettingsCommand implements ICommand<void> {
 
     const settingsData = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
 
-    let link = await BrowserStorageWrapper.get<LinkDto | undefined>(PinStoreKeys.PIN_LINK);
+    const link = await BrowserStorageWrapper.get<LinkDto | undefined>(PinStoreKeys.PIN_LINK);
     fnConsoleLog('ContentSettingsCommand', link, this.data.href);
-    if (this.data.href === link?.url.href) {
+    /*if (this.data.href === link?.url.href) {
       await BrowserStorageWrapper.remove(PinStoreKeys.PIN_LINK);
     } else {
       link = undefined;
-    }
+    }*/
 
     const data: ContentSettingsData = {
       ...settingsData,
