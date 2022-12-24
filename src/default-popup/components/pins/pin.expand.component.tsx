@@ -16,20 +16,23 @@
  */
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { PinObject } from '@common/model/pin.model';
+import { marked } from 'marked';
 
-interface PinPopOver {
+interface PinExpandProps {
   visible: boolean;
   pin: PinObject;
 }
 
-export const PinPopOver: FunctionComponent<PinPopOver> = ({ pin, visible }) => {
+export const PinExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, visible }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const valueRef = useRef<HTMLDivElement>(null);
   const img = new Image();
 
   useEffect(() => {
     img.width = 280;
     if (pin.screenshot) img.src = pin.screenshot;
     ref.current?.appendChild(img);
+    if (valueRef.current) valueRef.current.innerHTML = marked(pin.value);
     return () => {
       ref.current?.removeChild(img);
     };
@@ -45,7 +48,7 @@ export const PinPopOver: FunctionComponent<PinPopOver> = ({ pin, visible }) => {
         display: visible ? 'inline-block' : 'none'
       }}
     >
-      <div>{pin.value}</div>
+      <div ref={valueRef}></div>
       <div ref={ref}></div>
     </div>
   );

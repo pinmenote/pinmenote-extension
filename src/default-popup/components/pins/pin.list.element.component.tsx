@@ -22,7 +22,7 @@ import { BusMessageType } from '@common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { PinPopOver } from './pin.popover.component';
+import { PinExpandComponent } from './pin.expand.component';
 import { PinShareComponent } from './pin-share.component';
 import RemoveMarkdown from 'remove-markdown';
 import ShareIcon from '@mui/icons-material/Share';
@@ -136,7 +136,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
           </IconButton>
         </div>
       </div>
-      <PinPopOver visible={isPopoverOpen} pin={pin}></PinPopOver>
+      <PinExpandComponent visible={isPopoverOpen} pin={pin}></PinExpandComponent>
       <PinShareComponent pin={pin} visible={isShareOpen}></PinShareComponent>
     </div>
   );
