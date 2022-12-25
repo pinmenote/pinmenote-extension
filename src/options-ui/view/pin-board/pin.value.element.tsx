@@ -36,10 +36,6 @@ interface PinValueProps {
   pin: PinObject;
 }
 
-class SaveTimeout {
-  static timeout = -1;
-}
-
 export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.Element => {
   const [styleIcon, setStyleIcon] = useState<boolean>(!pin.viewType || pin.viewType === PinViewType.SCREENSHOT);
   const handleRemove = async (): Promise<void> => {
@@ -116,19 +112,15 @@ const EditElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.Element => 
     let state = createTextEditorState(pin.value);
     const view = new EditorView(ref, {
       state,
-      dispatchTransaction: (tx) => {
-        clearTimeout(SaveTimeout.timeout);
+      dispatchTransaction: async (tx) => {
         state = state.apply(tx);
         view.updateState(state);
-        clearTimeout(SaveTimeout.timeout);
         pin.value = defaultMarkdownSerializer.serialize(state.doc);
-        SaveTimeout.timeout = window.setTimeout(async () => {
-          await sendRuntimeMessage<PinObject>({
-            type: BusMessageType.OPTIONS_PIN_UPDATE,
-            data: pin
-          });
-          TinyEventDispatcher.dispatch<PinObject>(BusMessageType.OPT_PIN_SAVE_EDIT, pin);
-        }, 200);
+        await sendRuntimeMessage<PinObject>({
+          type: BusMessageType.OPTIONS_PIN_UPDATE,
+          data: pin
+        });
+        TinyEventDispatcher.dispatch<PinObject>(BusMessageType.OPT_PIN_SAVE_EDIT, pin);
       }
     });
   };
