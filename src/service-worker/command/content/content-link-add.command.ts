@@ -15,10 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { BusMessageType } from '@common/model/bus.model';
 import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { fnBrowserApi } from '@common/service/browser.api.wrapper';
 import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendTabMessage } from '@common/message/tab.message';
 import ICommand = Pinmenote.Common.ICommand;
 import LinkDto = Pinmenote.Pin.LinkDto;
 
@@ -28,7 +27,7 @@ export class ContentLinkAddCommand implements ICommand<void> {
     try {
       fnConsoleLog('ContentLinkAddCommand', this.data);
       await BrowserStorageWrapper.set(PinStoreKeys.PIN_LINK, this.data);
-      await sendTabMessage<LinkDto | undefined>({ type: BusMessageType.CONTENT_LINK_ADD, data: this.data });
+      await fnBrowserApi().tabs.update({ url: this.data.url.href });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }

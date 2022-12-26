@@ -27,6 +27,7 @@ import LinkDto = Pinmenote.Pin.LinkDto;
 export class CreateLinkCommand implements ICommand<boolean> {
   constructor(private link: LinkDto) {}
   execute(): boolean {
+    if (this.link.url.href !== window.location.href) return false;
     const value = fnFindElementXpath(this.link.locator.xpath);
     const ref = value.singleNodeValue as HTMLElement;
     const uid = fnUid();

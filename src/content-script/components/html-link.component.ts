@@ -23,31 +23,32 @@ import { pinStyles } from './styles/pin.styles';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
 import PinPoint = Pinmenote.Pin.PinPoint;
 
-class ScrollCheck {
-  private lastPosition = 0;
-  private noChanged = 0;
-  private maxNoChanged = 5;
-  constructor(private targetPosition: number) {}
+class ContentCheck {
+  private rect: DOMRect;
+  constructor(private ref: HTMLElement) {
+    this.rect = ref.getBoundingClientRect();
+  }
 
   get isTarget(): boolean {
-    const scrollY = window.scrollY;
-
-    // Check if changed and if not increase security mark for infinite setInterval
-    scrollY === this.lastPosition ? this.noChanged++ : (this.noChanged = 0);
-    if (this.noChanged >= this.maxNoChanged) return true;
-
-    this.lastPosition = scrollY;
-
-    return this.targetPosition > 0 && Math.abs(scrollY - this.targetPosition) > 5;
+    const rect = this.ref.getBoundingClientRect();
+    const isEqual =
+      rect.x == this.rect.x &&
+      rect.y == this.rect.y &&
+      rect.width == this.rect.width &&
+      rect.height == this.rect.height &&
+      rect.top == this.rect.top;
+    this.rect = rect;
+    return isEqual;
   }
 }
 
 export class HtmlLinkComponent implements HtmlComponent {
   private el = document.createElement('div');
   private xy?: PinPoint;
-  private scrollCheck?: ScrollCheck;
 
+  private contentCheck: ContentCheck;
   ref: HTMLElement;
+
   readonly object: HtmlObject;
   private readonly size = {
     width: 163,
@@ -58,6 +59,7 @@ export class HtmlLinkComponent implements HtmlComponent {
     this.el.id = object.uid;
     this.ref = ref;
     this.object = object;
+    this.contentCheck = new ContentCheck(this.ref);
   }
 
   get isDrag(): boolean {
@@ -73,9 +75,9 @@ export class HtmlLinkComponent implements HtmlComponent {
     return this.el;
   }
 
-  private apply = (): void => {
-    if (!this.scrollCheck?.isTarget) {
-      setTimeout(this.apply, 100);
+  private apply = (goto = false): void => {
+    if (!this.contentCheck.isTarget) {
+      setTimeout(() => this.apply(goto), 250);
     } else {
       this.xy = contentCalculatePinPoint(
         this.ref,
@@ -93,6 +95,10 @@ export class HtmlLinkComponent implements HtmlComponent {
         pinStyles
       );
       applyStylesToElement(this.el, styles);
+      if (goto) {
+        scrollToElementFn(this.ref, this.size.height);
+        this.el.focus();
+      }
     }
   };
 
@@ -100,14 +106,9 @@ export class HtmlLinkComponent implements HtmlComponent {
     this.el.remove();
   }
 
-  focus(goto: boolean): void {
-    if (goto) {
-      const position = scrollToElementFn(this.ref, this.size.height);
-      this.scrollCheck = new ScrollCheck(position);
-    }
-    this.el.focus();
-    this.apply();
-  }
+  focus = (goto: boolean): void => {
+    this.apply(goto);
+  };
 
   resize(): void {
     fnConsoleLog('resize');

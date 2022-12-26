@@ -55,9 +55,6 @@ class PinMeScript {
     TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
 
     TinyEventDispatcher.addListener<TimeoutMessage>(BusMessageType.CONTENT_TIMEOUT, this.handleContentTimeout);
-    TinyEventDispatcher.addListener<LinkDto>(BusMessageType.CONTENT_LINK_ADD, (event, key, value) => {
-      location.href = value.url.href;
-    });
   }
 
   private handleContentTimeout = async (event: string, key: string, value: TimeoutMessage) => {
