@@ -38,9 +38,7 @@ export class CreateLinkCommand implements ICommand<boolean> {
     }
     const pinComponent = new HtmlLinkComponent(ref, object);
     document.body.appendChild(pinComponent.render());
-    setTimeout(() => {
-      pinComponent.focus(true);
-    }, 500);
+    pinComponent.focus(true);
     return true;
   }
 }

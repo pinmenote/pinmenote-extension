@@ -85,7 +85,7 @@ export const PinBoard: FunctionComponent = () => {
         // Last id found
         PinBoardStore.setFrom(PinBoardStore.pins[PinBoardStore.pins.length - 1].id);
         await PinBoardStore.sendSearch();
-      }, 250);
+      }, 1000);
       return;
     }
 
@@ -104,7 +104,7 @@ export const PinBoard: FunctionComponent = () => {
     if (e.target.value.length <= 2) {
       PinBoardStore.timeout = window.setTimeout(async () => {
         await PinBoardStore.sendRange();
-      });
+      }, 1000);
       return;
     } else {
       PinBoardStore.setSearch(e.target.value);

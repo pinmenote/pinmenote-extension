@@ -16,7 +16,6 @@
  */
 import { PinObject } from '@common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
-import { resolveVideoTime } from '../../fn/resolve-video-time';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinFocusCommand implements ICommand<void> {
@@ -24,7 +23,7 @@ export class PinFocusCommand implements ICommand<void> {
   execute(): void {
     if (!this.data) return;
     PinStore.focusPin(this.data);
-    // TODO fixme
-    setTimeout(() => resolveVideoTime(this.data?.content.videoTime), 1000);
+    // TODO maybe uncomment ( needs fix anyway )
+    // setTimeout(() => resolveVideoTime(this.data?.content.videoTime), 1000);
   }
 }
