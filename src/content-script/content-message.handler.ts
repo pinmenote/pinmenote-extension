@@ -27,6 +27,7 @@ import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { RuntimeLoginRefreshCommand } from './command/runtime/runtime-login-refresh.command';
 import { RuntimePinChangedCommand } from './command/runtime/runtime-pin-changed.command';
+import { SettingsStore } from './store/settings.store';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '@common/fn/pin/content-pin-new-url';
 import { fnBrowserApi } from '@common/service/browser.api.wrapper';
@@ -93,7 +94,12 @@ export class ContentMessageHandler {
 
   private static handlePopupOpen = async (): Promise<void> => {
     const url = contentPinNewUrl();
-    const data: PinPopupInitData = { url, isAddingNote: PinAddElementStore.hasElement };
+    const data: PinPopupInitData = {
+      url,
+      pageTitle: document.title,
+      isAddingNote: PinAddElementStore.hasElement,
+      isBookmarked: SettingsStore.isBookmarked
+    };
     await sendRuntimeMessage<PinPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };
 }

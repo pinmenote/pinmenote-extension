@@ -42,9 +42,11 @@
 .ProseMirror ul, .ProseMirror ol {
     padding-left: 20px;
     list-style-type: disc;
+    list-style-position: outside;
 }
 
 .ProseMirror li {
     list-style-type: disc;
+    list-style-position: outside;
     position: relative;
 }

@@ -15,13 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import PinUrl = Pinmenote.Pin.PinUrl;
-import { PinObject } from '@common/model/pin.model';
+import { PinObject, PinPopupInitData } from '@common/model/pin.model';
 
 export class ActiveTabStore {
   private static urlValue?: PinUrl;
   private static isError = false;
   private static extensionUrl = false;
   private static isAddingNoteValue = false;
+
+  private static isBookmarkedValue = false;
+  private static pageTitleValue = '';
 
   private static originPinsValue: PinObject[] = [];
   private static hrefPinsValue: PinObject[] = [];
@@ -46,6 +49,14 @@ export class ActiveTabStore {
     return this.isAddingNoteValue;
   }
 
+  static get isBookmarked(): boolean {
+    return this.isBookmarkedValue;
+  }
+
+  static get pageTitle(): string {
+    return this.pageTitleValue;
+  }
+
   static get url(): PinUrl | undefined {
     return this.urlValue;
   }
@@ -58,10 +69,12 @@ export class ActiveTabStore {
     return this.extensionUrl;
   }
 
-  static updateState(isError: boolean, extensionUrl: boolean, isAddingNoteValue = false, urlValue?: PinUrl) {
+  static updateState(isError: boolean, extensionUrl: boolean, initData?: PinPopupInitData) {
     this.isError = isError;
     this.extensionUrl = extensionUrl;
-    this.urlValue = urlValue;
-    this.isAddingNoteValue = isAddingNoteValue;
+    this.urlValue = initData?.url;
+    this.isAddingNoteValue = initData?.isAddingNote || false;
+    this.isBookmarkedValue = initData?.isBookmarked || false;
+    this.pageTitleValue = initData?.pageTitle || '';
   }
 }

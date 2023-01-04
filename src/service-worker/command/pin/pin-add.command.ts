@@ -43,12 +43,12 @@ export class PinAddCommand implements ICommand<void> {
   private async addId(id: number): Promise<void> {
     const ids = await this.getIds();
     ids.push(id);
-    await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID_LIST, ids);
+    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_ID_LIST, ids);
     await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LAST_ID, id);
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.PIN_ID_LIST);
     return value || [];
   }
 }

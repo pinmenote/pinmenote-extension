@@ -64,7 +64,7 @@ export class OptionsPinSearchCommand implements ICommand<void> {
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.PIN_ID_LIST);
     return value || [];
   }
 }

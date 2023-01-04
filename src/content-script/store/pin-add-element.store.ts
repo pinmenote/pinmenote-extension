@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BorderStore } from './border.store';
 import { CreatePinDataCommand } from '../command/pin/create-pin-data.command';
 import { DocumentMediator } from '../mediator/document.mediator';
+import { SettingsStore } from './settings.store';
 import { fnConsoleLog } from '@common/fn/console.fn';
 
 export class PinAddElementStore {
@@ -52,8 +52,8 @@ export class PinAddElementStore {
       this.currentElement.addEventListener('click', this.handleElementClick);
       this.currentElementBorderStyle = this.currentElement.style.border;
       this.currentElementBorderRadius = this.currentElement.style.borderRadius;
-      this.currentElement.style.border = BorderStore.borderStyle;
-      this.currentElement.style.borderRadius = BorderStore.borderRadius;
+      this.currentElement.style.border = SettingsStore.borderStyle;
+      this.currentElement.style.borderRadius = SettingsStore.borderRadius;
     }
   }
 

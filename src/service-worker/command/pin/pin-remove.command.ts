@@ -42,14 +42,14 @@ export class PinRemoveCommand implements ICommand<void> {
     for (let i = 0; i < ids.length; i++) {
       if (ids[i] === id) {
         ids.splice(i, 1);
-        await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID_LIST, ids);
+        await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_ID_LIST, ids);
         return;
       }
     }
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.PIN_ID_LIST);
     return value || [];
   }
 }

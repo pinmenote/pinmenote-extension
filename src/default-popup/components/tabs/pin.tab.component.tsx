@@ -18,16 +18,15 @@ import { PinObject, PinPopupInitData } from '@common/model/pin.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { BusMessageType } from '@common/model/bus.model';
+import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
-import { PinCreateComponent } from '../pins/pin.create.component';
 import { PinListOriginComponent } from '../pins/pin.list.origin.component';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { sendRuntimeMessage } from '@common/message/runtime.message';
 import PinUrl = Pinmenote.Pin.PinUrl;
 
 export const PinTabComponent: FunctionComponent = () => {
-  const [url, setUrl] = useState<PinUrl | undefined>(ActiveTabStore.url);
   const [isError, setIsError] = useState<boolean>(ActiveTabStore.showErrorText);
   const [originPins, setOriginPins] = useState<PinObject[]>(ActiveTabStore.originPins);
   const [hrefPins, setHrefPins] = useState<PinObject[]>(ActiveTabStore.hrefPins);
@@ -50,7 +49,6 @@ export const PinTabComponent: FunctionComponent = () => {
     const urlKey = TinyEventDispatcher.addListener<PinPopupInitData>(
       BusMessageType.POPUP_INIT,
       async (event, key, value) => {
-        setUrl(ActiveTabStore.url);
         setIsError(ActiveTabStore.showErrorText);
         if (value.url) await fillPinData(value.url);
       }
@@ -80,10 +78,10 @@ export const PinTabComponent: FunctionComponent = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-            <PinCreateComponent />
+            <ObjectCreateComponent />
             {/* marginBottom:155 if test code is uncommented */}
             <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110, marginTop: 10 }}>
-              <PinListOriginComponent pinOrigin={originPins} pinHref={hrefPins} origin={url?.origin || ''} />
+              <PinListOriginComponent pinOrigin={originPins} pinHref={hrefPins} />
             </div>
           </div>
           <PinBoardButton />

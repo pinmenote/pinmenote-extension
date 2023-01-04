@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent } from 'react';
+import { ActiveTabStore } from '../../store/active-tab.store';
 import { PinListComponent } from './pin.list.component';
 import { PinObject } from '@common/model/pin.model';
 import { Typography } from '@mui/material';
@@ -22,10 +23,9 @@ import { Typography } from '@mui/material';
 interface PinListOriginProps {
   pinHref: PinObject[];
   pinOrigin: PinObject[];
-  origin?: string;
 }
 
-export const PinListOriginComponent: FunctionComponent<PinListOriginProps> = ({ pinHref, pinOrigin, origin }) => {
+export const PinListOriginComponent: FunctionComponent<PinListOriginProps> = ({ pinHref, pinOrigin }) => {
   return (
     <div>
       <Typography fontWeight="bold" fontSize="14px">
@@ -33,7 +33,7 @@ export const PinListOriginComponent: FunctionComponent<PinListOriginProps> = ({ 
       </Typography>
       <PinListComponent pinList={pinHref} visibility={true} />
       <Typography fontWeight="bold" fontSize="14px">
-        On {origin}
+        On {ActiveTabStore.url?.origin}
       </Typography>
       <PinListComponent pinList={pinOrigin} visibility={false} />
     </div>

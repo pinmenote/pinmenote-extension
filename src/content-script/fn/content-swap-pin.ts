@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { fnComputeCssContent, fnComputeHtmlContent } from '@common/fn/compute.element.fn';
-import { BorderStore } from '../store/border.store';
 import { BusMessageType } from '@common/model/bus.model';
 import { PinComponent } from '../components/pin.component';
 import { PinUpdateObject } from '@common/model/pin.model';
+import { SettingsStore } from '../store/settings.store';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { fnImgResize } from '@common/fn/img.resize.fn';
@@ -65,8 +65,8 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
     TinyEventDispatcher.addListener<string>(BusMessageType.CONTENT_PIN_SCREENSHOT, async (event, key, value) => {
       // After taking screenshot let's go back to note styles
       pinData.container.style.display = 'inline-block';
-      element.style.border = BorderStore.borderStyle;
-      element.style.borderRadius = BorderStore.borderRadius;
+      element.style.border = SettingsStore.borderStyle;
+      element.style.borderRadius = SettingsStore.borderRadius;
 
       TinyEventDispatcher.removeListener(event, key);
 

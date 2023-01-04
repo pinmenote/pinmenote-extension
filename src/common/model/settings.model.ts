@@ -28,6 +28,7 @@ export interface ContentExtensionData {
 
 export interface ContentSettingsData {
   version: number;
+  isBookmarked: boolean;
   borderStyle: string;
   borderRadius: string;
   screenshotFormat: string;

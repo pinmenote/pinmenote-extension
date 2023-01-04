@@ -26,13 +26,13 @@ import '../css/prosemirror.css';
 import { BusMessageType, TimeoutMessage } from '@common/model/bus.model';
 import { ContentExtensionData, ContentSettingsData, ExtensionTheme } from '@common/model/settings.model';
 import { fnConsoleError, fnConsoleLog } from '@common/fn/console.fn';
-import { BorderStore } from './store/border.store';
 import { ContentMessageHandler } from './content-message.handler';
 import { CreateLinkCommand } from './command/link/create-link.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
+import { SettingsStore } from './store/settings.store';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { WindowMediator } from './mediator/window.mediator';
 import { environmentConfig } from '@common/environment';
@@ -70,7 +70,7 @@ class PinMeScript {
   };
 
   private handleContentSettings = async (event: string, key: string, data: ContentSettingsData) => {
-    BorderStore.setBorderSettings(data);
+    SettingsStore.setSettings(data);
     if (data.link) new CreateLinkCommand(data.link).execute();
     await new RuntimePinGetHrefCommand().execute();
     await this.initialTimeout();

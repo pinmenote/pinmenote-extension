@@ -45,6 +45,8 @@ export enum BusMessageType {
   WORKER_ACK = 'worker.ack',
   POPUP_ACK = 'popup.ack',
   // Popup
+  POPUP_BOOKMARK_ADD = 'popup.bookmark.add',
+  POPUP_BOOKMARK_REMOVE = 'popup.bookmark.remove',
   POPUP_OPEN = 'popup.open',
   POPUP_INIT = 'popup.init',
   POPUP_PIN_START = 'popup.pin.start',

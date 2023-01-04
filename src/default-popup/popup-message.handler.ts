@@ -43,11 +43,11 @@ export class PopupMessageHandler {
     TinyEventDispatcher.addListener<PinPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
       if (value.url) LogManager.log(`${event} ${value.url.href}`);
       if (value.url?.href.startsWith(fnExtensionStartUrl())) {
-        ActiveTabStore.updateState(true, true);
+        ActiveTabStore.updateState(true, true, value);
       } else if (value.url) {
-        ActiveTabStore.updateState(false, false, value.isAddingNote, value.url);
+        ActiveTabStore.updateState(false, false, value);
       } else {
-        ActiveTabStore.updateState(true, false);
+        ActiveTabStore.updateState(true, false, value);
       }
     });
   }

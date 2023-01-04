@@ -29,6 +29,8 @@ export enum PinViewType {
 export interface PinPopupInitData {
   url?: PinUrl;
   isAddingNote: boolean;
+  isBookmarked: boolean;
+  pageTitle: string;
 }
 
 /* CONTENT */

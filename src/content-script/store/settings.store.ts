@@ -15,10 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentSettingsData } from '@common/model/settings.model';
+import { environmentConfig } from '@common/environment';
 
-export class BorderStore {
-  private static borderStyleValue = '2px solid #90caf9'; // TODO make it customizable
-  private static borderRadiusValue = '5px'; // TODO make it customizable
+export class SettingsStore {
+  private static borderStyleValue = environmentConfig.settings.borderStyle;
+  private static borderRadiusValue = environmentConfig.settings.borderRadius;
+  private static isBookmarkedValue = false;
 
   static get borderStyle(): string {
     return this.borderStyleValue;
@@ -28,8 +30,13 @@ export class BorderStore {
     return this.borderRadiusValue;
   }
 
-  static setBorderSettings(data: ContentSettingsData) {
+  static get isBookmarked(): boolean {
+    return this.isBookmarkedValue;
+  }
+
+  static setSettings(data: ContentSettingsData) {
     this.borderRadiusValue = data.borderRadius;
     this.borderStyleValue = data.borderStyle;
+    this.isBookmarkedValue = data.isBookmarked;
   }
 }

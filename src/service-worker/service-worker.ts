@@ -42,6 +42,8 @@ import { OptionsPinUpdateCommand } from './command/options/options-pin-update.co
 import { OptionsSetSettingsCommand } from './command/options/options-set-settings.command';
 import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
 import { PopupAccessTokenCommand } from './command/popup/popup-access-token.command';
+import { PopupBookmarkAddCommand } from './command/popup/popup-bookmark-add.command';
+import { PopupBookmarkRemoveCommand } from './command/popup/popup-bookmark-remove.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
 import { PopupPinCleanupCommand } from './command/popup/popup-pin-cleanup.command';
@@ -118,6 +120,12 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_SETTINGS:
       await new ContentSettingsCommand(msg.data).execute();
+      break;
+    case BusMessageType.POPUP_BOOKMARK_ADD:
+      await new PopupBookmarkAddCommand(msg.data).execute();
+      break;
+    case BusMessageType.POPUP_BOOKMARK_REMOVE:
+      await new PopupBookmarkRemoveCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_PIN_CLEANUP:
       await new PopupPinCleanupCommand().execute();
