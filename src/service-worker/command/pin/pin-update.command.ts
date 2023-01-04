@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { PinHashtagStore } from '../../store/pin/pin-hashtag.store';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { PinUpdateObject } from '@common/model/pin.model';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
@@ -25,7 +25,7 @@ export class PinUpdateCommand implements ICommand<void> {
   constructor(private data: PinUpdateObject) {}
   async execute(): Promise<void> {
     fnConsoleLog('WorkerPinManager->pinUpdate', this.data, this.data.pin.id);
-    const key = `${PinStoreKeys.PIN_ID}:${this.data.pin.id}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.data.pin.id}`;
 
     const updateTags = this.shouldUpdateTags(this.data.newHashtag, this.data.oldHashtag);
 

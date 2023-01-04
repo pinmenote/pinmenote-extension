@@ -16,8 +16,8 @@
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { PinObject } from '@common/model/pin.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { PinUpdateCommand } from '../pin/pin-update.command';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendRuntimeMessage } from '@common/message/runtime.message';
@@ -35,12 +35,12 @@ export class OptionsPinUpdateCommand implements ICommand<void> {
     }
   }
   private async addChangedPin(): Promise<void> {
-    let data = await BrowserStorageWrapper.get<number[]>(PinStoreKeys.CHANGED_PIN);
+    let data = await BrowserStorageWrapper.get<number[]>(ObjectStoreKeys.PIN_CHANGE);
     if (data) {
       data.push(this.data.id);
     } else {
       data = [this.data.id];
     }
-    await BrowserStorageWrapper.set(PinStoreKeys.CHANGED_PIN, data);
+    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_CHANGE, data);
   }
 }

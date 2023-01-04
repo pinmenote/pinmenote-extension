@@ -52,7 +52,7 @@ export class PinStore {
 
   public static clear(): void {
     for (const pinData of this.pinData) {
-      this.delByUid(pinData.object.uid);
+      pinData.cleanup();
     }
     this.pinData = [];
   }

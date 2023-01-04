@@ -16,8 +16,8 @@
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { PinObject } from '@common/model/pin.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendTabMessage } from '@common/message/tab.message';
 import ICommand = Pinmenote.Common.ICommand;
@@ -25,9 +25,9 @@ import ICommand = Pinmenote.Common.ICommand;
 export class ContentPinFocusCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
-      const data = await BrowserStorageWrapper.get<PinObject>(PinStoreKeys.NAVIGATE_PIN);
+      const data = await BrowserStorageWrapper.get<PinObject>(ObjectStoreKeys.PIN_NAVIGATE);
 
-      await BrowserStorageWrapper.remove(PinStoreKeys.NAVIGATE_PIN);
+      await BrowserStorageWrapper.remove(ObjectStoreKeys.PIN_NAVIGATE);
 
       await sendTabMessage<PinObject | undefined>({ type: BusMessageType.CONTENT_PIN_FOCUS, data });
     } catch (e) {

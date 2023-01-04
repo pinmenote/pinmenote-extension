@@ -18,7 +18,7 @@ import { ContentExtensionData, ContentSettingsData } from '@common/model/setting
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
 import { ContentIconColorCommand } from './content-icon-color.command';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { SettingsKeys } from '../../store/keys/settings.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendTabMessage } from '@common/message/tab.message';
@@ -33,10 +33,10 @@ export class ContentSettingsCommand implements ICommand<void> {
 
     const settingsData = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
 
-    let link = await BrowserStorageWrapper.get<LinkDto | undefined>(PinStoreKeys.PIN_LINK);
+    let link = await BrowserStorageWrapper.get<LinkDto | undefined>(ObjectStoreKeys.OBJECT_LINK);
     fnConsoleLog('ContentSettingsCommand', link, this.data.href);
     if (this.data.href === link?.url.href) {
-      await BrowserStorageWrapper.remove(PinStoreKeys.PIN_LINK);
+      await BrowserStorageWrapper.remove(ObjectStoreKeys.OBJECT_LINK);
     } else {
       link = undefined;
     }

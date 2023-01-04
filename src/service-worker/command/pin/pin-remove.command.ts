@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { PinFindHashtagCommand } from './pin-find-hashtag.command';
 import { PinHashtagStore } from '../../store/pin/pin-hashtag.store';
 import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
 import { PinObject } from '@common/model/pin.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
@@ -27,7 +27,7 @@ export class PinRemoveCommand implements ICommand<void> {
   constructor(private data: PinObject) {}
   async execute(): Promise<void> {
     fnConsoleLog('WorkerPinManager->pinRemove', this.data);
-    await BrowserStorageWrapper.remove(`${PinStoreKeys.PIN_ID}:${this.data.id}`);
+    await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`);
     await PinHrefOriginStore.delHrefOriginId(this.data.url, this.data.id);
     await this.delId(this.data.id);
 
@@ -42,14 +42,14 @@ export class PinRemoveCommand implements ICommand<void> {
     for (let i = 0; i < ids.length; i++) {
       if (ids[i] === id) {
         ids.splice(i, 1);
-        await BrowserStorageWrapper.set(PinStoreKeys.PIN_ID_LIST, ids);
+        await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID_LIST, ids);
         return;
       }
     }
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(PinStoreKeys.PIN_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
     return value || [];
   }
 }

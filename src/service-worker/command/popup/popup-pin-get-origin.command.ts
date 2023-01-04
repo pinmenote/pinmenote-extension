@@ -16,9 +16,9 @@
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
 import { PinObject } from '@common/model/pin.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendRuntimeMessage } from '@common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
@@ -45,7 +45,7 @@ export class PopupPinGetOriginCommand implements ICommand<void> {
     const pinIds = (await PinHrefOriginStore.originIds(data.origin)).reverse();
     const out: PinObject[] = [];
     for (const id of pinIds) {
-      const key = `${PinStoreKeys.PIN_ID}:${id}`;
+      const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
       const pin = await BrowserStorageWrapper.get<PinObject>(key);
       if (filterHref && pin.url.href === data.href) continue;
       out.push(pin);

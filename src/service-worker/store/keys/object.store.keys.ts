@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export class PinStoreKeys {
+export class ObjectStoreKeys {
   // PIN STATE
-  static readonly NAVIGATE_PIN = 'pin:navigate';
-  static readonly CHANGED_PIN = 'pin:change';
+  static readonly PIN_NAVIGATE = 'pin:navigate';
+  static readonly PIN_CHANGE = 'pin:change';
 
   // ID
-  static readonly PIN_ID = 'pin:id';
+  static readonly OBJECT_ID = 'o:id';
 
   // LINK
-  static readonly PIN_LINK = 'pin:link';
+  static readonly OBJECT_LINK = 'o:link';
 
-  static readonly PIN_ID_LIST = 'pin:id:list';
-  static readonly PIN_LAST_ID = 'pin:last:id';
+  static readonly OBJECT_ID_LIST = 'pin:id:list';
+  static readonly OBJECT_LAST_ID = 'pin:last:id';
 }

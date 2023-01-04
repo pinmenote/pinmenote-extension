@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { PinFindHashtagCommand } from './pin-find-hashtag.command';
 import { PinHashtagStore } from '../../store/pin/pin-hashtag.store';
 import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
 import { PinObject } from '@common/model/pin.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
@@ -35,7 +35,7 @@ export class PinAddCommand implements ICommand<void> {
       await PinHashtagStore.addHashtag(tag, this.data.id);
     }
 
-    const key = `${PinStoreKeys.PIN_ID}:${this.data.id}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`;
     await BrowserStorageWrapper.set(key, this.data);
     await PinHrefOriginStore.addHrefOriginId(this.data.url, this.data.id);
   }
@@ -43,12 +43,12 @@ export class PinAddCommand implements ICommand<void> {
   private async addId(id: number): Promise<void> {
     const ids = await this.getIds();
     ids.push(id);
-    await BrowserStorageWrapper.set(PinStoreKeys.PIN_ID_LIST, ids);
-    await BrowserStorageWrapper.set(PinStoreKeys.PIN_LAST_ID, id);
+    await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID_LIST, ids);
+    await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LAST_ID, id);
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(PinStoreKeys.PIN_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
     return value || [];
   }
 }

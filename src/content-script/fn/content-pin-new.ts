@@ -16,10 +16,11 @@
  */
 import { HtmlContent, ObjectTypeDto } from '@common/model/html.model';
 import { PinObject, PinViewType } from '@common/model/pin.model';
-import { fnComputeCssContent, fnComputeHtmlContent } from '@common/fn/compute.element.fn';
+import { fnComputeCssContent, fnComputeHtmlContent, fnComputeHtmlParentStyles } from '@common/fn/compute.element.fn';
 import { BusMessageType } from '@common/model/bus.model';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '@common/fn/pin/content-pin-new-url';
+import { fnConsoleLog } from '@common/fn/console.fn';
 import { fnImgResize } from '@common/fn/img.resize.fn';
 import { fnUid } from '@common/fn/uid.fn';
 import { fnXpath } from '@common/fn/xpath.fn';
@@ -96,6 +97,7 @@ const computePinContent = (ref: HTMLElement): HtmlContent => {
   const bodyStyle = document.body.getAttribute('style') || undefined;
   const title = document.title;
   const htmlContent = fnComputeHtmlContent(ref);
+  const htmlParentData = fnComputeHtmlParentStyles(ref);
   // fnConsoleLog('HTML :', htmlContent);
   let parent = ref.parentElement;
   // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
@@ -111,8 +113,9 @@ const computePinContent = (ref: HTMLElement): HtmlContent => {
     parent = parent.parentElement;
   }
   // fnConsoleLog('2:', htmlContent.cssStyles, parent);
-
+  fnConsoleLog('START COMPUTE CSS !!!');
   const css = fnComputeCssContent(htmlContent.cssStyles);
+  fnConsoleLog('STOP COMPUTE CSS !!!');
   const elementText = ref.innerText;
   const isLightTheme = window.matchMedia('(prefers-color-scheme: light)').matches;
   return {
@@ -133,7 +136,8 @@ const sendGetPinNextId = (reject: (value: string) => void) => {
     .then(() => {
       // We handle it above, inside dispatcher
     })
-    .catch(() => {
+    .catch((e) => {
+      fnConsoleLog('PROBLEM sendGetPinNextId !!!', e);
       reject('PROBLEM !!!');
     });
 };
@@ -145,7 +149,8 @@ const sendGetPinTakeScreenshot = (reject: (value: string) => void) => {
     .then(() => {
       // We handle it above, inside dispatcher
     })
-    .catch(() => {
+    .catch((e) => {
+      fnConsoleLog('PROBLEM sendGetPinTakeScreenshot !!!', e);
       reject('PROBLEM !!!');
     });
 };

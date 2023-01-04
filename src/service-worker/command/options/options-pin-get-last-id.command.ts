@@ -16,7 +16,7 @@
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendRuntimeMessage } from '@common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
@@ -32,7 +32,7 @@ export class OptionsPinGetLastIdCommand implements ICommand<void> {
   }
 
   private async getCount(): Promise<number> {
-    const value = await BrowserStorageWrapper.get<number | undefined>(PinStoreKeys.PIN_LAST_ID);
+    const value = await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LAST_ID);
     return value || 0;
   }
 }

@@ -17,7 +17,8 @@
 export const scrollToElementFn = (view?: HTMLElement, offset?: number): number => {
   if (!view) return -1;
   const rect = view.getBoundingClientRect();
-  const top = Math.max(rect.y - (offset || 0), 0);
+  // TODO fix scroll
+  const top = Math.max(rect.y + window.scrollY - (offset || 0), 0);
   window.scrollTo({
     top,
     behavior: 'smooth'

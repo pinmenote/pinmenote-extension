@@ -23,10 +23,10 @@ import { BusMessageType } from '@common/model/bus.model';
 import { CryptoDecryptCommand } from '../crypto/crypto-decrypt.command';
 import { CryptoEncryptSignCommand } from '../crypto/crypto-encrypt-sign.command';
 import { FetchService } from '../../service/fetch.service';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { ObjectTypeDto } from '@common/model/html.model';
 import { PinAddCommand } from '../pin/pin-add.command';
 import { PinRemoveCommand } from '../pin/pin-remove.command';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { PinUpdateCommand } from '../pin/pin-update.command';
 import { environmentConfig } from '@common/environment';
 import { fnConsoleLog } from '@common/fn/console.fn';
@@ -172,12 +172,12 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
   }
 
   private async pinGetId(pin: PinByIdRequest): Promise<PinObject | undefined> {
-    const key = `${PinStoreKeys.PIN_ID}:${pin.id}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${pin.id}`;
     return await BrowserStorageWrapper.get<PinObject>(key);
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(PinStoreKeys.PIN_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
     return value || [];
   }
 }

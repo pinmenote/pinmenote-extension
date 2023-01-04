@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
 import { PinObject } from '@common/model/pin.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import PinUrl = Pinmenote.Pin.PinUrl;
@@ -31,7 +31,7 @@ export class PinGetHrefCommand implements ICommand<Promise<PinObject[]>> {
     // await this.test();
     const out: PinObject[] = [];
     for (const id of pinIds) {
-      const key = `${PinStoreKeys.PIN_ID}:${id}`;
+      const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
       const pin = await BrowserStorageWrapper.get<PinObject>(key);
       // TODO revisit visible flag in pin.manager.ts in content scripts
       if (this.filterVisible && !pin.visible) continue;

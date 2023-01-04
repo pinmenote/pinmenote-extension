@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime, CssData, HtmlIntermediateData } from '@common/model/html.model';
+import { ContentVideoTime, CssData, HtmlIntermediateData, HtmlParentStyles } from '@common/model/html.model';
+import { environmentConfig } from '@common/environment';
 import { fnConsoleLog } from './console.fn';
 import { fnGetKey } from '@common/kv.utils';
 import { fnXpath } from '@common/fn/xpath.fn';
@@ -27,14 +28,20 @@ const computeSelectorRules = (cssRules: ComputeCssRule[], unique: Set<string>): 
     if (fnGetKey(r, 'selectorText')) {
       unique.forEach((u) => {
         if (u.startsWith('.')) {
-          if (r.selectorText.startsWith(`${u}:`) || r.selectorText.startsWith(`${u} `) || r.selectorText === u) {
+          if (
+            r.selectorText.startsWith(`${u}:`) ||
+            r.selectorText.startsWith(`${u} `) ||
+            r.selectorText.startsWith(`${u}[`) ||
+            r.selectorText.startsWith(`${u}.`) ||
+            r.selectorText === u
+          ) {
             output += `${r.cssText}
 `;
           }
         } else {
           const selectors: string[] = r.selectorText.split(',');
           selectors.forEach((s) => {
-            if (u === s || `* ${u}` === s) {
+            if (u === s || `* ${u}` === s || s.startsWith(`${u}[`) || s.startsWith(`${u}.`)) {
               output += `${r.cssText}
 `;
             }
@@ -42,13 +49,11 @@ const computeSelectorRules = (cssRules: ComputeCssRule[], unique: Set<string>): 
         }
       });
     } else if (r.media) {
-      const ruleText = computeSelectorRules(Array.from(r.cssRules) as ComputeCssRule[], unique);
-      if (ruleText) {
-        output += `@media ${r.conditionText} {
-  ${ruleText}
-}
-`;
+      // TODO - optimize that ( ok for now ) - look at old source from repo
+      output += `@media ${r.conditionText} {
+        ${r.cssText}
       }
+      `;
     } else {
       // TODO parse other rules ex CSSKeyFrameRules
     }
@@ -74,6 +79,23 @@ export const fnComputeCssContent = (styles: string[]): CssData => {
   };
 };
 
+export const fnComputeHtmlParentStyles = (ref: Element): HtmlParentStyles => {
+  let parent = ref.parentElement;
+  const cssStyles: string[] = [];
+  while (parent && parent.tagName.toLowerCase() !== 'body') {
+    const clazz = parent.getAttribute('class');
+    if (clazz) {
+      const a = clazz.split(' ').filter((e) => !!e);
+      cssStyles.push(...a.map((e) => `.${e}`));
+    }
+    parent = parent.parentElement;
+  }
+  return {
+    html: '',
+    cssStyles
+  };
+};
+
 export const fnComputeHtmlContent = (ref: Element): HtmlIntermediateData => {
   const tagName = ref.tagName.toLowerCase();
   const cssStyles: string[] = [tagName];
@@ -85,9 +107,8 @@ export const fnComputeHtmlContent = (ref: Element): HtmlIntermediateData => {
     videoTime.push({
       xpath: fnXpath(ref as HTMLElement),
       currentTime: (ref as HTMLVideoElement).currentTime,
-      displayTime: 5
+      displayTime: environmentConfig.settings.videoDisplayTime
     });
-    // SET SECONDS (el as HTMLVideoElement).currentTime = 148;
   }
 
   const attributes: Attr[] = Array.from(ref.attributes);
@@ -134,8 +155,10 @@ export const fnComputeHtmlContent = (ref: Element): HtmlIntermediateData => {
       html += computed.html;
       cssStyles.push(...computed.cssStyles);
       videoTime.push(...computed.videoTime);
+    } else if (node.nodeType === Node.COMMENT_NODE) {
+      fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
     } else {
-      fnConsoleLog('PROBLEM !!!', node.nodeType);
+      fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
     }
   }
   html += `</${tagName}>`;

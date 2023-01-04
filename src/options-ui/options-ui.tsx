@@ -68,7 +68,7 @@ const App: FunctionComponent = () => {
 try {
   OptionsMessageHandler.init();
 } catch (e: unknown) {
-  fnConsoleError('PROBLEM !!!', e);
+  fnConsoleError('PROBLEM OptionsMessageHandler.init !!!', e);
 }
 
 const root = createRoot(document.getElementById('root') as HTMLElement);

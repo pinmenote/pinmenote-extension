@@ -17,7 +17,7 @@
 import { PinByIdRequest, PinObject } from '@common/model/pin.model';
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendTabMessage } from '@common/message/tab.message';
 import ICommand = Pinmenote.Common.ICommand;
@@ -38,7 +38,7 @@ export class ContentPinGetIdCommand implements ICommand<void> {
   }
 
   private async pinGetId(pin: PinByIdRequest): Promise<PinObject | undefined> {
-    const key = `${PinStoreKeys.PIN_ID}:${pin.id}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${pin.id}`;
     return await BrowserStorageWrapper.get<PinObject>(key);
   }
 }

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { fnBrowserApi } from '@common/service/browser.api.wrapper';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
@@ -26,7 +26,7 @@ export class ContentLinkAddCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       fnConsoleLog('ContentLinkAddCommand', this.data);
-      await BrowserStorageWrapper.set(PinStoreKeys.PIN_LINK, this.data);
+      await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LINK, this.data);
       await fnBrowserApi().tabs.update({ url: this.data.url.href });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);

@@ -20,6 +20,7 @@ import { BusMessageType } from '@common/model/bus.model';
 import { PinComponent } from '../components/pin.component';
 import { PinUpdateObject } from '@common/model/pin.model';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '@common/fn/console.fn';
 import { fnImgResize } from '@common/fn/img.resize.fn';
 import { fnSleep } from '@common/fn/sleep.fn';
 import { fnXpath } from '@common/fn/xpath.fn';
@@ -27,10 +28,9 @@ import { sendRuntimeMessage } from '@common/message/runtime.message';
 
 export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement): Promise<void> => {
   pinData.container.style.display = 'none';
-  pinData.ref.style.border = pinData.object.border.style;
-  pinData.ref.style.borderRadius = pinData.object.border.radius;
+  pinData.restoreBorder();
   await fnSleep(100);
-  pinData.ref = element;
+  pinData.setNewRef(element);
   pinData.object.locator.xpath = fnXpath(element);
   pinData.object.content.elementText = element.innerText;
 
@@ -57,7 +57,8 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
       .then(() => {
         // We handle it above, inside dispatcher
       })
-      .catch(() => {
+      .catch((e) => {
+        fnConsoleLog('PROBLEM contentSwapPin !!!', e);
         pinData.container.style.display = 'inline-block';
         reject('PROBLEM !!!');
       });

@@ -34,8 +34,8 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     const href = fnNormalizeHref(window.location.href);
     if (this.href !== href) {
       fnConsoleLog('PinManager->invalidatePins->CLEAR href changed');
-      await new RuntimePinGetHrefCommand().execute();
       PinStore.clear();
+      await new RuntimePinGetHrefCommand().execute();
       return;
     }
     // Check for pending pins that should be on page but are not displayed

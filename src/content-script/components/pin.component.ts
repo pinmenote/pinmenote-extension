@@ -45,25 +45,39 @@ export class PinComponent implements HtmlComponent {
   private xy: PinPoint;
   private drag = false;
 
-  readonly ref: HTMLElement;
+  private refValue: HTMLElement;
+
   readonly object: PinObject;
 
   constructor(ref: HTMLElement, pin: PinObject) {
     this.el.id = pin.uid;
-    this.ref = ref;
+    this.refValue = ref;
     this.object = pin;
-    this.xy = contentCalculatePinPoint(this.ref, pin.size, pin.locator.elementSize, pin.locator.offset);
+    this.xy = contentCalculatePinPoint(this.refValue, pin.size, pin.locator.elementSize, pin.locator.offset);
     this.editor = new EditorComponent(this.object);
     this.topbar = new TopBarComponent(pin, ref);
     this.bottombar = new BottomBarComponent(pin);
+  }
+
+  setNewRef(ref: HTMLElement): void {
+    this.refValue = ref;
+  }
+
+  get container(): HTMLElement {
+    return this.el;
+  }
+
+  get ref(): HTMLElement {
+    return this.refValue;
   }
 
   focus(goto = false): void {
     this.editor.focus(goto);
   }
 
-  get container(): HTMLElement {
-    return this.el;
+  restoreBorder(): void {
+    this.refValue.style.border = this.object.border.style;
+    this.refValue.style.borderRadius = this.object.border.radius;
   }
 
   render(): HTMLElement {
@@ -112,7 +126,7 @@ export class PinComponent implements HtmlComponent {
     offset.x = offset.x + value.x;
     offset.y = offset.y + value.y;
     this.object.locator.offset = offset;
-    this.xy = contentCalculatePinPoint(this.ref, this.object.size, elementSize, offset);
+    this.xy = contentCalculatePinPoint(this.refValue, this.object.size, elementSize, offset);
     this.drag = false;
   }
 
@@ -122,7 +136,7 @@ export class PinComponent implements HtmlComponent {
 
   resize(): void {
     const { elementSize, offset } = this.object.locator;
-    this.xy = contentCalculatePinPoint(this.ref, this.object.size, elementSize, offset);
+    this.xy = contentCalculatePinPoint(this.refValue, this.object.size, elementSize, offset);
     this.el.style.left = `${this.xy.x}px`;
     this.el.style.top = `${this.xy.y}px`;
   }
@@ -131,8 +145,8 @@ export class PinComponent implements HtmlComponent {
     this.el.removeEventListener('mouseover', this.handleMouseOver);
     this.el.removeEventListener('mouseout', this.handleMouseOut);
 
-    this.ref.style.border = this.object.border.style;
-    this.ref.style.borderRadius = this.object.border.radius;
+    this.refValue.style.border = this.object.border.style;
+    this.refValue.style.borderRadius = this.object.border.radius;
 
     this.editor.cleanup();
     this.topbar.cleanup();

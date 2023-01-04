@@ -45,5 +45,6 @@
 }
 
 .ProseMirror li {
+    list-style-type: disc;
     position: relative;
 }

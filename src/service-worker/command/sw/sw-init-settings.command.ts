@@ -17,26 +17,19 @@
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { ContentSettingsData } from '@common/model/settings.model';
 import { SettingsKeys } from '../../store/keys/settings.keys';
+import { environmentConfig } from '@common/environment';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class SwInitSettingsCommand implements ICommand<Promise<void>> {
-  private targetVersion = 1;
-
   async execute(): Promise<void> {
     let settings = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
     if (!settings) {
-      settings = {
-        borderStyle: '2px solid #90caf9',
-        borderRadius: '5px',
-        version: this.targetVersion,
-        screenshotFormat: 'jpeg',
-        screenshotQuality: 80
-      };
+      settings = { ...environmentConfig.settings, version: environmentConfig.version };
       fnConsoleLog('Settings Initialize');
       await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, settings);
-    } else if (settings.version !== this.targetVersion) {
-      fnConsoleLog('Settings Different version !!! MIGRATE');
+    } else if (settings.version !== environmentConfig.version) {
+      fnConsoleLog('Settings Migrate placeholder');
     } else {
       fnConsoleLog('Settings Exists', settings);
     }

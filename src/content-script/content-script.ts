@@ -128,7 +128,6 @@ class PinMeScript {
         type: BusMessageType.CONTENT_TIMEOUT,
         data: { id: this.id, ms: this.ms }
       });
-      this.adaptIntervalMs();
     } catch (e) {
       fnConsoleLog('PROBLEM->initialTimeout !!!', e);
       this.cleanup();
@@ -162,5 +161,5 @@ try {
   new PinMeScript(fnUid(), 250);
   fnConsoleLog('PinMeScript -> STARTED !!!');
 } catch (e: unknown) {
-  fnConsoleError('PROBLEM !!!', e);
+  fnConsoleError('PROBLEM PinMeScript.new !!!', e);
 }

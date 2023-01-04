@@ -14,12 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+type ScreenshotFormat = 'jpeg' | 'png';
+
+interface SettingsConfig {
+  screenshotFormat: ScreenshotFormat;
+  screenshotQuality: number;
+  borderStyle: string;
+  borderRadius: string;
+  videoDisplayTime: number;
+}
+
 interface EnvironmentConfig {
   showAckMessage: boolean;
   apiUrl: string;
   websiteUrl: string;
   shortUrl: string;
   isProduction: boolean;
+  settings: SettingsConfig;
+  version: number;
 }
 
 export const environmentConfig: EnvironmentConfig = {
@@ -27,7 +40,15 @@ export const environmentConfig: EnvironmentConfig = {
   apiUrl: 'https://pinmenote.com',
   websiteUrl: 'https://pinmenote.com',
   shortUrl: 'https://pmn.cl',
-  isProduction: true
+  isProduction: true,
+  settings: {
+    screenshotFormat: 'jpeg',
+    screenshotQuality: 80,
+    borderRadius: '5px',
+    borderStyle: '2px solid #ff0000',
+    videoDisplayTime: 5
+  },
+  version: 1
 };
 
 if (process.env.NODE_ENV === 'development') {

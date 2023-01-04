@@ -17,7 +17,7 @@
 import { PinObject, PinRangeRequest } from '@common/model/pin.model';
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendRuntimeMessage } from '@common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
@@ -27,7 +27,7 @@ export class OptionsPinGetRangeCommand implements ICommand<void> {
 
   async execute(): Promise<void> {
     try {
-      const data = await this.getRange(PinStoreKeys.PIN_ID, this.data);
+      const data = await this.getRange(ObjectStoreKeys.OBJECT_ID, this.data);
       await sendRuntimeMessage<PinObject[]>({ type: BusMessageType.OPTIONS_PIN_GET_RANGE, data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
@@ -51,7 +51,7 @@ export class OptionsPinGetRangeCommand implements ICommand<void> {
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(PinStoreKeys.PIN_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
     return value || [];
   }
 }

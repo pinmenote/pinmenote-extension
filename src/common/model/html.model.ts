@@ -28,6 +28,11 @@ export interface HtmlIntermediateData {
   videoTime: ContentVideoTime[];
 }
 
+export interface HtmlParentStyles {
+  cssStyles: string[];
+  html: string;
+}
+
 export interface CssData {
   css: string;
   href: string[];

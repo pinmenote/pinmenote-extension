@@ -16,7 +16,7 @@
  */
 import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
 import { BusMessageType } from '@common/model/bus.model';
-import { PinStoreKeys } from '../../store/keys/pin.store.keys';
+import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
 import { fnConsoleLog } from '@common/fn/console.fn';
 import { sendTabMessage } from '@common/message/tab.message';
 import ICommand = Pinmenote.Common.ICommand;
@@ -24,9 +24,9 @@ import ICommand = Pinmenote.Common.ICommand;
 export class ContentPinChangedCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
-      const changedPin = await BrowserStorageWrapper.get<number[] | undefined>(PinStoreKeys.CHANGED_PIN);
+      const changedPin = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.PIN_CHANGE);
 
-      await BrowserStorageWrapper.remove(PinStoreKeys.CHANGED_PIN);
+      await BrowserStorageWrapper.remove(ObjectStoreKeys.PIN_CHANGE);
 
       const data = changedPin || [];
       await sendTabMessage<number[]>({
