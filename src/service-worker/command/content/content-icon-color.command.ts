@@ -17,18 +17,29 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { ExtensionTheme } from '../../../common/model/settings.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
+import icon128 from '../../../assets/icon/light/128.png';
 import icon16 from '../../../assets/icon/light/16.png';
 import icon24 from '../../../assets/icon/light/24.png';
 import icon32 from '../../../assets/icon/light/32.png';
+import icon48 from '../../../assets/icon/light/48.png';
 import ICommand = Pinmenote.Common.ICommand;
 
 const lightIcons = () => {
   const start = BrowserApi.runtimeUrl.length + 1;
+  if (BrowserApi.isChrome) {
+    return {
+      path: {
+        '16': (icon16 as string).substring(start).split('?')[0],
+        '24': (icon24 as string).substring(start).split('?')[0],
+        '32': (icon32 as string).substring(start).split('?')[0]
+      }
+    };
+  }
   return {
     path: {
-      '16': (icon16 as string).substring(start).split('?')[0],
-      '24': (icon24 as string).substring(start).split('?')[0],
-      '32': (icon32 as string).substring(start).split('?')[0]
+      '16': icon16,
+      '48': icon48,
+      '128': icon128
     }
   };
 };
@@ -37,7 +48,7 @@ export class ContentIconColorCommand implements ICommand<void> {
   constructor(private theme: ExtensionTheme) {}
   async execute(): Promise<void> {
     try {
-      if (this.theme === ExtensionTheme.LIGHT) {
+      if (this.theme === ExtensionTheme.DARK) {
         await BrowserApi.browserAction.setIcon(lightIcons());
       }
     } catch (e) {

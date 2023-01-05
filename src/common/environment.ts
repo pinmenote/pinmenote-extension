@@ -37,9 +37,9 @@ interface EnvironmentConfig {
 
 export const environmentConfig: EnvironmentConfig = {
   showAckMessage: false,
-  apiUrl: process.env.API_URL || '',
-  websiteUrl: process.env.SHORT_URL || '',
-  shortUrl: process.env.WEBSITE_URL || '',
+  apiUrl: process.env.API_URL || 'https://pinmenote.com',
+  websiteUrl: process.env.SHORT_URL || 'https://pmn.cl',
+  shortUrl: process.env.WEBSITE_URL || 'https://pinmenote.com',
   isProduction: process.env.IS_PRODUCTION === 'true',
   settings: {
     screenshotFormat: 'jpeg',
@@ -50,7 +50,3 @@ export const environmentConfig: EnvironmentConfig = {
   },
   version: 1
 };
-
-export function getWebsiteUrl(uri: string): string {
-  return `${environmentConfig.websiteUrl}${uri}`;
-}

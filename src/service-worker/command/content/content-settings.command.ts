@@ -24,7 +24,6 @@ import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import LinkDto = Pinmenote.Pin.LinkDto;
-import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 
 export class ContentSettingsCommand implements ICommand<void> {
   constructor(private data: ContentExtensionData) {}
@@ -42,12 +41,8 @@ export class ContentSettingsCommand implements ICommand<void> {
       link = undefined;
     }
 
-    const bookmarkKey = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.data.href}`;
-    const bookmark = await BrowserStorageWrapper.get<BookmarkDto | undefined>(bookmarkKey);
-
     const data: ContentSettingsData = {
       ...settingsData,
-      isBookmarked: !!bookmark,
       link
     };
     await BrowserApi.sendTabMessage<ContentSettingsData>({ type: BusMessageType.CONTENT_SETTINGS, data });

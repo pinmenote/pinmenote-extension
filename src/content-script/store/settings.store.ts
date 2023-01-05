@@ -37,6 +37,5 @@ export class SettingsStore {
   static setSettings(data: ContentSettingsData) {
     this.borderRadiusValue = data.borderRadius;
     this.borderStyleValue = data.borderStyle;
-    this.isBookmarkedValue = data.isBookmarked;
   }
 }

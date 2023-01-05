@@ -26,9 +26,9 @@ import { RegisterFormData } from '../../../common/model/auth.model';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { getWebsiteUrl } from '../../../common/environment';
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 import TokenUserDto = Pinmenote.Auth.TokenUserDto;
+import { environmentConfig } from '../../../common/environment';
 
 const inputBorder = {
   display: 'flex',
@@ -39,6 +39,10 @@ const inputBorder = {
 };
 
 const TOS_VERSION = 'v1';
+
+function getWebsiteUrl(uri: string): string {
+  return `${environmentConfig.websiteUrl}${uri}`;
+}
 
 export const RegisterComponent: FunctionComponent = () => {
   const [username, setUsername] = useState<string>('');

@@ -79,10 +79,10 @@ class PinMeScript {
   };
 
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
+    TinyEventDispatcher.removeListener(event, key);
     const lastId = await BrowserStorageWrapper.get(ObjectStoreKeys.OBJECT_LAST_ID);
     fnConsoleLog('handlePinSettings->LAST ID !!!', lastId);
     this.checkForLink();
-    TinyEventDispatcher.removeListener(event, key);
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches
       ? ExtensionTheme.LIGHT
       : ExtensionTheme.DARK;
