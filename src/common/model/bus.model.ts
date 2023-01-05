@@ -71,12 +71,10 @@ export enum BusMessageType {
   CONTENT_LOGIN = 'content.login',
   CONTENT_LOGIN_REFRESH = 'content.login.refresh',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
-  CONTENT_PIN_FOCUS = 'content.pin.focus',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_ID = 'content.pin.id',
   CONTENT_PIN_UPDATE = 'content.pin.update',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
-  CONTENT_PIN_GET_HREF = 'content.pin.get.href',
   CONTENT_PIN_GET_ID = 'content.pin.get.id',
   CONTENT_PIN_SCREENSHOT = 'content.pin.screenshot',
   CONTENT_REFRESH_TOKEN = 'content.refresh.token',
@@ -88,6 +86,5 @@ export enum BusMessageType {
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',
   OPTIONS_PIN_GET_RANGE = 'options.pin.get.range',
   OPTIONS_PIN_SHARE = 'options.pin.share',
-  OPTIONS_PIN_UPDATE = 'options.pin.update',
   OPTIONS_PIN_SEARCH = 'options.pin.search'
 }

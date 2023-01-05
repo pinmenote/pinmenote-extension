@@ -14,17 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { CreatePinXpathCommand } from '../pin/create-pin-xpath.command';
+import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
+import { PinStore } from '../../store/pin.store';
 import { contentPinNewUrl } from '../../../common/fn/pin/content-pin-new-url';
 import ICommand = Pinmenote.Common.ICommand;
-import PinUrl = Pinmenote.Pin.PinUrl;
 
 export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    await BrowserApi.sendRuntimeMessage<PinUrl>({
-      type: BusMessageType.CONTENT_PIN_GET_HREF,
-      data: contentPinNewUrl()
-    });
+    const data = await new PinGetHrefCommand(contentPinNewUrl(), true).execute();
+    PinStore.clear();
+    for (const pin of data) {
+      await new CreatePinXpathCommand(pin).execute();
+    }
   }
 }

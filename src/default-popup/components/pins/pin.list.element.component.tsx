@@ -19,10 +19,12 @@ import { PinObject, PinUpdateObject } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinExpandComponent } from './pin.expand.component';
 import { PinShareComponent } from './pin-share.component';
 import RemoveMarkdown from 'remove-markdown';
@@ -49,8 +51,9 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
       }
     });
 
-    await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
-    await BrowserApi.sendTabMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
+    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, data);
+
+    await BrowserApi.sendTabMessage<void>({ type: BusMessageType.CONTENT_PIN_NAVIGATE });
 
     window.close();
   };

@@ -27,7 +27,7 @@ export class PinGetHrefCommand implements ICommand<Promise<PinObject[]>> {
 
   async execute(): Promise<PinObject[]> {
     const pinIds = (await PinHrefOriginStore.hrefIds(this.data.href)).reverse();
-    fnConsoleLog('WorkerPinManager->pinGetHref', this.data.href, pinIds);
+    fnConsoleLog('WorkerPinManager->pinGetHref', this.data.href, 'ids->', pinIds);
     // await this.test();
     const out: PinObject[] = [];
     for (const id of pinIds) {

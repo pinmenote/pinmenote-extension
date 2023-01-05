@@ -16,10 +16,7 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { ContentPinFocusCommand } from './command/content/content-pin-focus.command';
-import { ContentPinGetHrefCommand } from './command/content/content-pin-get-href.command';
 import { ContentPinGetIdCommand } from './command/content/content-pin-get-id.command';
-import { ContentPinNavigateCommand } from './command/content/content-pin-navigate.command';
 import { ContentPinNextIdCommand } from './command/content/content-pin-next-id.command';
 import { ContentPinRemoveCommand } from './command/content/content-pin-remove.command';
 import { ContentPinScreenshotCommand } from './command/content/content-pin-screenshot.command';
@@ -64,12 +61,6 @@ const handleMessage = async (
   if (runtime.id !== BrowserApi.runtime.id) return;
 
   switch (msg.type) {
-    case BusMessageType.CONTENT_PIN_FOCUS:
-      await new ContentPinFocusCommand().execute();
-      break;
-    case BusMessageType.CONTENT_PIN_NAVIGATE:
-      await new ContentPinNavigateCommand(msg.data).execute();
-      break;
     case BusMessageType.CONTENT_PIN_ID:
       await new ContentPinNextIdCommand().execute();
       break;
@@ -78,9 +69,6 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_PIN_REMOVE:
       await new ContentPinRemoveCommand(msg.data).execute();
-      break;
-    case BusMessageType.CONTENT_PIN_GET_HREF:
-      await new ContentPinGetHrefCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_PIN_GET_ID:
       await new ContentPinGetIdCommand(msg.data).execute();

@@ -16,13 +16,14 @@
  */
 import { PinObject, PinViewType } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Link from '@mui/material/Link';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinValueElement } from './pin.value.element';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
@@ -74,10 +75,7 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
   };
 
   const handleUrlClick = async () => {
-    await BrowserApi.sendRuntimeMessage<PinObject>({
-      type: BusMessageType.CONTENT_PIN_NAVIGATE,
-      data: pin
-    });
+    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, pin);
   };
 
   return (

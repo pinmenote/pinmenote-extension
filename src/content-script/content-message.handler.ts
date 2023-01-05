@@ -19,8 +19,6 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { DocumentMediator } from './mediator/document.mediator';
 import { HtmlObject } from '../common/model/html.model';
 import { PinAddElementStore } from './store/pin-add-element.store';
-import { PinFocusCommand } from './command/pin/pin-focus.command';
-import { PinGetHrefCommand } from './command/pin/pin-get-href.command';
 import { PinGetIdCommand } from './command/pin/pin-get-id.command';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinPopupInitData } from '../common/model/pin.model';
@@ -61,13 +59,7 @@ export class ContentMessageHandler {
         DocumentMediator.stopListeners();
         break;
       case BusMessageType.CONTENT_PIN_NAVIGATE:
-        new PinNavigateCommand(msg.data).execute();
-        break;
-      case BusMessageType.CONTENT_PIN_FOCUS:
-        new PinFocusCommand(msg.data).execute();
-        break;
-      case BusMessageType.CONTENT_PIN_GET_HREF:
-        await new PinGetHrefCommand(msg.data).execute();
+        await new PinNavigateCommand().execute();
         break;
       case BusMessageType.CONTENT_PIN_REMOVE:
         PinStore.delByUid((msg.data as HtmlObject).uid);
