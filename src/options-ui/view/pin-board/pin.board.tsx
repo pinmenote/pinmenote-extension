@@ -26,6 +26,7 @@ import { PinObject } from '../../../common/model/pin.model';
 import SearchIcon from '@mui/icons-material/Search';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const PinBoard: FunctionComponent = () => {
   const [pinData, setPinData] = useState<PinObject[]>(PinBoardStore.pins);
@@ -37,13 +38,9 @@ export const PinBoard: FunctionComponent = () => {
     // Infinite scroll
     stackRef.current?.addEventListener('scroll', handleScroll);
 
-    const pinRemove = TinyEventDispatcher.addListener<PinObject>(
-      BusMessageType.OPTIONS_PIN_REMOVE,
-      (event, key, value) => {
-        PinBoardStore.removePin(value);
-        setPinData(PinBoardStore.pins.concat());
-      }
-    );
+    const refreshKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.OPT_REFRESH_BOARD, () => {
+      setPinData(PinBoardStore.pins.concat());
+    });
 
     const pinSearch = TinyEventDispatcher.addListener<PinObject[]>(
       BusMessageType.OPTIONS_PIN_SEARCH,
@@ -57,20 +54,26 @@ export const PinBoard: FunctionComponent = () => {
     const pinRange = TinyEventDispatcher.addListener<PinObject[]>(
       BusMessageType.OPTIONS_PIN_GET_RANGE,
       (event, key, value) => {
-        PinBoardStore.pins.push(...value);
-        setPinData(PinBoardStore.pins.concat());
+        if (value.length > 0) {
+          PinBoardStore.pins.push(...value);
+          setPinData(PinBoardStore.pins.concat());
+        } else {
+          PinBoardStore.setIsLast();
+        }
         PinBoardStore.setLoading(false);
       }
     );
     return () => {
+      TinyEventDispatcher.removeListener(BusMessageType.OPT_REFRESH_BOARD, refreshKey);
       stackRef.current?.removeEventListener('scroll', handleScroll);
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_PIN_REMOVE, pinRemove);
       TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_PIN_SEARCH, pinSearch);
       TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_PIN_GET_RANGE, pinRange);
     };
   });
 
   const handleScroll = () => {
+    fnConsoleLog('handleScroll');
+    if (PinBoardStore.isLast) return;
     if (!stackRef.current) return;
     const bottom = stackRef.current.scrollHeight - stackRef.current.clientHeight;
     // This is how offensive programming looks like - escape early instead of wrapping code with conditions
@@ -97,6 +100,7 @@ export const PinBoard: FunctionComponent = () => {
   };
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    fnConsoleLog('handleSearchChange');
     clearTimeout(PinBoardStore.timeout);
     setSearchValue(e.target.value);
     PinBoardStore.clearSearch();
@@ -115,6 +119,7 @@ export const PinBoard: FunctionComponent = () => {
   };
 
   const handleClearSearch = async () => {
+    fnConsoleLog('handleClearSearch');
     setSearchValue('');
     PinBoardStore.clearSearch();
     await PinBoardStore.sendRange();

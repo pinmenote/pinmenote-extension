@@ -27,7 +27,6 @@ import { PinPopupInitData } from '../common/model/pin.model';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { RuntimeLoginRefreshCommand } from './command/runtime/runtime-login-refresh.command';
-import { RuntimePinChangedCommand } from './command/runtime/runtime-pin-changed.command';
 import { SettingsStore } from './store/settings.store';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
@@ -60,9 +59,6 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.POPUP_PIN_STOP:
         DocumentMediator.stopListeners();
-        break;
-      case BusMessageType.CONTENT_PIN_CHANGED:
-        await new RuntimePinChangedCommand(msg.data).execute();
         break;
       case BusMessageType.CONTENT_PIN_NAVIGATE:
         new PinNavigateCommand(msg.data).execute();

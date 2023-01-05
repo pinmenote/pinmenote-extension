@@ -17,7 +17,7 @@
 import { PinObject, PinUpdateObject } from '../../../common/model/pin.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { PinUpdateCommand } from '../pin/pin-update.command';
+import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 

@@ -26,9 +26,9 @@ import { CryptoEncryptSignCommand } from '../crypto/crypto-encrypt-sign.command'
 import { FetchService } from '../../service/fetch.service';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { ObjectTypeDto } from '../../../common/model/html.model';
-import { PinAddCommand } from '../pin/pin-add.command';
-import { PinRemoveCommand } from '../pin/pin-remove.command';
-import { PinUpdateCommand } from '../pin/pin-update.command';
+import { PinAddCommand } from '../../../common/command/pin/pin-add.command';
+import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
+import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import BoolDto = Pinmenote.Common.BoolDto;

@@ -17,7 +17,7 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { PinObject } from '../../../common/model/pin.model';
-import { PinRemoveCommand } from '../pin/pin-remove.command';
+import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 

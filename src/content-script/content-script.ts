@@ -114,14 +114,6 @@ class PinMeScript {
   private handleVisibilityChange = async (e: Event): Promise<void> => {
     fnConsoleLog('visibilitychange', e);
     await this.initialTimeout();
-    try {
-      await BrowserApi.sendRuntimeMessage<undefined>({
-        type: BusMessageType.CONTENT_PIN_CHANGED
-      });
-    } catch (e) {
-      fnConsoleLog('PROBLEM->handleVisibilityChange !!!', e);
-      this.cleanup();
-    }
   };
 
   private async initialTimeout(): Promise<void> {

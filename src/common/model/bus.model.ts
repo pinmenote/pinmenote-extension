@@ -31,12 +31,10 @@ export enum BusMessageType {
   CNT_SETTINGS = 'cnt.settings',
   CNT_EDITOR_MARKS = 'cnt.editor.marks',
   // Internal options tab
-  OPT_PIN_EDIT = 'opt.pin.edit',
-  OPT_PIN_CANCEL_EDIT = 'opt.pin.cancel.edit',
-  OPT_PIN_SAVE_EDIT = 'opt.pin.save.edit',
   OPT_PIN_SHOW_IMAGE = 'opt.pin.show.image',
   OPT_GET_LEFT_MENU_DATA = 'opt.get.left.menu.data',
   OPT_GET_SETTINGS_DATA = 'opt.get.settings.data',
+  OPT_REFRESH_BOARD = 'opt.refresh.board',
   // Internal popup
   POP_CONSOLE_LOG = 'pop.console.log',
   POP_LOGIN_CLICK = 'pop.login.click',
@@ -74,7 +72,6 @@ export enum BusMessageType {
   CONTENT_LOGIN_REFRESH = 'content.login.refresh',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_FOCUS = 'content.pin.focus',
-  CONTENT_PIN_CHANGED = 'content.pin.changed',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_ID = 'content.pin.id',
   CONTENT_PIN_ADD = 'content.pin.add',
@@ -92,8 +89,6 @@ export enum BusMessageType {
   OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',
   OPTIONS_PIN_GET_RANGE = 'options.pin.get.range',
-  OPTIONS_PIN_GET_LAST_ID = 'options.pin.get.last.id',
-  OPTIONS_PIN_REMOVE = 'options.pin.remove',
   OPTIONS_PIN_SHARE = 'options.pin.share',
   OPTIONS_PIN_UPDATE = 'options.pin.update',
   OPTIONS_PIN_SEARCH = 'options.pin.search'

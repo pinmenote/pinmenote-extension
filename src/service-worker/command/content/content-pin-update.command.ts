@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinUpdateCommand } from '../pin/pin-update.command';
+import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { PinUpdateObject } from '../../../common/model/pin.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;

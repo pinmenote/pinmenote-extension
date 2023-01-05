@@ -19,7 +19,6 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentLinkAddCommand } from './command/content/content-link-add.command';
 import { ContentLoginCommand } from './command/content/content-login.command';
 import { ContentPinAddCommand } from './command/content/content-pin-add.command';
-import { ContentPinChangedCommand } from './command/content/content-pin-changed.command';
 import { ContentPinFocusCommand } from './command/content/content-pin-focus.command';
 import { ContentPinGetHrefCommand } from './command/content/content-pin-get-href.command';
 import { ContentPinGetIdCommand } from './command/content/content-pin-get-id.command';
@@ -31,12 +30,9 @@ import { ContentPinUpdateCommand } from './command/content/content-pin-update.co
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
 import { ContentSettingsCommand } from './command/content/content-settings.command';
 import { ContentTimeoutCommand } from './command/content/content-timeout.command';
-import { OptionsPinGetLastIdCommand } from './command/options/options-pin-get-last-id.command';
 import { OptionsPinGetRangeCommand } from './command/options/options-pin-get-range.command';
-import { OptionsPinRemoveCommand } from './command/options/options-pin-remove.command';
 import { OptionsPinSearchCommand } from './command/options/options-pin-search.command';
 import { OptionsPinShareCommand } from './command/options/options-pin-share.command';
-import { OptionsPinUpdateCommand } from './command/options/options-pin-update.command';
 import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
 import { PopupAccessTokenCommand } from './command/popup/popup-access-token.command';
 import { PopupBookmarkAddCommand } from './command/popup/popup-bookmark-add.command';
@@ -76,9 +72,6 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_PIN_FOCUS:
       await new ContentPinFocusCommand().execute();
-      break;
-    case BusMessageType.CONTENT_PIN_CHANGED:
-      await new ContentPinChangedCommand().execute();
       break;
     case BusMessageType.CONTENT_PIN_NAVIGATE:
       await new ContentPinNavigateCommand(msg.data).execute();
@@ -175,15 +168,6 @@ const handleMessage = async (
       break;
     case BusMessageType.OPTIONS_PIN_SHARE:
       await new OptionsPinShareCommand(msg.data).execute();
-      break;
-    case BusMessageType.OPTIONS_PIN_GET_LAST_ID:
-      await new OptionsPinGetLastIdCommand().execute();
-      break;
-    case BusMessageType.OPTIONS_PIN_UPDATE:
-      await new OptionsPinUpdateCommand(msg.data).execute();
-      break;
-    case BusMessageType.OPTIONS_PIN_REMOVE:
-      await new OptionsPinRemoveCommand(msg.data).execute();
       break;
     case BusMessageType.OPTIONS_SYNCHRONIZE_DATA:
       await new OptionsSynchronizeDataCommand().execute();

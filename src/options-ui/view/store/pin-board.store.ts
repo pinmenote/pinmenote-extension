@@ -17,27 +17,40 @@
 import { PinObject, PinRangeRequest } from '../../../common/model/pin.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PinBoardStore {
   static pins: PinObject[] = [];
 
   private static loading = false;
+  private static isLastValue = false;
   private static readonly search: PinRangeRequest = {
     from: 0,
     limit: 10
   };
 
-  static removePin(value: PinObject) {
+  static removePin = async (value: PinObject): Promise<boolean> => {
     for (let i = 0; i < this.pins.length; i++) {
       if (this.pins[i].id == value.id) {
         this.pins.splice(i, 1);
-        break;
+        await new PinRemoveCommand(value).execute();
+        return true;
       }
     }
+    return false;
+  };
+
+  static setIsLast(): void {
+    this.isLastValue = true;
+  }
+
+  static get isLast(): boolean {
+    return this.isLastValue;
   }
 
   static clearSearch(): void {
+    this.isLastValue = false;
     this.search.from = 0;
     this.search.search = undefined;
     this.pins = [];

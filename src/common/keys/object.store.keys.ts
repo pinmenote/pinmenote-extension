@@ -17,7 +17,6 @@
 export class ObjectStoreKeys {
   // PIN STATE
   static readonly PIN_NAVIGATE = 'pin:navigate';
-  static readonly PIN_CHANGE = 'pin:change';
 
   // ID
   static readonly OBJECT_ID = 'o:id';

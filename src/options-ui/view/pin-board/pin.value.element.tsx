@@ -24,6 +24,8 @@ import { EditorView } from 'prosemirror-view';
 import HtmlIcon from '@mui/icons-material/Html';
 import { IconButton } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
+import { PinBoardStore } from '../store/pin-board.store';
+import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
@@ -38,10 +40,9 @@ interface PinValueProps {
 export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.Element => {
   const [styleIcon, setStyleIcon] = useState<boolean>(!pin.viewType || pin.viewType === PinViewType.SCREENSHOT);
   const handleRemove = async (): Promise<void> => {
-    await BrowserApi.sendRuntimeMessage<PinObject>({
-      type: BusMessageType.OPTIONS_PIN_REMOVE,
-      data: pin
-    });
+    if (await PinBoardStore.removePin(pin)) {
+      TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_REFRESH_BOARD, undefined);
+    }
   };
 
   const handleImageDownload = async (): Promise<void> => {
@@ -69,10 +70,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
     } else {
       pin.viewType = PinViewType.SCREENSHOT;
     }
-    await BrowserApi.sendRuntimeMessage<PinObject>({
-      type: BusMessageType.OPTIONS_PIN_UPDATE,
-      data: pin
-    });
+    await new PinUpdateCommand({ pin }).execute();
     TinyEventDispatcher.dispatch<PinObject>(BusMessageType.OPT_PIN_SHOW_IMAGE, pin);
   };
 
@@ -115,11 +113,7 @@ const EditElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.Element => 
         state = state.apply(tx);
         view.updateState(state);
         pin.value = defaultMarkdownSerializer.serialize(state.doc);
-        await BrowserApi.sendRuntimeMessage<PinObject>({
-          type: BusMessageType.OPTIONS_PIN_UPDATE,
-          data: pin
-        });
-        TinyEventDispatcher.dispatch<PinObject>(BusMessageType.OPT_PIN_SAVE_EDIT, pin);
+        await new PinUpdateCommand({ pin }).execute();
       }
     });
   };

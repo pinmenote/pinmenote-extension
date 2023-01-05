@@ -14,21 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { PinObject } from '../../../common/model/pin.model';
-import { PinRemoveCommand } from '../pin/pin-remove.command';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { PIN_HASHTAG_REGEX } from '../../model/pin.model';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class OptionsPinRemoveCommand implements ICommand<void> {
-  constructor(private data: PinObject) {}
-  async execute(): Promise<void> {
-    try {
-      await new PinRemoveCommand(this.data).execute();
-      await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.OPTIONS_PIN_REMOVE, data: this.data });
-    } catch (e) {
-      fnConsoleLog('Error', e);
-    }
+export class PinFindHashtagCommand implements ICommand<string[]> {
+  constructor(private value: string) {}
+
+  execute(): string[] {
+    const match = this.value.match(PIN_HASHTAG_REGEX);
+    return match ? Array.from(match) : [];
   }
 }

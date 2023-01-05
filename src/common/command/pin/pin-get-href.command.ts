@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { PinHrefOriginStore } from '../../../common/store/pin-href-origin.store';
-import { PinObject } from '../../../common/model/pin.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { PinHrefOriginStore } from '../../store/pin-href-origin.store';
+import { PinObject } from '../../model/pin.model';
+import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import PinUrl = Pinmenote.Pin.PinUrl;
 

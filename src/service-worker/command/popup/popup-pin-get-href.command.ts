@@ -16,7 +16,7 @@
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { PinGetHrefCommand } from '../pin/pin-get-href.command';
+import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
 import { PinObject } from '../../../common/model/pin.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
