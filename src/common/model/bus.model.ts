@@ -75,7 +75,6 @@ export enum BusMessageType {
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_ID = 'content.pin.id',
   CONTENT_PIN_ADD = 'content.pin.add',
-  CONTENT_LINK_ADD = 'content.link.add',
   CONTENT_PIN_UPDATE = 'content.pin.update',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
   CONTENT_PIN_GET_HREF = 'content.pin.get.href',
@@ -84,7 +83,7 @@ export enum BusMessageType {
   CONTENT_REFRESH_TOKEN = 'content.refresh.token',
   CONTENT_TIMEOUT = 'content.timeout',
   CONTENT_TIMEOUT_SET = 'content.timeout.set',
-  CONTENT_SETTINGS = 'content.settings',
+  CONTENT_THEME = 'content.theme',
   // Options
   OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',

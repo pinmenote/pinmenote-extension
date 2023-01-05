@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { ContentSettingsData } from '../../common/model/settings.model';
+import { SettingsKeys } from '../../common/keys/settings.keys';
 import { environmentConfig } from '../../common/environment';
 
 export class SettingsStore {
@@ -34,8 +36,9 @@ export class SettingsStore {
     return this.isBookmarkedValue;
   }
 
-  static setSettings(data: ContentSettingsData) {
+  static initSettings = async (): Promise<void> => {
+    const data = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
     this.borderRadiusValue = data.borderRadius;
     this.borderStyleValue = data.borderStyle;
-  }
+  };
 }

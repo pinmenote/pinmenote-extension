@@ -24,12 +24,11 @@ import '@fontsource/roboto/700.css';
 import '../css/prosemirror.css';
 
 import { BusMessageType, TimeoutMessage } from '../common/model/bus.model';
-import { ContentExtensionData, ContentSettingsData, ExtensionTheme } from '../common/model/settings.model';
+import { ContentExtensionData, ExtensionTheme } from '../common/model/settings.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { ContentMessageHandler } from './content-message.handler';
-import { CreateLinkCommand } from './command/link/create-link.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
 import { ObjectStoreKeys } from '../common/keys/object.store.keys';
@@ -41,7 +40,6 @@ import { WindowMediator } from './mediator/window.mediator';
 import { environmentConfig } from '../common/environment';
 import { fnNormalizeHref } from '../common/fn/normalize.url.fn';
 import { fnUid } from '../common/fn/uid.fn';
-import LinkDto = Pinmenote.Pin.LinkDto;
 
 class PinMeScript {
   private href: string;
@@ -52,7 +50,6 @@ class PinMeScript {
     WindowMediator.start();
     ContentMessageHandler.start();
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
-    TinyEventDispatcher.addListener<ContentSettingsData>(BusMessageType.CONTENT_SETTINGS, this.handleContentSettings);
     TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
     TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
 
@@ -71,42 +68,44 @@ class PinMeScript {
     }
   };
 
-  private handleContentSettings = async (event: string, key: string, data: ContentSettingsData) => {
-    SettingsStore.setSettings(data);
-    if (data.link) new CreateLinkCommand(data.link).execute();
-    await new RuntimePinGetHrefCommand().execute();
-    await this.initialTimeout();
-  };
-
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
     TinyEventDispatcher.removeListener(event, key);
-    const lastId = await BrowserStorageWrapper.get(ObjectStoreKeys.OBJECT_LAST_ID);
-    fnConsoleLog('handlePinSettings->LAST ID !!!', lastId);
-    this.checkForLink();
+
+    const isLink = this.resolveLinkWebsite();
+    if (isLink) return;
+
+    await SettingsStore.initSettings();
+
+    // if (data.link) new CreateLinkCommand(data.link).execute();
+    await new RuntimePinGetHrefCommand().execute();
+    await this.initialTimeout();
+
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches
       ? ExtensionTheme.LIGHT
       : ExtensionTheme.DARK;
     await BrowserApi.sendRuntimeMessage<ContentExtensionData>({
-      type: BusMessageType.CONTENT_SETTINGS,
+      type: BusMessageType.CONTENT_THEME,
       data: {
-        href: this.href,
         theme
       }
     });
   };
 
-  private checkForLink(): void {
-    if (!window.location.href.startsWith(environmentConfig.shortUrl)) return;
-    this.redirectInterval = window.setInterval(this.redirect, 100);
+  private resolveLinkWebsite(): boolean {
+    if (!window.location.href.startsWith(environmentConfig.shortUrl)) return false;
+    this.redirectInterval = window.setInterval(this.linkRedirect, 100);
+    return true;
   }
 
-  private redirect = async (): Promise<void> => {
+  private linkRedirect = async (): Promise<void> => {
     const urlData = document.getElementById('urlData');
     if (urlData) {
       clearInterval(this.redirectInterval);
       if (urlData.innerText) {
         const { data } = JSON.parse(urlData.innerText);
-        await BrowserApi.sendRuntimeMessage<LinkDto>({ type: BusMessageType.CONTENT_LINK_ADD, data });
+        await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LINK, data);
+        /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+        document.location.href = data.url.href;
       }
     }
   };

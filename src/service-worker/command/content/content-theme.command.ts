@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ContentExtensionData, ExtensionTheme } from '../../../common/model/settings.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { ExtensionTheme } from '../../../common/model/settings.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import icon128 from '../../../assets/icon/light/128.png';
 import icon16 from '../../../assets/icon/light/16.png';
@@ -44,15 +44,15 @@ const lightIcons = () => {
   };
 };
 
-export class ContentIconColorCommand implements ICommand<void> {
-  constructor(private theme: ExtensionTheme) {}
+export class ContentThemeCommand implements ICommand<void> {
+  constructor(private data: ContentExtensionData) {}
   async execute(): Promise<void> {
     try {
-      if (this.theme === ExtensionTheme.DARK) {
+      if (this.data.theme === ExtensionTheme.DARK) {
         await BrowserApi.browserAction.setIcon(lightIcons());
       }
     } catch (e) {
-      fnConsoleLog('Error', this.theme, e);
+      fnConsoleLog('Error', this.data.theme, e);
     }
   }
 }

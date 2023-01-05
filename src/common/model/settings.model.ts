@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import LinkDto = Pinmenote.Pin.LinkDto;
 
 export enum ExtensionTheme {
   LIGHT = 'light',
@@ -22,7 +21,6 @@ export enum ExtensionTheme {
 }
 
 export interface ContentExtensionData {
-  href: string;
   theme: ExtensionTheme;
 }
 
@@ -32,5 +30,4 @@ export interface ContentSettingsData {
   borderRadius: string;
   screenshotFormat: string;
   screenshotQuality: number;
-  link?: LinkDto;
 }

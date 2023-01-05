@@ -16,7 +16,6 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { ContentLinkAddCommand } from './command/content/content-link-add.command';
 import { ContentLoginCommand } from './command/content/content-login.command';
 import { ContentPinAddCommand } from './command/content/content-pin-add.command';
 import { ContentPinFocusCommand } from './command/content/content-pin-focus.command';
@@ -28,7 +27,7 @@ import { ContentPinRemoveCommand } from './command/content/content-pin-remove.co
 import { ContentPinScreenshotCommand } from './command/content/content-pin-screenshot.command';
 import { ContentPinUpdateCommand } from './command/content/content-pin-update.command';
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
-import { ContentSettingsCommand } from './command/content/content-settings.command';
+import { ContentThemeCommand } from './command/content/content-theme.command';
 import { ContentTimeoutCommand } from './command/content/content-timeout.command';
 import { OptionsPinGetRangeCommand } from './command/options/options-pin-get-range.command';
 import { OptionsPinSearchCommand } from './command/options/options-pin-search.command';
@@ -82,9 +81,6 @@ const handleMessage = async (
     case BusMessageType.CONTENT_PIN_ADD:
       await new ContentPinAddCommand(msg.data).execute();
       break;
-    case BusMessageType.CONTENT_LINK_ADD:
-      await new ContentLinkAddCommand(msg.data).execute();
-      break;
     case BusMessageType.CONTENT_PIN_UPDATE:
       await new ContentPinUpdateCommand(msg.data).execute();
       break;
@@ -106,8 +102,8 @@ const handleMessage = async (
     case BusMessageType.CONTENT_TIMEOUT:
       await new ContentTimeoutCommand(msg.data).execute();
       break;
-    case BusMessageType.CONTENT_SETTINGS:
-      await new ContentSettingsCommand(msg.data).execute();
+    case BusMessageType.CONTENT_THEME:
+      await new ContentThemeCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_BOOKMARK_ADD:
       await new PopupBookmarkAddCommand(msg.data).execute();
