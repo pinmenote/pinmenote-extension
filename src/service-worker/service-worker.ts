@@ -16,8 +16,6 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { ContentLoginCommand } from './command/content/content-login.command';
-import { ContentPinAddCommand } from './command/content/content-pin-add.command';
 import { ContentPinFocusCommand } from './command/content/content-pin-focus.command';
 import { ContentPinGetHrefCommand } from './command/content/content-pin-get-href.command';
 import { ContentPinGetIdCommand } from './command/content/content-pin-get-id.command';
@@ -66,9 +64,6 @@ const handleMessage = async (
   if (runtime.id !== BrowserApi.runtime.id) return;
 
   switch (msg.type) {
-    case BusMessageType.CONTENT_LOGIN:
-      await new ContentLoginCommand(msg.data).execute();
-      break;
     case BusMessageType.CONTENT_PIN_FOCUS:
       await new ContentPinFocusCommand().execute();
       break;
@@ -77,9 +72,6 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_PIN_ID:
       await new ContentPinNextIdCommand().execute();
-      break;
-    case BusMessageType.CONTENT_PIN_ADD:
-      await new ContentPinAddCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_PIN_UPDATE:
       await new ContentPinUpdateCommand(msg.data).execute();

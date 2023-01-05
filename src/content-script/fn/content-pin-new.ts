@@ -23,6 +23,7 @@ import {
 } from '../../common/fn/compute.element.fn';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
+import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -170,9 +171,6 @@ const addNewPinWithScreenshot = async (
   } finally {
     dto.screenshot = screenshot;
   }
-  await BrowserApi.sendRuntimeMessage<PinObject>({
-    type: BusMessageType.CONTENT_PIN_ADD,
-    data: dto
-  });
+  await new PinAddCommand(dto).execute();
   resolve(dto);
 };

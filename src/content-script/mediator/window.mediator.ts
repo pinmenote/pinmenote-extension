@@ -20,10 +20,8 @@ import { PinStore } from '../store/pin.store';
 import { RuntimeLoginRefreshCommand } from '../command/runtime/runtime-login-refresh.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 
 export class WindowMediator {
-  private static readonly ACCESS_TOKEN_EVENT = 'pinmenote.access.token';
   private static readonly REFRESH_TOKEN_RESPONSE_EVENT = 'pinmenote.refresh.token.response';
   private static readonly REFRESH_TOKEN_EVENT = 'pinmenote.refresh.token';
 
@@ -34,7 +32,6 @@ export class WindowMediator {
     window.addEventListener(this.REFRESH_TOKEN_EVENT, this.handleRefreshToken);
     window.addEventListener('resize', this.handleResize);
 
-    TinyEventDispatcher.addListener<AccessTokenDto | undefined>(BusMessageType.CONTENT_LOGIN, this.handleLogin);
     TinyEventDispatcher.addListener<void>(BusMessageType.CONTENT_REFRESH_TOKEN, this.handleContentRefreshToken);
   }
 
@@ -60,11 +57,6 @@ export class WindowMediator {
   private static handleContentRefreshToken = () => {
     fnConsoleLog('content-script->handleContentRefrehToken');
     window.dispatchEvent(new Event(this.REFRESH_TOKEN_RESPONSE_EVENT));
-  };
-
-  private static handleLogin = (event: string, key: string, value: AccessTokenDto | undefined) => {
-    fnConsoleLog('content-script->handleLogin', event, value);
-    window.dispatchEvent(new MessageEvent(this.ACCESS_TOKEN_EVENT, { data: value }));
   };
 
   private static handleResize = (): void => {

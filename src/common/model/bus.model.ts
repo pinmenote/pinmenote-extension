@@ -74,7 +74,6 @@ export enum BusMessageType {
   CONTENT_PIN_FOCUS = 'content.pin.focus',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_ID = 'content.pin.id',
-  CONTENT_PIN_ADD = 'content.pin.add',
   CONTENT_PIN_UPDATE = 'content.pin.update',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
   CONTENT_PIN_GET_HREF = 'content.pin.get.href',

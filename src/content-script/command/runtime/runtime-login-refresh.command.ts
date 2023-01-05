@@ -14,14 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { ApiStore } from '../../../service-worker/store/api.store';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
+import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
 
 export class RuntimeLoginRefreshCommand implements ICommand<Promise<void>> {
+  private readonly ACCESS_TOKEN_EVENT = 'pinmenote.access.token';
+
   async execute(): Promise<void> {
     fnConsoleLog('handleContentLoginRefresh');
-    await BrowserApi.sendRuntimeMessage<string>({ type: BusMessageType.CONTENT_LOGIN, data: window.location.origin });
+    if (environmentConfig.isProduction) {
+      const origin = window.location.origin;
+      const key = `${ApiStore.ACCESS_TOKEN}:${origin}`;
+      const data = await BrowserStorageWrapper.get<AccessTokenDto | undefined>(key);
+      window.dispatchEvent(new MessageEvent(this.ACCESS_TOKEN_EVENT, { data }));
+    } else {
+      const key = `${ApiStore.ACCESS_TOKEN}:${environmentConfig.apiUrl}`;
+      const data = await BrowserStorageWrapper.get<AccessTokenDto | undefined>(key);
+      window.dispatchEvent(new MessageEvent(this.ACCESS_TOKEN_EVENT, { data }));
+    }
   }
 }
