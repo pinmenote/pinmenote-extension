@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime, CssData, HtmlIntermediateData, HtmlParentStyles } from '@common/model/html.model';
-import { environmentConfig } from '@common/environment';
+import { ContentVideoTime, CssData, HtmlIntermediateData, HtmlParentStyles } from '../model/html.model';
+import { environmentConfig } from '../environment';
 import { fnConsoleLog } from './console.fn';
-import { fnGetKey } from '@common/kv.utils';
-import { fnXpath } from '@common/fn/xpath.fn';
+import { fnGetKey } from '../kv.utils';
+import { fnXpath } from './xpath.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 

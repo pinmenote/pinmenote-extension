@@ -16,11 +16,11 @@
  */
 import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { AccountComponent } from '../account/account.component';
-import { BusMessageType } from '@common/model/bus.model';
-import { LogManager } from '@common/popup/log.manager';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { LogManager } from '../../../common/popup/log.manager';
 import { LoginComponent } from '../account/login.component';
 import { RegisterComponent } from '../account/register.component';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 
 enum LoginEnum {

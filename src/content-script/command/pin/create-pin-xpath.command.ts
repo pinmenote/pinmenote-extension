@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CreatePinDataCommand } from './create-pin-data.command';
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
-import { fnFindElementXpath } from '@common/fn/xpath.fn';
+import { fnFindElementXpath } from '../../../common/fn/xpath.fn';
 import { isElementHidden } from '../../fn/is-element-hidden';
 import ICommand = Pinmenote.Common.ICommand;
 

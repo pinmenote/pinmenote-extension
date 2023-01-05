@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinUpdateObject } from '@common/model/pin.model';
-import { BusMessageType } from '@common/model/bus.model';
-import { ObjectTypeDto } from '@common/model/html.model';
+import { PinObject, PinUpdateObject } from '../../common/model/pin.model';
+import { BusMessageType } from '../../common/model/bus.model';
+import { ObjectTypeDto } from '../../common/model/html.model';
 import { PinComponent } from '../components/pin.component';
 import { PinStore } from './pin.store';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { sendRuntimeMessage } from '../../common/message/runtime.message';
 import PinPoint = Pinmenote.Pin.PinPoint;
 
 export class PinDragStore {

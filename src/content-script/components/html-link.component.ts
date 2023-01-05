@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlObject } from '@common/model/html.model';
+import { HtmlComponent, HtmlObject } from '../../common/model/html.model';
 import { SettingsStore } from '../store/settings.store';
-import { applyStylesToElement } from '@common/style.utils';
+import { applyStylesToElement } from '../../common/style.utils';
 import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import { pinStyles } from './styles/pin.styles';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
 import PinPoint = Pinmenote.Pin.PinPoint;

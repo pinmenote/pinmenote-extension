@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { IconButton, Typography } from '@mui/material';
-import { PinObject, PinUpdateObject } from '@common/model/pin.model';
+import { PinObject, PinUpdateObject } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -26,11 +26,11 @@ import { PinExpandComponent } from './pin.expand.component';
 import { PinShareComponent } from './pin-share.component';
 import RemoveMarkdown from 'remove-markdown';
 import ShareIcon from '@mui/icons-material/Share';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
-import { sendTabMessage } from '@common/message/tab.message';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
+import { sendTabMessage } from '../../../common/message/tab.message';
 
 interface PinListElementProps {
   pin: PinObject;

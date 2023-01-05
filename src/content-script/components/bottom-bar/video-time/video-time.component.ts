@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime } from '@common/model/html.model';
-import { applyStylesToElement } from '@common/style.utils';
-import { fnFindElementXpath } from '@common/fn/xpath.fn';
-import { fnVideoSecondsTime } from '@common/fn/date.fn';
+import { ContentVideoTime } from '../../../../common/model/html.model';
+import { applyStylesToElement } from '../../../../common/style.utils';
+import { fnFindElementXpath } from '../../../../common/fn/xpath.fn';
+import { fnVideoSecondsTime } from '../../../../common/fn/date.fn';
 
 const elStyles = {
   display: 'flex',

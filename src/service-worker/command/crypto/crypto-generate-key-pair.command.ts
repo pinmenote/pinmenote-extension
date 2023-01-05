@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { generateKey } from 'openpgp';
 import ICommand = Pinmenote.Common.ICommand;
 

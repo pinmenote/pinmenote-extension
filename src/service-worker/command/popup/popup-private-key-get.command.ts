@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { BusMessageType } from '@common/model/bus.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PopupPrivateKeyGetCommand implements ICommand<void> {

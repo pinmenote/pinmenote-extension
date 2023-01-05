@@ -17,8 +17,8 @@
 import { ApiStore } from '../../store/api.store';
 import { CryptoSignCommand } from '../crypto/crypto-sign.command';
 import { FetchService } from '../../service/fetch.service';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { environmentConfig } from '../../../common/environment';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
 import LoginDto = Pinmenote.Auth.LoginDto;

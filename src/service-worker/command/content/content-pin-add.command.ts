@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PinAddCommand } from '../pin/pin-add.command';
-import { PinObject } from '@common/model/pin.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { PinObject } from '../../../common/model/pin.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentPinAddCommand implements ICommand<void> {

@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnBrowserApi, fnRuntimeUrl } from '@common/service/browser.api.wrapper';
-import { ExtensionTheme } from '@common/model/settings.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnBrowserApi, fnRuntimeUrl } from '../../../common/service/browser.api.wrapper';
+import { ExtensionTheme } from '../../../common/model/settings.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import icon16 from '../../../assets/icon/light/16.png';
 import icon24 from '../../../assets/icon/light/24.png';
 import icon32 from '../../../assets/icon/light/32.png';

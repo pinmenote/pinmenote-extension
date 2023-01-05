@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlLinkComponent } from '../../components/html-link.component';
-import { ObjectTypeDto } from '@common/model/html.model';
+import { ObjectTypeDto } from '../../../common/model/html.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { fnFindElementXpath } from '@common/fn/xpath.fn';
-import { fnUid } from '@common/fn/uid.fn';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnFindElementXpath } from '../../../common/fn/xpath.fn';
+import { fnUid } from '../../../common/fn/uid.fn';
 import { isElementHidden } from '../../fn/is-element-hidden';
 import ICommand = Pinmenote.Common.ICommand;
 import LinkDto = Pinmenote.Pin.LinkDto;

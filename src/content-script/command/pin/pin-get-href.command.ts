@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CreatePinXpathCommand } from './create-pin-xpath.command';
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
 import { RuntimePinFocusCommand } from '../runtime/runtime-pin-focus.command';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinGetHrefCommand implements ICommand<Promise<void>> {

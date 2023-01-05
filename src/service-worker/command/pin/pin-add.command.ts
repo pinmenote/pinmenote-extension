@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinFindHashtagCommand } from './pin-find-hashtag.command';
 import { PinHashtagStore } from '../../store/pin/pin-hashtag.store';
 import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
-import { PinObject } from '@common/model/pin.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { PinObject } from '../../../common/model/pin.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinAddCommand implements ICommand<void> {

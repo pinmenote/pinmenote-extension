@@ -16,10 +16,10 @@
  */
 import { ApiStore } from '../../store/api.store';
 import { FetchService } from '../../service/fetch.service';
-import { ObjectTypeDto } from '@common/model/html.model';
-import { PinObject } from '@common/model/pin.model';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { ObjectTypeDto } from '../../../common/model/html.model';
+import { PinObject } from '../../../common/model/pin.model';
+import { environmentConfig } from '../../../common/environment';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import NewShareDto = Pinmenote.Share.NewShareDto;
 import ShareUrlDto = Pinmenote.Share.ShareUrlDto;

@@ -16,16 +16,16 @@
  */
 import React, { ChangeEvent, FunctionComponent, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
 import { IconButton } from '@mui/material';
 import Input from '@mui/material/Input';
 import { PinBoardStore } from '../store/pin-board.store';
 import { PinElement } from './pin.element';
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../common/model/pin.model';
 import SearchIcon from '@mui/icons-material/Search';
 import Stack from '@mui/material/Stack';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 export const PinBoard: FunctionComponent = () => {
   const [pinData, setPinData] = useState<PinObject[]>(PinBoardStore.pins);

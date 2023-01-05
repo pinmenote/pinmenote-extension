@@ -14,17 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlContent, ObjectTypeDto } from '@common/model/html.model';
-import { PinObject, PinViewType } from '@common/model/pin.model';
-import { fnComputeCssContent, fnComputeHtmlContent, fnComputeHtmlParentStyles } from '@common/fn/compute.element.fn';
-import { BusMessageType } from '@common/model/bus.model';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { contentPinNewUrl } from '@common/fn/pin/content-pin-new-url';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { fnImgResize } from '@common/fn/img.resize.fn';
-import { fnUid } from '@common/fn/uid.fn';
-import { fnXpath } from '@common/fn/xpath.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { HtmlContent, ObjectTypeDto } from '../../common/model/html.model';
+import { PinObject, PinViewType } from '../../common/model/pin.model';
+import {
+  fnComputeCssContent,
+  fnComputeHtmlContent,
+  fnComputeHtmlParentStyles
+} from '../../common/fn/compute.element.fn';
+import { BusMessageType } from '../../common/model/bus.model';
+import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
+import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnImgResize } from '../../common/fn/img.resize.fn';
+import { fnUid } from '../../common/fn/uid.fn';
+import { fnXpath } from '../../common/fn/xpath.fn';
+import { sendRuntimeMessage } from '../../common/message/runtime.message';
 import LinkLocator = Pinmenote.Pin.LinkLocator;
 import PinPoint = Pinmenote.Pin.PinPoint;
 

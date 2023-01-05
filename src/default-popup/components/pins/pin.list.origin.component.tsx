@@ -17,7 +17,7 @@
 import React, { FunctionComponent } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { PinListComponent } from './pin.list.component';
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../common/model/pin.model';
 import { Typography } from '@mui/material';
 
 interface PinListOriginProps {

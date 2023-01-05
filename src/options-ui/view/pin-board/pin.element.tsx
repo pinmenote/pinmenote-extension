@@ -14,20 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinViewType } from '@common/model/pin.model';
+import { PinObject, PinViewType } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Link from '@mui/material/Link';
 import { PinValueElement } from './pin.value.element';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnDateFormat } from '@common/fn/date.format.fn';
-import { pinIframeFn } from '@common/fn/pin/pin.iframe.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { fnDateFormat } from '../../../common/fn/date.format.fn';
+import { pinIframeFn } from '../../../common/fn/pin/pin.iframe.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 interface PinElementParams {
   pin: PinObject;

@@ -16,17 +16,17 @@
  */
 import { BoldButtonComponent } from './editor-buttons/bold-button.component';
 import { BulletListButtonComponent } from './editor-buttons/bullet-list-button.component';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { ItalicButtonComponent } from './editor-buttons/italic-button.component';
 import { MoveIconComponent } from './action-buttons/move-icon.component';
 import { ParentIconComponent } from './action-buttons/parent-icon.component';
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../common/model/pin.model';
 import { RemoveIconComponent } from './action-buttons/remove-icon.component';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { applyStylesToElement } from '@common/style.utils';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { applyStylesToElement } from '../../../common/style.utils';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 const elStyles = {
   'background-color': '#ffffff00',

@@ -16,12 +16,12 @@
  */
 import { Input, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
-import { ContentSettingsData } from '@common/model/settings.model';
+import { BusMessageType } from '../../../../common/model/bus.model';
+import { ContentSettingsData } from '../../../../common/model/settings.model';
 import { SettingsStore } from '../../store/settings.store';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { sendRuntimeMessage } from '../../../../common/message/runtime.message';
 
 const borderContainer: CSSProperties = {
   display: 'flex',

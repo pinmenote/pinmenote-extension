@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiRegisterCommand } from '../api/api-register.command';
-import { BusMessageType } from '@common/model/bus.model';
-import { RegisterFormData } from '@common/model/auth.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { RegisterFormData } from '../../../common/model/auth.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 import TokenUserDto = Pinmenote.Auth.TokenUserDto;
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;

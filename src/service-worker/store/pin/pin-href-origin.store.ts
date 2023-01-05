@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import PinUrl = Pinmenote.Pin.PinUrl;
 
 export class PinHrefOriginStore {

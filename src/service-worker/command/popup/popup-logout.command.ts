@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiStore } from '../../store/api.store';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentLoginRefreshCommand } from '../content/content-login-refresh.command';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import BoolDto = Pinmenote.Common.BoolDto;
 import ICommand = Pinmenote.Common.ICommand;
 

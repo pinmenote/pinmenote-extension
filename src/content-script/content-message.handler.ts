@@ -14,25 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserGlobalSender, BusMessage, BusMessageType } from '@common/model/bus.model';
+import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { DocumentMediator } from './mediator/document.mediator';
-import { HtmlObject } from '@common/model/html.model';
+import { HtmlObject } from '../common/model/html.model';
 import { PinAddElementStore } from './store/pin-add-element.store';
 import { PinFocusCommand } from './command/pin/pin-focus.command';
 import { PinGetHrefCommand } from './command/pin/pin-get-href.command';
 import { PinGetIdCommand } from './command/pin/pin-get-id.command';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
-import { PinPopupInitData } from '@common/model/pin.model';
+import { PinPopupInitData } from '../common/model/pin.model';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { RuntimeLoginRefreshCommand } from './command/runtime/runtime-login-refresh.command';
 import { RuntimePinChangedCommand } from './command/runtime/runtime-pin-changed.command';
 import { SettingsStore } from './store/settings.store';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { contentPinNewUrl } from '@common/fn/pin/content-pin-new-url';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
+import { fnBrowserApi } from '../common/service/browser.api.wrapper';
+import { fnConsoleLog } from '../common/fn/console.fn';
+import { sendRuntimeMessage } from '../common/message/runtime.message';
 
 export class ContentMessageHandler {
   static start(): void {

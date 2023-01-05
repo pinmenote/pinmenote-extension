@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlContent, HtmlObject } from '@common/model/html.model';
+import { HtmlContent, HtmlObject } from './html.model';
 import PinSize = Pinmenote.Pin.PinSize;
 import PinUrl = Pinmenote.Pin.PinUrl;
 import ShareUrlDto = Pinmenote.Share.ShareUrlDto;

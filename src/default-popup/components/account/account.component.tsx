@@ -16,14 +16,14 @@
  */
 import { Button, IconButton, TextareaAutosize, Typography } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
-import { COLOR_DEFAULT_GREY } from '@common/components/colors';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { COLOR_DEFAULT_GREY } from '../../../common/components/colors';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { StyledInput } from '@common/components/react/styled.input';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { fnByteToMb } from '@common/fn/diskspace.fn';
-import { fnOpenOptionsPage } from '@common/service/browser.api.wrapper';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { StyledInput } from '../../../common/components/react/styled.input';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { fnByteToMb } from '../../../common/fn/diskspace.fn';
+import { fnOpenOptionsPage } from '../../../common/service/browser.api.wrapper';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
 
 class QuotaStore {

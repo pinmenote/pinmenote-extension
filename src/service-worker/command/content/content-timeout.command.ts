@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessageType, TimeoutMessage } from '@common/model/bus.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendTabMessage } from '@common/message/tab.message';
+import { BusMessageType, TimeoutMessage } from '../../../common/model/bus.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendTabMessage } from '../../../common/message/tab.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentTimeoutCommand implements ICommand<void> {

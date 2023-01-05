@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiStore } from '../../store/api.store';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchService } from '../../service/fetch.service';
-import { sendTabMessage } from '@common/message/tab.message';
+import { sendTabMessage } from '../../../common/message/tab.message';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
 

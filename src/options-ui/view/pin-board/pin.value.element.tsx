@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinViewType } from '@common/model/pin.model';
+import { PinObject, PinViewType } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import { EditorView } from 'prosemirror-view';
@@ -24,13 +24,13 @@ import HtmlIcon from '@mui/icons-material/Html';
 import { IconButton } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import ShareIcon from '@mui/icons-material/Share';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { createTextEditorState } from '@common/components/text-editor/text.editor.state';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
-import { fnB64toBlob } from '@common/fn/b64.to.blob.fn';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
-import { pinIframeFn } from '@common/fn/pin/pin.iframe.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { fnB64toBlob } from '../../../common/fn/b64.to.blob.fn';
+import { fnBrowserApi } from '../../../common/service/browser.api.wrapper';
+import { pinIframeFn } from '../../../common/fn/pin/pin.iframe.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 interface PinValueProps {
   pin: PinObject;

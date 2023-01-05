@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessage } from '@common/model/bus.model';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
+import { BusMessage } from '../model/bus.model';
+import { fnBrowserApi } from '../service/browser.api.wrapper';
 import { fnConsoleLog } from '../fn/console.fn';
 
 export const sendTabMessage = <T>(msg: BusMessage<T>): Promise<void> => {

@@ -40,7 +40,7 @@ export const environmentConfig: EnvironmentConfig = {
   apiUrl: 'https://pinmenote.com',
   websiteUrl: 'https://pinmenote.com',
   shortUrl: 'https://pmn.cl',
-  isProduction: true,
+  isProduction: false,
   settings: {
     screenshotFormat: 'jpeg',
     screenshotQuality: 80,

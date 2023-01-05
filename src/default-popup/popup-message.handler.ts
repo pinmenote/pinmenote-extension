@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserGlobalSender, BusMessage, BusMessageType } from '@common/model/bus.model';
-import { fnBrowserApi, fnExtensionStartUrl } from '@common/service/browser.api.wrapper';
+import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
+import { fnBrowserApi, fnExtensionStartUrl } from '../common/service/browser.api.wrapper';
 import { ActiveTabStore } from './store/active-tab.store';
-import { LogManager } from '@common/popup/log.manager';
-import { PinPopupInitData } from '@common/model/pin.model';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendTabMessage } from '@common/message/tab.message';
+import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
+import { LogManager } from '../common/popup/log.manager';
+import { ObjectStoreKeys } from '../common/keys/object.store.keys';
+import { PinPopupInitData } from '../common/model/pin.model';
+import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../common/fn/console.fn';
+import { sendTabMessage } from '../common/message/tab.message';
 
 export class PopupMessageHandler {
   static init(): void {
@@ -41,7 +43,9 @@ export class PopupMessageHandler {
   }
 
   private static popupInitListener(): void {
-    TinyEventDispatcher.addListener<PinPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
+    TinyEventDispatcher.addListener<PinPopupInitData>(BusMessageType.POPUP_INIT, async (event, key, value) => {
+      const lastId = await BrowserStorageWrapper.get(ObjectStoreKeys.OBJECT_LAST_ID);
+      LogManager.log(`popupInitListener->LAST ID !!! ${JSON.stringify(lastId)}`);
       LogManager.log(`${event} ${JSON.stringify(value || {})}`);
       if (value.url) LogManager.log(`${event} ${value.url.href}`);
       if (value.url?.href.startsWith(fnExtensionStartUrl())) {

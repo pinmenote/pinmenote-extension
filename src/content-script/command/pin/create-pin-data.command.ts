@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { DocumentMediator } from '../../mediator/document.mediator';
-import { HtmlComponent } from '@common/model/html.model';
+import { HtmlComponent } from '../../../common/model/html.model';
 import { PinComponent } from '../../components/pin.component';
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
 import { SettingsStore } from '../../store/settings.store';
 import { contentPinNew } from '../../fn/content-pin-new';

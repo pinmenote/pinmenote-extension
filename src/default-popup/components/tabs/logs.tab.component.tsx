@@ -16,10 +16,10 @@
  */
 import { Button, Typography } from '@mui/material';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
-import { LogManager } from '@common/popup/log.manager';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { LogManager } from '../../../common/popup/log.manager';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 export const LogsTabComponent: FunctionComponent = () => {
   const ref = useRef<HTMLDivElement>(null);

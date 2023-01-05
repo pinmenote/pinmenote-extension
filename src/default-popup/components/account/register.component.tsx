@@ -14,20 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '@common/components/colors';
+import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../common/components/colors';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import { LogManager } from '@common/popup/log.manager';
-import { RegisterFormData } from '@common/model/auth.model';
-import { StyledInput } from '@common/components/react/styled.input';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { LogManager } from '../../../common/popup/log.manager';
+import { RegisterFormData } from '../../../common/model/auth.model';
+import { StyledInput } from '../../../common/components/react/styled.input';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnOpenOptionsPage } from '@common/service/browser.api.wrapper';
-import { getWebsiteUrl } from '@common/environment';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { fnOpenOptionsPage } from '../../../common/service/browser.api.wrapper';
+import { getWebsiteUrl } from '../../../common/environment';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 import TokenUserDto = Pinmenote.Auth.TokenUserDto;
 

@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { PinGetHrefCommand } from '../pin/pin-get-href.command';
-import { PinObject } from '@common/model/pin.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { PinObject } from '../../../common/model/pin.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 import PinUrl = Pinmenote.Pin.PinUrl;
 

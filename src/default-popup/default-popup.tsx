@@ -22,8 +22,8 @@ import '@fontsource/roboto/700.css';
 import { Box, Tab, Tabs } from '@mui/material';
 import React, { ReactElement, useState } from 'react';
 import { AccountTabComponent } from './components/tabs/account.tab.component';
-import { BusMessageType } from '@common/model/bus.model';
-import { LogManager } from '@common/popup/log.manager';
+import { BusMessageType } from '../common/model/bus.model';
+import { LogManager } from '../common/popup/log.manager';
 import LogoDevIcon from '@mui/icons-material/LogoDev';
 import { LogsTabComponent } from './components/tabs/logs.tab.component';
 import PersonIcon from '@mui/icons-material/Person';
@@ -31,9 +31,9 @@ import { PinTabComponent } from './components/tabs/pin.tab.component';
 import { PopupMessageHandler } from './popup-message.handler';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { createRoot } from 'react-dom/client';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { environmentConfig } from '../common/environment';
+import { fnConsoleLog } from '../common/fn/console.fn';
+import { sendRuntimeMessage } from '../common/message/runtime.message';
 
 enum PanelEnum {
   PIN,

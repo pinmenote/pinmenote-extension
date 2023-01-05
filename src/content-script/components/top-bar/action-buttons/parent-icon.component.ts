@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../../common/model/pin.model';
 import { PinStore } from '../../../store/pin.store';
-import { applyStylesToElement } from '@common/style.utils';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { applyStylesToElement } from '../../../../common/style.utils';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ParentIconComponent {

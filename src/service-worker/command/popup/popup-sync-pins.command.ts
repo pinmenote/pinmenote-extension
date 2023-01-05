@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiSyncPinCommand } from '../api/api-sync-pin.command';
-import { BusMessageType } from '@common/model/bus.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import BoolDto = Pinmenote.Common.BoolDto;
 import ICommand = Pinmenote.Common.ICommand;
 

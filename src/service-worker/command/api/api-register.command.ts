@@ -17,9 +17,9 @@
 import { ApiStore } from '../../store/api.store';
 import { CryptoGenerateKeyPairCommand } from '../crypto/crypto-generate-key-pair.command';
 import { FetchService } from '../../service/fetch.service';
-import { RegisterFormData } from '@common/model/auth.model';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { RegisterFormData } from '../../../common/model/auth.model';
+import { environmentConfig } from '../../../common/environment';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
 import RegisterDto = Pinmenote.Auth.RegisterDto;

@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessageType } from '@common/model/bus.model';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { BusMessageType } from '../model/bus.model';
+import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
 
 export class LogManager {
   private static logValue = '';

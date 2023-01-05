@@ -1,5 +1,5 @@
 import { decrypt, readMessage } from 'openpgp';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class CryptoDecryptAesCommand implements ICommand<Promise<any>> {

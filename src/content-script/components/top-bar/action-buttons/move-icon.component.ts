@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PinDragStore } from '../../../store/pin-drag.store';
-import { PinObject } from '@common/model/pin.model';
-import { applyStylesToElement } from '@common/style.utils';
+import { PinObject } from '../../../../common/model/pin.model';
+import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class MoveIconComponent {

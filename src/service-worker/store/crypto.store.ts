@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PrivateKey, PublicKey, readKey, readPrivateKey } from 'openpgp';
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
+import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 
 export interface CryptoKey {
   privateKey?: PrivateKey;

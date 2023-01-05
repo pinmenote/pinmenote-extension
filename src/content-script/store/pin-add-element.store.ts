@@ -17,7 +17,7 @@
 import { CreatePinDataCommand } from '../command/pin/create-pin-data.command';
 import { DocumentMediator } from '../mediator/document.mediator';
 import { SettingsStore } from './settings.store';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class PinAddElementStore {
   private static currentElement: HTMLElement | null = null;

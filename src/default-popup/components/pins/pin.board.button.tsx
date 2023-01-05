@@ -16,7 +16,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { Button } from '@mui/material';
-import { fnOpenOptionsPage } from '@common/service/browser.api.wrapper';
+import { fnOpenOptionsPage } from '../../../common/service/browser.api.wrapper';
 
 export const PinBoardButton: FunctionComponent = () => {
   return (

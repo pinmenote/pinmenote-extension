@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessageType } from '@common/model/bus.model';
-import { sendTabMessage } from '@common/message/tab.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { sendTabMessage } from '../../../common/message/tab.message';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
 

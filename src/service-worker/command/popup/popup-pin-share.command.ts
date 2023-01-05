@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiSharePinCommand } from '../api/api-share-pin.command';
-import { BusMessageType } from '@common/model/bus.model';
-import { PinObject } from '@common/model/pin.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { PinObject } from '../../../common/model/pin.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 import ShareUrlDto = Pinmenote.Share.ShareUrlDto;

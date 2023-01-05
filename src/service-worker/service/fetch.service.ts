@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiStore } from '../store/api.store';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { environmentConfig } from '../../common/environment';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 
 export class ResponseError extends Error {

@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiSyncQuotaCommand } from '../api/api-sync-quota.command';
-import { BusMessageType } from '@common/model/bus.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
 import ICommand = Pinmenote.Common.ICommand;
 

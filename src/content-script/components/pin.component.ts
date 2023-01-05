@@ -16,11 +16,11 @@
  */
 import { BottomBarComponent } from './bottom-bar/bottom-bar.component';
 import { EditorComponent } from './editor.component';
-import { HtmlComponent } from '@common/model/html.model';
-import { PinObject } from '@common/model/pin.model';
+import { HtmlComponent } from '../../common/model/html.model';
+import { PinObject } from '../../common/model/pin.model';
 import { SettingsStore } from '../store/settings.store';
 import { TopBarComponent } from './top-bar/top-bar.component';
-import { applyStylesToElement } from '@common/style.utils';
+import { applyStylesToElement } from '../../common/style.utils';
 import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
 import { pinStyles } from './styles/pin.styles';
 import PinPoint = Pinmenote.Pin.PinPoint;

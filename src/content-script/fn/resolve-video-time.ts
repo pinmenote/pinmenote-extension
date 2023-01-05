@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime } from '@common/model/html.model';
-import { fnFindElementXpath } from '@common/fn/xpath.fn';
+import { ContentVideoTime } from '../../common/model/html.model';
+import { fnFindElementXpath } from '../../common/fn/xpath.fn';
 
 export const resolveVideoTime = (videoTime?: ContentVideoTime[]): void => {
   if (!videoTime) return;

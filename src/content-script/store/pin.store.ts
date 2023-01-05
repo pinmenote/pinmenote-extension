@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, ObjectTypeDto } from '@common/model/html.model';
+import { HtmlComponent, ObjectTypeDto } from '../../common/model/html.model';
 import { PinComponent } from '../components/pin.component';
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../common/model/pin.model';
 import { contentSwapPin } from '../fn/content-swap-pin';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class PinStore {
   private static pinData: HtmlComponent[] = [];

@@ -23,22 +23,24 @@ import '@fontsource/roboto/700.css';
 
 import '../css/prosemirror.css';
 
-import { BusMessageType, TimeoutMessage } from '@common/model/bus.model';
-import { ContentExtensionData, ContentSettingsData, ExtensionTheme } from '@common/model/settings.model';
-import { fnConsoleError, fnConsoleLog } from '@common/fn/console.fn';
+import { BusMessageType, TimeoutMessage } from '../common/model/bus.model';
+import { ContentExtensionData, ContentSettingsData, ExtensionTheme } from '../common/model/settings.model';
+import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
+import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { ContentMessageHandler } from './content-message.handler';
 import { CreateLinkCommand } from './command/link/create-link.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
+import { ObjectStoreKeys } from '../common/keys/object.store.keys';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
 import { SettingsStore } from './store/settings.store';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { WindowMediator } from './mediator/window.mediator';
-import { environmentConfig } from '@common/environment';
-import { fnNormalizeHref } from '@common/fn/normalize.url.fn';
-import { fnUid } from '@common/fn/uid.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { environmentConfig } from '../common/environment';
+import { fnNormalizeHref } from '../common/fn/normalize.url.fn';
+import { fnUid } from '../common/fn/uid.fn';
+import { sendRuntimeMessage } from '../common/message/runtime.message';
 import LinkDto = Pinmenote.Pin.LinkDto;
 
 class PinMeScript {
@@ -77,6 +79,8 @@ class PinMeScript {
   };
 
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
+    const lastId = await BrowserStorageWrapper.get(ObjectStoreKeys.OBJECT_LAST_ID);
+    fnConsoleLog('handlePinSettings->LAST ID !!!', lastId);
     this.checkForLink();
     TinyEventDispatcher.removeListener(event, key);
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches

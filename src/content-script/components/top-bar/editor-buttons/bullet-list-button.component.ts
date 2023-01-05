@@ -16,7 +16,7 @@
  */
 import { Command } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { applyStylesToElement } from '@common/style.utils';
+import { applyStylesToElement } from '../../../../common/style.utils';
 import { editorBarButtonStyles } from './editor-bar-button.styles';
 import { schema } from 'prosemirror-markdown';
 import { wrapInList } from 'prosemirror-schema-list';

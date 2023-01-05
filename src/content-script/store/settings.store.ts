@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentSettingsData } from '@common/model/settings.model';
-import { environmentConfig } from '@common/environment';
+import { ContentSettingsData } from '../../common/model/settings.model';
+import { environmentConfig } from '../../common/environment';
 
 export class SettingsStore {
   private static borderStyleValue = environmentConfig.settings.borderStyle;

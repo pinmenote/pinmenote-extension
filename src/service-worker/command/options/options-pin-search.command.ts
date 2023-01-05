@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinRangeRequest } from '@common/model/pin.model';
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { BusMessageType } from '@common/model/bus.model';
-import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { PinObject, PinRangeRequest } from '../../../common/model/pin.model';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsPinSearchCommand implements ICommand<void> {

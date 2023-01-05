@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { ContentSettingsData } from '@common/model/settings.model';
-import { SettingsKeys } from '../../store/keys/settings.keys';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ContentSettingsData } from '../../../common/model/settings.model';
+import { SettingsKeys } from '../../../common/keys/settings.keys';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsSetSettingsCommand implements ICommand<Promise<void>> {

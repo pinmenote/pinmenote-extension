@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { environmentConfig } from '../../common/environment';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import jwtDecode from 'jwt-decode';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 import TokenDataDto = Pinmenote.Auth.TokenDataDto;

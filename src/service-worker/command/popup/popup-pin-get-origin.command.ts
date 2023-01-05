@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { BusMessageType } from '@common/model/bus.model';
-import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
-import { PinObject } from '@common/model/pin.model';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { PinObject } from '../../../common/model/pin.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 import PinUrl = Pinmenote.Pin.PinUrl;
 

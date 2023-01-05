@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserGlobalSender, BusMessage, BusMessageType } from '@common/model/bus.model';
+import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
+import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { LogManager } from '../common/popup/log.manager';
-import { PinPopupInitData } from '@common/model/pin.model';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { contentPinNewUrl } from '@common/fn/pin/content-pin-new-url';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { ObjectStoreKeys } from '../common/keys/object.store.keys';
+import { PinPopupInitData } from '../common/model/pin.model';
+import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
+import { fnBrowserApi } from '../common/service/browser.api.wrapper';
+import { fnConsoleLog } from '../common/fn/console.fn';
+import { sendRuntimeMessage } from '../common/message/runtime.message';
 
 export class OptionsMessageHandler {
   static init(): void {
@@ -42,6 +44,8 @@ export class OptionsMessageHandler {
   };
 
   private static handlePopupOpen = async (): Promise<void> => {
+    const lastId = await BrowserStorageWrapper.get(ObjectStoreKeys.OBJECT_LAST_ID);
+    fnConsoleLog('LAST ID !!!', lastId);
     const url = contentPinNewUrl();
     const data: PinPopupInitData = { url, isAddingNote: false, isBookmarked: false, pageTitle: document.title };
     LogManager.log(`handlePopupOpen->${JSON.stringify(data)}`);

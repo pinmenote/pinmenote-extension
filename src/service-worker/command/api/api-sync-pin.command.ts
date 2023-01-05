@@ -14,23 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinByIdRequest, PinObject } from '@common/model/pin.model';
-import { fnIsoDateToUtcMiliseconds, fnMilisecondsToUtcDate } from '@common/fn/date.fn';
+import { PinByIdRequest, PinObject } from '../../../common/model/pin.model';
+import { fnIsoDateToUtcMiliseconds, fnMilisecondsToUtcDate } from '../../../common/fn/date.fn';
 import { ApiStore } from '../../store/api.store';
 import { ApiSyncQuotaCommand } from './api-sync-quota.command';
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { BusMessageType } from '@common/model/bus.model';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { CryptoDecryptCommand } from '../crypto/crypto-decrypt.command';
 import { CryptoEncryptSignCommand } from '../crypto/crypto-encrypt-sign.command';
 import { FetchService } from '../../service/fetch.service';
-import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
-import { ObjectTypeDto } from '@common/model/html.model';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { ObjectTypeDto } from '../../../common/model/html.model';
 import { PinAddCommand } from '../pin/pin-add.command';
 import { PinRemoveCommand } from '../pin/pin-remove.command';
 import { PinUpdateCommand } from '../pin/pin-update.command';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { environmentConfig } from '../../../common/environment';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import BoolDto = Pinmenote.Common.BoolDto;
 import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
 import EncryptedObjectDto = Pinmenote.Sync.EncryptedObjectDto;

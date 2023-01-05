@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessage } from '@common/model/bus.model';
+import { BusMessage } from '../model/bus.model';
 import { environmentConfig } from '../environment';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnBrowserApi } from '../service/browser.api.wrapper';
+import { fnConsoleLog } from '../fn/console.fn';
 
 export const sendRuntimeMessage = async <T>(msg: BusMessage<T>): Promise<void> => {
   return new Promise((resolve, reject) => {

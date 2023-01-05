@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinPopupInitData } from '@common/model/pin.model';
-import { LogManager } from '@common/popup/log.manager';
+import { PinObject, PinPopupInitData } from '../../common/model/pin.model';
+import { LogManager } from '../../common/popup/log.manager';
 import PinUrl = Pinmenote.Pin.PinUrl;
 
 export class ActiveTabStore {

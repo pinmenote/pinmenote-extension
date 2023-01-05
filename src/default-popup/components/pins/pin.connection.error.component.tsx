@@ -18,7 +18,7 @@ import { Button, Typography } from '@mui/material';
 import React, { FunctionComponent } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { PinBoardButton } from './pin.board.button';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
+import { fnBrowserApi } from '../../../common/service/browser.api.wrapper';
 
 export const PinConnectionErrorComponent: FunctionComponent = () => {
   const isExtension = ActiveTabStore.isExtension;

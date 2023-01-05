@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { fnBrowserApi } from '../../../common/service/browser.api.wrapper';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import LinkDto = Pinmenote.Pin.LinkDto;
 

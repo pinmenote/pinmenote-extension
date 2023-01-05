@@ -15,12 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { IconButton } from '@mui/material';
-import { PinObject } from '@common/model/pin.model';
-import { StyledInput } from '@common/components/react/styled.input';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { PinObject } from '../../../common/model/pin.model';
+import { StyledInput } from '../../../common/components/react/styled.input';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import ShareUrlDto = Pinmenote.Share.ShareUrlDto;
 
 export interface PinShareProps {

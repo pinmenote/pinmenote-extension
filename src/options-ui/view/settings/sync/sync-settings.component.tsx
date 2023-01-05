@@ -15,12 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../../common/model/bus.model';
 import { Button } from '@mui/material';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { sendRuntimeMessage } from '../../../../common/message/runtime.message';
 
 export const SyncSettingsComponent: FunctionComponent = () => {
   useEffect(() => {

@@ -1,6 +1,6 @@
-import { BrowserStorageWrapper } from '@common/service/browser.storage.wrapper';
-import { ObjectStoreKeys } from '../../store/keys/object.store.keys';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 import ICommand = Pinmenote.Common.ICommand;
 

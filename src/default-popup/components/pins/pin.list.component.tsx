@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { PinListElement } from './pin.list.element.component';
-import { PinObject } from '@common/model/pin.model';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { PinObject } from '../../../common/model/pin.model';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 interface PinListProps {
   pinList: PinObject[];

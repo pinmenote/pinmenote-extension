@@ -16,12 +16,12 @@
  */
 import { Button, Divider } from '@mui/material';
 import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { PinBoardStore } from '../store/pin-board.store';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnBrowserLogoIcon } from '@common/service/browser.api.wrapper';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { fnBrowserLogoIcon } from '../../../common/service/browser.api.wrapper';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 class MenuStore {
   static readonly ALL_URLS = '<all_urls>';

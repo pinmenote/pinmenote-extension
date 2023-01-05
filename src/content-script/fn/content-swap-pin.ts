@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnComputeCssContent, fnComputeHtmlContent } from '@common/fn/compute.element.fn';
-import { BusMessageType } from '@common/model/bus.model';
+import { fnComputeCssContent, fnComputeHtmlContent } from '../../common/fn/compute.element.fn';
+import { BusMessageType } from '../../common/model/bus.model';
 import { PinComponent } from '../components/pin.component';
-import { PinUpdateObject } from '@common/model/pin.model';
+import { PinUpdateObject } from '../../common/model/pin.model';
 import { SettingsStore } from '../store/settings.store';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { fnImgResize } from '@common/fn/img.resize.fn';
-import { fnSleep } from '@common/fn/sleep.fn';
-import { fnXpath } from '@common/fn/xpath.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnImgResize } from '../../common/fn/img.resize.fn';
+import { fnSleep } from '../../common/fn/sleep.fn';
+import { fnXpath } from '../../common/fn/xpath.fn';
+import { sendRuntimeMessage } from '../../common/message/runtime.message';
 
 export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement): Promise<void> => {
   pinData.container.style.display = 'none';

@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject } from '@common/model/pin.model';
+import { PinObject } from '../../../common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
-import { fnNormalizeHref } from '@common/fn/normalize.url.fn';
+import { fnNormalizeHref } from '../../../common/fn/normalize.url.fn';
 import { resolveVideoTime } from '../../fn/resolve-video-time';
 import ICommand = Pinmenote.Common.ICommand;
 

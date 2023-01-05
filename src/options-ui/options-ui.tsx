@@ -23,7 +23,7 @@ import { PinBoard } from './view/pin-board/pin.board';
 import { PinBoardStore } from './view/store/pin-board.store';
 import { SettingsComponent } from './view/settings/settings.component';
 import { createRoot } from 'react-dom/client';
-import { fnConsoleError } from '@common/fn/console.fn';
+import { fnConsoleError } from '../common/fn/console.fn';
 
 const initPinBoardStore = () => {
   PinBoardStore.clearSearch();

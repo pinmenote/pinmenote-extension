@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PIN_HASHTAG_REGEX, PinObject, PinUpdateObject } from '@common/model/pin.model';
-import { BusMessageType } from '@common/model/bus.model';
+import { PIN_HASHTAG_REGEX, PinObject, PinUpdateObject } from '../../common/model/pin.model';
+import { BusMessageType } from '../../common/model/bus.model';
 import { EditorView } from 'prosemirror-view';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { createTextEditorState } from '@common/components/text-editor/text.editor.state';
+import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { createTextEditorState } from '../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { sendRuntimeMessage } from '../../common/message/runtime.message';
 
 export class EditorComponent {
   private el = document.createElement('div');

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserGlobalSender, BusMessage, BusMessageType } from '@common/model/bus.model';
+import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { ContentLinkAddCommand } from './command/content/content-link-add.command';
 import { ContentLoginCommand } from './command/content/content-login.command';
 import { ContentPinAddCommand } from './command/content/content-pin-add.command';
@@ -59,9 +59,9 @@ import { PopupRegisterCommand } from './command/popup/popup-register.command';
 import { PopupSyncPinsCommand } from './command/popup/popup-sync-pins.command';
 import { PopupSyncQuotaCommand } from './command/popup/popup-sync-quota.command';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
-import { fnBrowserApi } from '@common/service/browser.api.wrapper';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { reloadContentScript } from '@common/message/reload.content.script';
+import { fnBrowserApi } from '../common/service/browser.api.wrapper';
+import { fnConsoleLog } from '../common/fn/console.fn';
+import { reloadContentScript } from '../common/message/reload.content.script';
 
 const handleMessage = async (
   msg: BusMessage<any>,

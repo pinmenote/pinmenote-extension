@@ -16,8 +16,8 @@
  */
 import { ApiStore } from '../../store/api.store';
 import { FetchService } from '../../service/fetch.service';
-import { environmentConfig } from '@common/environment';
-import { fnConsoleLog } from '@common/fn/console.fn';
+import { environmentConfig } from '../../../common/environment';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
 import ICommand = Pinmenote.Common.ICommand;
 

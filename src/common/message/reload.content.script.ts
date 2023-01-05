@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { fnIsChrome } from '@common/service/browser.api.wrapper';
+import { fnConsoleLog } from '../fn/console.fn';
+import { fnIsChrome } from '../service/browser.api.wrapper';
 
 export const reloadContentScript = async (tabId: number): Promise<void> => {
   const scripts = chrome.runtime.getManifest().content_scripts;

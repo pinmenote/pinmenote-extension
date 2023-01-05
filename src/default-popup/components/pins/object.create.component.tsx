@@ -20,12 +20,12 @@ import { ActiveTabStore } from '../../store/active-tab.store';
 import AddIcon from '@mui/icons-material/Add';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { BusMessageType } from '@common/model/bus.model';
-import { LogManager } from '@common/popup/log.manager';
-import { PinPopupInitData } from '@common/model/pin.model';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
-import { sendTabMessage } from '@common/message/tab.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { LogManager } from '../../../common/popup/log.manager';
+import { PinPopupInitData } from '../../../common/model/pin.model';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
+import { sendTabMessage } from '../../../common/message/tab.message';
 import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 
 export const ObjectCreateComponent: FunctionComponent = () => {

@@ -16,13 +16,13 @@
  */
 import { CreateLinkCommand } from '../link/create-link.command';
 import { CreatePinXpathCommand } from './create-pin-xpath.command';
-import { ObjectTypeDto } from '@common/model/html.model';
-import { PinObject } from '@common/model/pin.model';
+import { ObjectTypeDto } from '../../../common/model/html.model';
+import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
 import { RuntimePinGetHrefCommand } from '../runtime/runtime-pin-get-href.command';
-import { fnConsoleLog } from '@common/fn/console.fn';
-import { fnNormalizeHref } from '@common/fn/normalize.url.fn';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnNormalizeHref } from '../../../common/fn/normalize.url.fn';
 import { isElementHidden } from '../../fn/is-element-hidden';
 import ICommand = Pinmenote.Common.ICommand;
 

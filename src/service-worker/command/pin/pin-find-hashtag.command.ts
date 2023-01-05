@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PIN_HASHTAG_REGEX } from '@common/model/pin.model';
+import { PIN_HASHTAG_REGEX } from '../../../common/model/pin.model';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinFindHashtagCommand implements ICommand<string[]> {

@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessageType } from '@common/model/bus.model';
-import { ContentSettingsData } from '@common/model/settings.model';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { ContentSettingsData } from '../../../common/model/settings.model';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 export class SettingsStore {
   static settings?: ContentSettingsData;

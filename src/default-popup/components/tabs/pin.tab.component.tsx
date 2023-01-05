@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinPopupInitData } from '@common/model/pin.model';
+import { PinObject, PinPopupInitData } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
-import { BusMessageType } from '@common/model/bus.model';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
 import { PinListOriginComponent } from '../pins/pin.list.origin.component';
-import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
-import { sendRuntimeMessage } from '@common/message/runtime.message';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import PinUrl = Pinmenote.Pin.PinUrl;
 
 export const PinTabComponent: FunctionComponent = () => {
