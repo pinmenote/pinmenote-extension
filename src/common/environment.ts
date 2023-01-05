@@ -37,10 +37,10 @@ interface EnvironmentConfig {
 
 export const environmentConfig: EnvironmentConfig = {
   showAckMessage: false,
-  apiUrl: 'https://pinmenote.com',
-  websiteUrl: 'https://pinmenote.com',
-  shortUrl: 'https://pmn.cl',
-  isProduction: false,
+  apiUrl: process.env.API_URL || '',
+  websiteUrl: process.env.SHORT_URL || '',
+  shortUrl: process.env.WEBSITE_URL || '',
+  isProduction: process.env.IS_PRODUCTION === 'true',
   settings: {
     screenshotFormat: 'jpeg',
     screenshotQuality: 80,
@@ -50,13 +50,6 @@ export const environmentConfig: EnvironmentConfig = {
   },
   version: 1
 };
-
-if (process.env.NODE_ENV === 'development') {
-  environmentConfig.apiUrl = 'http://localhost:3000';
-  environmentConfig.websiteUrl = 'http://localhost:4200';
-  environmentConfig.shortUrl = 'http://localhost:8001';
-  environmentConfig.isProduction = false;
-}
 
 export function getWebsiteUrl(uri: string): string {
   return `${environmentConfig.websiteUrl}${uri}`;

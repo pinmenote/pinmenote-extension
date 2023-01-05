@@ -6,9 +6,9 @@
   "author": "Michal Szczepanski <michal@vane.pl>",
   "scripts": {
     "watch": "parcel watch src/manifest.json --host localhost --target pinmenote-dev --no-cache",
-    "build": "parcel build src/manifest.json --target pinmenote-prod --no-content-hash --no-cache --detailed-report 0",
-    "build:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --no-content-hash --no-cache --detailed-report 0",
-    "build:ff:dev": "parcel build src/manifest.json --target pinmenote-firefox-dev --no-content-hash --no-cache --detailed-report 0",
+    "build": "parcel build src/manifest.json --target pinmenote-prod --no-cache --detailed-report 0",
+    "build:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --no-cache --detailed-report 0",
+    "build:ff:dev": "parcel build src/manifest.json --target pinmenote-firefox-dev --no-cache --detailed-report 0",
     "lint": "eslint --ext .ts,.tsx  src/",
     "lint:fix": "eslint --ext .ts,.tsx  src/ --fix"
   },
@@ -16,20 +16,10 @@
     "lint"
   ],
   "targets": {
-    "pinmenote-dev": {
-      "sourceMap": {
-        "inline": false,
-        "inlineSources": false
-      }
-    },
+    "pinmenote-dev": {},
     "pinmenote-prod": {},
     "pinmenote-firefox-prod": {},
-    "pinmenote-firefox-dev": {
-      "sourceMap": {
-        "inline": false,
-        "inlineSources": false
-      }
-    }
+    "pinmenote-firefox-dev": {}
   },
   "devDependencies": {
     "@parcel/config-webextension": "^2.7.0",
