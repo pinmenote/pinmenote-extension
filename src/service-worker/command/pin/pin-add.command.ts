@@ -17,8 +17,8 @@
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinFindHashtagCommand } from './pin-find-hashtag.command';
-import { PinHashtagStore } from '../../store/pin/pin-hashtag.store';
-import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
+import { PinHashtagStore } from '../../../common/store/pin-hashtag.store';
+import { PinHrefOriginStore } from '../../../common/store/pin-href-origin.store';
 import { PinObject } from '../../../common/model/pin.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;

@@ -14,14 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentSettingsData } from '../../../common/model/settings.model';
+import { SettingsKeys } from '../../../common/keys/settings.keys';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 export class SettingsStore {
+  private static sent = false;
   static settings?: ContentSettingsData;
 
-  static async getSettings(): Promise<void> {
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_GET_SETTINGS });
+  static dispatchInit(): void {
+    if (this.sent) return;
+    TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_GET_SETTINGS_DATA, undefined);
+    this.sent = true;
   }
+
+  static fetchData = async (): Promise<void> => {
+    this.settings = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
+  };
 }

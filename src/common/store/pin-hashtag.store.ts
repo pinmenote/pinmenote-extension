@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
 
 export class PinHashtagStore {
   private static PIN_HASHTAG = 'pin:hashtag';

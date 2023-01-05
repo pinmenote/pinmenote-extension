@@ -16,7 +16,7 @@
  */
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { PinHashtagStore } from '../../store/pin/pin-hashtag.store';
+import { PinHashtagStore } from '../../../common/store/pin-hashtag.store';
 import { PinUpdateObject } from '../../../common/model/pin.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;

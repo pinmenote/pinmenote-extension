@@ -18,7 +18,7 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
+import { PinHrefOriginStore } from '../../../common/store/pin-href-origin.store';
 import { PinObject } from '../../../common/model/pin.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;

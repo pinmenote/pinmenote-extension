@@ -16,11 +16,10 @@
  */
 import { Input, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../../common/model/bus.model';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ContentSettingsData } from '../../../../common/model/settings.model';
+import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../store/settings.store';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
 const borderContainer: CSSProperties = {
@@ -29,39 +28,35 @@ const borderContainer: CSSProperties = {
   alignItems: 'center'
 };
 
-export const ScreenshotSettingsComponent: FunctionComponent = () => {
-  const [screenshotFormat, setScreenshotFormat] = useState<string>(SettingsStore.settings?.screenshotFormat || 'jpeg');
-  const [screenshotQuality, setScreenshotQuality] = useState<number>(SettingsStore.settings?.screenshotQuality || 80);
+export const ScreenshotSettingsComponent: FunctionComponent<{ format: string; quality: number }> = ({
+  format,
+  quality
+}) => {
+  const [screenshotFormat, setScreenshotFormat] = useState<string>(format);
+  const [screenshotQuality, setScreenshotQuality] = useState<number>(quality);
 
   useEffect(() => {
-    const settingsKey = TinyEventDispatcher.addListener<ContentSettingsData>(
-      BusMessageType.OPTIONS_GET_SETTINGS,
-      (event, key, value) => {
-        SettingsStore.settings = value;
-        setScreenshotFormat(value.screenshotFormat);
-        setScreenshotQuality(value.screenshotQuality);
-      }
-    );
-    return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_GET_SETTINGS, settingsKey);
-    };
+    if (quality !== screenshotQuality) {
+      setScreenshotQuality(quality);
+    }
+    if (format !== screenshotFormat) {
+      setScreenshotFormat(format);
+    }
   });
 
   const handleScreenshotQuality = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
+    if (!SettingsStore.settings) return;
     const value = Math.max(0, Math.min(parseInt(e.target.value), 100));
-    if (SettingsStore.settings) {
-      SettingsStore.settings.screenshotQuality = value;
-    }
+    SettingsStore.settings.screenshotQuality = value;
+    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     setScreenshotQuality(value);
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
   };
 
   const handleScreenshotFormat = async (e: SelectChangeEvent): Promise<void> => {
-    if (SettingsStore.settings) {
-      SettingsStore.settings.screenshotFormat = e.target.value;
-    }
+    if (!SettingsStore.settings) return;
+    SettingsStore.settings.screenshotFormat = e.target.value;
+    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     setScreenshotFormat(e.target.value);
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
   };
 
   return (

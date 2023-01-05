@@ -31,16 +31,12 @@ import { ContentPinUpdateCommand } from './command/content/content-pin-update.co
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
 import { ContentSettingsCommand } from './command/content/content-settings.command';
 import { ContentTimeoutCommand } from './command/content/content-timeout.command';
-import { OptionsGetOriginUrlsCommand } from './command/options/options-get-origin-urls.command';
-import { OptionsGetSettingsCommand } from './command/options/options-get-settings.command';
-import { OptionsPinGetHashListCommand } from './command/options/options-pin-get-hash-list.command';
 import { OptionsPinGetLastIdCommand } from './command/options/options-pin-get-last-id.command';
 import { OptionsPinGetRangeCommand } from './command/options/options-pin-get-range.command';
 import { OptionsPinRemoveCommand } from './command/options/options-pin-remove.command';
 import { OptionsPinSearchCommand } from './command/options/options-pin-search.command';
 import { OptionsPinShareCommand } from './command/options/options-pin-share.command';
 import { OptionsPinUpdateCommand } from './command/options/options-pin-update.command';
-import { OptionsSetSettingsCommand } from './command/options/options-set-settings.command';
 import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
 import { PopupAccessTokenCommand } from './command/popup/popup-access-token.command';
 import { PopupBookmarkAddCommand } from './command/popup/popup-bookmark-add.command';
@@ -170,18 +166,6 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_PRIVATE_KEY_IMPORT:
       await new PopupPrivateKeyImportCommand(msg.data).execute();
-      break;
-    case BusMessageType.OPTIONS_GET_ORIGIN_URLS:
-      await new OptionsGetOriginUrlsCommand().execute();
-      break;
-    case BusMessageType.OPTIONS_GET_SETTINGS:
-      await new OptionsGetSettingsCommand().execute();
-      break;
-    case BusMessageType.OPTIONS_SET_SETTINGS:
-      await new OptionsSetSettingsCommand(msg.data).execute();
-      break;
-    case BusMessageType.OPTIONS_PIN_GET_HASH_LIST:
-      await new OptionsPinGetHashListCommand().execute();
       break;
     case BusMessageType.OPTIONS_PIN_GET_RANGE:
       await new OptionsPinGetRangeCommand(msg.data).execute();

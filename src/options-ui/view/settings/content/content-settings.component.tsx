@@ -15,12 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../../common/model/bus.model';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ContentSettingsData } from '../../../../common/model/settings.model';
 import { Input } from '@mui/material';
+import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../store/settings.store';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
 const borderContainer: CSSProperties = {
@@ -29,52 +28,31 @@ const borderContainer: CSSProperties = {
   alignItems: 'center'
 };
 
-const initSettingsStore = () => {
-  SettingsStore.getSettings()
-    .then(() => {
-      /* Empty */
-    })
-    .catch(() => {
-      /* Empty */
-    });
-};
-
-export const ContentSettingsComponent: FunctionComponent = () => {
-  const [borderRadius, setBorderRadius] = useState<string>(SettingsStore.settings?.borderRadius || '');
-  const [borderStyle, setBorderStyle] = useState<string>(SettingsStore.settings?.borderStyle || '');
+export const ContentSettingsComponent: FunctionComponent<{ radius: string; style: string }> = ({ radius, style }) => {
+  const [borderRadius, setBorderRadius] = useState<string>(radius);
+  const [borderStyle, setBorderStyle] = useState<string>(style);
 
   useEffect(() => {
-    if (!borderRadius) {
-      initSettingsStore();
+    if (radius !== borderRadius) {
+      setBorderRadius(radius);
     }
-
-    const settingsKey = TinyEventDispatcher.addListener<ContentSettingsData>(
-      BusMessageType.OPTIONS_GET_SETTINGS,
-      (event, key, value) => {
-        SettingsStore.settings = value;
-        setBorderRadius(value.borderRadius);
-        setBorderStyle(value.borderStyle);
-      }
-    );
-    return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_GET_SETTINGS, settingsKey);
-    };
+    if (style !== borderStyle) {
+      setBorderStyle(style);
+    }
   });
 
   const handleBorderRadiusChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
-    if (SettingsStore.settings) {
-      SettingsStore.settings.borderRadius = e.target.value;
-    }
+    if (!SettingsStore.settings) return;
+    SettingsStore.settings.borderRadius = e.target.value;
+    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     setBorderRadius(e.target.value);
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
   };
 
   const handleBorderStyleChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
-    if (SettingsStore.settings) {
-      SettingsStore.settings.borderStyle = e.target.value;
-    }
+    if (!SettingsStore.settings) return;
+    SettingsStore.settings.borderStyle = e.target.value;
+    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     setBorderStyle(e.target.value);
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
   };
 
   return (

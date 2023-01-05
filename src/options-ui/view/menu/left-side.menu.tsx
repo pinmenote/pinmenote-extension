@@ -19,6 +19,8 @@ import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react'
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { PinBoardStore } from '../store/pin-board.store';
+import { PinHashtagStore } from '../../../common/store/pin-hashtag.store';
+import { PinHrefOriginStore } from '../../../common/store/pin-href-origin.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
@@ -29,32 +31,22 @@ class MenuStore {
   static urlList: string[] = [];
   static hashList: string[] = [];
 
-  static initialize(): void {
+  static dispatchInit(): void {
     if (this.sent) return;
-    this.getHashList()
-      .then(() => {
-        /* ignore */
-      })
-      .catch(() => {
-        /* ignore */
-      });
-    this.getOriginUrls()
-      .then(() => {
-        /* ignore */
-      })
-      .catch(() => {
-        /* ignore */
-      });
+    TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_GET_LEFT_MENU_DATA, undefined);
     this.sent = true;
   }
 
-  private static async getHashList(): Promise<void> {
-    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.OPTIONS_PIN_GET_HASH_LIST });
-  }
+  static fetchData = async (): Promise<void> => {
+    // url list
+    const urlList = await PinHrefOriginStore.getOriginUrls();
+    this.urlList = urlList.sort();
+    urlList.unshift(MenuStore.ALL_URLS);
 
-  private static async getOriginUrls(): Promise<void> {
-    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.OPTIONS_GET_ORIGIN_URLS });
-  }
+    // hash list
+    const hashList = await PinHashtagStore.getHashtagList();
+    MenuStore.hashList = hashList.sort();
+  };
 }
 
 interface MenuLinkItemProps {
@@ -86,25 +78,14 @@ export const LeftSideMenu: FunctionComponent = () => {
   const [hashList, setHashList] = useState<ReactNode[]>(MenuStore.hashList);
 
   useEffect(() => {
-    const urlsKey = TinyEventDispatcher.addListener<string[]>(
-      BusMessageType.OPTIONS_GET_ORIGIN_URLS,
-      (event, key, value) => {
-        MenuStore.urlList = value.sort();
-        value.unshift(MenuStore.ALL_URLS);
-        setUrlList(value.map((v) => <MenuLinkItem key={`item-${v}`} url={v} />));
-      }
-    );
-    const hashKey = TinyEventDispatcher.addListener<string[]>(
-      BusMessageType.OPTIONS_PIN_GET_HASH_LIST,
-      (event, key, value) => {
-        MenuStore.hashList = value.sort();
-        setHashList(value.map((h) => <Typography key={`hash-${h}`}>{h}</Typography>));
-      }
-    );
-    MenuStore.initialize();
+    const dataKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.OPT_GET_LEFT_MENU_DATA, async () => {
+      await MenuStore.fetchData();
+      setUrlList(MenuStore.urlList.map((v) => <MenuLinkItem key={`item-${v}`} url={v} />));
+      setHashList(MenuStore.hashList.map((h) => <Typography key={`hash-${h}`}>{h}</Typography>));
+    });
+    MenuStore.dispatchInit();
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_PIN_GET_HASH_LIST, hashKey);
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_GET_ORIGIN_URLS, urlsKey);
+      TinyEventDispatcher.removeListener(BusMessageType.OPT_GET_LEFT_MENU_DATA, dataKey);
     };
   });
 
