@@ -30,7 +30,8 @@ export class PopupMessageHandler {
       type: BusMessageType.POPUP_OPEN
     })
       .then((ack: any) => {
-        if (!ack) TinyEventDispatcher.dispatch(BusMessageType.POPUP_INIT, {});
+        LogManager.log(`FIREFOX SENDS EMPTY ACK :/!!! ${JSON.stringify(ack)}`);
+        // if (!ack) TinyEventDispatcher.dispatch(BusMessageType.POPUP_INIT, {});
         fnConsoleLog(ack);
       })
       .catch((e) => {
@@ -41,6 +42,7 @@ export class PopupMessageHandler {
 
   private static popupInitListener(): void {
     TinyEventDispatcher.addListener<PinPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
+      LogManager.log(`${event} ${JSON.stringify(value || {})}`);
       if (value.url) LogManager.log(`${event} ${value.url.href}`);
       if (value.url?.href.startsWith(fnExtensionStartUrl())) {
         ActiveTabStore.updateState(true, true, value);

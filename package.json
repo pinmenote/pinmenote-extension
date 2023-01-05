@@ -8,6 +8,7 @@
     "watch": "parcel watch src/manifest.json --host localhost --target pinmenote-dev --no-cache",
     "build": "parcel build src/manifest.json --target pinmenote-prod --no-content-hash --no-cache --detailed-report 0",
     "build:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --no-content-hash --no-cache --detailed-report 0",
+    "build:ff:dev": "parcel build src/manifest.json --target pinmenote-firefox-dev --no-content-hash --no-cache --detailed-report 0",
     "lint": "eslint --ext .ts,.tsx  src/",
     "lint:fix": "eslint --ext .ts,.tsx  src/ --fix"
   },
@@ -20,12 +21,18 @@
   "targets": {
     "pinmenote-dev": {
       "sourceMap": {
-        "inline": true,
-        "inlineSources": true
+        "inline": false,
+        "inlineSources": false
       }
     },
     "pinmenote-prod": {},
-    "pinmenote-firefox-prod": {}
+    "pinmenote-firefox-prod": {},
+    "pinmenote-firefox-dev": {
+      "sourceMap": {
+        "inline": false,
+        "inlineSources": false
+      }
+    }
   },
   "devDependencies": {
     "@parcel/config-webextension": "^2.7.0",

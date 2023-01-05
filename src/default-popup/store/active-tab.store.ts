@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import PinUrl = Pinmenote.Pin.PinUrl;
 import { PinObject, PinPopupInitData } from '@common/model/pin.model';
+import { LogManager } from '@common/popup/log.manager';
+import PinUrl = Pinmenote.Pin.PinUrl;
 
 export class ActiveTabStore {
   private static urlValue?: PinUrl;
@@ -70,6 +71,7 @@ export class ActiveTabStore {
   }
 
   static updateState(isError: boolean, extensionUrl: boolean, initData?: PinPopupInitData) {
+    LogManager.log(`isError ${isError.toString()}`);
     this.isError = isError;
     this.extensionUrl = extensionUrl;
     this.urlValue = initData?.url;

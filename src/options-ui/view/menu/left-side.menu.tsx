@@ -20,7 +20,7 @@ import { BusMessageType } from '@common/model/bus.model';
 import { PinBoardStore } from '../store/pin-board.store';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnGetKey } from '@common/kv.utils';
+import { fnBrowserLogoIcon } from '@common/service/browser.api.wrapper';
 import { sendRuntimeMessage } from '@common/message/runtime.message';
 
 class MenuStore {
@@ -117,12 +117,7 @@ export const LeftSideMenu: FunctionComponent = () => {
     <div style={{ minWidth: 250, maxWidth: 250, display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%', flexDirection: 'column' }}>
         <div style={{ display: 'flex', marginTop: 10, alignItems: 'center', justifyContent: 'center' }}>
-          <img
-            src={fnGetKey(chrome.runtime.getManifest().icons, '32')}
-            width="32"
-            height="32"
-            style={{ marginRight: 10 }}
-          />
+          <img src={fnBrowserLogoIcon()} width="32" height="32" style={{ marginRight: 10 }} />
           <Typography fontSize="2em" align="center">
             pinmenote
           </Typography>

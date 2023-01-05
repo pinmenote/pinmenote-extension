@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '@common/model/bus.model';
+import { LogManager } from '../common/popup/log.manager';
 import { PinPopupInitData } from '@common/model/pin.model';
 import { TinyEventDispatcher } from '@common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '@common/fn/pin/content-pin-new-url';
@@ -43,6 +44,7 @@ export class OptionsMessageHandler {
   private static handlePopupOpen = async (): Promise<void> => {
     const url = contentPinNewUrl();
     const data: PinPopupInitData = { url, isAddingNote: false, isBookmarked: false, pageTitle: document.title };
+    LogManager.log(`handlePopupOpen->${JSON.stringify(data)}`);
     await sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });
   };
 }

@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { fnGetKey } from '@common/kv.utils';
+
 export type BrowserGlobal = typeof chrome | typeof browser;
 
 let pinMeBrowserApi: BrowserGlobal;
@@ -41,6 +43,13 @@ export function fnOpenOptionsPage(subpage = ''): void {
   }
   window.open(browser.runtime.getManifest().options_ui?.page);
   window.close();
+}
+
+export function fnBrowserLogoIcon(): string {
+  if (isChrome) {
+    return fnGetKey(chrome.runtime.getManifest().icons, '32');
+  }
+  return fnGetKey(browser.runtime.getManifest().browser_action?.default_icon, '32');
 }
 
 export function fnRuntimeUrl(): string {

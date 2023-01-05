@@ -1,10 +1,10 @@
 #!/bin/bash
-export NODE_ENV=production
+export NODE_ENV=development
 # swap manifests
 mv src/manifest.json src/manifest.ch.json
 mv src/manifest.ff.json src/manifest.json
 # build
-npm run build:ff
+npm run build:ff:dev
 # swap manifests back
 mv src/manifest.json src/manifest.ff.json
 mv src/manifest.ch.json src/manifest.json
