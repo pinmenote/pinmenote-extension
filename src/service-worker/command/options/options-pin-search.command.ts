@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PinObject, PinRangeRequest } from '../../../common/model/pin.model';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsPinSearchCommand implements ICommand<void> {
@@ -28,7 +28,7 @@ export class OptionsPinSearchCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const data = await this.getSearch(ObjectStoreKeys.OBJECT_ID, this.data);
-      await sendRuntimeMessage<PinObject[]>({ type: BusMessageType.OPTIONS_PIN_SEARCH, data });
+      await BrowserApi.sendRuntimeMessage<PinObject[]>({ type: BusMessageType.OPTIONS_PIN_SEARCH, data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }

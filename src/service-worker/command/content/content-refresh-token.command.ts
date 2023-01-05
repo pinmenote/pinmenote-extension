@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiStore } from '../../store/api.store';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchService } from '../../service/fetch.service';
-import { sendTabMessage } from '../../../common/message/tab.message';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
 
@@ -26,6 +26,9 @@ export class ContentRefreshTokenCommand implements ICommand<void> {
     // Fill token data
     await ApiStore.getTokenData();
     await FetchService.refreshToken();
-    await sendTabMessage<AccessTokenDto | undefined>({ type: BusMessageType.CONTENT_REFRESH_TOKEN, data: undefined });
+    await BrowserApi.sendTabMessage<AccessTokenDto | undefined>({
+      type: BusMessageType.CONTENT_REFRESH_TOKEN,
+      data: undefined
+    });
   }
 }

@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { PinHrefOriginStore } from '../../store/pin/pin-href-origin.store';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsGetOriginUrlsCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const data = await PinHrefOriginStore.getOriginUrls();
-      await sendRuntimeMessage<string[]>({ type: BusMessageType.OPTIONS_GET_ORIGIN_URLS, data });
+      await BrowserApi.sendRuntimeMessage<string[]>({ type: BusMessageType.OPTIONS_GET_ORIGIN_URLS, data });
     } catch (e) {
       fnConsoleLog('Error', e);
     }

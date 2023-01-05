@@ -14,18 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsPinGetLastIdCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const data = await this.getCount();
-      await sendRuntimeMessage<number>({ type: BusMessageType.OPTIONS_PIN_GET_LAST_ID, data });
+      await BrowserApi.sendRuntimeMessage<number>({ type: BusMessageType.OPTIONS_PIN_GET_LAST_ID, data });
     } catch (e) {
       fnConsoleLog('Error', e);
     }

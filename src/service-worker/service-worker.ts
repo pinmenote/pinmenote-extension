@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
+import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentLinkAddCommand } from './command/content/content-link-add.command';
 import { ContentLoginCommand } from './command/content/content-login.command';
 import { ContentPinAddCommand } from './command/content/content-pin-add.command';
@@ -59,9 +60,7 @@ import { PopupRegisterCommand } from './command/popup/popup-register.command';
 import { PopupSyncPinsCommand } from './command/popup/popup-sync-pins.command';
 import { PopupSyncQuotaCommand } from './command/popup/popup-sync-quota.command';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
-import { fnBrowserApi } from '../common/service/browser.api.wrapper';
 import { fnConsoleLog } from '../common/fn/console.fn';
-import { reloadContentScript } from '../common/message/reload.content.script';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -73,7 +72,7 @@ const handleMessage = async (
   });
 
   // Skip not owned messages
-  if (runtime.id !== fnBrowserApi().runtime.id) return;
+  if (runtime.id !== BrowserApi.runtime.id) return;
 
   switch (msg.type) {
     case BusMessageType.CONTENT_LOGIN:
@@ -209,7 +208,7 @@ const handleMessage = async (
 };
 
 const handleInstalled = async (event: unknown): Promise<void> => {
-  fnConsoleLog('INSTALLED', event, fnBrowserApi().runtime.id);
+  fnConsoleLog('INSTALLED', event, BrowserApi.runtime.id);
   // Initial Content Settings
   await new SwInitSettingsCommand().execute();
   reloadActiveTabScript();
@@ -218,13 +217,13 @@ const handleInstalled = async (event: unknown): Promise<void> => {
 const reloadActiveTabScript = (): void => {
   try {
     /* eslint-disable @typescript-eslint/no-floating-promises */
-    fnBrowserApi() // eslint-disable-line @typescript-eslint/no-unsafe-call
-      .tabs.query({ active: true, currentWindow: true }, async (tabs: chrome.tabs.Tab[]) => {
+    BrowserApi.tabs // eslint-disable-line @typescript-eslint/no-unsafe-call
+      .query({ active: true, currentWindow: true }, async (tabs: chrome.tabs.Tab[]) => {
         const currentTab = tabs[0];
         if (!currentTab?.url) return;
         if (currentTab?.url.startsWith('chrome')) return;
         if (!currentTab?.id) return;
-        await reloadContentScript(currentTab.id);
+        await BrowserApi.reloadContentScript(currentTab.id);
       });
     /* eslint-enable @typescript-eslint/no-floating-promises */
   } catch (e) {
@@ -238,13 +237,13 @@ const handleSuspend = () => {
 
 const handleTabActivated = async (activeInfo: chrome.tabs.TabActiveInfo): Promise<void> => {
   fnConsoleLog('handleTabActivated', activeInfo.tabId);
-  await reloadContentScript(activeInfo.tabId);
+  await BrowserApi.reloadContentScript(activeInfo.tabId);
 };
 
-fnBrowserApi().tabs.onActivated.addListener(handleTabActivated);
+BrowserApi.tabs.onActivated.addListener(handleTabActivated);
 
-fnBrowserApi().runtime.onInstalled.addListener(handleInstalled);
-fnBrowserApi().runtime.onMessage.addListener(handleMessage);
-fnBrowserApi().runtime.onSuspend?.addListener(handleSuspend);
+BrowserApi.runtime.onInstalled.addListener(handleInstalled);
+BrowserApi.runtime.onMessage.addListener(handleMessage);
+BrowserApi.runtime.onSuspend?.addListener(handleSuspend);
 
-fnConsoleLog(`Pinmenote service-worker start! ${fnBrowserApi().runtime.id}`);
+fnConsoleLog(`Pinmenote service-worker start! ${BrowserApi.runtime.id}`);

@@ -16,14 +16,13 @@
  */
 import { Button, IconButton, TextareaAutosize, Typography } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { COLOR_DEFAULT_GREY } from '../../../common/components/colors';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnByteToMb } from '../../../common/fn/diskspace.fn';
-import { fnOpenOptionsPage } from '../../../common/service/browser.api.wrapper';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
 
 class QuotaStore {
@@ -32,7 +31,7 @@ class QuotaStore {
   static quota?: DiskQuotaDto;
 
   static async getQuota(): Promise<void> {
-    await sendRuntimeMessage<undefined>({
+    await BrowserApi.sendRuntimeMessage<undefined>({
       type: BusMessageType.POPUP_SYNC_QUOTA
     });
   }
@@ -76,20 +75,20 @@ export const AccountComponent: FunctionComponent = () => {
   });
 
   const handleLogout = async (): Promise<void> => {
-    await sendRuntimeMessage<undefined>({
+    await BrowserApi.sendRuntimeMessage<undefined>({
       type: BusMessageType.POPUP_LOGOUT
     });
   };
 
   const handleSyncNotes = async (): Promise<void> => {
-    await sendRuntimeMessage<undefined>({
+    await BrowserApi.sendRuntimeMessage<undefined>({
       type: BusMessageType.POPUP_SYNC_PINS
     });
   };
 
   const handleShowHidePrivateKey = async (): Promise<void> => {
     if (privateKey.length === 0) {
-      await sendRuntimeMessage<undefined>({
+      await BrowserApi.sendRuntimeMessage<undefined>({
         type: BusMessageType.POPUP_PRIVATE_KEY_GET
       });
     } else {
@@ -103,7 +102,7 @@ export const AccountComponent: FunctionComponent = () => {
   };
 
   const handleImportPrivateKey = async (): Promise<void> => {
-    await sendRuntimeMessage<string>({
+    await BrowserApi.sendRuntimeMessage<string>({
       type: BusMessageType.POPUP_PRIVATE_KEY_IMPORT,
       data: importKey
     });
@@ -168,7 +167,7 @@ export const AccountComponent: FunctionComponent = () => {
           sx={{ width: '100%' }}
           style={{ marginBottom: 10 }}
           variant="outlined"
-          onClick={() => fnOpenOptionsPage('#settings')}
+          onClick={() => BrowserApi.openOptionsPage('#settings')}
         >
           Advanced options
         </Button>

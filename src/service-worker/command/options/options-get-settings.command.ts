@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentSettingsData } from '../../../common/model/settings.model';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsGetSettingsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     const data = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
-    await sendRuntimeMessage<ContentSettingsData>({ type: BusMessageType.OPTIONS_GET_SETTINGS, data });
+    await BrowserApi.sendRuntimeMessage<ContentSettingsData>({ type: BusMessageType.OPTIONS_GET_SETTINGS, data });
   }
 }

@@ -14,51 +14,151 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BusMessage } from '../model/bus.model';
+import { environmentConfig } from '../environment';
+import { fnConsoleLog } from '../fn/console.fn';
 import { fnGetKey } from '../kv.utils';
 
 export type BrowserGlobal = typeof chrome | typeof browser;
+export type BrowserRuntime = typeof chrome.runtime | typeof browser.runtime;
+export type BrowserTabs = typeof chrome.tabs | typeof browser.tabs;
+export type BrowserTabObject = chrome.tabs.Tab | browser.tabs.Tab;
+export type BrowserLocalStore = typeof chrome.storage.local | typeof browser.storage.local;
+export type BrowserDownloads = typeof chrome.downloads | typeof browser.downloads;
+export type BrowserAction = typeof chrome.browserAction | typeof browser.browserAction;
 
-let pinMeBrowserApi: BrowserGlobal;
-let isChrome = false;
-try {
-  pinMeBrowserApi = browser;
-} catch (e) {
-  pinMeBrowserApi = chrome;
-  isChrome = true;
-}
+export class BrowserApi {
+  private static browserApi: BrowserGlobal;
+  private static isChromeValue = false;
 
-export function fnBrowserApi(): BrowserGlobal {
-  return pinMeBrowserApi;
-}
-
-export function fnExtensionStartUrl(): string {
-  return isChrome ? 'chrome-extension' : 'moz-extension';
-}
-
-export function fnOpenOptionsPage(subpage = ''): void {
-  if (isChrome) {
-    const optionsPage = chrome.runtime.getManifest().options_ui?.page;
-    if (optionsPage) window.open(`chrome-extension://${chrome.runtime.id}/${optionsPage}${subpage}`);
-    return;
+  static init() {
+    try {
+      this.browserApi = browser;
+    } catch (e) {
+      this.browserApi = chrome;
+      this.isChromeValue = true;
+    }
   }
-  window.open(browser.runtime.getManifest().options_ui?.page);
-  window.close();
-}
 
-export function fnBrowserLogoIcon(): string {
-  if (isChrome) {
-    return fnGetKey(chrome.runtime.getManifest().icons, '32');
+  static get isChrome(): boolean {
+    return this.isChromeValue;
   }
-  return fnGetKey(browser.runtime.getManifest().browser_action?.default_icon, '32');
-}
 
-export function fnRuntimeUrl(): string {
-  if (isChrome) {
-    return `chrome-extension://${chrome.runtime.id}`;
+  static get browser(): BrowserGlobal {
+    return this.browserApi;
   }
-  return 'moz-extension://';
-}
 
-export function fnIsChrome(): boolean {
-  return isChrome;
+  static get runtime(): BrowserRuntime {
+    return this.browserApi.runtime;
+  }
+
+  static get tabs(): BrowserTabs {
+    return this.browserApi.tabs;
+  }
+
+  static get localStore(): BrowserLocalStore {
+    return this.browserApi.storage.local;
+  }
+
+  static get downloads(): BrowserDownloads {
+    return this.browserApi.downloads;
+  }
+
+  static get browserAction(): BrowserAction {
+    return this.browserApi.browserAction;
+  }
+
+  static get startUrl(): string {
+    return this.isChromeValue ? 'chrome-extension' : 'moz-extension';
+  }
+
+  static get runtimeUrl(): string {
+    if (BrowserApi.isChrome) {
+      return `chrome-extension://${chrome.runtime.id}`;
+    }
+    return 'moz-extension://';
+  }
+
+  static get logoIconPath(): string {
+    if (this.isChromeValue) {
+      return fnGetKey(chrome.runtime.getManifest().icons, '32');
+    }
+    return fnGetKey(browser.runtime.getManifest().browser_action?.default_icon, '32');
+  }
+
+  static openOptionsPage(subpage = ''): void {
+    if (this.isChromeValue) {
+      const optionsPage = chrome.runtime.getManifest().options_ui?.page;
+      if (optionsPage) window.open(`chrome-extension://${chrome.runtime.id}/${optionsPage}${subpage}`);
+      return;
+    }
+    window.open(browser.runtime.getManifest().options_ui?.page);
+    window.close();
+  }
+
+  static sendTabMessage = <T>(msg: BusMessage<T>): Promise<void> => {
+    return new Promise((resolve: (...arg: any) => void, reject: (...arg: any) => void) => {
+      /* eslint-disable @typescript-eslint/no-unsafe-call */
+      /* eslint-disable @typescript-eslint/no-floating-promises */
+      this.tabs.query({ active: true, currentWindow: true }, (tabs: chrome.tabs.Tab[]) => {
+        const currentTab: BrowserTabObject | undefined = tabs[0];
+        if (currentTab?.id) {
+          try {
+            this.tabs.sendMessage(currentTab.id, msg, resolve);
+          } catch (e) {
+            fnConsoleLog('Error sendTabMessage', msg, e);
+            reject(e);
+          }
+        }
+      });
+    });
+  };
+
+  static sendRuntimeMessage = async <T>(msg: BusMessage<T>): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      try {
+        this.runtime.sendMessage(msg, (ack: any) => {
+          if (environmentConfig.showAckMessage) fnConsoleLog(`${msg.type}->ack`);
+          resolve(ack);
+        });
+      } catch (e) {
+        fnConsoleLog('runtime.lastError', BrowserApi.runtime.lastError);
+        reject(e);
+      }
+    });
+  };
+
+  static reloadContentScript = async (tabId: number): Promise<void> => {
+    const scripts = chrome.runtime.getManifest().content_scripts;
+    if (!scripts) return;
+    try {
+      await insertJsFiles(tabId, scripts[0]?.js);
+      await insertCssFiles(tabId, scripts[0].css);
+    } catch (e) {
+      fnConsoleLog('Error', e);
+    }
+  };
 }
+BrowserApi.init();
+
+const insertJsFiles = async (tabId: number, files: string[] | undefined): Promise<void> => {
+  if (!files) return;
+  if (BrowserApi.isChrome) {
+    await chrome.scripting.executeScript({ target: { tabId }, files });
+  } else {
+    for (const file of files) {
+      await browser.tabs.executeScript(tabId, { file });
+    }
+  }
+};
+
+const insertCssFiles = async (tabId: number, files: string[] | undefined): Promise<void> => {
+  if (!files) return;
+  if (BrowserApi.isChrome) {
+    await chrome.scripting.insertCSS({ target: { tabId }, files });
+  } else {
+    for (const file of files) {
+      await browser.tabs.insertCSS(tabId, { file });
+    }
+  }
+};

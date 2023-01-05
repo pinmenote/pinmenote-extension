@@ -16,6 +16,7 @@
  */
 import { PinObject, PinViewType } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -28,9 +29,7 @@ import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatch
 import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnB64toBlob } from '../../../common/fn/b64.to.blob.fn';
-import { fnBrowserApi } from '../../../common/service/browser.api.wrapper';
 import { pinIframeFn } from '../../../common/fn/pin/pin.iframe.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 interface PinValueProps {
   pin: PinObject;
@@ -39,7 +38,7 @@ interface PinValueProps {
 export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.Element => {
   const [styleIcon, setStyleIcon] = useState<boolean>(!pin.viewType || pin.viewType === PinViewType.SCREENSHOT);
   const handleRemove = async (): Promise<void> => {
-    await sendRuntimeMessage<PinObject>({
+    await BrowserApi.sendRuntimeMessage<PinObject>({
       type: BusMessageType.OPTIONS_PIN_REMOVE,
       data: pin
     });
@@ -56,7 +55,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
       url = window.URL.createObjectURL(new Blob([html], { type: 'text/html' }));
       filename = `${pin.id}.html`;
     }
-    await fnBrowserApi().downloads.download({
+    await BrowserApi.downloads.download({
       url,
       filename,
       conflictAction: 'uniquify'
@@ -70,7 +69,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
     } else {
       pin.viewType = PinViewType.SCREENSHOT;
     }
-    await sendRuntimeMessage<PinObject>({
+    await BrowserApi.sendRuntimeMessage<PinObject>({
       type: BusMessageType.OPTIONS_PIN_UPDATE,
       data: pin
     });
@@ -78,7 +77,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
   };
 
   const handleShare = async (): Promise<void> => {
-    await sendRuntimeMessage<PinObject>({
+    await BrowserApi.sendRuntimeMessage<PinObject>({
       type: BusMessageType.OPTIONS_PIN_SHARE,
       data: pin
     });
@@ -116,7 +115,7 @@ const EditElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.Element => 
         state = state.apply(tx);
         view.updateState(state);
         pin.value = defaultMarkdownSerializer.serialize(state.doc);
-        await sendRuntimeMessage<PinObject>({
+        await BrowserApi.sendRuntimeMessage<PinObject>({
           type: BusMessageType.OPTIONS_PIN_UPDATE,
           data: pin
         });

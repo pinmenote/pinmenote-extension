@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { PinStore } from '../store/pin.store';
 import { RuntimeLoginRefreshCommand } from '../command/runtime/runtime-login-refresh.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../common/message/runtime.message';
 import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
 
 export class WindowMediator {
@@ -50,7 +50,10 @@ export class WindowMediator {
 
   private static handleRefreshToken = async () => {
     fnConsoleLog('handleRefreshToken');
-    await sendRuntimeMessage<string>({ type: BusMessageType.CONTENT_REFRESH_TOKEN, data: window.location.origin });
+    await BrowserApi.sendRuntimeMessage<string>({
+      type: BusMessageType.CONTENT_REFRESH_TOKEN,
+      data: window.location.origin
+    });
   };
 
   // Move to message manager

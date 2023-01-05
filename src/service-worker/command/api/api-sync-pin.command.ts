@@ -18,6 +18,7 @@ import { PinByIdRequest, PinObject } from '../../../common/model/pin.model';
 import { fnIsoDateToUtcMiliseconds, fnMilisecondsToUtcDate } from '../../../common/fn/date.fn';
 import { ApiStore } from '../../store/api.store';
 import { ApiSyncQuotaCommand } from './api-sync-quota.command';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CryptoDecryptCommand } from '../crypto/crypto-decrypt.command';
@@ -30,7 +31,6 @@ import { PinRemoveCommand } from '../pin/pin-remove.command';
 import { PinUpdateCommand } from '../pin/pin-update.command';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import BoolDto = Pinmenote.Common.BoolDto;
 import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
 import EncryptedObjectDto = Pinmenote.Sync.EncryptedObjectDto;
@@ -59,7 +59,7 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
     await BrowserStorageWrapper.set(ApiStore.KEY_NOTE_UPDATE, dt);
 
     const quota = await new ApiSyncQuotaCommand().execute();
-    await sendRuntimeMessage<DiskQuotaDto>({
+    await BrowserApi.sendRuntimeMessage<DiskQuotaDto>({
       type: BusMessageType.POPUP_SYNC_QUOTA,
       data: quota
     });

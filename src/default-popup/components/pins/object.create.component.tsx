@@ -20,12 +20,11 @@ import { ActiveTabStore } from '../../store/active-tab.store';
 import AddIcon from '@mui/icons-material/Add';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { LogManager } from '../../../common/popup/log.manager';
 import { PinPopupInitData } from '../../../common/model/pin.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
-import { sendTabMessage } from '../../../common/message/tab.message';
 import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 
 export const ObjectCreateComponent: FunctionComponent = () => {
@@ -47,7 +46,7 @@ export const ObjectCreateComponent: FunctionComponent = () => {
 
   const handlePinStart = async () => {
     try {
-      await sendTabMessage<undefined>({
+      await BrowserApi.sendTabMessage<undefined>({
         type: BusMessageType.POPUP_PIN_START
       });
     } catch (e) {
@@ -58,7 +57,7 @@ export const ObjectCreateComponent: FunctionComponent = () => {
 
   const handlePinStop = async () => {
     try {
-      await sendTabMessage<undefined>({
+      await BrowserApi.sendTabMessage<undefined>({
         type: BusMessageType.POPUP_PIN_STOP
       });
     } catch (e) {
@@ -69,7 +68,7 @@ export const ObjectCreateComponent: FunctionComponent = () => {
 
   const handleBookmarkAdd = async () => {
     try {
-      await sendRuntimeMessage<BookmarkDto>({
+      await BrowserApi.sendRuntimeMessage<BookmarkDto>({
         type: BusMessageType.POPUP_BOOKMARK_ADD,
         data: {
           value: ActiveTabStore.pageTitle,
@@ -85,7 +84,7 @@ export const ObjectCreateComponent: FunctionComponent = () => {
 
   const handleBookmarkRemove = async () => {
     try {
-      await sendRuntimeMessage<BookmarkDto>({
+      await BrowserApi.sendRuntimeMessage<BookmarkDto>({
         type: BusMessageType.POPUP_BOOKMARK_REMOVE,
         data: {
           value: ActiveTabStore.pageTitle,

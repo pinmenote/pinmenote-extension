@@ -15,12 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect } from 'react';
+import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { Button } from '@mui/material';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../../common/message/runtime.message';
 
 export const SyncSettingsComponent: FunctionComponent = () => {
   useEffect(() => {
@@ -36,11 +36,11 @@ export const SyncSettingsComponent: FunctionComponent = () => {
   });
 
   const handleSynchronize = async () => {
-    await sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_DATA });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_DATA });
   };
 
   const handleClear = async () => {
-    await sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_CLEAR });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_CLEAR });
   };
 
   return (

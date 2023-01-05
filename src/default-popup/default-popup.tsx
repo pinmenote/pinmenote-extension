@@ -22,6 +22,7 @@ import '@fontsource/roboto/700.css';
 import { Box, Tab, Tabs } from '@mui/material';
 import React, { ReactElement, useState } from 'react';
 import { AccountTabComponent } from './components/tabs/account.tab.component';
+import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BusMessageType } from '../common/model/bus.model';
 import { LogManager } from '../common/popup/log.manager';
 import LogoDevIcon from '@mui/icons-material/LogoDev';
@@ -33,7 +34,6 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import { createRoot } from 'react-dom/client';
 import { environmentConfig } from '../common/environment';
 import { fnConsoleLog } from '../common/fn/console.fn';
-import { sendRuntimeMessage } from '../common/message/runtime.message';
 
 enum PanelEnum {
   PIN,
@@ -59,7 +59,7 @@ const App: React.FC = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: PanelEnum) => {
     setSelectedPanel(newValue);
     if (newValue === PanelEnum.ACCOUNT) {
-      sendRuntimeMessage<void>({
+      BrowserApi.sendRuntimeMessage<void>({
         type: BusMessageType.POPUP_ACCESS_TOKEN
       })
         .then(() => fnConsoleLog('ack'))

@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent } from 'react';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { Button } from '@mui/material';
-import { fnOpenOptionsPage } from '../../../common/service/browser.api.wrapper';
 
 export const PinBoardButton: FunctionComponent = () => {
   return (
@@ -25,7 +25,7 @@ export const PinBoardButton: FunctionComponent = () => {
         sx={{ width: '100%' }}
         style={{ marginBottom: 10 }}
         variant="outlined"
-        onClick={() => fnOpenOptionsPage()}
+        onClick={() => BrowserApi.openOptionsPage()}
       >
         Go to pin board
       </Button>

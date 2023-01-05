@@ -15,19 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
+import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { LogManager } from '../common/popup/log.manager';
 import { ObjectStoreKeys } from '../common/keys/object.store.keys';
 import { PinPopupInitData } from '../common/model/pin.model';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
-import { fnBrowserApi } from '../common/service/browser.api.wrapper';
 import { fnConsoleLog } from '../common/fn/console.fn';
-import { sendRuntimeMessage } from '../common/message/runtime.message';
 
 export class OptionsMessageHandler {
   static init(): void {
-    fnBrowserApi().runtime.onMessage.addListener(this.handleRemoteMessage);
+    BrowserApi.runtime.onMessage.addListener(this.handleRemoteMessage);
     TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
 
@@ -49,6 +48,6 @@ export class OptionsMessageHandler {
     const url = contentPinNewUrl();
     const data: PinPopupInitData = { url, isAddingNote: false, isBookmarked: false, pageTitle: document.title };
     LogManager.log(`handlePopupOpen->${JSON.stringify(data)}`);
-    await sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });
   };
 }

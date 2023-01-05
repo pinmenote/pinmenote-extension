@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { PinHashtagStore } from '../../store/pin/pin-hashtag.store';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsPinGetHashListCommand implements ICommand<void> {
@@ -25,7 +25,7 @@ export class OptionsPinGetHashListCommand implements ICommand<void> {
     try {
       const data = await PinHashtagStore.getHashtagList();
       fnConsoleLog('HASHTAG LIST', data);
-      await sendRuntimeMessage<string[]>({ type: BusMessageType.OPTIONS_PIN_GET_HASH_LIST, data });
+      await BrowserApi.sendRuntimeMessage<string[]>({ type: BusMessageType.OPTIONS_PIN_GET_HASH_LIST, data });
     } catch (e) {
       fnConsoleLog('Error', e);
     }

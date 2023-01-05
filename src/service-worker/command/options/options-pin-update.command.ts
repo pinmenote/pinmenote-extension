@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinUpdateCommand } from '../pin/pin-update.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsPinUpdateCommand implements ICommand<void> {
@@ -29,7 +29,7 @@ export class OptionsPinUpdateCommand implements ICommand<void> {
     try {
       await new PinUpdateCommand({ pin: this.data }).execute();
       await this.addChangedPin();
-      await sendRuntimeMessage<PinObject>({ type: BusMessageType.OPTIONS_PIN_UPDATE, data: this.data });
+      await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.OPTIONS_PIN_UPDATE, data: this.data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }

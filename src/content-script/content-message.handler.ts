@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
+import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { DocumentMediator } from './mediator/document.mediator';
 import { HtmlObject } from '../common/model/html.model';
 import { PinAddElementStore } from './store/pin-add-element.store';
@@ -30,18 +31,16 @@ import { RuntimePinChangedCommand } from './command/runtime/runtime-pin-changed.
 import { SettingsStore } from './store/settings.store';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
-import { fnBrowserApi } from '../common/service/browser.api.wrapper';
 import { fnConsoleLog } from '../common/fn/console.fn';
-import { sendRuntimeMessage } from '../common/message/runtime.message';
 
 export class ContentMessageHandler {
   static start(): void {
-    fnBrowserApi().runtime.onMessage.addListener(this.handleMessage);
+    BrowserApi.runtime.onMessage.addListener(this.handleMessage);
     TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
 
   static cleanup(): void {
-    fnBrowserApi().runtime.onMessage.removeListener(this.handleMessage);
+    BrowserApi.runtime.onMessage.removeListener(this.handleMessage);
   }
 
   private static handleMessage = async (
@@ -100,6 +99,6 @@ export class ContentMessageHandler {
       isAddingNote: PinAddElementStore.hasElement,
       isBookmarked: SettingsStore.isBookmarked
     };
-    await sendRuntimeMessage<PinPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
+    await BrowserApi.sendRuntimeMessage<PinPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };
 }

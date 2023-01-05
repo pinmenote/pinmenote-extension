@@ -26,6 +26,7 @@ import '../css/prosemirror.css';
 import { BusMessageType, TimeoutMessage } from '../common/model/bus.model';
 import { ContentExtensionData, ContentSettingsData, ExtensionTheme } from '../common/model/settings.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
+import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { ContentMessageHandler } from './content-message.handler';
 import { CreateLinkCommand } from './command/link/create-link.command';
@@ -40,7 +41,6 @@ import { WindowMediator } from './mediator/window.mediator';
 import { environmentConfig } from '../common/environment';
 import { fnNormalizeHref } from '../common/fn/normalize.url.fn';
 import { fnUid } from '../common/fn/uid.fn';
-import { sendRuntimeMessage } from '../common/message/runtime.message';
 import LinkDto = Pinmenote.Pin.LinkDto;
 
 class PinMeScript {
@@ -63,7 +63,7 @@ class PinMeScript {
     if (value.id === this.id) {
       await new InvalidatePinsCommand(this.href).execute();
       this.href = fnNormalizeHref(window.location.href);
-      await sendRuntimeMessage<TimeoutMessage>({
+      await BrowserApi.sendRuntimeMessage<TimeoutMessage>({
         type: BusMessageType.CONTENT_TIMEOUT,
         data: { id: this.id, ms: this.ms }
       });
@@ -86,7 +86,7 @@ class PinMeScript {
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches
       ? ExtensionTheme.LIGHT
       : ExtensionTheme.DARK;
-    await sendRuntimeMessage<ContentExtensionData>({
+    await BrowserApi.sendRuntimeMessage<ContentExtensionData>({
       type: BusMessageType.CONTENT_SETTINGS,
       data: {
         href: this.href,
@@ -106,7 +106,7 @@ class PinMeScript {
       clearInterval(this.redirectInterval);
       if (urlData.innerText) {
         const { data } = JSON.parse(urlData.innerText);
-        await sendRuntimeMessage<LinkDto>({ type: BusMessageType.CONTENT_LINK_ADD, data });
+        await BrowserApi.sendRuntimeMessage<LinkDto>({ type: BusMessageType.CONTENT_LINK_ADD, data });
       }
     }
   };
@@ -115,7 +115,7 @@ class PinMeScript {
     fnConsoleLog('visibilitychange', e);
     await this.initialTimeout();
     try {
-      await sendRuntimeMessage<undefined>({
+      await BrowserApi.sendRuntimeMessage<undefined>({
         type: BusMessageType.CONTENT_PIN_CHANGED
       });
     } catch (e) {
@@ -128,7 +128,7 @@ class PinMeScript {
     fnConsoleLog('initialTimeout');
     try {
       // TODO move to settings
-      await sendRuntimeMessage<TimeoutMessage>({
+      await BrowserApi.sendRuntimeMessage<TimeoutMessage>({
         type: BusMessageType.CONTENT_TIMEOUT,
         data: { id: this.id, ms: this.ms }
       });

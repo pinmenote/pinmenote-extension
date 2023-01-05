@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiStore } from '../../store/api.store';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 import TokenDataDto = Pinmenote.Auth.TokenDataDto;
 
@@ -25,7 +25,7 @@ export class PopupAccessTokenCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const tokenData = await ApiStore.getTokenData();
-      await sendRuntimeMessage<TokenDataDto | undefined>({
+      await BrowserApi.sendRuntimeMessage<TokenDataDto | undefined>({
         type: BusMessageType.POPUP_ACCESS_TOKEN,
         data: tokenData
       });

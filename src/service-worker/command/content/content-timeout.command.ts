@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BusMessageType, TimeoutMessage } from '../../../common/model/bus.model';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendTabMessage } from '../../../common/message/tab.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentTimeoutCommand implements ICommand<void> {
@@ -31,10 +31,10 @@ export class ContentTimeoutCommand implements ICommand<void> {
   }
 
   private sendTimeoutMessage = async (): Promise<void> => {
-    await sendTabMessage<TimeoutMessage>({ type: BusMessageType.CONTENT_TIMEOUT, data: this.data });
+    await BrowserApi.sendTabMessage<TimeoutMessage>({ type: BusMessageType.CONTENT_TIMEOUT, data: this.data });
   };
 
   private sendTimeoutSetMessage = async (data: number): Promise<void> => {
-    await sendTabMessage<number>({ type: BusMessageType.CONTENT_TIMEOUT_SET, data });
+    await BrowserApi.sendTabMessage<number>({ type: BusMessageType.CONTENT_TIMEOUT_SET, data });
   };
 }

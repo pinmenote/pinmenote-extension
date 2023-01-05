@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnBrowserApi, fnRuntimeUrl } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { ExtensionTheme } from '../../../common/model/settings.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import icon16 from '../../../assets/icon/light/16.png';
@@ -23,7 +23,7 @@ import icon32 from '../../../assets/icon/light/32.png';
 import ICommand = Pinmenote.Common.ICommand;
 
 const lightIcons = () => {
-  const start = fnRuntimeUrl().length + 1;
+  const start = BrowserApi.runtimeUrl.length + 1;
   return {
     path: {
       '16': (icon16 as string).substring(start).split('?')[0],
@@ -38,7 +38,7 @@ export class ContentIconColorCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       if (this.theme === ExtensionTheme.LIGHT) {
-        await fnBrowserApi().browserAction.setIcon(lightIcons());
+        await BrowserApi.browserAction.setIcon(lightIcons());
       }
     } catch (e) {
       fnConsoleLog('Error', this.theme, e);

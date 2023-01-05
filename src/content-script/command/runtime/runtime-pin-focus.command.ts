@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class RuntimePinFocusCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     try {
-      await sendRuntimeMessage<undefined>({
+      await BrowserApi.sendRuntimeMessage<undefined>({
         type: BusMessageType.CONTENT_PIN_FOCUS
       });
     } catch (e: unknown) {

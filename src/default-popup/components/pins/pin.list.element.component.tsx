@@ -18,6 +18,7 @@ import { IconButton, Typography } from '@mui/material';
 import { PinObject, PinUpdateObject } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -29,8 +30,6 @@ import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
-import { sendTabMessage } from '../../../common/message/tab.message';
 
 interface PinListElementProps {
   pin: PinObject;
@@ -43,27 +42,27 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
   const [isVisible, setIsVisible] = useState(pin.visible);
   const handlePinGo = async (data: PinObject): Promise<void> => {
     data.visible = true;
-    await sendRuntimeMessage<PinUpdateObject>({
+    await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
       type: BusMessageType.POPUP_PIN_UPDATE,
       data: {
         pin: data
       }
     });
 
-    await sendRuntimeMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
-    await sendTabMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
+    await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
+    await BrowserApi.sendTabMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
 
     window.close();
   };
 
   const handlePinVisible = async (data: PinObject): Promise<void> => {
     data.visible = !data.visible;
-    await sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_VISIBLE, data });
+    await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_VISIBLE, data });
     setIsVisible(data.visible);
   };
 
   const handlePinRemove = async (data: PinObject): Promise<void> => {
-    await sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_REMOVE, data });
+    await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_REMOVE, data });
     // Send itself cause command sends message to tab
     TinyEventDispatcher.dispatch(BusMessageType.POPUP_PIN_REMOVE, data);
   };
@@ -72,7 +71,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
     setShareOpen(!isShareOpen);
     setIsPopoverOpen(false);
     if (!data.share && !isShareOpen) {
-      await sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_SHARE, data });
+      await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_SHARE, data });
     }
   };
 

@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class RuntimePinChangedCommand implements ICommand<void> {
   constructor(private changedIds: number[]) {}
   async execute(): Promise<void> {
     for (const id of this.changedIds) {
-      await sendRuntimeMessage<{ id: number }>({
+      await BrowserApi.sendRuntimeMessage<{ id: number }>({
         type: BusMessageType.CONTENT_PIN_GET_ID,
         data: { id }
       });

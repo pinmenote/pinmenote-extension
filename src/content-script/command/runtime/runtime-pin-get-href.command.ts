@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { contentPinNewUrl } from '../../../common/fn/pin/content-pin-new-url';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 import PinUrl = Pinmenote.Pin.PinUrl;
 
 export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    await sendRuntimeMessage<PinUrl>({
+    await BrowserApi.sendRuntimeMessage<PinUrl>({
       type: BusMessageType.CONTENT_PIN_GET_HREF,
       data: contentPinNewUrl()
     });

@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PIN_HASHTAG_REGEX, PinObject, PinUpdateObject } from '../../common/model/pin.model';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { EditorView } from 'prosemirror-view';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
@@ -22,7 +23,6 @@ import { createTextEditorState } from '../../common/components/text-editor/text.
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
-import { sendRuntimeMessage } from '../../common/message/runtime.message';
 
 export class EditorComponent {
   private el = document.createElement('div');
@@ -83,7 +83,7 @@ export class EditorComponent {
         const newMatch = value.match(PIN_HASHTAG_REGEX);
         this.pin.value = value;
         try {
-          await sendRuntimeMessage<PinUpdateObject>({
+          await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
             type: BusMessageType.CONTENT_PIN_UPDATE,
             data: {
               pin: this.pin,
@@ -108,7 +108,10 @@ export class EditorComponent {
       this.el.style.height = `${this.pin.size.height}px`;
     }
     try {
-      await sendRuntimeMessage<PinUpdateObject>({ type: BusMessageType.CONTENT_PIN_UPDATE, data: { pin: this.pin } });
+      await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
+        type: BusMessageType.CONTENT_PIN_UPDATE,
+        data: { pin: this.pin }
+      });
     } catch (e) {
       fnConsoleLog(e);
     }

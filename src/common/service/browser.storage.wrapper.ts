@@ -14,37 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnBrowserApi } from './browser.api.wrapper';
+
+import { BrowserApi } from './browser.api.wrapper';
 
 export class BrowserStorageWrapper {
-  private static get api(): chrome.storage.LocalStorageArea | browser.storage.StorageArea {
-    return fnBrowserApi().storage.local;
-  }
-
   static async get<T>(key: string): Promise<T> {
-    const value = await this.api.get(key);
+    const value = await BrowserApi.localStore.get(key);
     return value[key];
   }
 
   static async getAll(): Promise<any> {
-    return await this.api.get();
+    return await BrowserApi.localStore.get();
   }
 
   static async getBytesInUse(key?: string): Promise<number> {
-    return await this.api.getBytesInUse(key);
+    return await BrowserApi.localStore.getBytesInUse(key);
   }
 
   static async set<T>(key: string, value: T): Promise<void> {
     const v: { [key: string]: any } = {};
     v[key] = value;
-    await this.api.set(v);
+    await BrowserApi.localStore.set(v);
   }
 
   static async remove(key: string): Promise<void> {
-    await this.api.remove(key);
+    await BrowserApi.localStore.remove(key);
   }
 
   static async clear(): Promise<void> {
-    await this.api.clear();
+    await BrowserApi.localStore.clear();
   }
 }

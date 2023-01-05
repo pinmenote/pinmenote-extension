@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PinObject, PinRangeRequest } from '../../../common/model/pin.model';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 export class PinBoardStore {
   static pins: PinObject[] = [];
@@ -71,7 +71,7 @@ export class PinBoardStore {
 
   static async sendRange(): Promise<void> {
     fnConsoleLog('PinBoardStore->getRange', this.search);
-    await sendRuntimeMessage<PinRangeRequest>({
+    await BrowserApi.sendRuntimeMessage<PinRangeRequest>({
       type: BusMessageType.OPTIONS_PIN_GET_RANGE,
       data: this.search
     });
@@ -79,7 +79,7 @@ export class PinBoardStore {
 
   static async sendSearch(): Promise<void> {
     fnConsoleLog('PinBoardStore->getSearch', this.search);
-    await sendRuntimeMessage<PinRangeRequest>({
+    await BrowserApi.sendRuntimeMessage<PinRangeRequest>({
       type: BusMessageType.OPTIONS_PIN_SEARCH,
       data: PinBoardStore.search
     });

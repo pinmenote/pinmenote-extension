@@ -16,6 +16,7 @@
  */
 import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../common/components/colors';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
@@ -23,8 +24,6 @@ import { LogManager } from '../../../common/popup/log.manager';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnOpenOptionsPage } from '../../../common/service/browser.api.wrapper';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 import TokenUserDto = Pinmenote.Auth.TokenUserDto;
 import LoginDto = Pinmenote.Auth.LoginDto;
@@ -49,7 +48,7 @@ export const LoginComponent: FunctionComponent = () => {
 
   const handleLoginClick = async (): Promise<void> => {
     setResponseError(undefined);
-    await sendRuntimeMessage<LoginDto>({
+    await BrowserApi.sendRuntimeMessage<LoginDto>({
       type: BusMessageType.POPUP_LOGIN,
       data: { email, signature: '' }
     });
@@ -103,7 +102,7 @@ export const LoginComponent: FunctionComponent = () => {
           sx={{ width: '100%' }}
           style={{ marginBottom: 10 }}
           variant="outlined"
-          onClick={() => fnOpenOptionsPage('#settings')}
+          onClick={() => BrowserApi.openOptionsPage('#settings')}
         >
           Advanced options
         </Button>

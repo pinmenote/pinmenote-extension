@@ -16,10 +16,10 @@
  */
 import { ApiLoginCommand } from '../api/api-login.command';
 import { ApiStore } from '../../store/api.store';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentLoginRefreshCommand } from '../content/content-login-refresh.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 import LoginDto = Pinmenote.Auth.LoginDto;
 import TokenUserDto = Pinmenote.Auth.TokenUserDto;
@@ -33,7 +33,7 @@ export class PopupLoginCommand implements ICommand<void> {
 
       const data = await new ApiLoginCommand(this.data).execute();
 
-      await sendRuntimeMessage<TokenUserDto>({
+      await BrowserApi.sendRuntimeMessage<TokenUserDto>({
         type: BusMessageType.POPUP_LOGIN,
         data
       });

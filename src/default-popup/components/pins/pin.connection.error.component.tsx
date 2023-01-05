@@ -17,8 +17,8 @@
 import { Button, Typography } from '@mui/material';
 import React, { FunctionComponent } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { PinBoardButton } from './pin.board.button';
-import { fnBrowserApi } from '../../../common/service/browser.api.wrapper';
 
 export const PinConnectionErrorComponent: FunctionComponent = () => {
   const isExtension = ActiveTabStore.isExtension;
@@ -42,7 +42,7 @@ const ExtensionMessage: FunctionComponent = () => {
 
 const NoUrlMessage: FunctionComponent = () => {
   const handleRefreshPage = async (): Promise<void> => {
-    await fnBrowserApi().tabs.reload();
+    await BrowserApi.tabs.reload();
     window.close();
   };
 

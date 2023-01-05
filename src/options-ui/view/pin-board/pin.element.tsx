@@ -16,6 +16,7 @@
  */
 import { PinObject, PinViewType } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -27,7 +28,6 @@ import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatch
 import Typography from '@mui/material/Typography';
 import { fnDateFormat } from '../../../common/fn/date.format.fn';
 import { pinIframeFn } from '../../../common/fn/pin/pin.iframe.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 interface PinElementParams {
   pin: PinObject;
@@ -74,7 +74,7 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
   };
 
   const handleUrlClick = async () => {
-    await sendRuntimeMessage<PinObject>({
+    await BrowserApi.sendRuntimeMessage<PinObject>({
       type: BusMessageType.CONTENT_PIN_NAVIGATE,
       data: pin
     });

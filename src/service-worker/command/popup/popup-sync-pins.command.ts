@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiSyncPinCommand } from '../api/api-sync-pin.command';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import BoolDto = Pinmenote.Common.BoolDto;
 import ICommand = Pinmenote.Common.ICommand;
 
@@ -25,7 +25,7 @@ export class PopupSyncPinsCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const data = await new ApiSyncPinCommand().execute();
-      await sendRuntimeMessage<BoolDto>({
+      await BrowserApi.sendRuntimeMessage<BoolDto>({
         type: BusMessageType.POPUP_SYNC_PINS,
         data
       });

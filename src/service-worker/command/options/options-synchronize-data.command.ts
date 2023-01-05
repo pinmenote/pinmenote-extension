@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsSynchronizeDataCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    await sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_DATA, data: 'foo' });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_DATA, data: 'foo' });
   }
 }

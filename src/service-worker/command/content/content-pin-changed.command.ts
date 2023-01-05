@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendTabMessage } from '../../../common/message/tab.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentPinChangedCommand implements ICommand<void> {
@@ -29,7 +29,7 @@ export class ContentPinChangedCommand implements ICommand<void> {
       await BrowserStorageWrapper.remove(ObjectStoreKeys.PIN_CHANGE);
 
       const data = changedPin || [];
-      await sendTabMessage<number[]>({
+      await BrowserApi.sendTabMessage<number[]>({
         type: BusMessageType.CONTENT_PIN_CHANGED,
         data
       });

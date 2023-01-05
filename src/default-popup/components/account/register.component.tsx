@@ -16,6 +16,7 @@
  */
 import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../common/components/colors';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -25,9 +26,7 @@ import { RegisterFormData } from '../../../common/model/auth.model';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnOpenOptionsPage } from '../../../common/service/browser.api.wrapper';
 import { getWebsiteUrl } from '../../../common/environment';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 import TokenUserDto = Pinmenote.Auth.TokenUserDto;
 
@@ -76,7 +75,7 @@ export const RegisterComponent: FunctionComponent = () => {
         message: 'Accept Terms of use and Privacy Policy before creating account'
       });
     } else {
-      await sendRuntimeMessage<RegisterFormData>({
+      await BrowserApi.sendRuntimeMessage<RegisterFormData>({
         type: BusMessageType.POPUP_REGISTER,
         data: { username, email, acceptedVersion }
       });
@@ -167,7 +166,7 @@ export const RegisterComponent: FunctionComponent = () => {
           sx={{ width: '100%' }}
           style={{ marginBottom: 10 }}
           variant="outlined"
-          onClick={() => fnOpenOptionsPage('#settings')}
+          onClick={() => BrowserApi.openOptionsPage('#settings')}
         >
           Advanced options
         </Button>

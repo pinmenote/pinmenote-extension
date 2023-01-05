@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiSyncQuotaCommand } from '../api/api-sync-quota.command';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
 import ICommand = Pinmenote.Common.ICommand;
 
@@ -25,7 +25,7 @@ export class PopupSyncQuotaCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const data = await new ApiSyncQuotaCommand().execute();
-      await sendRuntimeMessage<DiskQuotaDto>({
+      await BrowserApi.sendRuntimeMessage<DiskQuotaDto>({
         type: BusMessageType.POPUP_SYNC_QUOTA,
         data
       });

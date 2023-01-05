@@ -21,6 +21,7 @@ import {
   fnComputeHtmlContent,
   fnComputeHtmlParentStyles
 } from '../../common/fn/compute.element.fn';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
@@ -28,7 +29,6 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnImgResize } from '../../common/fn/img.resize.fn';
 import { fnUid } from '../../common/fn/uid.fn';
 import { fnXpath } from '../../common/fn/xpath.fn';
-import { sendRuntimeMessage } from '../../common/message/runtime.message';
 import LinkLocator = Pinmenote.Pin.LinkLocator;
 import PinPoint = Pinmenote.Pin.PinPoint;
 
@@ -134,7 +134,7 @@ const computePinContent = (ref: HTMLElement): HtmlContent => {
 };
 
 const sendGetPinNextId = (reject: (value: string) => void) => {
-  sendRuntimeMessage<undefined>({
+  BrowserApi.sendRuntimeMessage<undefined>({
     type: BusMessageType.CONTENT_PIN_ID
   })
     .then(() => {
@@ -147,7 +147,7 @@ const sendGetPinNextId = (reject: (value: string) => void) => {
 };
 
 const sendGetPinTakeScreenshot = (reject: (value: string) => void) => {
-  sendRuntimeMessage<undefined>({
+  BrowserApi.sendRuntimeMessage<undefined>({
     type: BusMessageType.CONTENT_PIN_SCREENSHOT
   })
     .then(() => {
@@ -170,7 +170,7 @@ const addNewPinWithScreenshot = async (
   } finally {
     dto.screenshot = screenshot;
   }
-  await sendRuntimeMessage<PinObject>({
+  await BrowserApi.sendRuntimeMessage<PinObject>({
     type: BusMessageType.CONTENT_PIN_ADD,
     data: dto
   });

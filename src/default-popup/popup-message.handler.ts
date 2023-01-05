@@ -15,20 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
-import { fnBrowserApi, fnExtensionStartUrl } from '../common/service/browser.api.wrapper';
 import { ActiveTabStore } from './store/active-tab.store';
+import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { LogManager } from '../common/popup/log.manager';
 import { ObjectStoreKeys } from '../common/keys/object.store.keys';
 import { PinPopupInitData } from '../common/model/pin.model';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../common/fn/console.fn';
-import { sendTabMessage } from '../common/message/tab.message';
 
 export class PopupMessageHandler {
   static init(): void {
-    fnBrowserApi().runtime.onMessage.addListener(this.handleMessage);
-    sendTabMessage<undefined>({
+    BrowserApi.runtime.onMessage.addListener(this.handleMessage);
+    BrowserApi.sendTabMessage<undefined>({
       type: BusMessageType.POPUP_OPEN
     })
       .then((ack: any) => {
@@ -48,7 +47,7 @@ export class PopupMessageHandler {
       LogManager.log(`popupInitListener->LAST ID !!! ${JSON.stringify(lastId)}`);
       LogManager.log(`${event} ${JSON.stringify(value || {})}`);
       if (value.url) LogManager.log(`${event} ${value.url.href}`);
-      if (value.url?.href.startsWith(fnExtensionStartUrl())) {
+      if (value.url?.href.startsWith(BrowserApi.startUrl)) {
         ActiveTabStore.updateState(true, true, value);
       } else if (value.url) {
         ActiveTabStore.updateState(false, false, value);
@@ -67,7 +66,7 @@ export class PopupMessageHandler {
       type: BusMessageType.POPUP_ACK
     });
     // Skip not owned messages
-    if (runtime.id !== fnBrowserApi().runtime.id) return;
+    if (runtime.id !== BrowserApi.runtime.id) return;
 
     TinyEventDispatcher.dispatch(msg.type, msg.data);
   };

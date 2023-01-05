@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { readPrivateKey } from 'openpgp';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PopupPrivateKeyImportCommand implements ICommand<void> {
@@ -27,7 +27,7 @@ export class PopupPrivateKeyImportCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       await this.importPrivateKey(this.data);
-      await sendRuntimeMessage<string>({
+      await BrowserApi.sendRuntimeMessage<string>({
         type: BusMessageType.POPUP_PRIVATE_KEY_GET,
         data: this.data
       });

@@ -16,12 +16,12 @@
  */
 import { Input, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
+import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { ContentSettingsData } from '../../../../common/model/settings.model';
 import { SettingsStore } from '../../store/settings.store';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { sendRuntimeMessage } from '../../../../common/message/runtime.message';
 
 const borderContainer: CSSProperties = {
   display: 'flex',
@@ -53,7 +53,7 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
       SettingsStore.settings.screenshotQuality = value;
     }
     setScreenshotQuality(value);
-    await sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
   };
 
   const handleScreenshotFormat = async (e: SelectChangeEvent): Promise<void> => {
@@ -61,7 +61,7 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
       SettingsStore.settings.screenshotFormat = e.target.value;
     }
     setScreenshotFormat(e.target.value);
-    await sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SET_SETTINGS, data: SettingsStore.settings });
   };
 
   return (

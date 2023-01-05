@@ -16,12 +16,11 @@
  */
 import { Button, Divider } from '@mui/material';
 import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { PinBoardStore } from '../store/pin-board.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnBrowserLogoIcon } from '../../../common/service/browser.api.wrapper';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 
 class MenuStore {
   static readonly ALL_URLS = '<all_urls>';
@@ -50,11 +49,11 @@ class MenuStore {
   }
 
   private static async getHashList(): Promise<void> {
-    await sendRuntimeMessage<undefined>({ type: BusMessageType.OPTIONS_PIN_GET_HASH_LIST });
+    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.OPTIONS_PIN_GET_HASH_LIST });
   }
 
   private static async getOriginUrls(): Promise<void> {
-    await sendRuntimeMessage<undefined>({ type: BusMessageType.OPTIONS_GET_ORIGIN_URLS });
+    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.OPTIONS_GET_ORIGIN_URLS });
   }
 }
 
@@ -117,7 +116,7 @@ export const LeftSideMenu: FunctionComponent = () => {
     <div style={{ minWidth: 250, maxWidth: 250, display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%', flexDirection: 'column' }}>
         <div style={{ display: 'flex', marginTop: 10, alignItems: 'center', justifyContent: 'center' }}>
-          <img src={fnBrowserLogoIcon()} width="32" height="32" style={{ marginRight: 10 }} />
+          <img src={BrowserApi.logoIconPath} width="32" height="32" style={{ marginRight: 10 }} />
           <Typography fontSize="2em" align="center">
             pinmenote
           </Typography>

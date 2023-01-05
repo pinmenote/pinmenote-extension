@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { fnBrowserApi } from '../../../common/service/browser.api.wrapper';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import LinkDto = Pinmenote.Pin.LinkDto;
@@ -27,7 +27,7 @@ export class ContentLinkAddCommand implements ICommand<void> {
     try {
       fnConsoleLog('ContentLinkAddCommand', this.data);
       await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LINK, this.data);
-      await fnBrowserApi().tabs.update({ url: this.data.url.href });
+      await BrowserApi.tabs.update({ url: this.data.url.href });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }

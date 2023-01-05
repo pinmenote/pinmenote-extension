@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PinObject, PinUpdateObject } from '../../common/model/pin.model';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ObjectTypeDto } from '../../common/model/html.model';
 import { PinComponent } from '../components/pin.component';
 import { PinStore } from './pin.store';
-import { sendRuntimeMessage } from '../../common/message/runtime.message';
 import PinPoint = Pinmenote.Pin.PinPoint;
 
 export class PinDragStore {
@@ -39,7 +39,7 @@ export class PinDragStore {
   public static async stopDragPin(value: PinPoint): Promise<void> {
     if (!this.dragValue) return;
     this.dragValue.stopDrag(value);
-    await sendRuntimeMessage<PinUpdateObject>({
+    await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
       type: BusMessageType.CONTENT_PIN_UPDATE,
       data: { pin: this.dragValue.object }
     });

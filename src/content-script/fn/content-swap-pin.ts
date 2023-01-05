@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { fnComputeCssContent, fnComputeHtmlContent } from '../../common/fn/compute.element.fn';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { PinComponent } from '../components/pin.component';
 import { PinUpdateObject } from '../../common/model/pin.model';
@@ -24,7 +25,6 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnImgResize } from '../../common/fn/img.resize.fn';
 import { fnSleep } from '../../common/fn/sleep.fn';
 import { fnXpath } from '../../common/fn/xpath.fn';
-import { sendRuntimeMessage } from '../../common/message/runtime.message';
 
 export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement): Promise<void> => {
   pinData.container.style.display = 'none';
@@ -51,7 +51,7 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
   pinData.object.locator.offset = { x: 0, y: 0 };
 
   return new Promise((resolve, reject) => {
-    sendRuntimeMessage<undefined>({
+    BrowserApi.sendRuntimeMessage<undefined>({
       type: BusMessageType.CONTENT_PIN_SCREENSHOT
     })
       .then(() => {
@@ -72,7 +72,7 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
 
       pinData.object.screenshot = await fnImgResize(pinData.object, value);
 
-      await sendRuntimeMessage<PinUpdateObject>({
+      await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
         type: BusMessageType.CONTENT_PIN_UPDATE,
         data: { pin: pinData.object }
       });

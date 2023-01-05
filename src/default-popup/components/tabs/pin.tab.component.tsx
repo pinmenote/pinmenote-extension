@@ -17,13 +17,13 @@
 import { PinObject, PinPopupInitData } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
 import { PinListOriginComponent } from '../pins/pin.list.origin.component';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import { sendRuntimeMessage } from '../../../common/message/runtime.message';
 import PinUrl = Pinmenote.Pin.PinUrl;
 
 export const PinTabComponent: FunctionComponent = () => {
@@ -61,11 +61,11 @@ export const PinTabComponent: FunctionComponent = () => {
   });
 
   const fillPinData = async (url: PinUrl) => {
-    await sendRuntimeMessage<PinUrl>({
+    await BrowserApi.sendRuntimeMessage<PinUrl>({
       type: BusMessageType.POPUP_PIN_GET_ORIGIN,
       data: url
     });
-    await sendRuntimeMessage<PinUrl>({
+    await BrowserApi.sendRuntimeMessage<PinUrl>({
       type: BusMessageType.POPUP_PIN_GET_HREF,
       data: url
     });
