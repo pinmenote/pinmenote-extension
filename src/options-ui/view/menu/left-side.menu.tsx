@@ -18,8 +18,8 @@ import { Button, Divider } from '@mui/material';
 import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjHashtagStore } from '../../../common/store/obj-hashtag.store';
 import { PinBoardStore } from '../store/pin-board.store';
-import { PinHashtagStore } from '../../../common/store/pin-hashtag.store';
 import { PinHrefOriginStore } from '../../../common/store/pin-href-origin.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
@@ -44,7 +44,7 @@ class MenuStore {
     urlList.unshift(MenuStore.ALL_URLS);
 
     // hash list
-    const hashList = await PinHashtagStore.getHashtagList();
+    const hashList = await ObjHashtagStore.getHashtagList();
     MenuStore.hashList = hashList.sort();
   };
 }

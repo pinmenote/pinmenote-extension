@@ -19,8 +19,6 @@ import PinSize = Pinmenote.Pin.PinSize;
 import PinUrl = Pinmenote.Pin.PinUrl;
 import ShareUrlDto = Pinmenote.Share.ShareUrlDto;
 
-export const PIN_HASHTAG_REGEX = new RegExp(/#(\w+)/g);
-
 export enum PinViewType {
   SCREENSHOT = 1,
   CONTENT = 2

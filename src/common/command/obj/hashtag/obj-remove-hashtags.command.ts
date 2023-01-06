@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PIN_HASHTAG_REGEX } from '../../model/pin.model';
+import { ObjFindHashtagCommand } from './obj-find-hashtag.command';
+import { ObjHashtagStore } from '../../../store/obj-hashtag.store';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class PinFindHashtagCommand implements ICommand<string[]> {
-  constructor(private value: string) {}
+export class ObjRemoveHashtagsCommand implements ICommand<Promise<void>> {
+  constructor(private id: number, private value: string) {}
 
-  execute(): string[] {
-    const match = this.value.match(PIN_HASHTAG_REGEX);
-    return match ? Array.from(match) : [];
+  async execute(): Promise<void> {
+    const hashtags = new ObjFindHashtagCommand(this.value).execute();
+    for (const tag of hashtags) {
+      await ObjHashtagStore.delHashtag(tag, this.id);
+    }
   }
 }

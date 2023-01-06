@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,19 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export class ObjectStoreKeys {
-  // PIN STATE
-  static readonly PIN_NAVIGATE = 'pin:navigate';
+import { ObjFindHashtagCommand } from './obj-find-hashtag.command';
+import { ObjHashtagStore } from '../../../store/obj-hashtag.store';
+import ICommand = Pinmenote.Common.ICommand;
 
-  // ID
-  static readonly OBJECT_ID = 'o:id';
-  static readonly OBJECT_LIST_ID = 'o:list:id';
-  static readonly OBJECT_LIST = 'o:list';
+export class ObjAddHashtagsCommand implements ICommand<Promise<void>> {
+  constructor(private id: number, private value: string) {}
 
-  // LINK
-  static readonly OBJECT_LINK = 'o:link';
-  // BOOKMARK
-
-  static readonly OBJECT_BOOKMARK = 'o:bookmark';
-  static readonly BOOKMARK_LIST = 'o:bookmark:list';
+  async execute(): Promise<void> {
+    const hashtags = new ObjFindHashtagCommand(this.value).execute();
+    for (const tag of hashtags) {
+      await ObjHashtagStore.addHashtag(tag, this.id);
+    }
+  }
 }

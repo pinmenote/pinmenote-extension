@@ -16,16 +16,16 @@
  */
 import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
 
-export class PinHashtagStore {
-  private static PIN_HASHTAG = 'pin:hashtag';
-  private static PIN_LIST_HASHTAG = 'pin:hashtag:list';
+export class ObjHashtagStore {
+  private static OBJ_HASHTAG = 'obj:hashtag';
+  private static OBJ_LIST_HASHTAG = 'obj:hashtag:list';
 
   static async addHashtag(hashtag: string, id: number): Promise<void> {
     const ids = await this.getHashtagIds(hashtag);
     if (ids.indexOf(id) === -1) {
       ids.push(id);
     }
-    const key = `${this.PIN_HASHTAG}:${hashtag}`;
+    const key = `${this.OBJ_HASHTAG}:${hashtag}`;
     await BrowserStorageWrapper.set(key, ids);
 
     await this.addListHashtag(hashtag);
@@ -33,7 +33,7 @@ export class PinHashtagStore {
 
   static async delHashtag(hashtag: string, id: number): Promise<void> {
     const ids = await this.getHashtagIds(hashtag);
-    const key = `${this.PIN_HASHTAG}:${hashtag}`;
+    const key = `${this.OBJ_HASHTAG}:${hashtag}`;
     for (let i = 0; i < ids.length; i++) {
       if (ids[i] === id) {
         ids.splice(i, 1);
@@ -49,12 +49,12 @@ export class PinHashtagStore {
   }
 
   static async getHashtagList(): Promise<string[]> {
-    const value = await BrowserStorageWrapper.get<string[] | undefined>(this.PIN_LIST_HASHTAG);
+    const value = await BrowserStorageWrapper.get<string[] | undefined>(this.OBJ_LIST_HASHTAG);
     return value || [];
   }
 
   private static async getHashtagIds(hashtag: string): Promise<number[]> {
-    const key = `${this.PIN_HASHTAG}:${hashtag}`;
+    const key = `${this.OBJ_HASHTAG}:${hashtag}`;
     return (await BrowserStorageWrapper.get<number[] | undefined>(key)) || [];
   }
 
@@ -71,6 +71,6 @@ export class PinHashtagStore {
   }
 
   private static async setHashtagList(list: string[]): Promise<void> {
-    await BrowserStorageWrapper.set(this.PIN_LIST_HASHTAG, list);
+    await BrowserStorageWrapper.set(this.OBJ_LIST_HASHTAG, list);
   }
 }

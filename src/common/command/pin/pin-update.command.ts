@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ObjHashtagStore } from '../../store/obj-hashtag.store';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinHashtagStore } from '../../store/pin-hashtag.store';
 import { PinUpdateObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
@@ -51,7 +51,7 @@ export class PinUpdateCommand implements ICommand<void> {
     if (!this.data.newHashtag) return;
     const hashtags = this.data.newHashtag;
     for (const tag of hashtags) {
-      await PinHashtagStore.addHashtag(tag, this.data.pin.id);
+      await ObjHashtagStore.addHashtag(tag, this.data.pin.id);
     }
   }
 
@@ -59,7 +59,7 @@ export class PinUpdateCommand implements ICommand<void> {
     if (!this.data.oldHashtag) return;
     const hashtags = this.data.oldHashtag;
     for (const tag of hashtags) {
-      await PinHashtagStore.delHashtag(tag, this.data.pin.id);
+      await ObjHashtagStore.delHashtag(tag, this.data.pin.id);
     }
   }
 }

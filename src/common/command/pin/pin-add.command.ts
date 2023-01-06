@@ -15,10 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ObjUpdateLastId } from '../obj/obj-update-last-id';
+import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
+import { ObjAddIdCommand } from '../obj/obj-add-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinFindHashtagCommand } from './pin-find-hashtag.command';
-import { PinHashtagStore } from '../../store/pin-hashtag.store';
 import { PinHrefOriginStore } from '../../store/pin-href-origin.store';
 import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
@@ -29,27 +28,14 @@ export class PinAddCommand implements ICommand<void> {
   async execute(): Promise<void> {
     fnConsoleLog('PinAddCommand->execute', this.data, this.data.id);
 
-    await this.addId(this.data.id);
+    await new ObjAddIdCommand(this.data.id).execute();
 
-    const hashtags = new PinFindHashtagCommand(this.data.value).execute();
-    for (const tag of hashtags) {
-      await PinHashtagStore.addHashtag(tag, this.data.id);
-    }
+    await new ObjAddHashtagsCommand(this.data.id, this.data.value).execute();
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`;
+
     await BrowserStorageWrapper.set(key, this.data);
+
     await PinHrefOriginStore.addHrefOriginId(this.data.url, this.data.id);
-  }
-
-  private async addId(id: number): Promise<void> {
-    const ids = await this.getIds();
-    ids.push(id);
-    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_ID_LIST, ids);
-    await new ObjUpdateLastId(id).execute();
-  }
-
-  private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.PIN_ID_LIST);
-    return value || [];
   }
 }
