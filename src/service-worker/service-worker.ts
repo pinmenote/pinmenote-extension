@@ -16,11 +16,7 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { ContentPinGetIdCommand } from './command/content/content-pin-get-id.command';
-import { ContentPinNextIdCommand } from './command/content/content-pin-next-id.command';
-import { ContentPinRemoveCommand } from './command/content/content-pin-remove.command';
 import { ContentPinScreenshotCommand } from './command/content/content-pin-screenshot.command';
-import { ContentPinUpdateCommand } from './command/content/content-pin-update.command';
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { ContentTimeoutCommand } from './command/content/content-timeout.command';
@@ -61,18 +57,6 @@ const handleMessage = async (
   if (runtime.id !== BrowserApi.runtime.id) return;
 
   switch (msg.type) {
-    case BusMessageType.CONTENT_PIN_ID:
-      await new ContentPinNextIdCommand().execute();
-      break;
-    case BusMessageType.CONTENT_PIN_UPDATE:
-      await new ContentPinUpdateCommand(msg.data).execute();
-      break;
-    case BusMessageType.CONTENT_PIN_REMOVE:
-      await new ContentPinRemoveCommand(msg.data).execute();
-      break;
-    case BusMessageType.CONTENT_PIN_GET_ID:
-      await new ContentPinGetIdCommand(msg.data).execute();
-      break;
     case BusMessageType.CONTENT_PIN_SCREENSHOT:
       await new ContentPinScreenshotCommand().execute();
       break;

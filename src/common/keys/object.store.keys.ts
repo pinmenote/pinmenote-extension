@@ -21,12 +21,12 @@ export class ObjectStoreKeys {
   // ID
   static readonly OBJECT_ID = 'o:id';
   static readonly OBJECT_LAST_ID = 'o:last:id';
-  // LINK
+  static readonly PIN_ID_LIST = 'pin:id:list';
 
+  // LINK
   static readonly OBJECT_LINK = 'o:link';
   // BOOKMARK
-  static readonly OBJECT_BOOKMARK = 'o:bookmark';
 
+  static readonly OBJECT_BOOKMARK = 'o:bookmark';
   static readonly BOOKMARK_LIST = 'o:bookmark:list';
-  static readonly PIN_ID_LIST = 'pin:id:list';
 }

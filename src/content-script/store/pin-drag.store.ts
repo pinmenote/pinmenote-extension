@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinUpdateObject } from '../../common/model/pin.model';
-import { BrowserApi } from '../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../common/model/bus.model';
 import { ObjectTypeDto } from '../../common/model/html.model';
 import { PinComponent } from '../components/pin.component';
+import { PinObject } from '../../common/model/pin.model';
 import { PinStore } from './pin.store';
+import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
 import PinPoint = Pinmenote.Pin.PinPoint;
 
 export class PinDragStore {
@@ -39,10 +38,8 @@ export class PinDragStore {
   public static async stopDragPin(value: PinPoint): Promise<void> {
     if (!this.dragValue) return;
     this.dragValue.stopDrag(value);
-    await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
-      type: BusMessageType.CONTENT_PIN_UPDATE,
-      data: { pin: this.dragValue.object }
-    });
+
+    await new PinUpdateCommand({ pin: this.dragValue.object }).execute();
     if (this.dragValue) {
       this.dragValue = undefined;
     }

@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../../common/model/bus.model';
 import { PinObject } from '../../../../common/model/pin.model';
+import { PinRemoveCommand } from '../../../../common/command/pin/pin-remove.command';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -39,6 +38,6 @@ export class RemoveIconComponent {
 
   private handleClick = async () => {
     this.el.removeEventListener('click', this.handleClick);
-    await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: this.pin });
+    await new PinRemoveCommand(this.pin).execute();
   };
 }

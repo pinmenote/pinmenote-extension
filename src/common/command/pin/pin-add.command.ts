@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ObjUpdateLastId } from '../obj/obj-update-last-id';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PinFindHashtagCommand } from './pin-find-hashtag.command';
 import { PinHashtagStore } from '../../store/pin-hashtag.store';
@@ -44,7 +45,7 @@ export class PinAddCommand implements ICommand<void> {
     const ids = await this.getIds();
     ids.push(id);
     await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_ID_LIST, ids);
-    await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LAST_ID, id);
+    await new ObjUpdateLastId(id).execute();
   }
 
   private async getIds(): Promise<number[]> {

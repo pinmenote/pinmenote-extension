@@ -23,6 +23,7 @@ import {
 } from '../../common/fn/compute.element.fn';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
+import { ObjNextIdCommand } from '../../common/command/obj/obj-next-id.command';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
@@ -39,8 +40,9 @@ export const contentPinNew = async (ref: HTMLElement, offset: PinPoint): Promise
   const locator: LinkLocator = computeLinkLocator(ref, offset);
   const content: HtmlContent = computePinContent(ref);
   const dt = new Date().toISOString();
+  const id = await new ObjNextIdCommand().execute();
   const dto: PinObject = {
-    id: -1,
+    id,
     uid,
     type: ObjectTypeDto.Pin,
     version: 1,
@@ -61,25 +63,16 @@ export const contentPinNew = async (ref: HTMLElement, offset: PinPoint): Promise
       style: ref.style.border
     }
   };
-
   return new Promise((resolve, reject) => {
     // Crop screenshot function
-    let id = -1;
     TinyEventDispatcher.addListener<string>(
       BusMessageType.CONTENT_PIN_SCREENSHOT,
       async (event: string, key: string, value: string) => {
         TinyEventDispatcher.removeListener(event, key);
-        // add pin with screenshot
-        dto.id = id;
         await addNewPinWithScreenshot(dto, value, resolve);
       }
     );
-    TinyEventDispatcher.addListener<number>(BusMessageType.CONTENT_PIN_ID, (event, key, value) => {
-      TinyEventDispatcher.removeListener(event, key);
-      id = value;
-      sendGetPinTakeScreenshot(reject);
-    });
-    sendGetPinNextId(reject);
+    sendGetPinTakeScreenshot(reject);
   });
 };
 
@@ -132,19 +125,6 @@ const computePinContent = (ref: HTMLElement): HtmlContent => {
     css,
     elementText
   };
-};
-
-const sendGetPinNextId = (reject: (value: string) => void) => {
-  BrowserApi.sendRuntimeMessage<undefined>({
-    type: BusMessageType.CONTENT_PIN_ID
-  })
-    .then(() => {
-      // We handle it above, inside dispatcher
-    })
-    .catch((e) => {
-      fnConsoleLog('PROBLEM sendGetPinNextId !!!', e);
-      reject('PROBLEM !!!');
-    });
 };
 
 const sendGetPinTakeScreenshot = (reject: (value: string) => void) => {

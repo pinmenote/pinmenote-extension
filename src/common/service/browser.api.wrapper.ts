@@ -25,13 +25,14 @@ export type BrowserTabs = typeof chrome.tabs | typeof browser.tabs;
 export type BrowserTabObject = chrome.tabs.Tab | browser.tabs.Tab;
 export type BrowserLocalStore = typeof chrome.storage.local | typeof browser.storage.local;
 export type BrowserDownloads = typeof chrome.downloads | typeof browser.downloads;
-export type BrowserAction = typeof chrome.browserAction | typeof browser.browserAction;
+export type BrowserAction = typeof chrome.action | typeof browser.browserAction;
 
 export class BrowserApi {
   private static browserApi: BrowserGlobal;
   private static isChromeValue = false;
 
   static init() {
+    if (this.browserApi) return;
     try {
       this.browserApi = browser;
     } catch (e) {
@@ -65,6 +66,7 @@ export class BrowserApi {
   }
 
   static get browserAction(): BrowserAction {
+    if (this.isChromeValue) return this.browserApi.action;
     return this.browserApi.browserAction;
   }
 

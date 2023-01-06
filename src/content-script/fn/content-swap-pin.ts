@@ -18,7 +18,7 @@ import { fnComputeCssContent, fnComputeHtmlContent } from '../../common/fn/compu
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { PinComponent } from '../components/pin.component';
-import { PinUpdateObject } from '../../common/model/pin.model';
+import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
 import { SettingsStore } from '../store/settings.store';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -72,10 +72,7 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
 
       pinData.object.screenshot = await fnImgResize(pinData.object, value);
 
-      await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
-        type: BusMessageType.CONTENT_PIN_UPDATE,
-        data: { pin: pinData.object }
-      });
+      await new PinUpdateCommand({ pin: pinData.object }).execute();
 
       resolve();
     });

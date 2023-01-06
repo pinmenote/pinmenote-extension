@@ -14,7 +14,7 @@ export class PopupBookmarkAddCommand implements ICommand<Promise<void>> {
       return;
     }
     const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.msg.url?.href}`;
-    await BrowserStorageWrapper.remove(key);
+    await BrowserStorageWrapper.set(key, this.msg);
     await this.removeBookmarkFromList();
   }
 

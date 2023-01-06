@@ -19,7 +19,6 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { DocumentMediator } from './mediator/document.mediator';
 import { HtmlObject } from '../common/model/html.model';
 import { PinAddElementStore } from './store/pin-add-element.store';
-import { PinGetIdCommand } from './command/pin/pin-get-id.command';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinPopupInitData } from '../common/model/pin.model';
 import { PinStore } from './store/pin.store';
@@ -63,9 +62,6 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.CONTENT_PIN_REMOVE:
         PinStore.delByUid((msg.data as HtmlObject).uid);
-        break;
-      case BusMessageType.CONTENT_PIN_GET_ID:
-        await new PinGetIdCommand(msg.data).execute();
         break;
       case BusMessageType.CONTENT_PIN_VISIBLE:
         await new PinVisibleCommand(msg.data).execute();

@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PIN_HASHTAG_REGEX, PinObject, PinUpdateObject } from '../../common/model/pin.model';
-import { BrowserApi } from '../../common/service/browser.api.wrapper';
+import { PIN_HASHTAG_REGEX, PinObject } from '../../common/model/pin.model';
 import { BusMessageType } from '../../common/model/bus.model';
 import { EditorView } from 'prosemirror-view';
+import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { createTextEditorState } from '../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
@@ -83,14 +83,11 @@ export class EditorComponent {
         const newMatch = value.match(PIN_HASHTAG_REGEX);
         this.pin.value = value;
         try {
-          await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
-            type: BusMessageType.CONTENT_PIN_UPDATE,
-            data: {
-              pin: this.pin,
-              oldHashtag: oldMatch ? Array.from(oldMatch) : [],
-              newHashtag: newMatch ? Array.from(newMatch) : []
-            }
-          });
+          await new PinUpdateCommand({
+            pin: this.pin,
+            oldHashtag: oldMatch ? Array.from(oldMatch) : [],
+            newHashtag: newMatch ? Array.from(newMatch) : []
+          }).execute();
         } catch (e) {
           fnConsoleLog('ERROR UPDATE PIN', e);
         }
@@ -108,10 +105,7 @@ export class EditorComponent {
       this.el.style.height = `${this.pin.size.height}px`;
     }
     try {
-      await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
-        type: BusMessageType.CONTENT_PIN_UPDATE,
-        data: { pin: this.pin }
-      });
+      await new PinUpdateCommand({ pin: this.pin }).execute();
     } catch (e) {
       fnConsoleLog(e);
     }

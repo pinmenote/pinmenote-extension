@@ -45,7 +45,6 @@ export enum BusMessageType {
   WORKER_ACK = 'worker.ack',
   POPUP_ACK = 'popup.ack',
   // Popup
-  POPUP_BOOKMARK_ADD = 'popup.bookmark.add',
   POPUP_BOOKMARK_REMOVE = 'popup.bookmark.remove',
   POPUP_OPEN = 'popup.open',
   POPUP_INIT = 'popup.init',
@@ -72,10 +71,7 @@ export enum BusMessageType {
   CONTENT_LOGIN_REFRESH = 'content.login.refresh',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
-  CONTENT_PIN_ID = 'content.pin.id',
-  CONTENT_PIN_UPDATE = 'content.pin.update',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
-  CONTENT_PIN_GET_ID = 'content.pin.get.id',
   CONTENT_PIN_SCREENSHOT = 'content.pin.screenshot',
   CONTENT_REFRESH_TOKEN = 'content.refresh.token',
   CONTENT_TIMEOUT = 'content.timeout',

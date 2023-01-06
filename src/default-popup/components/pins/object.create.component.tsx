@@ -18,6 +18,7 @@ import { Button, IconButton } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import AddIcon from '@mui/icons-material/Add';
+import { BookmarkAddCommand } from '../../../common/command/bookmark/bookmark-add.command';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
@@ -67,18 +68,8 @@ export const ObjectCreateComponent: FunctionComponent = () => {
   };
 
   const handleBookmarkAdd = async () => {
-    try {
-      await BrowserApi.sendRuntimeMessage<BookmarkDto>({
-        type: BusMessageType.POPUP_BOOKMARK_ADD,
-        data: {
-          value: ActiveTabStore.pageTitle,
-          isDirectory: false,
-          url: ActiveTabStore.url
-        }
-      });
-    } catch (e) {
-      LogManager.log(JSON.stringify(e));
-    }
+    if (!ActiveTabStore.url) return;
+    await new BookmarkAddCommand(ActiveTabStore.pageTitle, ActiveTabStore.url).execute();
     window.close();
   };
 

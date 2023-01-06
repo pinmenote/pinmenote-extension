@@ -25,8 +25,8 @@ import icon48 from '../../../assets/icon/light/48.png';
 import ICommand = Pinmenote.Common.ICommand;
 
 const lightIcons = () => {
-  const start = BrowserApi.runtimeUrl.length + 1;
   if (BrowserApi.isChrome) {
+    const start = BrowserApi.runtimeUrl.length + 1;
     return {
       path: {
         '16': (icon16 as string).substring(start).split('?')[0],
