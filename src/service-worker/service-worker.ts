@@ -25,17 +25,9 @@ import { OptionsPinSearchCommand } from './command/options/options-pin-search.co
 import { OptionsPinShareCommand } from './command/options/options-pin-share.command';
 import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
 import { PopupAccessTokenCommand } from './command/popup/popup-access-token.command';
-import { PopupBookmarkAddCommand } from './command/popup/popup-bookmark-add.command';
-import { PopupBookmarkRemoveCommand } from './command/popup/popup-bookmark-remove.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
-import { PopupPinCleanupCommand } from './command/popup/popup-pin-cleanup.command';
-import { PopupPinGetHrefCommand } from './command/popup/popup-pin-get-href.command';
-import { PopupPinGetOriginCommand } from './command/popup/popup-pin-get-origin.command';
-import { PopupPinRemoveCommand } from './command/popup/popup-pin-remove.command';
 import { PopupPinShareCommand } from './command/popup/popup-pin-share.command';
-import { PopupPinUpdateCommand } from './command/popup/popup-pin-update.command';
-import { PopupPinVisibleCommand } from './command/popup/popup-pin-visible.command';
 import { PopupPrivateKeyGetCommand } from './command/popup/popup-private-key-get.command';
 import { PopupPrivateKeyImportCommand } from './command/popup/popup-private-key-import.command';
 import { PopupRegisterCommand } from './command/popup/popup-register.command';
@@ -69,32 +61,8 @@ const handleMessage = async (
     case BusMessageType.CONTENT_THEME:
       await new ContentThemeCommand(msg.data).execute();
       break;
-    case BusMessageType.POPUP_BOOKMARK_ADD:
-      await new PopupBookmarkAddCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_BOOKMARK_REMOVE:
-      await new PopupBookmarkRemoveCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_PIN_CLEANUP:
-      await new PopupPinCleanupCommand().execute();
-      break;
-    case BusMessageType.POPUP_PIN_REMOVE:
-      await new PopupPinRemoveCommand(msg.data).execute();
-      break;
     case BusMessageType.POPUP_PIN_SHARE:
       await new PopupPinShareCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_PIN_UPDATE:
-      await new PopupPinUpdateCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_PIN_VISIBLE:
-      await new PopupPinVisibleCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_PIN_GET_ORIGIN:
-      await new PopupPinGetOriginCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_PIN_GET_HREF:
-      await new PopupPinGetHrefCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_ACCESS_TOKEN:
       await new PopupAccessTokenCommand().execute();

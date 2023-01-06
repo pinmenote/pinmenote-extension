@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { IconButton, Typography } from '@mui/material';
-import { PinObject, PinUpdateObject } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
@@ -26,7 +25,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinExpandComponent } from './pin.expand.component';
+import { PinObject } from '../../../common/model/pin.model';
+import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { PinShareComponent } from './pin-share.component';
+import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import RemoveMarkdown from 'remove-markdown';
 import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
@@ -44,13 +46,9 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
   const [isVisible, setIsVisible] = useState(pin.visible);
   const handlePinGo = async (data: PinObject): Promise<void> => {
     data.visible = true;
-    await BrowserApi.sendRuntimeMessage<PinUpdateObject>({
-      type: BusMessageType.POPUP_PIN_UPDATE,
-      data: {
-        pin: data
-      }
-    });
-
+    await new PinUpdateCommand({
+      pin: data
+    }).execute();
     await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, data);
 
     await BrowserApi.sendTabMessage<void>({ type: BusMessageType.CONTENT_PIN_NAVIGATE });
@@ -60,14 +58,16 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
 
   const handlePinVisible = async (data: PinObject): Promise<void> => {
     data.visible = !data.visible;
-    await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_VISIBLE, data });
+    await new PinUpdateCommand({
+      pin: data
+    }).execute();
     setIsVisible(data.visible);
   };
 
   const handlePinRemove = async (data: PinObject): Promise<void> => {
-    await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_REMOVE, data });
-    // Send itself cause command sends message to tab
-    TinyEventDispatcher.dispatch(BusMessageType.POPUP_PIN_REMOVE, data);
+    await new PinRemoveCommand(data).execute();
+    await BrowserApi.sendTabMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_REMOVE, data });
+    TinyEventDispatcher.dispatch(BusMessageType.POP_PIN_REMOVE, data);
   };
 
   const handleShare = async (data: PinObject): Promise<void> => {

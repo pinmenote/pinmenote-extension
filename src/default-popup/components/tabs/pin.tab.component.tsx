@@ -17,11 +17,12 @@
 import { PinObject, PinPopupInitData } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
+import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
+import { PinGetOriginCommand } from '../../../common/command/pin/pin-get-origin.command';
 import { PinListOriginComponent } from '../pins/pin.list.origin.component';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import PinUrl = Pinmenote.Pin.PinUrl;
@@ -32,43 +33,25 @@ export const PinTabComponent: FunctionComponent = () => {
   const [hrefPins, setHrefPins] = useState<PinObject[]>(ActiveTabStore.hrefPins);
 
   useEffect(() => {
-    const originKey = TinyEventDispatcher.addListener<PinObject[]>(
-      BusMessageType.POPUP_PIN_GET_ORIGIN,
-      (event, key, value) => {
-        ActiveTabStore.originPins = value;
-        setOriginPins(value);
-      }
-    );
-    const hrefKey = TinyEventDispatcher.addListener<PinObject[]>(
-      BusMessageType.POPUP_PIN_GET_HREF,
-      (event, key, value) => {
-        ActiveTabStore.hrefPins = value;
-        setHrefPins(value);
-      }
-    );
     const urlKey = TinyEventDispatcher.addListener<PinPopupInitData>(
       BusMessageType.POPUP_INIT,
       async (event, key, value) => {
         setIsError(ActiveTabStore.showErrorText);
-        if (value.url) await fillPinData(value.url);
+        if (value.url) {
+          await fillPinData(value.url);
+        }
       }
     );
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_PIN_GET_ORIGIN, originKey);
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_PIN_GET_HREF, hrefKey);
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_INIT, urlKey);
     };
   });
 
   const fillPinData = async (url: PinUrl) => {
-    await BrowserApi.sendRuntimeMessage<PinUrl>({
-      type: BusMessageType.POPUP_PIN_GET_ORIGIN,
-      data: url
-    });
-    await BrowserApi.sendRuntimeMessage<PinUrl>({
-      type: BusMessageType.POPUP_PIN_GET_HREF,
-      data: url
-    });
+    ActiveTabStore.hrefPins = await new PinGetHrefCommand(url).execute();
+    ActiveTabStore.originPins = await new PinGetOriginCommand(url).execute();
+    setHrefPins(ActiveTabStore.hrefPins);
+    setOriginPins(ActiveTabStore.originPins);
   };
 
   return (

@@ -21,12 +21,12 @@ import AddIcon from '@mui/icons-material/Add';
 import { BookmarkAddCommand } from '../../../common/command/bookmark/bookmark-add.command';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { BookmarkRemoveCommand } from '../../../common/command/bookmark/bookmark-remove.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { LogManager } from '../../../common/popup/log.manager';
 import { PinPopupInitData } from '../../../common/model/pin.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 
 export const ObjectCreateComponent: FunctionComponent = () => {
   const [isAdding, setIsAdding] = useState<boolean>(ActiveTabStore.isAddingNote);
@@ -74,18 +74,8 @@ export const ObjectCreateComponent: FunctionComponent = () => {
   };
 
   const handleBookmarkRemove = async () => {
-    try {
-      await BrowserApi.sendRuntimeMessage<BookmarkDto>({
-        type: BusMessageType.POPUP_BOOKMARK_REMOVE,
-        data: {
-          value: ActiveTabStore.pageTitle,
-          isDirectory: false,
-          url: ActiveTabStore.url
-        }
-      });
-    } catch (e) {
-      LogManager.log(JSON.stringify(e));
-    }
+    if (!ActiveTabStore.url) return;
+    await new BookmarkRemoveCommand(ActiveTabStore.url).execute();
     window.close();
   };
 

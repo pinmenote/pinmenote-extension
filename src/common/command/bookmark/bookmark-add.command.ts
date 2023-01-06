@@ -18,6 +18,13 @@ export class BookmarkAddCommand implements ICommand<Promise<BookmarkDto>> {
       isDirectory: false
     };
     await BrowserStorageWrapper.set(key, data);
+    await this.addBookmarkToList(this.url);
     return data;
+  }
+
+  private async addBookmarkToList(url: PinUrl): Promise<void> {
+    const bookmarkList = (await BrowserStorageWrapper.get<string[] | undefined>(ObjectStoreKeys.BOOKMARK_LIST)) || [];
+    bookmarkList.push(url.href);
+    await BrowserStorageWrapper.set(ObjectStoreKeys.BOOKMARK_LIST, bookmarkList);
   }
 }

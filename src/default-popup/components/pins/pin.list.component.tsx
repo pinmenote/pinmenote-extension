@@ -29,24 +29,21 @@ export const PinListComponent: FunctionComponent<PinListProps> = ({ pinList, vis
   const [reRender, setReRender] = useState(false);
 
   useEffect(() => {
-    const removeKey = TinyEventDispatcher.addListener<PinObject>(
-      BusMessageType.POPUP_PIN_REMOVE,
-      (event, key, value) => {
-        if (value.url.href === pinList[0].url.href) {
-          for (let i = 0; i < pinList.length; i++) {
-            const pin = pinList[i];
-            if (pin.uid === value.uid) {
-              pinList.splice(i, 1);
-              break;
-            }
+    const removeKey = TinyEventDispatcher.addListener<PinObject>(BusMessageType.POP_PIN_REMOVE, (event, key, value) => {
+      if (value.url.href === pinList[0].url.href) {
+        for (let i = 0; i < pinList.length; i++) {
+          const pin = pinList[i];
+          if (pin.uid === value.uid) {
+            pinList.splice(i, 1);
+            break;
           }
-          // Refresh state so component re-renders
-          setReRender(!reRender);
         }
+        // Refresh state so component re-renders
+        setReRender(!reRender);
       }
-    );
+    });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_PIN_REMOVE, removeKey);
+      TinyEventDispatcher.removeListener(BusMessageType.POP_PIN_REMOVE, removeKey);
     };
   });
 
