@@ -33,6 +33,7 @@ interface EnvironmentConfig {
   isProduction: boolean;
   settings: SettingsConfig;
   version: number;
+  objListLimit: number;
 }
 
 export const environmentConfig: EnvironmentConfig = {
@@ -48,5 +49,6 @@ export const environmentConfig: EnvironmentConfig = {
     borderStyle: '2px solid #ff0000',
     videoDisplayTime: 5
   },
-  version: 1
+  objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000'),
+  version: parseInt(process.env.VERSION || '1')
 };

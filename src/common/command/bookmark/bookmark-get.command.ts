@@ -15,36 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ObjAddIdCommand } from '../obj/obj-add-id.command';
-import { ObjNextIdCommand } from '../obj/obj-next-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import ICommand = Pinmenote.Common.ICommand;
 import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
+import ICommand = Pinmenote.Common.ICommand;
 import PinUrl = Pinmenote.Pin.PinUrl;
 
-export class BookmarkAddCommand implements ICommand<Promise<BookmarkDto>> {
-  constructor(private value: string, private url: PinUrl) {}
-
-  async execute(): Promise<BookmarkDto> {
+export class BookmarkGetCommand implements ICommand<Promise<BookmarkDto | undefined>> {
+  constructor(private url: PinUrl) {}
+  async execute(): Promise<BookmarkDto | undefined> {
     const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.url.href}`;
-    const id = await new ObjNextIdCommand().execute();
-
-    const data: BookmarkDto = {
-      id,
-      value: this.value,
-      url: this.url
-    };
-    await BrowserStorageWrapper.set(key, data);
-
-    await this.addBookmarkToList(id);
-
-    await new ObjAddIdCommand(id).execute();
-    return data;
-  }
-
-  private async addBookmarkToList(id: number): Promise<void> {
-    const bookmarkList = (await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.BOOKMARK_LIST)) || [];
-    bookmarkList.push(id);
-    await BrowserStorageWrapper.set(ObjectStoreKeys.BOOKMARK_LIST, bookmarkList);
+    const bookmark = await BrowserStorageWrapper.get<BookmarkDto | undefined>(key);
+    return bookmark;
   }
 }

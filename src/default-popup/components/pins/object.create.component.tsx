@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import { ActiveTabStore } from '../../store/active-tab.store';
 import AddIcon from '@mui/icons-material/Add';
 import { BookmarkAddCommand } from '../../../common/command/bookmark/bookmark-add.command';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import { BookmarkGetCommand } from '../../../common/command/bookmark/bookmark-get.command';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { BookmarkRemoveCommand } from '../../../common/command/bookmark/bookmark-remove.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
@@ -27,17 +28,21 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { LogManager } from '../../../common/popup/log.manager';
 import { PinPopupInitData } from '../../../common/model/pin.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 
 export const ObjectCreateComponent: FunctionComponent = () => {
   const [isAdding, setIsAdding] = useState<boolean>(ActiveTabStore.isAddingNote);
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(ActiveTabStore.isBookmarked);
+  const [bookmarkData, setBookmarkData] = useState<BookmarkDto | undefined>(undefined);
 
   useEffect(() => {
     const addingKey = TinyEventDispatcher.addListener<PinPopupInitData>(
       BusMessageType.POPUP_INIT,
-      (event, key, value) => {
+      async (event, key, value) => {
         setIsAdding(value.isAddingNote);
-        setIsBookmarked(value.isBookmarked);
+        if (ActiveTabStore.url) {
+          const bookmark = await new BookmarkGetCommand(ActiveTabStore.url).execute();
+          setBookmarkData(bookmark);
+        }
       }
     );
     return () => {
@@ -69,14 +74,14 @@ export const ObjectCreateComponent: FunctionComponent = () => {
 
   const handleBookmarkAdd = async () => {
     if (!ActiveTabStore.url) return;
-    await new BookmarkAddCommand(ActiveTabStore.pageTitle, ActiveTabStore.url).execute();
-    window.close();
+    const bookmark = await new BookmarkAddCommand(ActiveTabStore.pageTitle, ActiveTabStore.url).execute();
+    setBookmarkData(bookmark);
   };
 
   const handleBookmarkRemove = async () => {
-    if (!ActiveTabStore.url) return;
-    await new BookmarkRemoveCommand(ActiveTabStore.url).execute();
-    window.close();
+    if (!bookmarkData) return;
+    await new BookmarkRemoveCommand(bookmarkData).execute();
+    setBookmarkData(undefined);
   };
 
   const pinBtn = isAdding ? (
@@ -89,15 +94,16 @@ export const ObjectCreateComponent: FunctionComponent = () => {
     </Button>
   );
 
-  const bookmarkBtn = isBookmarked ? (
-    <IconButton title="Remove bookmark" onClick={handleBookmarkRemove}>
-      <BookmarkIcon />
-    </IconButton>
-  ) : (
-    <IconButton title="Add bookmark" onClick={handleBookmarkAdd}>
-      <BookmarkBorderIcon />
-    </IconButton>
-  );
+  const bookmarkBtn =
+    bookmarkData !== undefined ? (
+      <IconButton title="Remove bookmark" onClick={handleBookmarkRemove}>
+        <BookmarkIcon />
+      </IconButton>
+    ) : (
+      <IconButton title="Add bookmark" onClick={handleBookmarkAdd}>
+        <BookmarkBorderIcon />
+      </IconButton>
+    );
 
   return (
     <div style={{ display: 'flex' }}>

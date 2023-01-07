@@ -17,10 +17,11 @@
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ObjUpdateLastIdCommand } from './obj-update-last-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { environmentConfig } from '../../environment';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ObjAddIdCommand implements ICommand<Promise<void>> {
-  private readonly listLimit = 10;
+  private readonly listLimit = environmentConfig.objListLimit;
 
   constructor(private id: number) {}
   async execute(): Promise<void> {
@@ -28,6 +29,7 @@ export class ObjAddIdCommand implements ICommand<Promise<void>> {
     let ids = await this.getList(listId);
 
     // hit limit so create new list
+    // this way we get faster writes and can batch
     if (ids.length >= this.listLimit) {
       listId += 1;
       ids = [];

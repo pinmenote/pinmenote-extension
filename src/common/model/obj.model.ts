@@ -21,13 +21,10 @@ export interface ObjLinkDto {
 
 export interface ObjIdentityDto {
   user: string;
-  fingerprint: string;
-  group: string;
 }
 
 export interface ObjEncryptionDto {
   encrypted: boolean;
-  group: string;
 }
 
 export enum ObjTypeDto {

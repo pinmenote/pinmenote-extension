@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,23 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { ChangeEvent, FunctionComponent, useEffect, useRef, useState } from 'react';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import { BoardSearchInput } from '../menu/board-search.input';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
-import ClearIcon from '@mui/icons-material/Clear';
 import { IconButton } from '@mui/material';
-import Input from '@mui/material/Input';
 import { PinBoardStore } from '../store/pin-board.store';
 import { PinElement } from './pin.element';
 import { PinObject } from '../../../common/model/pin.model';
-import SearchIcon from '@mui/icons-material/Search';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import Typography from '@mui/material/Typography';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const PinBoard: FunctionComponent = () => {
   const [pinData, setPinData] = useState<PinObject[]>(PinBoardStore.pins);
-  const [searchValue, setSearchValue] = useState<string>(PinBoardStore.getSearch() || '');
 
   const stackRef = useRef<HTMLDivElement>();
 
@@ -46,7 +44,7 @@ export const PinBoard: FunctionComponent = () => {
       BusMessageType.OPTIONS_PIN_SEARCH,
       (event, key, value) => {
         PinBoardStore.pins.push(...value);
-        setSearchValue(PinBoardStore.getSearch() || '');
+        // setSearchValue(PinBoardStore.getSearch() || '');
         setPinData(PinBoardStore.pins.concat());
         PinBoardStore.setLoading(false);
       }
@@ -99,50 +97,13 @@ export const PinBoard: FunctionComponent = () => {
     }, 250);
   };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    fnConsoleLog('handleSearchChange');
-    clearTimeout(PinBoardStore.timeout);
-    setSearchValue(e.target.value);
-    PinBoardStore.clearSearch();
-    setPinData([]);
-    if (e.target.value.length <= 2) {
-      PinBoardStore.timeout = window.setTimeout(async () => {
-        await PinBoardStore.sendRange();
-      }, 1000);
-      return;
-    } else {
-      PinBoardStore.setSearch(e.target.value);
-    }
-    PinBoardStore.timeout = window.setTimeout(async () => {
-      await PinBoardStore.sendSearch();
-    }, 1000);
-  };
-
-  const handleClearSearch = async () => {
-    fnConsoleLog('handleClearSearch');
-    setSearchValue('');
-    PinBoardStore.clearSearch();
-    await PinBoardStore.sendRange();
-  };
-
   return (
     <div style={{ width: '100%', marginLeft: 20, marginTop: 10 }}>
-      <Box style={{ margin: 10 }}>
-        <Input
-          startAdornment={<SearchIcon />}
-          placeholder="Find note"
-          style={{ width: '50%' }}
-          type="text"
-          value={searchValue}
-          onChange={handleSearchChange}
-          endAdornment={
-            PinBoardStore.getSearch() ? (
-              <IconButton onClick={handleClearSearch}>
-                <ClearIcon />
-              </IconButton>
-            ) : undefined
-          }
-        />
+      <Box style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
+        <BoardSearchInput></BoardSearchInput>
+        <IconButton>
+          <Typography>aaaa</Typography>
+        </IconButton>
       </Box>
       <Stack direction="row" flexWrap="wrap" ref={stackRef} style={{ overflow: 'auto', height: 'calc(100vh - 65px)' }}>
         {pinData.map((pin) => (
