@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PIN_HASHTAG_REGEX, PinObject } from '../../common/model/pin.model';
 import { BusMessageType } from '../../common/model/bus.model';
 import { EditorView } from 'prosemirror-view';
+import { ObjUpdateHashtagsCommand } from '../../common/command/obj/hashtag/obj-update-hashtags.command';
+import { PinObject } from '../../common/model/pin.model';
 import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { createTextEditorState } from '../../common/components/text-editor/text.editor.state';
@@ -79,15 +80,10 @@ export class EditorComponent {
         this.editorView?.updateState(state);
         await this.resizeTextArea();
         const value = defaultMarkdownSerializer.serialize(state.doc);
-        const oldMatch = this.pin.value.match(PIN_HASHTAG_REGEX);
-        const newMatch = value.match(PIN_HASHTAG_REGEX);
+        await new ObjUpdateHashtagsCommand(this.pin.id, this.pin.value, value).execute();
         this.pin.value = value;
         try {
-          await new PinUpdateCommand({
-            pin: this.pin,
-            oldHashtag: oldMatch ? Array.from(oldMatch) : [],
-            newHashtag: newMatch ? Array.from(newMatch) : []
-          }).execute();
+          await new PinUpdateCommand(this.pin).execute();
         } catch (e) {
           fnConsoleLog('ERROR UPDATE PIN', e);
         }
@@ -105,7 +101,7 @@ export class EditorComponent {
       this.el.style.height = `${this.pin.size.height}px`;
     }
     try {
-      await new PinUpdateCommand({ pin: this.pin }).execute();
+      await new PinUpdateCommand(this.pin).execute();
     } catch (e) {
       fnConsoleLog(e);
     }

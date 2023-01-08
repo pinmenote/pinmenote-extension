@@ -70,7 +70,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
     } else {
       pin.viewType = PinViewType.SCREENSHOT;
     }
-    await new PinUpdateCommand({ pin }).execute();
+    await new PinUpdateCommand(pin).execute();
     TinyEventDispatcher.dispatch<PinObject>(BusMessageType.OPT_PIN_SHOW_IMAGE, pin);
   };
 
@@ -113,7 +113,7 @@ const EditElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.Element => 
         state = state.apply(tx);
         view.updateState(state);
         pin.value = defaultMarkdownSerializer.serialize(state.doc);
-        await new PinUpdateCommand({ pin }).execute();
+        await new PinUpdateCommand(pin).execute();
       }
     });
   };

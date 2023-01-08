@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { PinComponent } from '../../pin.component';
 import { PinObject } from '../../../../common/model/pin.model';
-import { PinStore } from '../../../store/pin.store';
 import { applyStylesToElement } from '../../../../common/style.utils';
+import { contentSwapPin } from '../../../fn/content-swap-pin';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ParentIconComponent {
   private el = document.createElement('div');
-  constructor(private pin: PinObject, private ref: HTMLElement) {}
+  constructor(private pin: PinObject, private parent: PinComponent) {}
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 0 24 24" width="12">
@@ -44,13 +45,12 @@ export class ParentIconComponent {
   }
 
   private handleClick = async (): Promise<void> => {
-    if (this.ref.parentElement?.tagName === 'BODY') {
+    if (this.parent.ref.parentElement?.tagName === 'BODY') {
       fnConsoleLog(`No parent for note ${this.pin.uid}`);
       return;
     }
-    await PinStore.pinToParent(this.pin, this.ref.parentElement);
-    if (this.ref.parentElement) {
-      this.ref = this.ref.parentElement;
+    if (this.parent.ref.parentElement) {
+      await contentSwapPin(this.parent, this.parent.ref.parentElement);
     }
   };
 }

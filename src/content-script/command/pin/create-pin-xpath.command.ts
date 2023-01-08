@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,21 @@
 import { CreatePinDataCommand } from './create-pin-data.command';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
-import { fnFindElementXpath } from '../../../common/fn/xpath.fn';
+import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { isElementHidden } from '../../fn/is-element-hidden';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class CreatePinXpathCommand implements ICommand<Promise<boolean>> {
   constructor(private pin: PinObject) {}
   async execute(): Promise<boolean> {
-    const value = fnFindElementXpath(this.pin.locator.xpath);
+    const value = XpathFactory.newXPathResult(this.pin.locator.xpath);
     const node = value.singleNodeValue as HTMLElement;
     if (!this.pin.visible || !node || isElementHidden(node)) {
       // will be created on invalidate
       PinPendingStore.add(this.pin);
       return false;
     }
-    const pinData = await new CreatePinDataCommand(node, this.pin.locator.offset, this.pin).execute();
+    const pinData = await new CreatePinDataCommand(node, this.pin).execute();
     // CHECK IF CREATED
     if (pinData) return true;
     PinPendingStore.add(this.pin);

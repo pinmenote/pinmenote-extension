@@ -42,7 +42,7 @@ export class OptionsMessageHandler {
 
   private static handlePopupOpen = async (): Promise<void> => {
     const url = contentPinNewUrl();
-    const data: PinPopupInitData = { url, isAddingNote: false, isBookmarked: false, pageTitle: document.title };
+    const data: PinPopupInitData = { url, isAddingNote: false, pageTitle: document.title };
     LogManager.log(`handlePopupOpen->${JSON.stringify(data)}`);
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });
   };

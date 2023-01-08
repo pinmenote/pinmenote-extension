@@ -27,7 +27,6 @@ export enum PinViewType {
 export interface PinPopupInitData {
   url?: PinUrl;
   isAddingNote: boolean;
-  isBookmarked: boolean;
   pageTitle: string;
 }
 
@@ -46,12 +45,6 @@ export interface PinObject extends HtmlObject {
     radius: string;
     style: string;
   };
-}
-
-export interface PinUpdateObject {
-  pin: PinObject;
-  oldHashtag?: string[];
-  newHashtag?: string[];
 }
 
 export interface PinRangeRequest {

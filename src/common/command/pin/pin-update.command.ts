@@ -15,51 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ObjHashtagStore } from '../../store/obj-hashtag.store';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinUpdateObject } from '../../model/pin.model';
+import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinUpdateCommand implements ICommand<void> {
-  constructor(private data: PinUpdateObject) {}
+  constructor(private data: PinObject) {}
   async execute(): Promise<void> {
-    fnConsoleLog('WorkerPinManager->pinUpdate', this.data, this.data.pin.id);
-    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.data.pin.id}`;
+    fnConsoleLog('WorkerPinManager->pinUpdate', this.data, this.data.id);
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`;
 
-    const updateTags = this.shouldUpdateTags(this.data.newHashtag, this.data.oldHashtag);
-
-    if (updateTags) await this.clearCurrentHashtags();
-
-    await BrowserStorageWrapper.set(key, this.data.pin);
-
-    if (updateTags) await this.addNewHashtags();
-  }
-
-  private shouldUpdateTags(a?: string[], b?: string[]): boolean {
-    if (a === b) return false;
-    if (a == undefined && b == undefined) return false;
-    if (a == undefined || b == undefined) return true;
-    if (a.length !== b.length) return true;
-    for (let i = 0; i < a.length; ++i) {
-      if (a[i] !== b[i]) return true;
-    }
-    return false;
-  }
-
-  private async addNewHashtags(): Promise<void> {
-    if (!this.data.newHashtag) return;
-    const hashtags = this.data.newHashtag;
-    for (const tag of hashtags) {
-      await ObjHashtagStore.addHashtag(tag, this.data.pin.id);
-    }
-  }
-
-  private async clearCurrentHashtags(): Promise<void> {
-    if (!this.data.oldHashtag) return;
-    const hashtags = this.data.oldHashtag;
-    for (const tag of hashtags) {
-      await ObjHashtagStore.delHashtag(tag, this.data.pin.id);
-    }
+    await BrowserStorageWrapper.set(key, this.data);
   }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import { PinPopupInitData } from '../common/model/pin.model';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { RuntimeLoginRefreshCommand } from './command/runtime/runtime-login-refresh.command';
-import { SettingsStore } from './store/settings.store';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
 import { fnConsoleLog } from '../common/fn/console.fn';
@@ -80,8 +79,7 @@ export class ContentMessageHandler {
     const data: PinPopupInitData = {
       url,
       pageTitle: document.title,
-      isAddingNote: PinAddElementStore.hasElement,
-      isBookmarked: SettingsStore.isBookmarked
+      isAddingNote: PinAddElementStore.hasElement
     };
     await BrowserApi.sendRuntimeMessage<PinPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };

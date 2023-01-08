@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,17 +21,16 @@ import { PinComponent } from '../components/pin.component';
 import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
 import { SettingsStore } from '../store/settings.store';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { computeLinkLocator } from './content-pin-new';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnImgResize } from '../../common/fn/img.resize.fn';
 import { fnSleep } from '../../common/fn/sleep.fn';
-import { fnXpath } from '../../common/fn/xpath.fn';
 
 export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement): Promise<void> => {
   pinData.container.style.display = 'none';
   pinData.restoreBorder();
   await fnSleep(100);
   pinData.setNewRef(element);
-  pinData.object.locator.xpath = fnXpath(element);
   pinData.object.content.elementText = element.innerText;
 
   const htmlContent = fnComputeHtmlContent(element);
@@ -40,15 +39,7 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
   pinData.object.content.html = htmlContent.html;
   pinData.object.content.videoTime = htmlContent.videoTime;
   pinData.object.content.css = css;
-
-  const rect = element.getBoundingClientRect();
-  pinData.object.locator.elementSize = {
-    x: Math.round(rect.x),
-    y: Math.round(rect.y),
-    width: Math.round(rect.width),
-    height: Math.round(rect.height)
-  };
-  pinData.object.locator.offset = { x: 0, y: 0 };
+  pinData.object.locator = computeLinkLocator(element);
 
   return new Promise((resolve, reject) => {
     BrowserApi.sendRuntimeMessage<undefined>({
@@ -72,7 +63,7 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
 
       pinData.object.screenshot = await fnImgResize(pinData.object, value);
 
-      await new PinUpdateCommand({ pin: pinData.object }).execute();
+      await new PinUpdateCommand(pinData.object).execute();
 
       resolve();
     });

@@ -24,7 +24,6 @@ export class ActiveTabStore {
   private static extensionUrl = false;
   private static isAddingNoteValue = false;
 
-  private static isBookmarkedValue = false;
   private static pageTitleValue = '';
 
   private static originPinsValue: PinObject[] = [];
@@ -50,10 +49,6 @@ export class ActiveTabStore {
     return this.isAddingNoteValue;
   }
 
-  static get isBookmarked(): boolean {
-    return this.isBookmarkedValue;
-  }
-
   static get pageTitle(): string {
     return this.pageTitleValue;
   }
@@ -76,7 +71,6 @@ export class ActiveTabStore {
     this.extensionUrl = extensionUrl;
     this.urlValue = initData?.url;
     this.isAddingNoteValue = initData?.isAddingNote || false;
-    this.isBookmarkedValue = initData?.isBookmarked || false;
     this.pageTitleValue = initData?.pageTitle || '';
   }
 }

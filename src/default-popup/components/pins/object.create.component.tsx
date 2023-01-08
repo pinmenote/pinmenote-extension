@@ -50,7 +50,7 @@ export const ObjectCreateComponent: FunctionComponent = () => {
     };
   });
 
-  const handlePinStart = async () => {
+  const handleNewPin = async () => {
     try {
       await BrowserApi.sendTabMessage<undefined>({
         type: BusMessageType.POPUP_PIN_START
@@ -89,7 +89,7 @@ export const ObjectCreateComponent: FunctionComponent = () => {
       Cancel
     </Button>
   ) : (
-    <Button sx={{ width: '100%' }} variant="outlined" onClick={handlePinStart}>
+    <Button sx={{ width: '100%' }} variant="outlined" onClick={handleNewPin}>
       <AddIcon /> New Pin
     </Button>
   );

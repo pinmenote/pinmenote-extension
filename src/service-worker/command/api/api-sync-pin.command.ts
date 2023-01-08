@@ -70,7 +70,7 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
   private async sendAll(dt: string): Promise<string> {
     let maxMs = fnIsoDateToUtcMiliseconds(dt);
     fnConsoleLog('Sync - sendAll - maxMs', maxMs);
-    const ids = await this.getIds();
+    const ids: number[] = [];
     for (const id of ids) {
       const pin = await this.pinGetId({ id });
       if (pin) {
@@ -118,7 +118,7 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
         const data = await new CryptoDecryptCommand<PinObject>(syncPin.data, false).execute();
         if (data) {
           fnConsoleLog('Sync - updateFromServer - ok', pin.id);
-          await new PinUpdateCommand({ pin: data }).execute();
+          await new PinUpdateCommand(data).execute();
           return fnIsoDateToUtcMiliseconds(syncPin.updatedAt);
         } else {
           fnConsoleLog('Sync - updateFromServer - no - decrypted', pin.id);
@@ -174,10 +174,5 @@ export class ApiSyncPinCommand implements ICommand<Promise<BoolDto>> {
   private async pinGetId(pin: PinByIdRequest): Promise<PinObject | undefined> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${pin.id}`;
     return await BrowserStorageWrapper.get<PinObject>(key);
-  }
-
-  private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
-    return value || [];
   }
 }

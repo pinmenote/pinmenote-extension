@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { ItalicButtonComponent } from './editor-buttons/italic-button.component';
-import { MoveIconComponent } from './action-buttons/move-icon.component';
 import { ParentIconComponent } from './action-buttons/parent-icon.component';
+import { PinComponent } from '../pin.component';
 import { PinObject } from '../../../common/model/pin.model';
 import { RemoveIconComponent } from './action-buttons/remove-icon.component';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
@@ -60,7 +60,6 @@ export class TopBarComponent {
   private italic: ItalicButtonComponent;
   private bulletList: BulletListButtonComponent;
 
-  private moveIcon: MoveIconComponent;
   private parentIcon: ParentIconComponent;
   private removeIcon: RemoveIconComponent;
 
@@ -72,13 +71,12 @@ export class TopBarComponent {
 
   private editor?: EditorView;
 
-  constructor(private pin: PinObject, private ref: HTMLElement) {
+  constructor(private pin: PinObject, private parent: PinComponent) {
     this.bold = new BoldButtonComponent();
     this.italic = new ItalicButtonComponent();
     this.bulletList = new BulletListButtonComponent();
 
-    this.moveIcon = new MoveIconComponent(pin);
-    this.parentIcon = new ParentIconComponent(pin, ref);
+    this.parentIcon = new ParentIconComponent(pin, parent);
     this.removeIcon = new RemoveIconComponent(pin);
   }
 
@@ -98,7 +96,6 @@ export class TopBarComponent {
     this.editbar.appendChild(this.bulletList.render());
 
     applyStylesToElement(this.toolbar, toolsStyles);
-    this.toolbar.appendChild(this.moveIcon.render());
     this.toolbar.appendChild(this.parentIcon.render());
     this.toolbar.appendChild(this.removeIcon.render());
 
@@ -133,7 +130,6 @@ export class TopBarComponent {
     this.italic.cleanup();
     this.bulletList.cleanup();
 
-    this.moveIcon.cleanup();
     this.parentIcon.cleanup();
     this.removeIcon.cleanup();
 

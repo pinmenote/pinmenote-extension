@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,6 @@ export class PinComponent implements HtmlComponent {
   private readonly editor: EditorComponent;
 
   private xy: PinPoint;
-  private drag = false;
 
   private refValue: HTMLElement;
 
@@ -53,9 +52,9 @@ export class PinComponent implements HtmlComponent {
     this.el.id = pin.uid;
     this.refValue = ref;
     this.object = pin;
-    this.xy = contentCalculatePinPoint(this.refValue, pin.size, pin.locator.elementSize, pin.locator.offset);
+    this.xy = contentCalculatePinPoint(this.refValue, pin.size);
     this.editor = new EditorComponent(this.object);
-    this.topbar = new TopBarComponent(pin, ref);
+    this.topbar = new TopBarComponent(pin, this);
     this.bottombar = new BottomBarComponent(pin);
   }
 
@@ -110,33 +109,8 @@ export class PinComponent implements HtmlComponent {
     return this.el;
   }
 
-  startDrag(): void {
-    this.drag = true;
-  }
-
-  updateDrag(value: PinPoint): void {
-    const newX = this.xy.x + value.x;
-    const newY = this.xy.y + value.y;
-    this.el.style.left = `${newX}px`;
-    this.el.style.top = `${newY}px`;
-  }
-
-  stopDrag(value: PinPoint): void {
-    const { offset, elementSize } = this.object.locator;
-    offset.x = offset.x + value.x;
-    offset.y = offset.y + value.y;
-    this.object.locator.offset = offset;
-    this.xy = contentCalculatePinPoint(this.refValue, this.object.size, elementSize, offset);
-    this.drag = false;
-  }
-
-  get isDrag(): boolean {
-    return this.drag;
-  }
-
   resize(): void {
-    const { elementSize, offset } = this.object.locator;
-    this.xy = contentCalculatePinPoint(this.refValue, this.object.size, elementSize, offset);
+    this.xy = contentCalculatePinPoint(this.refValue, this.object.size);
     this.el.style.left = `${this.xy.x}px`;
     this.el.style.top = `${this.xy.y}px`;
   }

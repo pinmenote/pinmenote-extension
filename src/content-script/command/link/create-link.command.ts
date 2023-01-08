@@ -17,8 +17,8 @@
 import { HtmlLinkComponent } from '../../components/html-link.component';
 import { ObjectTypeDto } from '../../../common/model/html.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
+import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnFindElementXpath } from '../../../common/fn/xpath.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 import { isElementHidden } from '../../fn/is-element-hidden';
 import ICommand = Pinmenote.Common.ICommand;
@@ -28,7 +28,7 @@ export class CreateLinkCommand implements ICommand<boolean> {
   constructor(private link: LinkDto) {}
   execute(): boolean {
     if (this.link.url.href !== window.location.href) return false;
-    const value = fnFindElementXpath(this.link.locator.xpath);
+    const value = XpathFactory.newXPathResult(this.link.locator.xpath);
     const ref = value.singleNodeValue as HTMLElement;
     const uid = fnUid();
     const object = { uid, type: ObjectTypeDto.Link, ...this.link };

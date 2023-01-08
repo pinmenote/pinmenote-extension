@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,18 +26,17 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { ObjNextIdCommand } from '../../common/command/obj/obj-next-id.command';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { XpathFactory } from '../../common/factory/xpath.factory';
 import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnImgResize } from '../../common/fn/img.resize.fn';
 import { fnUid } from '../../common/fn/uid.fn';
-import { fnXpath } from '../../common/fn/xpath.fn';
 import LinkLocator = Pinmenote.Pin.LinkLocator;
-import PinPoint = Pinmenote.Pin.PinPoint;
 
-export const contentPinNew = async (ref: HTMLElement, offset: PinPoint): Promise<PinObject> => {
+export const contentPinNew = async (ref: HTMLElement): Promise<PinObject> => {
   // Roll back border to take snapshot
   const uid = fnUid();
-  const locator: LinkLocator = computeLinkLocator(ref, offset);
+  const locator: LinkLocator = computeLinkLocator(ref);
   const content: HtmlContent = computePinContent(ref);
   const dt = new Date().toISOString();
   const id = await new ObjNextIdCommand().execute();
@@ -76,12 +75,11 @@ export const contentPinNew = async (ref: HTMLElement, offset: PinPoint): Promise
   });
 };
 
-const computeLinkLocator = (ref: HTMLElement, offset: PinPoint): LinkLocator => {
+export const computeLinkLocator = (ref: HTMLElement): LinkLocator => {
   const rect = ref.getBoundingClientRect();
-  const xpath = fnXpath(ref);
+  const xpath = XpathFactory.newXPathString(ref);
   return {
     xpath,
-    offset,
     elementSize: {
       x: Math.round(rect.x),
       y: Math.round(rect.y),

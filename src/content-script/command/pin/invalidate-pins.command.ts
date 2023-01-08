@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
         const data = PinStore.delByUid(pinData.object.uid);
         if (data) PinPendingStore.add(data.object);
       }
-      if (!pinData.isDrag) pinData.resize();
+      pinData.resize();
     });
   }
 }

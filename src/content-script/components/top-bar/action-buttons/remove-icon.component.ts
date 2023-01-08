@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 import { PinObject } from '../../../../common/model/pin.model';
 import { PinRemoveCommand } from '../../../../common/command/pin/pin-remove.command';
+import { PinStore } from '../../../store/pin.store';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -39,5 +40,6 @@ export class RemoveIconComponent {
   private handleClick = async () => {
     this.el.removeEventListener('click', this.handleClick);
     await new PinRemoveCommand(this.pin).execute();
+    PinStore.delByUid(this.pin.uid);
   };
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +62,6 @@ export class HtmlLinkComponent implements HtmlComponent {
     this.contentCheck = new ContentCheck(this.ref);
   }
 
-  get isDrag(): boolean {
-    return true;
-  }
-
   render(): HTMLElement {
     this.ref.style.border = SettingsStore.borderStyle;
     this.ref.style.borderRadius = SettingsStore.borderRadius;
@@ -79,12 +75,7 @@ export class HtmlLinkComponent implements HtmlComponent {
     if (!this.contentCheck.isTarget) {
       setTimeout(() => this.apply(goto), 250);
     } else {
-      this.xy = contentCalculatePinPoint(
-        this.ref,
-        this.size,
-        this.object.locator.elementSize,
-        this.object.locator.offset
-      );
+      this.xy = contentCalculatePinPoint(this.ref, this.size);
       const styles = Object.assign(
         {
           left: `${Math.floor(this.xy.x)}px`,

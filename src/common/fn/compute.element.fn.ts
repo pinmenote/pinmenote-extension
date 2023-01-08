@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentVideoTime, CssData, HtmlIntermediateData, HtmlParentStyles } from '../model/html.model';
+import { XpathFactory } from '../factory/xpath.factory';
 import { environmentConfig } from '../environment';
 import { fnConsoleLog } from './console.fn';
 import { fnGetKey } from '../kv.utils';
-import { fnXpath } from './xpath.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
@@ -105,7 +105,7 @@ export const fnComputeHtmlContent = (ref: Element): HtmlIntermediateData => {
   if (tagName === 'video') {
     // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
     videoTime.push({
-      xpath: fnXpath(ref as HTMLElement),
+      xpath: XpathFactory.newXPathString(ref as HTMLElement),
       currentTime: (ref as HTMLVideoElement).currentTime,
       displayTime: environmentConfig.settings.videoDisplayTime
     });

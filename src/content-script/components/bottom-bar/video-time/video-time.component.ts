@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentVideoTime } from '../../../../common/model/html.model';
+import { XpathFactory } from '../../../../common/factory/xpath.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { fnFindElementXpath } from '../../../../common/fn/xpath.fn';
 import { fnVideoSecondsTime } from '../../../../common/fn/date.fn';
 
 const elStyles = {
@@ -74,7 +74,7 @@ export class VideoTimeComponent {
 
   private handleNavigateClick = () => {
     if (!this.video) return;
-    const value = fnFindElementXpath(this.video.xpath);
+    const value = XpathFactory.newXPathResult(this.video.xpath);
     const node = value.singleNodeValue as HTMLVideoElement;
     if (!node) return;
     node.currentTime = this.video.currentTime;

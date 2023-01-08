@@ -21,28 +21,19 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class PinAddElementStore {
   private static currentElement: HTMLElement | null = null;
-  private static currentElementBorderStyle = '';
-  private static currentElementBorderRadius = '';
+  private static borderStyle = '';
+  private static borderRadius = '';
 
   static get hasElement(): boolean {
     return !!this.currentElement;
   }
 
-  static get borderStyle(): string {
-    return this.currentElementBorderStyle;
-  }
-
-  static get borderRadius(): string {
-    return this.currentElementBorderRadius;
-  }
-
   static clearElement(): void {
     if (!this.currentElement) return;
-    this.currentElement.removeEventListener('click', this.handleElementClick);
-    this.currentElement.style.border = this.currentElementBorderStyle;
-    this.currentElement.style.borderRadius = this.currentElementBorderRadius;
-    this.currentElementBorderStyle = '';
-    this.currentElementBorderRadius = '';
+    this.currentElement.style.border = this.borderStyle;
+    this.currentElement.style.borderRadius = this.borderRadius;
+    this.borderStyle = '';
+    this.borderRadius = '';
     this.currentElement = null;
   }
 
@@ -50,8 +41,8 @@ export class PinAddElementStore {
     if (this.currentElement !== element) {
       this.currentElement = element;
       this.currentElement.addEventListener('click', this.handleElementClick);
-      this.currentElementBorderStyle = this.currentElement.style.border;
-      this.currentElementBorderRadius = this.currentElement.style.borderRadius;
+      this.borderStyle = this.currentElement.style.border;
+      this.borderRadius = this.currentElement.style.borderRadius;
       this.currentElement.style.border = SettingsStore.borderStyle;
       this.currentElement.style.borderRadius = SettingsStore.borderRadius;
     }
@@ -62,13 +53,9 @@ export class PinAddElementStore {
     event.stopImmediatePropagation();
     fnConsoleLog('CLick', event);
     if (this.currentElement) {
-      const element = event.target as HTMLElement;
-      this.currentElement.style.border = this.currentElementBorderStyle;
-      this.currentElement.style.borderRadius = this.currentElementBorderRadius;
-      await new CreatePinDataCommand(element, {
-        x: event.offsetX,
-        y: event.offsetY
-      }).execute();
+      this.currentElement.style.border = this.borderStyle;
+      this.currentElement.style.borderRadius = this.borderRadius;
+      await new CreatePinDataCommand(this.currentElement).execute();
     }
     DocumentMediator.stopListeners();
   };

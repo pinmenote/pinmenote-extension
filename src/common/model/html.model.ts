@@ -57,7 +57,6 @@ export interface HtmlContent {
 export interface HtmlComponent {
   object: HtmlObject;
   ref: HTMLElement;
-  get isDrag(): boolean;
   render(): HTMLElement;
   cleanup(): void;
   focus(goto: boolean): void;

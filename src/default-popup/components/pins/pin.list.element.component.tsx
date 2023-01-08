@@ -46,9 +46,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
   const [isVisible, setIsVisible] = useState(pin.visible);
   const handlePinGo = async (data: PinObject): Promise<void> => {
     data.visible = true;
-    await new PinUpdateCommand({
-      pin: data
-    }).execute();
+    await new PinUpdateCommand(data).execute();
     await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, data);
 
     await BrowserApi.sendTabMessage<void>({ type: BusMessageType.CONTENT_PIN_NAVIGATE });
@@ -58,9 +56,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
 
   const handlePinVisible = async (data: PinObject): Promise<void> => {
     data.visible = !data.visible;
-    await new PinUpdateCommand({
-      pin: data
-    }).execute();
+    await new PinUpdateCommand(data).execute();
     setIsVisible(data.visible);
   };
 

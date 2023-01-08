@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import PinSize = Pinmenote.Pin.PinSize;
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 import PinPoint = Pinmenote.Pin.PinPoint;
 
-export const contentCalculatePinPoint = (
-  ref: HTMLElement,
-  pinSize: PinSize,
-  elementSize: PinRectangle,
-  offset: PinPoint
-): PinPoint => {
+export const contentCalculatePinPoint = (ref: HTMLElement, pinSize: PinSize): PinPoint => {
   const rect = ref.getBoundingClientRect();
-  const offsetScaleX = rect.width / elementSize.width;
-  const offsetScaleY = rect.height / elementSize.height;
-  let x = rect.left + offset.x * offsetScaleX + window.scrollX;
-  const y = rect.top + offset.y * offsetScaleY + window.scrollY;
+  let x = rect.left + window.scrollX;
+  const y = rect.top + window.scrollY;
   // TODO move only required width to fit
   if (x + pinSize.width > window.innerWidth) {
     x = rect.right - pinSize.width;
