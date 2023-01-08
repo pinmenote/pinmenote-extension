@@ -14,11 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../../common/model/bus.model';
+import { ContentSettingsStore } from '../../../store/content-settings.store';
+import { CssFactory } from '../../../factory/css.factory';
+import { HtmlFactory } from '../../../factory/html.factory';
+import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
 import { PinComponent } from '../../pin.component';
+import { PinFactory } from '../../../factory/pin.factory';
 import { PinObject } from '../../../../common/model/pin.model';
+import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
+import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { contentSwapPin } from '../../../fn/content-swap-pin';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnSleep } from '../../../../common/fn/sleep.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ParentIconComponent {
@@ -50,7 +59,47 @@ export class ParentIconComponent {
       return;
     }
     if (this.parent.ref.parentElement) {
-      await contentSwapPin(this.parent, this.parent.ref.parentElement);
+      // this.parent.setNewRef(this.parent.ref.parentElement);
+      await fnSleep(100);
+      this.parent.object.content.elementText = this.parent.ref.parentElement.innerText;
+
+      const htmlContent = HtmlFactory.computeHtmlIntermediateData(this.parent.ref.parentElement);
+      const css = CssFactory.computeCssContent(htmlContent.cssStyles);
+
+      this.parent.object.content.html = htmlContent.html;
+      this.parent.object.content.videoTime = htmlContent.videoTime;
+      this.parent.object.content.css = css;
+      this.parent.object.locator = PinFactory.computeLinkLocator(this.parent.ref.parentElement);
+
+      return new Promise((resolve, reject) => {
+        BrowserApi.sendRuntimeMessage<undefined>({
+          type: BusMessageType.CONTENT_PIN_SCREENSHOT
+        })
+          .then(() => {
+            // We handle it above, inside dispatcher
+          })
+          .catch((e) => {
+            fnConsoleLog('PROBLEM contentSwapPin !!!', e);
+            // pinData.container.style.display = 'inline-block';
+            reject('PROBLEM !!!');
+          });
+        TinyEventDispatcher.addListener<string>(BusMessageType.CONTENT_PIN_SCREENSHOT, async (event, key, value) => {
+          // After taking screenshot let's go back to note styles
+          // pinData.container.style.display = 'inline-block';
+          if (this.parent.ref.parentElement) {
+            this.parent.ref.parentElement.style.border = ContentSettingsStore.borderStyle;
+            this.parent.ref.parentElement.style.borderRadius = ContentSettingsStore.borderRadius;
+          }
+
+          TinyEventDispatcher.removeListener(event, key);
+
+          this.parent.object.screenshot = await ImageResizeFactory.resize(this.parent.object.locator.rect, value);
+
+          await new PinUpdateCommand(this.parent.object).execute();
+
+          resolve();
+        });
+      });
     }
   };
 }

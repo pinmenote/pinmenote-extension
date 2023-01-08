@@ -50,10 +50,6 @@ export class PinFactory {
       locator,
       content,
       value: '',
-      size: {
-        width: 163,
-        height: 34
-      },
       border: {
         radius: ref.style.borderRadius,
         style: ref.style.border

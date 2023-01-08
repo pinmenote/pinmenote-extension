@@ -24,49 +24,35 @@ import { createTextEditorState } from '../../common/components/text-editor/text.
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
+import PinRectangle = Pinmenote.Pin.PinRectangle;
 
-export class EditorComponent {
+export class TextEditorComponent {
   private el = document.createElement('div');
 
   private editorView?: EditorView;
 
-  constructor(private pin: PinObject) {}
-
-  get editor(): EditorView | undefined {
-    return this.editorView;
-  }
+  constructor(private pin: PinObject, private rect: PinRectangle) {}
 
   render(): HTMLElement {
-    this.el.style.width = `${this.pin.size.width}px`;
-    this.el.style.height = `${this.pin.size.height}px`;
-
     this.editorView = this.createEditor();
-    // FIXME resize prosemirror element differently
-    setTimeout(this.deferredResize, 0);
-
-    this.el.addEventListener('mouseup', this.handleMouseUp);
+    this.resizeTextArea(this.rect);
+    this.el.style.marginTop = `${this.rect.height}px`;
     return this.el;
   }
 
   cleanup(): void {
     this.editorView?.destroy();
-    this.el.removeEventListener('mouseup', this.handleMouseUp);
+  }
+
+  resize(rect: PinRectangle): void {
+    this.resizeTextArea(rect);
   }
 
   focus(goto = false): void {
-    if (goto) scrollToElementFn(this.editorView?.dom, this.pin.size.height);
+    const height = parseInt(this.el.style.height.split('px')[0]);
+    if (goto) scrollToElementFn(this.editorView?.dom, height);
     this.editorView?.focus();
   }
-
-  private deferredResize = async () => {
-    const div: HTMLDivElement = this.el.getElementsByClassName('ProseMirror')[0] as HTMLDivElement;
-    if (!div) return;
-    await this.resizeTextArea();
-  };
-
-  private handleMouseUp = async () => {
-    await this.resizeTextArea();
-  };
 
   private createEditor(): EditorView {
     let state = createTextEditorState(this.pin.value);
@@ -78,7 +64,6 @@ export class EditorComponent {
       dispatchTransaction: async (tx) => {
         state = state.apply(tx);
         this.editorView?.updateState(state);
-        await this.resizeTextArea();
         const value = defaultMarkdownSerializer.serialize(state.doc);
         await new ObjUpdateHashtagsCommand(this.pin.id, this.pin.value, value).execute();
         this.pin.value = value;
@@ -92,18 +77,9 @@ export class EditorComponent {
     });
   }
 
-  private resizeTextArea = async () => {
-    const div: HTMLDivElement = this.el.getElementsByClassName('ProseMirror')[0] as HTMLDivElement;
-    if (div) {
-      this.pin.size.width = Math.round(div.offsetWidth);
-      this.pin.size.height = Math.round(div.offsetHeight);
-      this.el.style.width = `${this.pin.size.width}px`;
-      this.el.style.height = `${this.pin.size.height}px`;
-    }
-    try {
-      await new PinUpdateCommand(this.pin).execute();
-    } catch (e) {
-      fnConsoleLog(e);
-    }
+  private resizeTextArea = (rect: PinRectangle) => {
+    this.el.style.width = `${rect.width}px`;
+    this.el.style.height = `${rect.height}px`;
+    this.el.style.marginTop = `${rect.height}px`;
   };
 }

@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import PinSize = Pinmenote.Pin.PinSize;
-import PinPoint = Pinmenote.Pin.PinPoint;
+export interface ObjPoint {
+  x: number;
+  y: number;
+}
 
-export const contentCalculatePinPoint = (ref: HTMLElement, pinSize: PinSize): PinPoint => {
-  const rect = ref.getBoundingClientRect();
-  let x = rect.left + window.scrollX;
-  const y = rect.bottom + window.scrollY;
-  // TODO move only required width to fit
-  if (x + pinSize.width > window.innerWidth) {
-    x = rect.right - pinSize.width;
-  }
-  return { x, y };
-};
+export interface ObjSize {
+  width: number;
+  height: number;
+}
+
+export type ObjRectangle = ObjPoint & ObjSize;
