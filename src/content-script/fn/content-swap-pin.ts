@@ -16,15 +16,15 @@
  */
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { CssFactory } from '../factory/css.factory';
 import { HtmlFactory } from '../factory/html.factory';
+import { ImageResizeFactory } from '../../common/factory/image-resize.factory';
 import { PinComponent } from '../components/pin.component';
 import { PinFactory } from '../factory/pin.factory';
 import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
-import { SettingsStore } from '../store/settings.store';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import { fnImgResize } from '../../common/fn/img.resize.fn';
 import { fnSleep } from '../../common/fn/sleep.fn';
 
 export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement): Promise<void> => {
@@ -57,12 +57,12 @@ export const contentSwapPin = async (pinData: PinComponent, element: HTMLElement
     TinyEventDispatcher.addListener<string>(BusMessageType.CONTENT_PIN_SCREENSHOT, async (event, key, value) => {
       // After taking screenshot let's go back to note styles
       pinData.container.style.display = 'inline-block';
-      element.style.border = SettingsStore.borderStyle;
-      element.style.borderRadius = SettingsStore.borderRadius;
+      element.style.border = ContentSettingsStore.borderStyle;
+      element.style.borderRadius = ContentSettingsStore.borderRadius;
 
       TinyEventDispatcher.removeListener(event, key);
 
-      pinData.object.screenshot = await fnImgResize(pinData.object, value);
+      pinData.object.screenshot = await ImageResizeFactory.resize(pinData.object.locator.rect, value);
 
       await new PinUpdateCommand(pinData.object).execute();
 

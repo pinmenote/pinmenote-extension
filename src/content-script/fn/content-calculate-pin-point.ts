@@ -25,9 +25,5 @@ export const contentCalculatePinPoint = (ref: HTMLElement, pinSize: PinSize): Pi
   if (x + pinSize.width > window.innerWidth) {
     x = rect.right - pinSize.width;
   }
-  /* NOT WORKING
-    if (y + dto.size.height > window.innerHeight + document.body.scrollHeight) {
-      y = rect.bottom;
-    }*/
   return { x, y };
 };

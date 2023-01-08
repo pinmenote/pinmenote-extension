@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BottomBarComponent } from './bottom-bar/bottom-bar.component';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { EditorComponent } from './editor.component';
 import { HtmlComponent } from '../../common/model/html.model';
 import { PinObject } from '../../common/model/pin.model';
-import { SettingsStore } from '../store/settings.store';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
 import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
@@ -92,8 +92,8 @@ export class PinComponent implements HtmlComponent {
     this.el.appendChild(this.topbar.render());
 
     applyStylesToElement(this.pinContainer, pinContainerStyles);
-    this.pinContainer.style.border = SettingsStore.borderStyle;
-    this.pinContainer.style.borderRadius = SettingsStore.borderRadius;
+    this.pinContainer.style.border = ContentSettingsStore.borderStyle;
+    this.pinContainer.style.borderRadius = ContentSettingsStore.borderRadius;
 
     this.pinContainer.appendChild(this.editor.render());
 
@@ -106,8 +106,8 @@ export class PinComponent implements HtmlComponent {
 
     this.topbar.setEditor(this.editor.editor);
 
-    this.refValue.style.border = SettingsStore.borderStyle;
-    this.refValue.style.borderRadius = SettingsStore.borderRadius;
+    this.refValue.style.border = ContentSettingsStore.borderStyle;
+    this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
 
     return this.el;
   }

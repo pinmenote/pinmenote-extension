@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlObject } from '../../common/model/html.model';
-import { SettingsStore } from '../store/settings.store';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { applyStylesToElement } from '../../common/style.utils';
 import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -63,8 +63,8 @@ export class HtmlLinkComponent implements HtmlComponent {
   }
 
   render(): HTMLElement {
-    this.ref.style.border = SettingsStore.borderStyle;
-    this.ref.style.borderRadius = SettingsStore.borderRadius;
+    this.ref.style.border = ContentSettingsStore.borderStyle;
+    this.ref.style.borderRadius = ContentSettingsStore.borderRadius;
     const s = document.createElement('div');
     s.innerText = this.object.value;
     this.el.appendChild(s);
@@ -80,8 +80,8 @@ export class HtmlLinkComponent implements HtmlComponent {
         {
           left: `${Math.floor(this.xy.x)}px`,
           top: `${Math.floor(this.xy.y)}px`,
-          border: SettingsStore.borderStyle,
-          'border-radius': SettingsStore.borderRadius
+          border: ContentSettingsStore.borderStyle,
+          'border-radius': ContentSettingsStore.borderRadius
         },
         pinStyles
       );

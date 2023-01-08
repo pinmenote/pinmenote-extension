@@ -19,13 +19,13 @@ import { PinObject, PinViewType } from '../../common/model/pin.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { HtmlFactory } from './html.factory';
+import { ImageResizeFactory } from '../../common/factory/image-resize.factory';
 import { ObjNextIdCommand } from '../../common/command/obj/obj-next-id.command';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import { fnImgResize } from '../../common/fn/img.resize.fn';
 import { fnUid } from '../../common/fn/uid.fn';
 import LinkLocator = Pinmenote.Pin.LinkLocator;
 
@@ -77,7 +77,7 @@ export class PinFactory {
     const xpath = XpathFactory.newXPathString(ref);
     return {
       xpath,
-      elementSize: {
+      rect: {
         x: Math.round(rect.x),
         y: Math.round(rect.y),
         width: Math.round(rect.width),
@@ -106,7 +106,7 @@ export class PinFactory {
   ): Promise<void> => {
     // Let's resize screenshot and resolve promise
     try {
-      screenshot = await fnImgResize(dto, screenshot);
+      screenshot = await ImageResizeFactory.resize(dto.locator.rect, screenshot);
     } finally {
       dto.screenshot = screenshot;
     }

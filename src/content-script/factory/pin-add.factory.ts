@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { DocumentMediator } from '../mediator/document.mediator';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from './pin.factory';
-import { SettingsStore } from '../store/settings.store';
 
 export class PinAddFactory {
   private static currentElement: HTMLElement | null = null;
@@ -43,8 +43,8 @@ export class PinAddFactory {
       this.currentElement.addEventListener('click', this.handleElementClick);
       this.borderStyle = this.currentElement.style.border;
       this.borderRadius = this.currentElement.style.borderRadius;
-      this.currentElement.style.border = SettingsStore.borderStyle;
-      this.currentElement.style.borderRadius = SettingsStore.borderRadius;
+      this.currentElement.style.border = ContentSettingsStore.borderStyle;
+      this.currentElement.style.borderRadius = ContentSettingsStore.borderRadius;
     }
   }
 

@@ -17,23 +17,27 @@
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { ContentSettingsData } from '../../common/model/settings.model';
 import { SettingsKeys } from '../../common/keys/settings.keys';
-import { environmentConfig } from '../../common/environment';
 
-export class SettingsStore {
-  private static borderStyleValue = environmentConfig.settings.borderStyle;
-  private static borderRadiusValue = environmentConfig.settings.borderRadius;
+export class ContentSettingsStore {
+  private static settings: ContentSettingsData;
 
   static get borderStyle(): string {
-    return this.borderStyleValue;
+    return this.settings.borderStyle;
   }
 
   static get borderRadius(): string {
-    return this.borderRadiusValue;
+    return this.settings.borderRadius;
+  }
+
+  static get screenshotQuality(): number {
+    return this.settings.screenshotQuality;
+  }
+
+  static get screenshotFormat(): string {
+    return this.settings.screenshotFormat;
   }
 
   static initSettings = async (): Promise<void> => {
-    const data = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
-    this.borderRadiusValue = data.borderRadius;
-    this.borderStyleValue = data.borderStyle;
+    this.settings = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
   };
 }

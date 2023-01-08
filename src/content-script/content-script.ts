@@ -29,12 +29,12 @@ import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { ContentMessageHandler } from './content-message.handler';
+import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
 import { ObjectStoreKeys } from '../common/keys/object.store.keys';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
-import { SettingsStore } from './store/settings.store';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { WindowMediator } from './mediator/window.mediator';
 import { environmentConfig } from '../common/environment';
@@ -71,10 +71,10 @@ class PinMeScript {
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
     TinyEventDispatcher.removeListener(event, key);
 
-    const isLink = this.resolveLinkWebsite();
-    if (isLink) return;
+    // Link so we navigate further
+    if (this.resolveLinkWebsite()) return;
 
-    await SettingsStore.initSettings();
+    await ContentSettingsStore.initSettings();
 
     // if (data.link) new CreateLinkCommand(data.link).execute();
     await new RuntimePinGetHrefCommand().execute();
