@@ -18,26 +18,15 @@ import { HtmlComponent } from '../../../common/model/html.model';
 import { PinComponent } from '../../components/pin.component';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
-import { SettingsStore } from '../../store/settings.store';
-import { contentPinNew } from '../../fn/content-pin-new';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class CreatePinDataCommand implements ICommand<Promise<HtmlComponent | undefined>> {
-  constructor(private ref: HTMLElement, private dto?: PinObject) {}
-  async execute(): Promise<HtmlComponent | undefined> {
-    let shouldFocus = false;
-    if (!this.dto) {
-      this.dto = await contentPinNew(this.ref);
-      shouldFocus = true;
-    }
-    // TODO !!! CHANGE HTMLElements to interfaces
+export class CreatePinComponentCommand implements ICommand<HtmlComponent | undefined> {
+  constructor(private ref: HTMLElement, private dto: PinObject, private focus = false) {}
+  execute(): HtmlComponent | undefined {
     const pinComponent = new PinComponent(this.ref, this.dto);
     document.body.appendChild(pinComponent.render());
 
-    if (shouldFocus) pinComponent.focus();
-
-    this.ref.style.border = SettingsStore.borderStyle;
-    this.ref.style.borderRadius = SettingsStore.borderRadius;
+    if (this.focus) pinComponent.focus();
 
     // Add Pin data
     return PinStore.add(pinComponent);

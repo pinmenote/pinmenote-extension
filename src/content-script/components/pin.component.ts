@@ -106,6 +106,9 @@ export class PinComponent implements HtmlComponent {
 
     this.topbar.setEditor(this.editor.editor);
 
+    this.refValue.style.border = SettingsStore.borderStyle;
+    this.refValue.style.borderRadius = SettingsStore.borderRadius;
+
     return this.el;
   }
 

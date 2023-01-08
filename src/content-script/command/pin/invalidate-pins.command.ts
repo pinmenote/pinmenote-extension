@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CreateLinkCommand } from '../link/create-link.command';
-import { CreatePinXpathCommand } from './create-pin-xpath.command';
 import { ObjectTypeDto } from '../../../common/model/html.model';
+import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
@@ -44,7 +44,7 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     for (const pin of pinList) {
       switch (pin.type) {
         case ObjectTypeDto.Pin:
-          if (await new CreatePinXpathCommand(pin as PinObject).execute()) {
+          if (new PinAddXpathCommand(pin as PinObject).execute()) {
             PinPendingStore.remove(pin.uid);
           }
           break;

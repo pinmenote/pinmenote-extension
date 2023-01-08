@@ -14,20 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CreatePinXpathCommand } from './create-pin-xpath.command';
+import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class PinVisibleCommand implements ICommand<Promise<void>> {
+export class PinVisibleCommand implements ICommand<void> {
   constructor(private pin: PinObject) {}
-  async execute(): Promise<void> {
+  execute(): void {
     if (!this.pin.visible) {
       PinStore.delByUid(this.pin.uid);
       PinPendingStore.add(this.pin);
     } else {
-      await new CreatePinXpathCommand(this.pin).execute();
+      new PinAddXpathCommand(this.pin).execute();
     }
   }
 }

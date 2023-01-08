@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CreatePinXpathCommand } from '../pin/create-pin-xpath.command';
+import { PinAddXpathCommand } from '../pin/pin-add-xpath.command';
 import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
 import { PinStore } from '../../store/pin.store';
 import { contentPinNewUrl } from '../../../common/fn/pin/content-pin-new-url';
@@ -25,7 +25,7 @@ export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
     const data = await new PinGetHrefCommand(contentPinNewUrl(), true).execute();
     PinStore.clear();
     for (const pin of data) {
-      await new CreatePinXpathCommand(pin).execute();
+      new PinAddXpathCommand(pin).execute();
     }
   }
 }

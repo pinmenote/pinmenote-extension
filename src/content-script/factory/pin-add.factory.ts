@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CreatePinDataCommand } from '../command/pin/create-pin-data.command';
+import { CreatePinComponentCommand } from '../command/pin/create-pin-component.command';
 import { DocumentMediator } from '../mediator/document.mediator';
-import { SettingsStore } from './settings.store';
-import { fnConsoleLog } from '../../common/fn/console.fn';
+import { PinFactory } from './pin.factory';
+import { SettingsStore } from '../store/settings.store';
 
-export class PinAddElementStore {
+export class PinAddFactory {
   private static currentElement: HTMLElement | null = null;
   private static borderStyle = '';
   private static borderRadius = '';
@@ -28,7 +28,7 @@ export class PinAddElementStore {
     return !!this.currentElement;
   }
 
-  static clearElement(): void {
+  static clear(): void {
     if (!this.currentElement) return;
     this.currentElement.style.border = this.borderStyle;
     this.currentElement.style.borderRadius = this.borderRadius;
@@ -51,12 +51,11 @@ export class PinAddElementStore {
   private static handleElementClick = async (event: MouseEvent): Promise<void> => {
     event.preventDefault();
     event.stopImmediatePropagation();
-    fnConsoleLog('CLick', event);
-    if (this.currentElement) {
-      this.currentElement.style.border = this.borderStyle;
-      this.currentElement.style.borderRadius = this.borderRadius;
-      await new CreatePinDataCommand(this.currentElement).execute();
-    }
+    const element = this.currentElement;
     DocumentMediator.stopListeners();
+    if (element) {
+      const dto = await PinFactory.contentPinNew(element);
+      new CreatePinComponentCommand(element, dto, true).execute();
+    }
   };
 }

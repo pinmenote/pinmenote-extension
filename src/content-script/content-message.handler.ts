@@ -17,8 +17,7 @@
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { DocumentMediator } from './mediator/document.mediator';
-import { HtmlObject } from '../common/model/html.model';
-import { PinAddElementStore } from './store/pin-add-element.store';
+import { PinAddFactory } from './factory/pin-add.factory';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinPopupInitData } from '../common/model/pin.model';
 import { PinStore } from './store/pin.store';
@@ -60,10 +59,10 @@ export class ContentMessageHandler {
         await new PinNavigateCommand().execute();
         break;
       case BusMessageType.CONTENT_PIN_REMOVE:
-        PinStore.delByUid((msg.data as HtmlObject).uid);
+        PinStore.delByUid(msg.data);
         break;
       case BusMessageType.CONTENT_PIN_VISIBLE:
-        await new PinVisibleCommand(msg.data).execute();
+        new PinVisibleCommand(msg.data).execute();
         break;
       case BusMessageType.CONTENT_LOGIN_REFRESH:
         await new RuntimeLoginRefreshCommand().execute();
@@ -79,7 +78,7 @@ export class ContentMessageHandler {
     const data: PinPopupInitData = {
       url,
       pageTitle: document.title,
-      isAddingNote: PinAddElementStore.hasElement
+      isAddingNote: PinAddFactory.hasElement
     };
     await BrowserApi.sendRuntimeMessage<PinPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };

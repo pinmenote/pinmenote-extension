@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinAddElementStore } from '../store/pin-add-element.store';
+import { PinAddFactory } from '../factory/pin-add.factory';
 
 export class DocumentMediator {
   static startListeners(): void {
@@ -25,7 +25,7 @@ export class DocumentMediator {
   static stopListeners(): void {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('mouseover', this.handleMouseOver);
-    PinAddElementStore.clearElement();
+    PinAddFactory.clear();
   }
 
   private static handleKeyDown = (event: KeyboardEvent): void => {
@@ -35,11 +35,11 @@ export class DocumentMediator {
   };
 
   private static handleMouseOver = (event: MouseEvent): void => {
-    if (PinAddElementStore.hasElement) {
-      PinAddElementStore.clearElement();
+    if (PinAddFactory.hasElement) {
+      PinAddFactory.clear();
     }
     if (event.target instanceof HTMLElement) {
-      PinAddElementStore.updateElement(event.target);
+      PinAddFactory.updateElement(event.target);
     }
   };
 }

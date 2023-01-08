@@ -62,7 +62,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
 
   const handlePinRemove = async (data: PinObject): Promise<void> => {
     await new PinRemoveCommand(data).execute();
-    await BrowserApi.sendTabMessage<PinObject>({ type: BusMessageType.CONTENT_PIN_REMOVE, data });
+    await BrowserApi.sendTabMessage<string>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: data.uid });
     TinyEventDispatcher.dispatch(BusMessageType.POP_PIN_REMOVE, data);
   };
 
