@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CreatePinComponentCommand } from '../command/pin/create-pin-component.command';
 import { DocumentMediator } from '../mediator/document.mediator';
+import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from './pin.factory';
 import { SettingsStore } from '../store/settings.store';
 
@@ -55,7 +55,7 @@ export class PinAddFactory {
     DocumentMediator.stopListeners();
     if (element) {
       const dto = await PinFactory.contentPinNew(element);
-      new CreatePinComponentCommand(element, dto, true).execute();
+      new PinComponentAddCommand(element, dto, true).execute();
     }
   };
 }

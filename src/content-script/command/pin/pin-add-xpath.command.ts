@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CreatePinComponentCommand } from './create-pin-component.command';
+import { PinComponentAddCommand } from './pin-component-add.command';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
@@ -31,7 +31,7 @@ export class PinAddXpathCommand implements ICommand<boolean> {
       PinPendingStore.add(this.pin);
       return false;
     }
-    const pinData = new CreatePinComponentCommand(node, this.pin).execute();
+    const pinData = new PinComponentAddCommand(node, this.pin).execute();
     // CHECK IF CREATED
     if (pinData) return true;
     PinPendingStore.add(this.pin);
