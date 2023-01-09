@@ -16,6 +16,7 @@
  */
 import { PinAddXpathCommand } from '../pin/pin-add-xpath.command';
 import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
+import { PinNavigateCommand } from '../pin/pin-navigate.command';
 import { PinStore } from '../../store/pin.store';
 import { contentPinNewUrl } from '../../../common/fn/pin/content-pin-new-url';
 import ICommand = Pinmenote.Common.ICommand;
@@ -27,5 +28,7 @@ export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
     for (const pin of data) {
       new PinAddXpathCommand(pin).execute();
     }
+    // Navigate possible if url was different
+    await new PinNavigateCommand().execute();
   }
 }

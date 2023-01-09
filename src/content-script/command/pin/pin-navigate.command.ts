@@ -25,11 +25,14 @@ import ICommand = Pinmenote.Common.ICommand;
 export class PinNavigateCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     const url = fnNormalizeHref(window.location.href);
-    const data = await BrowserStorageWrapper.get<PinObject>(ObjectStoreKeys.PIN_NAVIGATE);
+
+    const data = await BrowserStorageWrapper.get<PinObject | undefined>(ObjectStoreKeys.PIN_NAVIGATE);
+    if (!data) return;
+
     if (data.url.href === url) {
+      await BrowserStorageWrapper.remove(ObjectStoreKeys.PIN_NAVIGATE);
       PinStore.focusPin(data);
       resolveVideoTime(data.content.videoTime);
-      await BrowserStorageWrapper.remove(ObjectStoreKeys.PIN_NAVIGATE);
     } else {
       window.location.href = data.url.href;
     }
