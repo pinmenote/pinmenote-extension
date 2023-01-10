@@ -67,7 +67,7 @@ export class TopBarComponent implements HtmlComponent, HtmlComponentFocusable {
   constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
     this.removeIcon = new RemoveIconComponent(this.object);
     this.parentIcon = new ParentIconComponent(this.object, parent);
-    this.drawIcon = new DrawIconComponent();
+    this.drawIcon = new DrawIconComponent(this.object);
     this.addIcon = new AddIconComponent();
   }
 
