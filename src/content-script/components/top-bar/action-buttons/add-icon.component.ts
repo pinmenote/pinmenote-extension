@@ -15,16 +15,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
+import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class AddIconComponent implements HtmlComponent {
   private el = document.createElement('div');
 
   cleanup(): void {
-    fnConsoleLog('cleanup');
+    this.el.removeEventListener('click', this.handleClick);
   }
 
   render(): HTMLElement {
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#ff0000" height="24" viewBox="0 0 24 24" width="24">
+        <path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+    </svg>`;
+    this.el.addEventListener('click', this.handleClick);
+    applyStylesToElement(this.el, iconButtonStyles);
+
     return this.el;
   }
+
+  private handleClick = () => {
+    fnConsoleLog('add click');
+  };
 }

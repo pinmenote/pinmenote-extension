@@ -16,6 +16,7 @@
  */
 import { HtmlComponent, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { DrawComponent } from './draw.component';
 import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextEditorComponent } from './text-editor.component';
@@ -29,6 +30,8 @@ export class PinComponent implements HtmlComponent, PageComponent {
   private readonly topBar: TopBarComponent;
   private readonly textEditor: TextEditorComponent;
 
+  private readonly drawComponent: DrawComponent;
+
   private rect: PinRectangle;
 
   private refValue: HTMLElement;
@@ -40,8 +43,9 @@ export class PinComponent implements HtmlComponent, PageComponent {
     this.refValue = ref;
     this.object = pin;
     this.rect = PinPointFactory.calculateRect(this.refValue);
-    this.topBar = new TopBarComponent(this.rect, this.object, this);
+    this.topBar = new TopBarComponent(this.object, this.rect, this);
     this.textEditor = new TextEditorComponent(this.object, this.rect);
+    this.drawComponent = new DrawComponent(this.object, this.rect, this);
   }
 
   setNewRef(ref: HTMLElement): void {
@@ -74,6 +78,8 @@ export class PinComponent implements HtmlComponent, PageComponent {
 
     this.el.appendChild(this.topBar.render());
 
+    this.el.appendChild(this.drawComponent.render());
+
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
 
@@ -91,6 +97,7 @@ export class PinComponent implements HtmlComponent, PageComponent {
     this.el.style.height = `${this.rect.height}px`;
     this.textEditor.resize(this.rect);
     this.topBar.resize(this.rect);
+    this.drawComponent.resize(this.rect);
   }
 
   cleanup(): void {

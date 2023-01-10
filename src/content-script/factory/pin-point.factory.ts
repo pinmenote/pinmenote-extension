@@ -19,10 +19,11 @@ import PinRectangle = Pinmenote.Pin.PinRectangle;
 export class PinPointFactory {
   static calculateRect(ref: HTMLElement): PinRectangle {
     const rect = ref.getBoundingClientRect();
+    const width = rect.width < 200 ? 200 : rect.width;
     return {
       x: Math.round(rect.left + window.scrollX),
       y: Math.round(rect.top + window.scrollY),
-      width: Math.round(rect.width),
+      width: Math.round(width),
       height: Math.round(rect.height)
     };
   }

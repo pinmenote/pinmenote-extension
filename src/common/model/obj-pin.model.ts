@@ -22,6 +22,11 @@ interface ObjPagePinDto {
   html: PinHtmlDataDto[];
   css: PinCssDataDto;
   video: PinVideoDataDto[];
+  draw: PinDrawDto[];
+}
+
+interface PinDrawDto {
+  drawData: string[];
 }
 
 interface PinVideoDataDto {

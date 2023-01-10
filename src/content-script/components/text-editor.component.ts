@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BusMessageType } from '../../common/model/bus.model';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
 import { ObjUpdateHashtagsCommand } from '../../common/command/obj/hashtag/obj-update-hashtags.command';
 import { PinObject } from '../../common/model/pin.model';
@@ -35,8 +36,8 @@ export class TextEditorComponent {
 
   render(): HTMLElement {
     this.editorView = this.createEditor();
+    this.el.style.border = ContentSettingsStore.borderStyle;
     this.resize(this.rect);
-    this.el.style.marginTop = `${this.rect.height}px`;
     return this.el;
   }
 
