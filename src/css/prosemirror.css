@@ -28,6 +28,7 @@
     line-height: 100%;
     margin: 0;
     padding: 0;
+    border: none;
 }
 
 .ProseMirror p:first-child {
@@ -37,16 +38,19 @@
 .ProseMirror p {
     margin: 0px 0px 4px;
     padding: 0;
+    border: none;
 }
 
 .ProseMirror ul, .ProseMirror ol {
     padding-left: 20px;
     list-style-type: disc;
     list-style-position: outside;
+    border: none;
 }
 
 .ProseMirror li {
     list-style-type: disc;
     list-style-position: outside;
     position: relative;
+    border: none;
 }

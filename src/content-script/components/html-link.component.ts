@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlObject } from '../../common/model/html.model';
+import { HtmlComponent, HtmlObject, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { applyStylesToElement } from '../../common/style.utils';
 import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
@@ -42,7 +42,7 @@ class ContentCheck {
   }
 }
 
-export class HtmlLinkComponent implements HtmlComponent {
+export class HtmlLinkComponent implements HtmlComponent, PageComponent {
   private el = document.createElement('div');
   private xy?: PinPoint;
 

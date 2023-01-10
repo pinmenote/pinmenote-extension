@@ -14,20 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComponent, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { HtmlComponent } from '../../common/model/html.model';
 import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextEditorComponent } from './text-editor.component';
+import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
 import { pinStyles } from './styles/pin.styles';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
-export class PinComponent implements HtmlComponent {
+export class PinComponent implements HtmlComponent, PageComponent {
   private readonly el = document.createElement('div');
+  private readonly topBar: TopBarComponent;
   private readonly textEditor: TextEditorComponent;
 
-  private xy: PinRectangle;
+  private rect: PinRectangle;
 
   private refValue: HTMLElement;
 
@@ -37,8 +39,15 @@ export class PinComponent implements HtmlComponent {
     this.el.id = pin.uid;
     this.refValue = ref;
     this.object = pin;
-    this.xy = PinPointFactory.calculateRect(this.refValue);
-    this.textEditor = new TextEditorComponent(this.object, this.xy);
+    this.rect = PinPointFactory.calculateRect(this.refValue);
+    this.topBar = new TopBarComponent(this.rect, this.object, this);
+    this.textEditor = new TextEditorComponent(this.object, this.rect);
+  }
+
+  setNewRef(ref: HTMLElement): void {
+    this.refValue.style.border = this.object.border.style;
+    this.refValue.style.borderRadius = this.object.border.radius;
+    this.refValue = ref;
   }
 
   get ref(): HTMLElement {
@@ -52,11 +61,10 @@ export class PinComponent implements HtmlComponent {
   render(): HTMLElement {
     const styles = Object.assign(
       {
-        left: `${this.xy.x}px`,
-        top: `${this.xy.y}px`,
-        width: `${this.xy.width}px`,
-        height: `${this.xy.height}px`,
-        'background-color': '#ffffff00'
+        left: `${this.rect.x}px`,
+        top: `${this.rect.y}px`,
+        width: `${this.rect.width}px`,
+        height: `${this.rect.height}px`
       },
       pinStyles
     );
@@ -64,19 +72,25 @@ export class PinComponent implements HtmlComponent {
     applyStylesToElement(this.el, styles);
     this.el.appendChild(this.textEditor.render());
 
+    this.el.appendChild(this.topBar.render());
+
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
+
+    this.el.addEventListener('mouseover', this.handleMouseOver);
+    this.el.addEventListener('mouseout', this.handleMouseOut);
 
     return this.el;
   }
 
   resize(): void {
-    this.xy = PinPointFactory.calculateRect(this.refValue);
-    this.el.style.left = `${this.xy.x}px`;
-    this.el.style.top = `${this.xy.y}px`;
-    this.el.style.width = `${this.xy.width}px`;
-    this.el.style.height = `${this.xy.height}px`;
-    this.textEditor.resize(this.xy);
+    this.rect = PinPointFactory.calculateRect(this.refValue);
+    this.el.style.left = `${this.rect.x}px`;
+    this.el.style.top = `${this.rect.y}px`;
+    this.el.style.width = `${this.rect.width}px`;
+    this.el.style.height = `${this.rect.height}px`;
+    this.textEditor.resize(this.rect);
+    this.topBar.resize(this.rect);
   }
 
   cleanup(): void {
@@ -87,18 +101,17 @@ export class PinComponent implements HtmlComponent {
     this.refValue.style.borderRadius = this.object.border.radius;
 
     this.textEditor.cleanup();
-    /*this.topbar.cleanup();
-    this.bottombar.cleanup();*/
+    this.topBar.cleanup();
     this.el.remove();
   }
 
   private handleMouseOver = () => {
-    /*this.topbar.focusin();
-    this.bottombar.focusin();*/
+    this.textEditor.focusin();
+    this.topBar.focusin();
   };
 
   private handleMouseOut = () => {
-    /*this.topbar.focusout();
-    this.bottombar.focusout();*/
+    this.textEditor.focusout();
+    this.topBar.focusout();
   };
 }

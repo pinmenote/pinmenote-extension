@@ -16,14 +16,14 @@
  */
 import { Command } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { applyStylesToElement } from '../../../../common/style.utils';
+import { applyStylesToElement } from '../../../common/style.utils';
 import { editorBarButtonStyles } from './editor-bar-button.styles';
 import { schema } from 'prosemirror-markdown';
 import { toggleMark } from 'prosemirror-commands';
 
-export class ItalicButtonComponent {
+export class BoldButtonComponent {
   private el = document.createElement('div');
-  private italicCommand?: Command;
+  private boldCommand?: Command;
 
   private clicked = false;
   private selected = false;
@@ -35,19 +35,19 @@ export class ItalicButtonComponent {
   }
 
   render(): HTMLDivElement {
-    this.el.innerText = 'I';
+    this.el.innerText = 'B';
     this.el.addEventListener('mousedown', this.handleMouseDown);
-    this.el.addEventListener('click', this.handleItalicClick);
+    this.el.addEventListener('click', this.handleBoldClick);
     applyStylesToElement(this.el, editorBarButtonStyles);
-    this.el.style.fontStyle = 'italic';
+    this.el.style.fontWeight = 'bold';
 
-    this.italicCommand = toggleMark(schema.marks.em);
+    this.boldCommand = toggleMark(schema.marks.strong);
 
     return this.el;
   }
 
   cleanup(): void {
-    this.el.removeEventListener('click', this.handleItalicClick);
+    this.el.removeEventListener('click', this.handleBoldClick);
     this.el.removeEventListener('mousedown', this.handleMouseDown);
   }
 
@@ -71,12 +71,12 @@ export class ItalicButtonComponent {
     this.selected = false;
   }
 
-  private handleItalicClick = (e: MouseEvent) => {
+  private handleBoldClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopImmediatePropagation();
 
     //eslint-disable-next-line @typescript-eslint/unbound-method
-    if (this.editor && this.italicCommand) this.italicCommand(this.editor.state, this.editor.dispatch, this.editor);
+    if (this.editor && this.boldCommand) this.boldCommand(this.editor.state, this.editor.dispatch, this.editor);
 
     this.selected ? this.unselect(true) : this.select(true);
     this.clicked = true;

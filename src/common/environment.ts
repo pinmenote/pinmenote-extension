@@ -17,11 +17,13 @@
 
 type ScreenshotFormat = 'jpeg' | 'png';
 
-interface SettingsConfig {
+export interface SettingsConfig {
+  version: number;
   screenshotFormat: ScreenshotFormat;
   screenshotQuality: number;
   borderStyle: string;
   borderRadius: string;
+  themeColor: string;
   videoDisplayTime: number;
 }
 
@@ -32,7 +34,6 @@ interface EnvironmentConfig {
   shortUrl: string;
   isProduction: boolean;
   settings: SettingsConfig;
-  version: number;
   objListLimit: number;
 }
 
@@ -43,12 +44,13 @@ export const environmentConfig: EnvironmentConfig = {
   shortUrl: process.env.WEBSITE_URL || 'https://pinmenote.com',
   isProduction: process.env.IS_PRODUCTION === 'true',
   settings: {
+    version: parseInt(process.env.VERSION || '1'),
     screenshotFormat: 'jpeg',
     screenshotQuality: 80,
-    borderRadius: '5px',
     borderStyle: '2px solid #ff0000',
+    borderRadius: '5px',
+    themeColor: '#ff0000',
     videoDisplayTime: 5
   },
-  objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000'),
-  version: parseInt(process.env.VERSION || '1')
+  objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
 };

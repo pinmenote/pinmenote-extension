@@ -17,7 +17,7 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ContentSettingsData } from '../../../common/model/settings.model';
+import { SettingsConfig } from '../../../common/environment';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
@@ -25,7 +25,7 @@ import ICommand = Pinmenote.Common.ICommand;
 export class ContentPinScreenshotCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
-      const settings = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
+      const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
       const data = await BrowserApi.tabs.captureVisibleTab({
         format: settings.screenshotFormat,
         quality: settings.screenshotQuality

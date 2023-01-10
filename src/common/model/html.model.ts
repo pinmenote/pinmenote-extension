@@ -54,13 +54,21 @@ export interface HtmlContent {
   elementText: string;
 }
 
-export interface HtmlComponent {
+export interface HtmlComponentFocusable {
+  focusin(): void;
+  focusout(): void;
+}
+
+export interface PageComponent {
   object: HtmlObject;
-  ref: HTMLElement;
+  focus(goto: boolean): void;
+  cleanup(): void;
+  resize(): void;
+}
+
+export interface HtmlComponent {
   render(): HTMLElement;
   cleanup(): void;
-  focus(goto: boolean): void;
-  resize(): void;
 }
 
 export interface HtmlObject extends LinkDto {

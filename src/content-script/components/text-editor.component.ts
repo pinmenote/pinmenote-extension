@@ -35,7 +35,7 @@ export class TextEditorComponent {
 
   render(): HTMLElement {
     this.editorView = this.createEditor();
-    this.resizeTextArea(this.rect);
+    this.resize(this.rect);
     this.el.style.marginTop = `${this.rect.height}px`;
     return this.el;
   }
@@ -45,10 +45,21 @@ export class TextEditorComponent {
   }
 
   resize(rect: PinRectangle): void {
-    this.resizeTextArea(rect);
+    this.el.style.width = `${rect.width}px`;
+    this.el.style.height = `${rect.height}px`;
+    this.el.style.marginTop = `${rect.height}px`;
+  }
+
+  focusin() {
+    this.el.style.display = 'inline-block';
+  }
+
+  focusout() {
+    this.el.style.display = 'none';
   }
 
   focus(goto = false): void {
+    this.focusin();
     const height = parseInt(this.el.style.height.split('px')[0]);
     if (goto) scrollToElementFn(this.editorView?.dom, height);
     this.editorView?.focus();
@@ -76,10 +87,4 @@ export class TextEditorComponent {
       }
     });
   }
-
-  private resizeTextArea = (rect: PinRectangle) => {
-    this.el.style.width = `${rect.width}px`;
-    this.el.style.height = `${rect.height}px`;
-    this.el.style.marginTop = `${rect.height}px`;
-  };
 }

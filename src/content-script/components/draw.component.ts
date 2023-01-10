@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComponent } from '../../common/model/html.model';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 
-export enum ExtensionTheme {
-  LIGHT = 'light',
-  DARK = 'dark'
-}
+export class DrawComponent implements HtmlComponent {
+  private readonly el = document.createElement('div');
 
-export interface ContentExtensionData {
-  theme: ExtensionTheme;
+  render(): HTMLElement {
+    return this.el;
+  }
+
+  cleanup() {
+    fnConsoleLog('cleanup');
+  }
 }

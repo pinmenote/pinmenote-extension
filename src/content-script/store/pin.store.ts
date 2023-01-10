@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../common/model/html.model';
+import { PageComponent } from '../../common/model/html.model';
 import { PinObject } from '../../common/model/pin.model';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class PinStore {
-  private static pinData: HtmlComponent[] = [];
+  private static pinData: PageComponent[] = [];
 
-  public static getByUid(uid: string): HtmlComponent | undefined {
+  public static getByUid(uid: string): PageComponent | undefined {
     const index = this.pinData.findIndex((p) => p.object.uid === uid);
     if (index > -1) {
       return this.pinData[index];
@@ -29,14 +29,14 @@ export class PinStore {
     return undefined;
   }
 
-  public static add(data: HtmlComponent): HtmlComponent {
+  public static add(data: PageComponent): PageComponent {
     if (this.pinData.findIndex((c) => c.object.uid === data.object.uid) === -1) {
       this.pinData.push(data);
     }
     return data;
   }
 
-  public static delByUid(uid: string): HtmlComponent | undefined {
+  public static delByUid(uid: string): PageComponent | undefined {
     fnConsoleLog('PinStore->delByUid', uid);
     const index = this.pinData.findIndex((c) => c.object.uid === uid);
     if (index > -1) {
@@ -55,7 +55,7 @@ export class PinStore {
     this.pinData = [];
   }
 
-  public static each(fn: (value: HtmlComponent, index: number, array: HtmlComponent[]) => void): void {
+  public static each(fn: (value: PageComponent, index: number, array: PageComponent[]) => void): void {
     this.pinData.forEach(fn);
   }
 

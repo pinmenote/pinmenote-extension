@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
-import { ContentSettingsData } from '../../common/model/settings.model';
+import { SettingsConfig } from '../../common/environment';
 import { SettingsKeys } from '../../common/keys/settings.keys';
 
 export class ContentSettingsStore {
-  private static settings: ContentSettingsData;
+  private static settings: SettingsConfig;
 
   static get borderStyle(): string {
     return this.settings.borderStyle;
@@ -38,6 +38,6 @@ export class ContentSettingsStore {
   }
 
   static initSettings = async (): Promise<void> => {
-    this.settings = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
+    this.settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
   };
 }

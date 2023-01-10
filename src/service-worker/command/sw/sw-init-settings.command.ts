@@ -14,21 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { SettingsConfig, environmentConfig } from '../../../common/environment';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ContentSettingsData } from '../../../common/model/settings.model';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
-import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class SwInitSettingsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    let settings = await BrowserStorageWrapper.get<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY);
+    const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
     if (!settings) {
-      settings = { ...environmentConfig.settings, version: environmentConfig.version };
       fnConsoleLog('Settings Initialize');
-      await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, settings);
-    } else if (settings.version !== environmentConfig.version) {
+      await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, environmentConfig.settings);
+    } else if (settings.version !== environmentConfig.settings.version) {
       fnConsoleLog('Settings Migrate placeholder');
     } else {
       fnConsoleLog('Settings Exists', settings);
