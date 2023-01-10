@@ -14,40 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDrawDto } from './obj-draw.model';
-import { ObjRectangle } from './obj-utils.model';
+import { ObjPoint } from './obj-utils.model';
 
-interface ObjPagePinDto {
-  title: string;
-  theme: string;
-  html: PinHtmlDataDto[];
-  css: PinCssDataDto;
-  video: PinVideoDataDto[];
-  draw?: ObjDrawDto[];
+export enum DrawToolDto {
+  Pencil = 'PENCIL',
+  Line = 'LINE',
+  Fill = 'FILL'
 }
 
-interface PinVideoDataDto {
-  currentTime: number;
-  displayTime: number;
-  xpath: string;
-}
-
-interface PinHtmlDataDto {
-  parent: string; // bodyStyle
-  screenshot?: string;
-  html: string;
-  text: string; // innerText value of html
-  xpath: string;
-  size: ObjRectangle;
-  border: PinBorderDataDto;
-}
-
-export interface PinCssDataDto {
-  css: string;
-  href: string[];
-}
-
-interface PinBorderDataDto {
-  radius: string;
-  style: string;
+export interface ObjDrawDto {
+  points: ObjPoint[];
+  tool: DrawToolDto;
 }

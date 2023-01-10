@@ -16,26 +16,23 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
 import { BusMessageType } from '../../common/model/bus.model';
+import { DrawAreaComponent } from './draw/draw-area.component';
 import { PinComponent } from './pin.component';
 import { PinObject } from '../../common/model/pin.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { applyStylesToElement } from '../../common/style.utils';
-import { fnConsoleLog } from '../../common/fn/console.fn';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class DrawComponent implements HtmlComponent, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
-  private readonly canvas: HTMLCanvasElement = document.createElement('canvas');
-  private readonly ctx: CanvasRenderingContext2D | null;
+  private drawArea: DrawAreaComponent;
 
   private visible = false;
   private readonly drawKey: string;
 
   constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
-    this.canvas.width = rect.width;
-    this.canvas.height = rect.height;
-    this.ctx = this.canvas.getContext('2d');
+    this.drawArea = new DrawAreaComponent(this.rect);
     this.drawKey = TinyEventDispatcher.addListener<PinObject>(BusMessageType.CNT_DRAW_CLICK, this.handleDrawIconClick);
   }
 
@@ -47,66 +44,11 @@ export class DrawComponent implements HtmlComponent, HtmlComponentFocusable {
       display: 'none'
     };
     applyStylesToElement(this.el, styles);
-    this.el.appendChild(this.canvas);
-
-    this.canvas.addEventListener('mousedown', this.handleMouseDown);
-    this.canvas.addEventListener('mouseup', this.handleMouseUp);
-    this.canvas.addEventListener('mouseout', this.handleMouseOut);
-    this.canvas.addEventListener('mousemove', this.handleMouseMove);
+    this.el.appendChild(this.drawArea.canvas);
+    this.drawArea.render();
 
     return this.el;
   }
-
-  private curr = {
-    x: 0,
-    y: 0
-  };
-
-  private prev = {
-    x: 0,
-    y: 0
-  };
-
-  private drawing = false;
-
-  private handleMouseUp = (e: MouseEvent) => {
-    this.drawing = false;
-  };
-
-  private handleMouseOut = (e: MouseEvent) => {
-    this.drawing = false;
-  };
-
-  private handleMouseMove = (e: MouseEvent) => {
-    this.prev = { ...this.curr };
-    this.curr.x = e.offsetX;
-    this.curr.y = e.offsetY;
-    this.draw();
-  };
-
-  private handleMouseDown = (e: MouseEvent) => {
-    if (!this.ctx || !this.visible) return;
-    this.prev = { ...this.curr };
-    this.curr.x = e.offsetX;
-    this.curr.y = e.offsetY;
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#ff0000';
-    this.ctx.fillRect(this.curr.x, this.curr.y, 4, 4);
-    this.ctx.closePath();
-    this.drawing = true;
-  };
-
-  private draw = (): void => {
-    if (!this.drawing) return;
-    if (!this.ctx) return;
-    this.ctx.beginPath();
-    this.ctx.moveTo(this.prev.x, this.prev.y);
-    this.ctx.lineTo(this.curr.x, this.curr.y);
-    this.ctx.strokeStyle = '#ff0000';
-    this.ctx.lineWidth = 4;
-    this.ctx.stroke();
-    this.ctx.closePath();
-  };
 
   private handleDrawIconClick = (event: string, key: string, value: PinObject) => {
     if (this.object.id === value.id) {
@@ -118,8 +60,7 @@ export class DrawComponent implements HtmlComponent, HtmlComponentFocusable {
   resize(rect: PinRectangle): void {
     if (rect.width === this.rect.width && this.rect.height === rect.height) return;
     this.rect = rect;
-    this.canvas.width = rect.width;
-    this.canvas.height = rect.height;
+    this.drawArea.resize(rect);
   }
 
   focusin(): void {
@@ -131,7 +72,7 @@ export class DrawComponent implements HtmlComponent, HtmlComponentFocusable {
   }
 
   cleanup() {
-    fnConsoleLog('cleanup');
     TinyEventDispatcher.removeListener(BusMessageType.CNT_DRAW_CLICK, this.drawKey);
+    this.drawArea.cleanup();
   }
 }
