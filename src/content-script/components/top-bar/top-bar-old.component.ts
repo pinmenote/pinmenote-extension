@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoldButtonComponent } from '../editor-buttons/bold-button.component';
-import { BulletListButtonComponent } from '../editor-buttons/bullet-list-button.component';
+import { BoldButtonComponent } from '../text-bar/text-bar-buttons/bold-button.component';
+import { BulletListButtonComponent } from '../text-bar/text-bar-buttons/bullet-list-button.component';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { ItalicButtonComponent } from '../editor-buttons/italic-button.component';
+import { ItalicButtonComponent } from '../text-bar/text-bar-buttons/italic-button.component';
 import { ParentIconComponent } from './action-buttons/parent-icon.component';
 import { PinComponent } from '../pin.component';
 import { PinObject } from '../../../common/model/pin.model';

@@ -55,7 +55,7 @@ const addIconStyles = {
   'background-color': '#ffffff00'
 };
 
-export class TopBarComponent implements HtmlComponent, HtmlComponentFocusable {
+export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
   private readonly removeIcon: RemoveIconComponent;

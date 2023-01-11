@@ -16,23 +16,23 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
 import { BusMessageType } from '../../common/model/bus.model';
-import { DrawAreaComponent } from './draw/draw-area.component';
+import { DrawComponent } from './draw/draw.component';
 import { PinComponent } from './pin.component';
 import { PinObject } from '../../common/model/pin.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { applyStylesToElement } from '../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
-export class DrawComponent implements HtmlComponent, HtmlComponentFocusable {
+export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
-  private drawArea: DrawAreaComponent;
+  private drawArea: DrawComponent;
 
   private visible = false;
   private readonly drawKey: string;
 
   constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
-    this.drawArea = new DrawAreaComponent(this.rect);
+    this.drawArea = new DrawComponent(this.rect);
     this.drawKey = TinyEventDispatcher.addListener<PinObject>(BusMessageType.CNT_DRAW_CLICK, this.handleDrawIconClick);
   }
 

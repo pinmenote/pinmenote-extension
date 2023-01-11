@@ -31,7 +31,7 @@ import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { fnSleep } from '../../../../common/fn/sleep.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class ParentIconComponent implements HtmlComponent {
+export class ParentIconComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
   constructor(private pin: PinObject, private parent: PinComponent) {}
 

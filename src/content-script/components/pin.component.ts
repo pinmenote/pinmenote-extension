@@ -16,17 +16,17 @@
  */
 import { HtmlComponent, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { DrawComponent } from './draw.component';
+import { DrawContainerComponent } from './draw-container.component';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
-import { TextEditorComponent } from './text-editor.component';
+import { TextContainerComponent } from './text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
 import { pinStyles } from './styles/pin.styles';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
-export class PinComponent implements HtmlComponent, PageComponent {
+export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly content = document.createElement('div');
   readonly top = document.createElement('div');
   readonly bottom = document.createElement('div');
@@ -34,9 +34,9 @@ export class PinComponent implements HtmlComponent, PageComponent {
   private readonly mouseManager: PinMouseManager;
 
   private readonly topBar: TopBarComponent;
-  private readonly textEditor: TextEditorComponent;
+  private readonly text: TextContainerComponent;
 
-  private readonly drawComponent: DrawComponent;
+  private readonly drawComponent: DrawContainerComponent;
 
   private rect: PinRectangle;
 
@@ -49,8 +49,8 @@ export class PinComponent implements HtmlComponent, PageComponent {
     this.object = pin;
     this.rect = PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this.object, this.rect, this);
-    this.textEditor = new TextEditorComponent(this.object, this.rect);
-    this.drawComponent = new DrawComponent(this.object, this.rect, this);
+    this.text = new TextContainerComponent(this.object, this.rect);
+    this.drawComponent = new DrawContainerComponent(this.object, this.rect, this);
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
   }
 
@@ -69,7 +69,7 @@ export class PinComponent implements HtmlComponent, PageComponent {
   }
 
   focus(goto = false): void {
-    this.textEditor.focus(goto);
+    this.text.focus(goto);
   }
 
   render(): void {
@@ -89,7 +89,7 @@ export class PinComponent implements HtmlComponent, PageComponent {
     );
     applyStylesToElement(this.bottom, bottomStyles);
     applyStylesToElement(this.top, topStyles);
-    this.bottom.appendChild(this.textEditor.render());
+    this.bottom.appendChild(this.text.render());
 
     this.top.appendChild(this.topBar.render());
 
@@ -100,6 +100,7 @@ export class PinComponent implements HtmlComponent, PageComponent {
     document.body.appendChild(this.top);
     document.body.appendChild(this.bottom);
     this.mouseManager.start();
+    this.handleMouseOut();
   }
 
   resize(): void {
@@ -108,7 +109,8 @@ export class PinComponent implements HtmlComponent, PageComponent {
     this.top.style.left = `${this.rect.x}px`;
     this.bottom.style.top = `${this.rect.y + this.rect.height}px`;
     this.bottom.style.left = `${this.rect.x}px`;
-    this.textEditor.resize(this.rect);
+
+    this.text.resize(this.rect);
     this.topBar.resize(this.rect);
     this.drawComponent.resize(this.rect);
   }
@@ -117,20 +119,26 @@ export class PinComponent implements HtmlComponent, PageComponent {
     this.refValue.style.border = this.object.border.style;
     this.refValue.style.borderRadius = this.object.border.radius;
 
-    this.textEditor.cleanup();
+    this.text.cleanup();
     this.topBar.cleanup();
     this.top.remove();
     this.bottom.remove();
     this.mouseManager.stop();
   }
 
+  private timeoutId = -1;
+
   private handleMouseOver = () => {
-    this.textEditor.focusin();
+    window.clearTimeout(this.timeoutId);
+    this.text.focusin();
     this.topBar.focusin();
   };
 
   private handleMouseOut = () => {
-    this.textEditor.focusout();
-    this.topBar.focusout();
+    // TODO fix by creating borders top bottom left right around component
+    this.timeoutId = window.setTimeout(() => {
+      this.text.focusout();
+      this.topBar.focusout();
+    }, 1000);
   };
 }

@@ -19,7 +19,7 @@ import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class AddIconComponent implements HtmlComponent {
+export class AddIconComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   cleanup(): void {

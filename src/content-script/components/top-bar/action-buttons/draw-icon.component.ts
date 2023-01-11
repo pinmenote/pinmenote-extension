@@ -22,7 +22,7 @@ import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawIconComponent implements HtmlComponent {
+export class DrawIconComponent implements HtmlComponent<HTMLElement> {
   private readonly el = document.createElement('div');
 
   constructor(private object: PinObject) {}

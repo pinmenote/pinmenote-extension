@@ -14,11 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { DrawToolDto, ObjDrawDto } from '../../../common/model/obj-draw.model';
+import { ObjPoint } from '../../../common/model/obj-utils.model';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
-export class DrawAreaComponent {
+export class DrawComponent {
   readonly canvas: HTMLCanvasElement = document.createElement('canvas');
   private readonly ctx: CanvasRenderingContext2D;
+
+  private currentPoints: ObjPoint[] = [];
+  private currentTool = DrawToolDto.Pencil;
+  private currentToolSize = 4;
+  private currentColor = '#ff0000';
+  private lineCap: CanvasLineCap = 'square';
+  private lineJoin: CanvasLineJoin = 'round';
+
+  private drawData: ObjDrawDto[] = [];
 
   constructor(private rect: PinRectangle) {
     this.canvas.width = rect.width;
@@ -62,16 +73,30 @@ export class DrawAreaComponent {
 
   private handleMouseUp = (e: MouseEvent) => {
     this.drawing = false;
+    this.appendData();
   };
 
   private handleMouseOut = (e: MouseEvent) => {
     this.drawing = false;
+    this.appendData();
   };
 
+  private appendData(): void {
+    this.drawData.push({
+      points: this.currentPoints.slice(0),
+      size: this.currentToolSize,
+      color: this.currentColor,
+      tool: this.currentTool,
+      brush: {
+        lineCap: this.lineCap,
+        lineJoin: this.lineJoin
+      }
+    });
+  }
+
   private handleMouseMove = (e: MouseEvent) => {
-    this.prev = { ...this.curr };
-    this.curr.x = e.offsetX;
-    this.curr.y = e.offsetY;
+    this.prev = { x: this.curr.x, y: this.curr.y };
+    this.curr = { x: e.offsetX, y: e.offsetY };
     this.draw();
   };
 
@@ -80,11 +105,9 @@ export class DrawAreaComponent {
     this.prev = { ...this.curr };
     this.curr.x = e.offsetX;
     this.curr.y = e.offsetY;
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#ff0000';
-    this.ctx.fillRect(this.curr.x, this.curr.y, 4, 4);
-    this.ctx.closePath();
+    this.currentPoints.push(this.curr);
     this.drawing = true;
+    this.draw();
   };
 
   private draw = (): void => {
@@ -92,9 +115,12 @@ export class DrawAreaComponent {
     this.ctx.beginPath();
     this.ctx.moveTo(this.prev.x, this.prev.y);
     this.ctx.lineTo(this.curr.x, this.curr.y);
-    this.ctx.strokeStyle = '#ff0000';
-    this.ctx.lineWidth = 4;
+    this.ctx.strokeStyle = this.currentColor;
+    this.ctx.lineWidth = this.currentToolSize;
+    this.ctx.lineCap = this.lineCap;
+    this.ctx.lineJoin = this.lineJoin;
     this.ctx.stroke();
     this.ctx.closePath();
+    this.currentPoints.push(this.curr);
   };
 }

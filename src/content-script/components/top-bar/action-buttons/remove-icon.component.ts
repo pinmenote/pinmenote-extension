@@ -22,7 +22,7 @@ import { SettingsStore } from '../../../../options-ui/view/store/settings.store'
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class RemoveIconComponent implements HtmlComponent {
+export class RemoveIconComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
   constructor(private pin: PinObject) {}
 

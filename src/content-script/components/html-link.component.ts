@@ -42,7 +42,7 @@ class ContentCheck {
   }
 }
 
-export class HtmlLinkComponent implements HtmlComponent, PageComponent {
+export class HtmlLinkComponent implements HtmlComponent<HTMLElement>, PageComponent<HTMLElement> {
   private el = document.createElement('div');
   private xy?: PinPoint;
 

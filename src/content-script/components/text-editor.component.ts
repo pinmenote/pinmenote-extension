@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
@@ -27,7 +28,7 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
-export class TextEditorComponent {
+export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
 
   private editorView?: EditorView;

@@ -18,6 +18,7 @@ import { ObjPoint } from './obj-utils.model';
 
 export enum DrawToolDto {
   Pencil = 'PENCIL',
+  Erase = 'ERASE',
   Line = 'LINE',
   Fill = 'FILL'
 }
@@ -25,6 +26,7 @@ export enum DrawToolDto {
 export interface ObjDrawDto {
   points: ObjPoint[];
   size: number;
-  color: number;
+  color: string;
   tool: DrawToolDto;
+  brush: any;
 }
