@@ -17,7 +17,7 @@
 import { ContentVideoTime } from '../../common/model/html.model';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 
-export const resolveVideoTime = (videoTime?: ContentVideoTime[]): void => {
+export const resolveVideoTimeFn = (videoTime?: ContentVideoTime[]): void => {
   if (!videoTime) return;
   for (const video of videoTime) {
     const value = XpathFactory.newXPathResult(video.xpath);

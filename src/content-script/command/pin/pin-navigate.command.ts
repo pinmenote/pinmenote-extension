@@ -19,7 +19,7 @@ import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
 import { fnNormalizeHref } from '../../../common/fn/normalize.url.fn';
-import { resolveVideoTime } from '../../fn/resolve-video-time';
+import { resolveVideoTimeFn } from '../../fn/resolve-video-time.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinNavigateCommand implements ICommand<Promise<void>> {
@@ -32,7 +32,7 @@ export class PinNavigateCommand implements ICommand<Promise<void>> {
     if (data.url.href === url) {
       await BrowserStorageWrapper.remove(ObjectStoreKeys.PIN_NAVIGATE);
       PinStore.focusPin(data);
-      resolveVideoTime(data.content.videoTime);
+      resolveVideoTimeFn(data.content.videoTime);
     } else {
       window.location.href = data.url.href;
     }

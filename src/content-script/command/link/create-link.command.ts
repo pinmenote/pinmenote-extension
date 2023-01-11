@@ -20,7 +20,7 @@ import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
-import { isElementHidden } from '../../fn/is-element-hidden';
+import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import LinkDto = Pinmenote.Pin.LinkDto;
 
@@ -33,7 +33,7 @@ export class CreateLinkCommand implements ICommand<boolean> {
     const uid = fnUid();
     const object = { uid, type: ObjectTypeDto.Link, ...this.link };
     fnConsoleLog('CreateLinkCommand->ref', ref, this.link);
-    if (!ref || isElementHidden(ref)) {
+    if (!ref || isElementHiddenFn(ref)) {
       PinPendingStore.add(object);
       return false;
     }

@@ -20,5 +20,5 @@ export const pinStyles = {
   'z-index': 'calc(9e999)', // https://stackoverflow.com/questions/1118198/how-can-you-figure-out-the-highest-z-index-in-your-document
   display: 'flex',
   'flex-direction': 'column',
-  'background-color': '#ffffffff'
+  'background-color': '#ffffff00'
 };

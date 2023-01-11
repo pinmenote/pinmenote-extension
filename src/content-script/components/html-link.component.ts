@@ -16,8 +16,8 @@
  */
 import { HtmlComponent, HtmlObject, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { PinPointFactory } from '../factory/pin-point.factory';
 import { applyStylesToElement } from '../../common/style.utils';
-import { contentCalculatePinPoint } from '../fn/content-calculate-pin-point';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { pinStyles } from './styles/pin.styles';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
@@ -42,7 +42,7 @@ class ContentCheck {
   }
 }
 
-export class HtmlLinkComponent implements HtmlComponent<HTMLElement>, PageComponent<HTMLElement> {
+export class HtmlLinkComponent implements HtmlComponent<HTMLElement>, PageComponent {
   private el = document.createElement('div');
   private xy?: PinPoint;
 
@@ -75,7 +75,7 @@ export class HtmlLinkComponent implements HtmlComponent<HTMLElement>, PageCompon
     if (!this.contentCheck.isTarget) {
       setTimeout(() => this.apply(goto), 250);
     } else {
-      this.xy = contentCalculatePinPoint(this.ref, this.size);
+      this.xy = PinPointFactory.calculateRect(this.ref);
       const styles = Object.assign(
         {
           left: `${Math.floor(this.xy.x)}px`,

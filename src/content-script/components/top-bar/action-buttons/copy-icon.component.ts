@@ -19,6 +19,7 @@ import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 export class CopyIconComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
+  constructor(private ref: HTMLElement) {}
   render(): HTMLElement {
     return this.el;
   }
@@ -26,4 +27,8 @@ export class CopyIconComponent implements HtmlComponent<HTMLElement> {
   cleanup() {
     fnConsoleLog('cleanup');
   }
+
+  private handleClick = async () => {
+    await navigator.clipboard.writeText(this.ref.innerText);
+  };
 }
