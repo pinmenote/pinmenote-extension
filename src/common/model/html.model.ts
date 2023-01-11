@@ -64,10 +64,11 @@ export interface PageComponent {
   focus(goto: boolean): void;
   cleanup(): void;
   resize(): void;
+  render(): void;
 }
 
 export interface HtmlComponent {
-  render(): HTMLElement;
+  render(): void;
   cleanup(): void;
 }
 

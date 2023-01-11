@@ -24,5 +24,7 @@ export enum DrawToolDto {
 
 export interface ObjDrawDto {
   points: ObjPoint[];
+  size: number;
+  color: number;
   tool: DrawToolDto;
 }

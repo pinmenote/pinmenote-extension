@@ -47,8 +47,6 @@ export class TextEditorComponent {
 
   resize(rect: PinRectangle): void {
     this.el.style.width = `${rect.width}px`;
-    this.el.style.height = `${rect.height}px`;
-    this.el.style.marginTop = `${rect.height}px`;
   }
 
   focusin() {

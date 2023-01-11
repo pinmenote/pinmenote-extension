@@ -24,8 +24,7 @@ export class PinComponentAddCommand implements ICommand<HtmlComponent | undefine
   constructor(private ref: HTMLElement, private dto: PinObject, private focus = false) {}
   execute(): HtmlComponent | undefined {
     const pinComponent = new PinComponent(this.ref, this.dto);
-    document.body.appendChild(pinComponent.render());
-
+    pinComponent.render();
     if (this.focus) pinComponent.focus();
 
     // Add Pin data

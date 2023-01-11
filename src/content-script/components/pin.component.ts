@@ -17,6 +17,7 @@
 import { HtmlComponent, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { DrawComponent } from './draw.component';
+import { PinMouseManager } from './pin-mouse.manager';
 import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextEditorComponent } from './text-editor.component';
@@ -26,7 +27,12 @@ import { pinStyles } from './styles/pin.styles';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class PinComponent implements HtmlComponent, PageComponent {
-  private readonly el = document.createElement('div');
+  readonly content = document.createElement('div');
+  readonly top = document.createElement('div');
+  readonly bottom = document.createElement('div');
+
+  private readonly mouseManager: PinMouseManager;
+
   private readonly topBar: TopBarComponent;
   private readonly textEditor: TextEditorComponent;
 
@@ -39,19 +45,23 @@ export class PinComponent implements HtmlComponent, PageComponent {
   readonly object: PinObject;
 
   constructor(ref: HTMLElement, pin: PinObject) {
-    this.el.id = pin.uid;
     this.refValue = ref;
     this.object = pin;
     this.rect = PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this.object, this.rect, this);
     this.textEditor = new TextEditorComponent(this.object, this.rect);
     this.drawComponent = new DrawComponent(this.object, this.rect, this);
+    this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
   }
 
   setNewRef(ref: HTMLElement): void {
+    this.mouseManager.stop();
     this.refValue.style.border = this.object.border.style;
     this.refValue.style.borderRadius = this.object.border.radius;
+    this.refValue.removeEventListener('mouseover', this.handleMouseOver);
+    this.refValue.removeEventListener('mouseout', this.handleMouseOut);
     this.refValue = ref;
+    this.mouseManager.start();
   }
 
   get ref(): HTMLElement {
@@ -62,54 +72,56 @@ export class PinComponent implements HtmlComponent, PageComponent {
     this.textEditor.focus(goto);
   }
 
-  render(): HTMLElement {
-    const styles = Object.assign(
+  render(): void {
+    const bottomStyles = Object.assign(
       {
         left: `${this.rect.x}px`,
-        top: `${this.rect.y}px`,
-        width: `${this.rect.width}px`,
-        height: `${this.rect.height}px`
+        top: `${this.rect.y + this.rect.height}px`
       },
       pinStyles
     );
+    const topStyles = Object.assign(
+      {
+        left: `${this.rect.x}px`,
+        top: `${this.rect.y}px`
+      },
+      pinStyles
+    );
+    applyStylesToElement(this.bottom, bottomStyles);
+    applyStylesToElement(this.top, topStyles);
+    this.bottom.appendChild(this.textEditor.render());
 
-    applyStylesToElement(this.el, styles);
-    this.el.appendChild(this.textEditor.render());
+    this.top.appendChild(this.topBar.render());
 
-    this.el.appendChild(this.topBar.render());
-
-    this.el.appendChild(this.drawComponent.render());
+    this.top.appendChild(this.drawComponent.render());
 
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
-
-    this.el.addEventListener('mouseover', this.handleMouseOver);
-    this.el.addEventListener('mouseout', this.handleMouseOut);
-
-    return this.el;
+    document.body.appendChild(this.top);
+    document.body.appendChild(this.bottom);
+    this.mouseManager.start();
   }
 
   resize(): void {
     this.rect = PinPointFactory.calculateRect(this.refValue);
-    this.el.style.left = `${this.rect.x}px`;
-    this.el.style.top = `${this.rect.y}px`;
-    this.el.style.width = `${this.rect.width}px`;
-    this.el.style.height = `${this.rect.height}px`;
+    this.top.style.top = `${this.rect.y}px`;
+    this.top.style.left = `${this.rect.x}px`;
+    this.bottom.style.top = `${this.rect.y + this.rect.height}px`;
+    this.bottom.style.left = `${this.rect.x}px`;
     this.textEditor.resize(this.rect);
     this.topBar.resize(this.rect);
     this.drawComponent.resize(this.rect);
   }
 
   cleanup(): void {
-    this.el.removeEventListener('mouseover', this.handleMouseOver);
-    this.el.removeEventListener('mouseout', this.handleMouseOut);
-
     this.refValue.style.border = this.object.border.style;
     this.refValue.style.borderRadius = this.object.border.radius;
 
     this.textEditor.cleanup();
     this.topBar.cleanup();
-    this.el.remove();
+    this.top.remove();
+    this.bottom.remove();
+    this.mouseManager.stop();
   }
 
   private handleMouseOver = () => {
