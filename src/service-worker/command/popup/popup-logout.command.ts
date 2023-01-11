@@ -17,7 +17,6 @@
 import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ContentLoginRefreshCommand } from '../content/content-login-refresh.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import BoolDto = Pinmenote.Common.BoolDto;
 import ICommand = Pinmenote.Common.ICommand;
@@ -30,7 +29,6 @@ export class PopupLogoutCommand implements ICommand<void> {
         type: BusMessageType.POPUP_LOGOUT,
         data: { value: true }
       });
-      await new ContentLoginRefreshCommand().execute();
     } catch (e) {
       fnConsoleLog('Error', e);
     }

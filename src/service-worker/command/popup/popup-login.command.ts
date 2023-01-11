@@ -18,7 +18,6 @@ import { ApiLoginCommand } from '../api/api-login.command';
 import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ContentLoginRefreshCommand } from '../content/content-login-refresh.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import LoginDto = Pinmenote.Auth.LoginDto;
@@ -37,7 +36,6 @@ export class PopupLoginCommand implements ICommand<void> {
         type: BusMessageType.POPUP_LOGIN,
         data
       });
-      await new ContentLoginRefreshCommand().execute();
     } catch (e) {
       fnConsoleLog('Error', e);
     }

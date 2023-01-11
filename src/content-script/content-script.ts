@@ -36,7 +36,6 @@ import { ObjectStoreKeys } from '../common/keys/object.store.keys';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { WindowMediator } from './mediator/window.mediator';
 import { environmentConfig } from '../common/environment';
 import { fnNormalizeHref } from '../common/fn/normalize.url.fn';
 import { fnUid } from '../common/fn/uid.fn';
@@ -47,7 +46,6 @@ class PinMeScript {
 
   constructor(private readonly id: string, private ms: number) {
     this.href = fnNormalizeHref(window.location.href);
-    WindowMediator.start();
     ContentMessageHandler.start();
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
@@ -134,7 +132,6 @@ class PinMeScript {
     TinyEventDispatcher.cleanup();
     DocumentMediator.stopListeners();
     PinStore.clear();
-    WindowMediator.cleanup();
     ContentMessageHandler.cleanup();
   }
 

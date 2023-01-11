@@ -26,6 +26,11 @@ export interface TimeoutMessage {
   id: string;
 }
 
+export interface BusDownloadMessage {
+  url: string;
+  filename: string;
+}
+
 export enum BusMessageType {
   // Internal content script
   CNT_SETTINGS = 'cnt.settings',
@@ -61,13 +66,12 @@ export enum BusMessageType {
   POPUP_PRIVATE_KEY_GET = 'popup.private.key.get',
   POPUP_PRIVATE_KEY_IMPORT = 'popup.private.key.import',
   // Content script
-  CONTENT_LOGIN = 'content.login',
-  CONTENT_LOGIN_REFRESH = 'content.login.refresh',
+  CONTENT_DOWNLOAD_DATA = 'content.download',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
-  CONTENT_PIN_SCREENSHOT = 'content.pin.screenshot',
   CONTENT_REFRESH_TOKEN = 'content.refresh.token',
+  CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
   CONTENT_TIMEOUT = 'content.timeout',
   CONTENT_TIMEOUT_SET = 'content.timeout.set',
   CONTENT_THEME = 'content.theme',

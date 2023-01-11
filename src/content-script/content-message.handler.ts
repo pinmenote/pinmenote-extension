@@ -22,7 +22,6 @@ import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinPopupInitData } from '../common/model/pin.model';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
-import { RuntimeLoginRefreshCommand } from './command/runtime/runtime-login-refresh.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
 import { fnConsoleLog } from '../common/fn/console.fn';
@@ -63,9 +62,6 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.CONTENT_PIN_VISIBLE:
         new PinVisibleCommand(msg.data).execute();
-        break;
-      case BusMessageType.CONTENT_LOGIN_REFRESH:
-        await new RuntimeLoginRefreshCommand().execute();
         break;
       default:
         TinyEventDispatcher.dispatch(msg.type, msg.data);

@@ -74,7 +74,7 @@ export class ParentIconComponent implements HtmlComponent<HTMLElement> {
 
       return new Promise((resolve, reject) => {
         BrowserApi.sendRuntimeMessage<undefined>({
-          type: BusMessageType.CONTENT_PIN_SCREENSHOT
+          type: BusMessageType.CONTENT_TAKE_SCREENSHOT
         })
           .then(() => {
             // We handle it above, inside dispatcher
@@ -84,15 +84,15 @@ export class ParentIconComponent implements HtmlComponent<HTMLElement> {
             // pinData.container.style.display = 'inline-block';
             reject('PROBLEM !!!');
           });
-        TinyEventDispatcher.addListener<string>(BusMessageType.CONTENT_PIN_SCREENSHOT, async (event, key, value) => {
+        TinyEventDispatcher.addListener<string>(BusMessageType.CONTENT_TAKE_SCREENSHOT, async (event, key, value) => {
+          TinyEventDispatcher.removeListener(event, key);
+
           // After taking screenshot let's go back to note styles
           // pinData.container.style.display = 'inline-block';
           if (this.parent.ref.parentElement) {
             this.parent.ref.style.border = ContentSettingsStore.borderStyle;
             this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
           }
-
-          TinyEventDispatcher.removeListener(event, key);
 
           this.parent.object.screenshot = await ImageResizeFactory.resize(this.parent.object.locator.rect, value);
 

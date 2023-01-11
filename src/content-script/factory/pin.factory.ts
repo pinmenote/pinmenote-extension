@@ -58,7 +58,7 @@ export class PinFactory {
     return new Promise((resolve, reject) => {
       // Crop screenshot function
       TinyEventDispatcher.addListener<string>(
-        BusMessageType.CONTENT_PIN_SCREENSHOT,
+        BusMessageType.CONTENT_TAKE_SCREENSHOT,
         async (event: string, key: string, value: string) => {
           TinyEventDispatcher.removeListener(event, key);
           await PinFactory.addNewPinWithScreenshot(dto, value, resolve);
@@ -84,7 +84,7 @@ export class PinFactory {
 
   static sendGetPinTakeScreenshot = (reject: (value: string) => void) => {
     BrowserApi.sendRuntimeMessage<undefined>({
-      type: BusMessageType.CONTENT_PIN_SCREENSHOT
+      type: BusMessageType.CONTENT_TAKE_SCREENSHOT
     })
       .then(() => {
         // We handle it above, inside dispatcher

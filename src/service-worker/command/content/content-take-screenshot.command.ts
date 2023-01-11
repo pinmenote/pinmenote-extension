@@ -22,7 +22,7 @@ import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class ContentPinScreenshotCommand implements ICommand<void> {
+export class ContentTakeScreenshotCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
@@ -30,7 +30,7 @@ export class ContentPinScreenshotCommand implements ICommand<void> {
         format: settings.screenshotFormat,
         quality: settings.screenshotQuality
       });
-      await BrowserApi.sendTabMessage({ type: BusMessageType.CONTENT_PIN_SCREENSHOT, data });
+      await BrowserApi.sendTabMessage({ type: BusMessageType.CONTENT_TAKE_SCREENSHOT, data });
     } catch (e) {
       fnConsoleLog('Error', e);
     }

@@ -16,8 +16,9 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { ContentPinScreenshotCommand } from './command/content/content-pin-screenshot.command';
+import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
+import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { ContentTimeoutCommand } from './command/content/content-timeout.command';
 import { OptionsPinGetRangeCommand } from './command/options/options-pin-get-range.command';
@@ -49,8 +50,11 @@ const handleMessage = async (
   if (runtime.id !== BrowserApi.runtime.id) return;
 
   switch (msg.type) {
-    case BusMessageType.CONTENT_PIN_SCREENSHOT:
-      await new ContentPinScreenshotCommand().execute();
+    case BusMessageType.CONTENT_DOWNLOAD_DATA:
+      await new ContentDownloadDataCommand(msg.data).execute();
+      break;
+    case BusMessageType.CONTENT_TAKE_SCREENSHOT:
+      await new ContentTakeScreenshotCommand().execute();
       break;
     case BusMessageType.CONTENT_REFRESH_TOKEN:
       await new ContentRefreshTokenCommand().execute();
