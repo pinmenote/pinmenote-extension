@@ -2,7 +2,13 @@ import { ContentSettingsStore } from '../../content-script/store/content-setting
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class ImageResizeFactory {
-  static resize = (rect: PinRectangle, b64image: string): Promise<string> => {
+  static resize = (size: PinRectangle, b64image: string): Promise<string> => {
+    const rect = {
+      x: size.x,
+      y: size.y,
+      width: size.width,
+      height: Math.min(size.height, window.innerHeight - size.y)
+    };
     return new Promise<string>((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
