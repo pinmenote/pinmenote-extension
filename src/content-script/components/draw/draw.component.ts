@@ -20,7 +20,7 @@ import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class DrawComponent {
   readonly canvas: HTMLCanvasElement = document.createElement('canvas');
-  private readonly ctx: CanvasRenderingContext2D;
+  private readonly ctx: CanvasRenderingContext2D | null;
 
   private currentPoints: ObjPoint[] = [];
   private currentTool = DrawToolDto.Pencil;
@@ -34,8 +34,10 @@ export class DrawComponent {
   constructor(private rect: PinRectangle) {
     this.canvas.width = rect.width;
     this.canvas.height = rect.height;
+    this.canvas.style.width = `${rect.width}px`;
+    this.canvas.style.height = `${rect.height}px`;
     const ctx = this.canvas.getContext('2d');
-    if (!ctx) throw new Error('empty context');
+    this.canvas.innerText = 'no javascript enabled - drawing not working';
     this.ctx = ctx;
   }
 
@@ -50,6 +52,8 @@ export class DrawComponent {
     this.rect = rect;
     this.canvas.width = rect.width;
     this.canvas.height = rect.height;
+    this.canvas.style.width = `${rect.width}px`;
+    this.canvas.style.height = `${rect.height}px`;
   }
 
   cleanup(): void {
@@ -111,7 +115,7 @@ export class DrawComponent {
   };
 
   private draw = (): void => {
-    if (!this.drawing) return;
+    if (!this.drawing || !this.ctx) return;
     this.ctx.beginPath();
     this.ctx.moveTo(this.prev.x, this.prev.y);
     this.ctx.lineTo(this.curr.x, this.curr.y);
