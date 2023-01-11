@@ -33,7 +33,7 @@ export class DocumentMediator {
         break;
       }
     }
-    // Fu..ing google maps
+    // Well, canvas web pages...
     if (canvasFound) {
       this.overlay = document.createElement('div');
       applyStylesToElement(this.overlay, pinStyles);

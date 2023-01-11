@@ -16,11 +16,14 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { AddIconComponent } from './action-buttons/add-icon.component';
+import { CopyIconComponent } from './action-buttons/copy-icon.component';
+import { DownloadIconComponent } from './action-buttons/download-icon.component';
 import { DrawIconComponent } from './action-buttons/draw-icon.component';
 import { ParentIconComponent } from './action-buttons/parent-icon.component';
 import { PinComponent } from '../pin.component';
 import { PinObject } from '../../../common/model/pin.model';
 import { RemoveIconComponent } from './action-buttons/remove-icon.component';
+import { TextIconComponent } from './action-buttons/text-icon.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
@@ -32,25 +35,43 @@ const topBarStyles = {
 };
 
 const removeIconStyles = {
-  right: `10px`,
+  right: `0px`,
   position: 'absolute',
   'background-color': '#ffffff00'
 };
 
 const parentIconStyles = {
-  right: `34px`,
-  position: 'absolute',
-  'background-color': '#ffffff00'
-};
-
-const drawIconStyles = {
-  left: '10px',
+  right: `20px`,
   position: 'absolute',
   'background-color': '#ffffff00'
 };
 
 const addIconStyles = {
-  left: '34px',
+  right: '48px',
+  position: 'absolute',
+  'background-color': '#ffffff00'
+};
+
+const copyIconStyles = {
+  right: '72px',
+  position: 'absolute',
+  'background-color': '#ffffff00'
+};
+
+const downloadIconStyles = {
+  right: '96px',
+  position: 'absolute',
+  'background-color': '#ffffff00'
+};
+
+const drawIconStyles = {
+  left: '0px',
+  position: 'absolute',
+  'background-color': '#ffffff00'
+};
+
+const textIconStyles = {
+  left: '24px',
   position: 'absolute',
   'background-color': '#ffffff00'
 };
@@ -58,17 +79,24 @@ const addIconStyles = {
 export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
+  private readonly addIcon: AddIconComponent;
   private readonly removeIcon: RemoveIconComponent;
   private readonly parentIcon: ParentIconComponent;
+  private readonly copyIcon: CopyIconComponent;
+  private readonly downloadIcon: DownloadIconComponent;
 
+  private readonly textIcon: TextIconComponent;
   private readonly drawIcon: DrawIconComponent;
-  private readonly addIcon: AddIconComponent;
 
   constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
+    this.addIcon = new AddIconComponent(parent);
     this.removeIcon = new RemoveIconComponent(this.object);
     this.parentIcon = new ParentIconComponent(this.object, parent);
-    this.drawIcon = new DrawIconComponent(this.object);
-    this.addIcon = new AddIconComponent();
+    this.copyIcon = new CopyIconComponent(parent);
+    this.downloadIcon = new DownloadIconComponent(parent);
+
+    this.textIcon = new TextIconComponent(parent);
+    this.drawIcon = new DrawIconComponent(parent);
   }
 
   focusin(): void {
@@ -92,14 +120,26 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.el.appendChild(parentComponent);
     applyStylesToElement(parentComponent, parentIconStyles);
 
+    const addComponent = this.addIcon.render();
+    this.el.appendChild(addComponent);
+    applyStylesToElement(addComponent, addIconStyles);
+
+    const copyComponent = this.copyIcon.render();
+    this.el.appendChild(copyComponent);
+    applyStylesToElement(copyComponent, copyIconStyles);
+
+    const downloadComponent = this.downloadIcon.render();
+    this.el.appendChild(downloadComponent);
+    applyStylesToElement(downloadComponent, downloadIconStyles);
+
     // left side
     const drawComponent = this.drawIcon.render();
     this.el.appendChild(drawComponent);
     applyStylesToElement(drawComponent, drawIconStyles);
 
-    const addComponent = this.addIcon.render();
-    this.el.appendChild(addComponent);
-    applyStylesToElement(addComponent, addIconStyles);
+    const textComponent = this.textIcon.render();
+    this.el.appendChild(textComponent);
+    applyStylesToElement(textComponent, textIconStyles);
 
     return this.el;
   }

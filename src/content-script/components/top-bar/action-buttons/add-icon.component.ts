@@ -15,12 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
+import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class AddIconComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
+
+  constructor(private parent: PinComponent) {}
 
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);

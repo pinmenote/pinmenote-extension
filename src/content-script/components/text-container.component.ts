@@ -25,6 +25,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   private textBar: TextBarComponent;
   private textEditor: TextEditorComponent;
+
   constructor(private object: PinObject, rect: PinRectangle) {
     this.textBar = new TextBarComponent();
     this.textEditor = new TextEditorComponent(object, rect);
@@ -44,6 +45,14 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   resize(rect: PinRectangle): void {
     this.textEditor.resize(rect);
+  }
+
+  show(): void {
+    this.el.style.display = 'inline-block';
+  }
+
+  hide(): void {
+    this.el.style.display = 'none';
   }
 
   cleanup(): void {

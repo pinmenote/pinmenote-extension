@@ -15,11 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
-import { BusMessageType } from '../../common/model/bus.model';
 import { DrawComponent } from './draw/draw.component';
 import { PinComponent } from './pin.component';
 import { PinObject } from '../../common/model/pin.model';
-import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { applyStylesToElement } from '../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
@@ -28,12 +26,8 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   private drawArea: DrawComponent;
 
-  private visible = false;
-  private readonly drawKey: string;
-
   constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
     this.drawArea = new DrawComponent(this.rect);
-    this.drawKey = TinyEventDispatcher.addListener<PinObject>(BusMessageType.CNT_DRAW_CLICK, this.handleDrawIconClick);
   }
 
   render(): HTMLElement {
@@ -50,13 +44,6 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
     return this.el;
   }
 
-  private handleDrawIconClick = (event: string, key: string, value: PinObject) => {
-    if (this.object.id === value.id) {
-      this.visible = !this.visible;
-      this.visible ? this.focusin() : this.focusout();
-    }
-  };
-
   resize(rect: PinRectangle): void {
     if (rect.width === this.rect.width && this.rect.height === rect.height) return;
     this.rect = rect;
@@ -64,7 +51,7 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
   }
 
   focusin(): void {
-    if (this.visible) this.el.style.display = 'inline-block';
+    this.el.style.display = 'inline-block';
   }
 
   focusout(): void {
@@ -72,7 +59,6 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
   }
 
   cleanup() {
-    TinyEventDispatcher.removeListener(BusMessageType.CNT_DRAW_CLICK, this.drawKey);
     this.drawArea.cleanup();
   }
 }

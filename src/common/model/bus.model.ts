@@ -30,7 +30,6 @@ export enum BusMessageType {
   // Internal content script
   CNT_SETTINGS = 'cnt.settings',
   CNT_EDITOR_MARKS = 'cnt.editor.marks',
-  CNT_DRAW_CLICK = 'cnt.draw.click',
   // Internal options tab
   OPT_PIN_SHOW_IMAGE = 'opt.pin.show.image',
   OPT_GET_LEFT_MENU_DATA = 'opt.get.left.menu.data',

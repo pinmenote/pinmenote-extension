@@ -46,7 +46,8 @@ export interface ObjEncryptionDto {
 export enum ObjTypeDto {
   PageBookmark = 'PAGE_BOOKMARK',
   PageNote = 'PAGE_NOTE',
-  PagePin = 'PAGE_PIN',
+  ElementPin = 'ELEMENT_PIN',
+  CanvasPin = 'CANVAS_PIN',
   PageLink = 'PAGE_LINK',
   Note = 'NOTE',
   Drawing = 'DRAWING'

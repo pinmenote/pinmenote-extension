@@ -15,15 +15,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
+import { PinComponent } from '../../pin.component';
+import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class DownloadIconComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
+  constructor(private parent: PinComponent) {}
   render(): HTMLElement {
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#ff0000" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+<g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/>
+</g></svg>`;
+    this.el.addEventListener('click', this.handleClick);
+    applyStylesToElement(this.el, iconButtonStyles);
+
     return this.el;
   }
 
   cleanup() {
-    fnConsoleLog('cleanup');
+    this.el.removeEventListener('click', this.handleClick);
   }
+
+  private handleClick = () => {
+    fnConsoleLog('download click');
+  };
 }
