@@ -107,6 +107,14 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.el.style.display = 'none';
   }
 
+  moveup(): void {
+    this.el.style.top = '-48px';
+  }
+
+  movedown(): void {
+    this.el.style.top = '-24px';
+  }
+
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.rect.width}px` }, topBarStyles);
     applyStylesToElement(this.el, style);

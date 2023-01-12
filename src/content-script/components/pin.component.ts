@@ -16,6 +16,7 @@
  */
 import { HtmlComponent, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinObject } from '../../common/model/pin.model';
@@ -36,7 +37,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private readonly topBar: TopBarComponent;
   readonly text: TextContainerComponent;
 
-  readonly drawComponent: DrawContainerComponent;
+  private readonly drawComponent: DrawContainerComponent;
+  private readonly drawBar: DrawBarComponent;
 
   private rect: PinRectangle;
 
@@ -50,8 +52,11 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.rect = PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this.object, this.rect, this);
     this.text = new TextContainerComponent(this.object, this.rect);
-    this.drawComponent = new DrawContainerComponent(this.object, this.rect, this);
+
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
+
+    this.drawComponent = new DrawContainerComponent(this.object, this.rect, this);
+    this.drawBar = new DrawBarComponent(this.rect, this.drawComponent);
   }
 
   setNewRef(ref: HTMLElement): void {
@@ -92,6 +97,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.bottom.appendChild(this.text.render());
 
     this.top.appendChild(this.topBar.render());
+    this.top.appendChild(this.drawBar.render());
 
     this.top.appendChild(this.drawComponent.render());
 
@@ -124,6 +130,9 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.top.remove();
     this.bottom.remove();
     this.mouseManager.stop();
+
+    this.drawComponent.cleanup();
+    this.drawBar.cleanup();
   }
 
   private timeoutId = -1;
@@ -132,6 +141,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     window.clearTimeout(this.timeoutId);
     this.text.focusin();
     this.topBar.focusin();
+    this.drawBar.focusin();
   };
 
   private handleMouseOut = () => {
@@ -139,6 +149,19 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.timeoutId = window.setTimeout(() => {
       this.text.focusout();
       this.topBar.focusout();
+      this.drawBar.focusout();
     }, 1000);
+  };
+
+  startDraw = () => {
+    this.topBar.moveup();
+    this.drawBar.toggle();
+    this.drawComponent.focusin();
+  };
+
+  stopDraw = () => {
+    this.topBar.movedown();
+    this.drawBar.toggle();
+    this.drawComponent.focusout();
   };
 }

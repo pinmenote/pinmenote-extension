@@ -44,10 +44,10 @@ export class DrawIconComponent implements HtmlComponent<HTMLElement> {
   handleClick = () => {
     this.visible = !this.visible;
     if (this.visible) {
-      this.parent.drawComponent.focusin();
+      this.parent.startDraw();
       this.fillColor = '#ff0000';
     } else {
-      this.parent.drawComponent.focusout();
+      this.parent.stopDraw();
       this.fillColor = '#000000';
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
