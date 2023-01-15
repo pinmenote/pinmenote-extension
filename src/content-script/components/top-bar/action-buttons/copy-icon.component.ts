@@ -38,6 +38,7 @@ export class CopyIconComponent implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = async () => {
-    await navigator.clipboard.writeText(this.parent.ref.innerText);
+    const text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
+    await navigator.clipboard.writeText(text);
   };
 }

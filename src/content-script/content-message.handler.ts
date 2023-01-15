@@ -41,9 +41,7 @@ export class ContentMessageHandler {
     runtime: BrowserGlobalSender,
     sendResponse: (response: BusMessage<undefined>) => void
   ): Promise<void> => {
-    if (![BusMessageType.CONTENT_TIMEOUT, BusMessageType.CONTENT_TIMEOUT_SET].includes(msg.type)) {
-      fnConsoleLog('content-script->msg', Date.now(), msg);
-    }
+    fnConsoleLog('content-script->msg', Date.now(), msg);
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });

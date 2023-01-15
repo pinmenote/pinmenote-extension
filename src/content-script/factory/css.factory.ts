@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CssData } from '../../common/model/html.model';
-import { fnGetKey } from '../../common/kv.utils';
+import { fnGetKey } from '../../common/fn/kv.utils';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 

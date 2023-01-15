@@ -19,6 +19,7 @@ import { ContentSettingsStore } from '../store/content-settings.store';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
+import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
 import PinPoint = Pinmenote.Pin.PinPoint;
@@ -103,5 +104,9 @@ export class HtmlLinkComponent implements HtmlComponent<HTMLElement>, PageCompon
 
   resize(): void {
     fnConsoleLog('resize');
+  }
+
+  isHidden(): boolean {
+    return isElementHiddenFn(this.ref);
   }
 }

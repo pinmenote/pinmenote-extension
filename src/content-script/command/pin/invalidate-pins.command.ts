@@ -23,7 +23,6 @@ import { PinStore } from '../../store/pin.store';
 import { RuntimePinGetHrefCommand } from '../runtime/runtime-pin-get-href.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnNormalizeHref } from '../../../common/fn/normalize.url.fn';
-import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class InvalidatePinsCommand implements ICommand<Promise<void>> {
@@ -57,7 +56,7 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     }
     // Ok so check if we displayed on some elements that are not visible
     PinStore.each((pinData) => {
-      if (isElementHiddenFn(pinData.ref)) {
+      if (pinData.isHidden()) {
         const data = PinStore.delByUid(pinData.object.uid);
         if (data) PinPendingStore.add(data.object);
       }

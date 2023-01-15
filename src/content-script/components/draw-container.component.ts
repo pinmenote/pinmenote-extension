@@ -27,7 +27,7 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
   private drawArea: DrawComponent;
 
   constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
-    this.drawArea = new DrawComponent(this.rect);
+    this.drawArea = new DrawComponent(this.rect, parent);
   }
 
   render(): HTMLElement {
@@ -38,7 +38,8 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
       display: 'none'
     };
     applyStylesToElement(this.el, styles);
-    this.el.appendChild(this.drawArea.canvas);
+    this.el.appendChild(this.drawArea.rasterCanvas);
+    this.el.appendChild(this.drawArea.drawCanvas);
     this.drawArea.render();
 
     return this.el;

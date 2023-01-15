@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,27 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessageType, TimeoutMessage } from '../../../common/model/bus.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class ContentTimeoutCommand implements ICommand<void> {
-  constructor(private data: TimeoutMessage) {}
+export class ContentInvalidateCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    try {
-      const timeoutId = setTimeout(this.sendTimeoutMessage, this.data.ms);
-      await this.sendTimeoutSetMessage(+timeoutId);
-    } catch (e) {
-      fnConsoleLog('Error', this.data, e);
-    }
+    await BrowserApi.sendTabMessage<undefined>({ type: BusMessageType.CONTENT_INVALIDATE });
+    fnConsoleLog('ContentInvalidateCommand->execute');
   }
-
-  private sendTimeoutMessage = async (): Promise<void> => {
-    await BrowserApi.sendTabMessage<TimeoutMessage>({ type: BusMessageType.CONTENT_TIMEOUT, data: this.data });
-  };
-
-  private sendTimeoutSetMessage = async (data: number): Promise<void> => {
-    await BrowserApi.sendTabMessage<number>({ type: BusMessageType.CONTENT_TIMEOUT_SET, data });
-  };
 }

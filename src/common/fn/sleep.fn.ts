@@ -14,20 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessageType, TimeoutMessage } from '../model/bus.model';
-import { BrowserApi } from '../service/browser.api.wrapper';
-import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
-import { fnUid } from './uid.fn';
-
 export const fnSleep = async (ms: number): Promise<void> => {
-  const id = fnUid();
-  await BrowserApi.sendRuntimeMessage<TimeoutMessage>({ type: BusMessageType.CONTENT_TIMEOUT, data: { id, ms } });
   return new Promise((resolve) => {
-    TinyEventDispatcher.addListener<TimeoutMessage>(BusMessageType.CONTENT_TIMEOUT, (event, key, value) => {
-      TinyEventDispatcher.removeListener(event, key);
-      if (value.id === id) {
-        resolve();
-      }
-    });
+    setTimeout(() => {
+      resolve();
+    }, ms);
   });
 };

@@ -17,14 +17,13 @@
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { DrawBrushSizeComponent } from './draw-buttons/draw-brush-size.component';
 import { DrawColorPickerComponent } from './draw-buttons/draw-color-picker.component';
-import { DrawContainerComponent } from '../draw-container.component';
 import { DrawEraseComponent } from './draw-buttons/draw-erase.component';
 import { DrawLineComponent } from './draw-buttons/draw-line.component';
 import { DrawPencilComponent } from './draw-buttons/draw-pencil.component';
 import { DrawRedoComponent } from './draw-buttons/draw-redo.component';
 import { DrawUndoComponent } from './draw-buttons/draw-undo.component';
+import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const drawBarStyles = {
@@ -49,29 +48,35 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private readonly pencil: DrawPencilComponent;
   private readonly line: DrawLineComponent;
   private readonly erase: DrawEraseComponent;
-  private readonly color: DrawColorPickerComponent;
+  private readonly colorPicker: DrawColorPickerComponent;
   private readonly size: DrawBrushSizeComponent;
   private readonly undo: DrawUndoComponent;
   private readonly redo: DrawRedoComponent;
 
-  constructor(private rect: PinRectangle, private drawContainer: DrawContainerComponent) {
+  constructor(private rect: PinRectangle, private parent: PinComponent) {
     this.pencil = new DrawPencilComponent();
     this.line = new DrawLineComponent();
     this.erase = new DrawEraseComponent();
 
-    this.color = new DrawColorPickerComponent();
+    this.colorPicker = new DrawColorPickerComponent(rect, parent);
     this.size = new DrawBrushSizeComponent();
 
     this.undo = new DrawUndoComponent();
     this.redo = new DrawRedoComponent();
   }
 
+  color(): string {
+    return this.colorPicker.color();
+  }
+
   focusin(): void {
     if (this.visible) this.el.style.display = 'inline-block';
+    this.colorPicker.focusin();
   }
 
   focusout(): void {
     this.el.style.display = 'none';
+    this.colorPicker.focusout();
   }
 
   toggle(): void {
@@ -84,7 +89,15 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   }
 
   cleanup(): void {
-    fnConsoleLog('cleanup');
+    this.pencil.cleanup();
+    this.line.cleanup();
+    this.erase.cleanup();
+
+    this.colorPicker.cleanup();
+    this.size.cleanup();
+
+    this.undo.cleanup();
+    this.redo.cleanup();
   }
 
   render(): HTMLElement {
@@ -95,7 +108,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.placeComponent(this.line.render(), 29);
     this.placeComponent(this.erase.render(), 53);
 
-    this.placeComponent(this.color.render(), 97);
+    this.placeComponent(this.colorPicker.render(), 97);
     this.placeComponent(this.size.render(), 121);
 
     this.placeComponent(this.undo.render(), 165);

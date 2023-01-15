@@ -23,11 +23,11 @@ import '@fontsource/roboto/700.css';
 
 import '../css/prosemirror.css';
 
-import { BusMessageType, TimeoutMessage } from '../common/model/bus.model';
 import { ContentExtensionData, ExtensionTheme } from '../common/model/settings.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
+import { BusMessageType } from '../common/model/bus.model';
 import { ContentMessageHandler } from './content-message.handler';
 import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
@@ -43,6 +43,7 @@ import { fnUid } from '../common/fn/uid.fn';
 class PinMeScript {
   private href: string;
   private redirectInterval = 0;
+  private timeoutId = 0;
 
   constructor(private readonly id: string, private ms: number) {
     this.href = fnNormalizeHref(window.location.href);
@@ -50,21 +51,7 @@ class PinMeScript {
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
     TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
-
-    TinyEventDispatcher.addListener<TimeoutMessage>(BusMessageType.CONTENT_TIMEOUT, this.handleContentTimeout);
   }
-
-  private handleContentTimeout = async (event: string, key: string, value: TimeoutMessage) => {
-    if (value.id === this.id) {
-      await new InvalidatePinsCommand(this.href).execute();
-      this.href = fnNormalizeHref(window.location.href);
-      await BrowserApi.sendRuntimeMessage<TimeoutMessage>({
-        type: BusMessageType.CONTENT_TIMEOUT,
-        data: { id: this.id, ms: this.ms }
-      });
-      this.adaptIntervalMs();
-    }
-  };
 
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
     TinyEventDispatcher.removeListener(event, key);
@@ -76,7 +63,7 @@ class PinMeScript {
 
     // if (data.link) new CreateLinkCommand(data.link).execute();
     await new RuntimePinGetHrefCommand().execute();
-    await this.initialTimeout();
+    this.initTimeout();
 
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches
       ? ExtensionTheme.LIGHT
@@ -110,22 +97,32 @@ class PinMeScript {
 
   private handleVisibilityChange = async (e: Event): Promise<void> => {
     fnConsoleLog('visibilitychange', e);
-    await this.initialTimeout();
+    await this.invalidatePins();
+    this.initTimeout();
+    await this.invalidateContentScript();
   };
 
-  private async initialTimeout(): Promise<void> {
-    fnConsoleLog('initialTimeout');
+  private initTimeout = (): void => {
+    clearTimeout(this.timeoutId);
+    this.timeoutId = window.setTimeout(this.invalidatePins, this.ms);
+  };
+
+  private invalidatePins = async (): Promise<void> => {
+    await new InvalidatePinsCommand(this.href).execute();
+    this.href = fnNormalizeHref(window.location.href);
+    this.adaptIntervalMs();
+    this.initTimeout();
+  };
+
+  private invalidateContentScript = async (): Promise<void> => {
     try {
-      // TODO move to settings
-      await BrowserApi.sendRuntimeMessage<TimeoutMessage>({
-        type: BusMessageType.CONTENT_TIMEOUT,
-        data: { id: this.id, ms: this.ms }
+      await BrowserApi.sendRuntimeMessage<undefined>({
+        type: BusMessageType.CONTENT_INVALIDATE
       });
     } catch (e) {
-      fnConsoleLog('PROBLEM->initialTimeout !!!', e);
       this.cleanup();
     }
-  }
+  };
 
   private cleanup(): void {
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
@@ -133,6 +130,7 @@ class PinMeScript {
     DocumentMediator.stopListeners();
     PinStore.clear();
     ContentMessageHandler.cleanup();
+    clearTimeout(this.timeoutId);
   }
 
   private adaptIntervalMs() {

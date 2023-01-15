@@ -14,117 +14,88 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { DrawToolDto, ObjDrawDto } from '../../../common/model/obj-draw.model';
-import { ObjPoint } from '../../../common/model/obj-utils.model';
+import { PencilDraw } from './tool/pencil.draw';
+import { PinComponent } from '../pin.component';
+import { applyStylesToElement } from '../../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
+const canvasStyles = {
+  position: 'absolute',
+  top: '0px',
+  left: '0px'
+};
+
 export class DrawComponent {
-  readonly canvas: HTMLCanvasElement = document.createElement('canvas');
-  private readonly ctx: CanvasRenderingContext2D | null;
+  readonly rasterCanvas: HTMLCanvasElement = document.createElement('canvas');
+  readonly drawCanvas: HTMLCanvasElement = document.createElement('canvas');
+  private readonly drawCtx: CanvasRenderingContext2D | null;
+  private readonly rasterCtx: CanvasRenderingContext2D | null;
 
-  private currentPoints: ObjPoint[] = [];
-  private currentTool = DrawToolDto.Pencil;
-  private currentToolSize = 4;
-  private currentColor = '#ff0000';
-  private lineCap: CanvasLineCap = 'square';
-  private lineJoin: CanvasLineJoin = 'round';
+  private toolSize = 4;
 
-  private drawData: ObjDrawDto[] = [];
+  private drawing = false;
 
-  constructor(private rect: PinRectangle) {
-    this.canvas.width = rect.width;
-    this.canvas.height = rect.height;
-    this.canvas.style.width = `${rect.width}px`;
-    this.canvas.style.height = `${rect.height}px`;
-    const ctx = this.canvas.getContext('2d');
-    this.canvas.innerText = 'no javascript enabled - drawing not working';
-    this.ctx = ctx;
+  constructor(private rect: PinRectangle, private parent: PinComponent) {
+    this.drawCanvas.width = rect.width;
+    this.drawCanvas.height = rect.height;
+    this.drawCanvas.style.width = `${rect.width}px`;
+    this.drawCanvas.style.height = `${rect.height}px`;
+    applyStylesToElement(this.drawCanvas, canvasStyles);
+    this.drawCanvas.innerText = 'no javascript enabled - drawing not working';
+    this.drawCtx = this.drawCanvas.getContext('2d');
+
+    this.rasterCanvas.width = rect.width;
+    this.rasterCanvas.height = rect.height;
+    this.rasterCanvas.style.width = `${rect.width}px`;
+    this.rasterCanvas.style.height = `${rect.height}px`;
+    applyStylesToElement(this.rasterCanvas, canvasStyles);
+    this.rasterCanvas.innerText = 'no javascript enabled - drawing not working';
+    this.rasterCtx = this.rasterCanvas.getContext('2d');
   }
 
   render(): void {
-    this.canvas.addEventListener('mousedown', this.handleMouseDown);
-    this.canvas.addEventListener('mouseup', this.handleMouseUp);
-    this.canvas.addEventListener('mouseout', this.handleMouseOut);
-    this.canvas.addEventListener('mousemove', this.handleMouseMove);
+    this.drawCanvas.addEventListener('mousedown', this.handleMouseDown);
+    this.drawCanvas.addEventListener('mouseup', this.handleMouseUp);
+    this.drawCanvas.addEventListener('mouseout', this.handleMouseUp);
+    this.drawCanvas.addEventListener('mousemove', this.handleMouseMove);
   }
 
   resize(rect: PinRectangle): void {
     this.rect = rect;
-    this.canvas.width = rect.width;
-    this.canvas.height = rect.height;
-    this.canvas.style.width = `${rect.width}px`;
-    this.canvas.style.height = `${rect.height}px`;
+    this.drawCanvas.width = rect.width;
+    this.drawCanvas.height = rect.height;
+    this.drawCanvas.style.width = `${rect.width}px`;
+    this.drawCanvas.style.height = `${rect.height}px`;
+    this.rasterCanvas.width = rect.width;
+    this.rasterCanvas.height = rect.height;
+    this.rasterCanvas.style.width = `${rect.width}px`;
+    this.rasterCanvas.style.height = `${rect.height}px`;
   }
 
   cleanup(): void {
-    this.canvas.removeEventListener('mousedown', this.handleMouseDown);
-    this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-    this.canvas.removeEventListener('mouseout', this.handleMouseOut);
-    this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+    this.drawCanvas.removeEventListener('mousedown', this.handleMouseDown);
+    this.drawCanvas.removeEventListener('mouseup', this.handleMouseUp);
+    this.drawCanvas.removeEventListener('mouseout', this.handleMouseUp);
+    this.drawCanvas.removeEventListener('mousemove', this.handleMouseMove);
   }
 
-  private curr = {
-    x: 0,
-    y: 0
-  };
-
-  private prev = {
-    x: 0,
-    y: 0
-  };
-
-  private drawing = false;
-
-  private handleMouseUp = (e: MouseEvent) => {
+  private handleMouseUp = () => {
+    if (!this.drawing) return;
+    const points = PencilDraw.stopDraw();
     this.drawing = false;
-    this.appendData();
+    if (!this.drawCtx || !this.rasterCtx) return;
+    this.drawCtx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+    PencilDraw.raster(points, this.parent.drawBar.color(), this.toolSize, this.rasterCtx);
   };
-
-  private handleMouseOut = (e: MouseEvent) => {
-    this.drawing = false;
-    this.appendData();
-  };
-
-  private appendData(): void {
-    this.drawData.push({
-      points: this.currentPoints.slice(0),
-      size: this.currentToolSize,
-      color: this.currentColor,
-      tool: this.currentTool,
-      brush: {
-        lineCap: this.lineCap,
-        lineJoin: this.lineJoin
-      }
-    });
-  }
 
   private handleMouseMove = (e: MouseEvent) => {
-    this.prev = { x: this.curr.x, y: this.curr.y };
-    this.curr = { x: e.offsetX, y: e.offsetY };
-    this.draw();
+    if (!this.drawCtx || !this.drawing) return;
+    PencilDraw.draw({ x: e.offsetX, y: e.offsetY }, this.drawCtx);
   };
 
   private handleMouseDown = (e: MouseEvent) => {
-    if (!this.ctx) return;
-    this.prev = { ...this.curr };
-    this.curr.x = e.offsetX;
-    this.curr.y = e.offsetY;
-    this.currentPoints.push(this.curr);
+    if (!this.drawCtx) return;
     this.drawing = true;
-    this.draw();
-  };
-
-  private draw = (): void => {
-    if (!this.drawing || !this.ctx) return;
-    this.ctx.beginPath();
-    this.ctx.moveTo(this.prev.x, this.prev.y);
-    this.ctx.lineTo(this.curr.x, this.curr.y);
-    this.ctx.strokeStyle = this.currentColor;
-    this.ctx.lineWidth = this.currentToolSize;
-    this.ctx.lineCap = this.lineCap;
-    this.ctx.lineJoin = this.lineJoin;
-    this.ctx.stroke();
-    this.ctx.closePath();
-    this.currentPoints.push(this.curr);
+    PencilDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.parent.drawBar.color(), this.toolSize, this.drawCtx);
   };
 }

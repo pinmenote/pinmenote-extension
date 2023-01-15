@@ -65,6 +65,7 @@ export interface PageComponent {
   cleanup(): void;
   resize(): void;
   render(): any;
+  isHidden(): boolean;
 }
 
 export interface HtmlComponent<T> {

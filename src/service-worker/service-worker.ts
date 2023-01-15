@@ -17,10 +17,10 @@
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
+import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
-import { ContentTimeoutCommand } from './command/content/content-timeout.command';
 import { OptionsPinGetRangeCommand } from './command/options/options-pin-get-range.command';
 import { OptionsPinSearchCommand } from './command/options/options-pin-search.command';
 import { OptionsPinShareCommand } from './command/options/options-pin-share.command';
@@ -59,11 +59,11 @@ const handleMessage = async (
     case BusMessageType.CONTENT_REFRESH_TOKEN:
       await new ContentRefreshTokenCommand().execute();
       break;
-    case BusMessageType.CONTENT_TIMEOUT:
-      await new ContentTimeoutCommand(msg.data).execute();
-      break;
     case BusMessageType.CONTENT_THEME:
       await new ContentThemeCommand(msg.data).execute();
+      break;
+    case BusMessageType.CONTENT_INVALIDATE:
+      await new ContentInvalidateCommand().execute();
       break;
     case BusMessageType.POPUP_PIN_SHARE:
       await new PopupPinShareCommand(msg.data).execute();

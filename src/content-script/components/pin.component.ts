@@ -24,6 +24,7 @@ import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextContainerComponent } from './text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
+import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
@@ -38,7 +39,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly text: TextContainerComponent;
 
   private readonly drawComponent: DrawContainerComponent;
-  private readonly drawBar: DrawBarComponent;
+  readonly drawBar: DrawBarComponent;
 
   private rect: PinRectangle;
 
@@ -55,8 +56,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
 
+    this.drawBar = new DrawBarComponent(this.rect, this);
     this.drawComponent = new DrawContainerComponent(this.object, this.rect, this);
-    this.drawBar = new DrawBarComponent(this.rect, this.drawComponent);
   }
 
   setNewRef(ref: HTMLElement): void {
@@ -97,9 +98,9 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.bottom.appendChild(this.text.render());
 
     this.top.appendChild(this.topBar.render());
-    this.top.appendChild(this.drawBar.render());
 
     this.top.appendChild(this.drawComponent.render());
+    this.top.appendChild(this.drawBar.render());
 
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
@@ -164,4 +165,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawBar.toggle();
     this.drawComponent.focusout();
   };
+
+  isHidden(): boolean {
+    return isElementHiddenFn(this.refValue);
+  }
 }

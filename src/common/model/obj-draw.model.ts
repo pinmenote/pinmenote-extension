@@ -28,5 +28,4 @@ export interface ObjDrawDto {
   size: number;
   color: string;
   tool: DrawToolDto;
-  brush: any;
 }

@@ -17,7 +17,7 @@
 import { BusMessage } from '../model/bus.model';
 import { environmentConfig } from '../environment';
 import { fnConsoleLog } from '../fn/console.fn';
-import { fnGetKey } from '../kv.utils';
+import { fnGetKey } from '../fn/kv.utils';
 
 export type BrowserGlobal = typeof chrome | typeof browser;
 export type BrowserRuntime = typeof chrome.runtime | typeof browser.runtime;
@@ -134,6 +134,7 @@ export class BrowserApi {
     const scripts = chrome.runtime.getManifest().content_scripts;
     if (!scripts) return;
     try {
+      fnConsoleLog('reloadContentScript', scripts);
       await insertJsFiles(tabId, scripts[0]?.js);
       await insertCssFiles(tabId, scripts[0].css);
     } catch (e) {

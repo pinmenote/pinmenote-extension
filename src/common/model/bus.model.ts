@@ -21,11 +21,6 @@ export interface BusMessage<T> {
   data?: T;
 }
 
-export interface TimeoutMessage {
-  ms: number;
-  id: string;
-}
-
 export interface BusDownloadMessage {
   url: string;
   filename: string;
@@ -72,9 +67,8 @@ export enum BusMessageType {
   CONTENT_PIN_REMOVE = 'content.pin.remove',
   CONTENT_REFRESH_TOKEN = 'content.refresh.token',
   CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
-  CONTENT_TIMEOUT = 'content.timeout',
-  CONTENT_TIMEOUT_SET = 'content.timeout.set',
   CONTENT_THEME = 'content.theme',
+  CONTENT_INVALIDATE = 'content.invalidate',
   // Options
   OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',
