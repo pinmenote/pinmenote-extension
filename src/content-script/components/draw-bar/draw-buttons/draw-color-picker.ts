@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { DrawColorPickerComponent } from '../draw-color-picker.component';
-import { HtmlComponent } from '../../../../../common/model/html.model';
-import { PinComponent } from '../../../pin.component';
-import { applyStylesToElement } from '../../../../../common/style.utils';
+import { DrawColorPickerComponent } from './draw-color-picker.component';
+import { HtmlComponent } from '../../../../common/model/html.model';
+import { applyStylesToElement } from '../../../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const saturationStyles = {
@@ -92,7 +91,7 @@ interface RGBColor {
   b: number;
 }
 
-export class ColorPicker implements HtmlComponent<HTMLElement> {
+export class DrawColorPicker implements HtmlComponent<HTMLElement> {
   private readonly el = document.createElement('div');
   private readonly saturation = document.createElement('div');
   private readonly saturationSelector = document.createElement('div');
@@ -106,11 +105,7 @@ export class ColorPicker implements HtmlComponent<HTMLElement> {
 
   private color: HSVColor = { h: 0, s: 1, v: 1 };
 
-  constructor(
-    private rect: PinRectangle,
-    private parent: PinComponent,
-    private colorDisplay: DrawColorPickerComponent
-  ) {}
+  constructor(private rect: PinRectangle, private colorDisplay: DrawColorPickerComponent) {}
 
   render(): HTMLElement {
     applyStylesToElement(this.saturation, saturationStyles);

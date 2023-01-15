@@ -14,22 +14,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../../../../common/model/html.model';
+import { DrawBrushSize } from './draw-brush-size';
+import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawBrushSizeComponent implements HtmlComponent<HTMLElement> {
+export class DrawBrushSizeComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
+
+  private visible = false;
+
+  private sizeInput: DrawBrushSize;
+
+  constructor(private parent: PinComponent) {
+    this.sizeInput = new DrawBrushSize();
+  }
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-            <circle cx="12" cy="12" r="4" fill="#ff0000" />
+            <circle cx="12" cy="12" r="4" fill="#000000" />
         </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 
+    this.parent.top.appendChild(this.sizeInput.render());
+
     return this.el;
+  }
+
+  setSize(value: number) {
+    this.sizeInput.setSize(value);
+  }
+
+  value(): number {
+    return this.sizeInput.value();
+  }
+
+  focusin() {
+    if (this.visible) this.sizeInput.show();
+  }
+
+  focusout() {
+    this.sizeInput.hide();
   }
 
   cleanup(): void {
@@ -37,6 +64,11 @@ export class DrawBrushSizeComponent implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = () => {
-    fnConsoleLog('add click');
+    this.visible = !this.visible;
+    if (this.visible) {
+      this.sizeInput.show();
+    } else {
+      this.sizeInput.hide();
+    }
   };
 }

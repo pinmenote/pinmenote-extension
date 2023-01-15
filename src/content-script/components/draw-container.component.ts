@@ -24,7 +24,7 @@ import PinRectangle = Pinmenote.Pin.PinRectangle;
 export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
-  private drawArea: DrawComponent;
+  readonly drawArea: DrawComponent;
 
   constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
     this.drawArea = new DrawComponent(this.rect, parent);

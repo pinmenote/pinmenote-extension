@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../../common/model/html.model';
-import { ColorPicker } from './draw-color-picker/color-picker';
+import { DrawColorPicker } from './draw-color-picker';
 import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
@@ -24,12 +24,12 @@ import PinRectangle = Pinmenote.Pin.PinRectangle;
 export class DrawColorPickerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
 
-  private picker: ColorPicker;
+  private picker: DrawColorPicker;
 
   private visible = false;
 
   constructor(private rect: PinRectangle, private parent: PinComponent) {
-    this.picker = new ColorPicker(rect, parent, this);
+    this.picker = new DrawColorPicker(rect, this);
   }
 
   render(): HTMLElement {

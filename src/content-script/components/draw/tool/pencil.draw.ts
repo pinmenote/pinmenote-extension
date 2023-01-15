@@ -41,8 +41,8 @@ export class PencilDraw {
     ctx.lineTo(to.x, to.y);
     ctx.strokeStyle = this.color;
     ctx.lineWidth = this.lineWidth;
-    ctx.lineCap = 'square';
-    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'miter';
     ctx.stroke();
     ctx.closePath();
     this.from = to;

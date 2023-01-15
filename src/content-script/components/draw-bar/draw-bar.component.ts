@@ -18,9 +18,11 @@ import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/htm
 import { DrawBrushSizeComponent } from './draw-buttons/draw-brush-size.component';
 import { DrawColorPickerComponent } from './draw-buttons/draw-color-picker.component';
 import { DrawEraseComponent } from './draw-buttons/draw-erase.component';
+import { DrawFillComponent } from './draw-buttons/draw-fill.component';
 import { DrawLineComponent } from './draw-buttons/draw-line.component';
 import { DrawPencilComponent } from './draw-buttons/draw-pencil.component';
 import { DrawRedoComponent } from './draw-buttons/draw-redo.component';
+import { DrawToolDto } from '../../../common/model/obj-draw.model';
 import { DrawUndoComponent } from './draw-buttons/draw-undo.component';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
@@ -44,25 +46,80 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private readonly el = document.createElement('div');
 
   private visible = false;
+  private toolValue: DrawToolDto = DrawToolDto.Pencil;
 
   private readonly pencil: DrawPencilComponent;
   private readonly line: DrawLineComponent;
+  private readonly fill: DrawFillComponent;
   private readonly erase: DrawEraseComponent;
+
   private readonly colorPicker: DrawColorPickerComponent;
-  private readonly size: DrawBrushSizeComponent;
-  private readonly undo: DrawUndoComponent;
-  private readonly redo: DrawRedoComponent;
+  private readonly sizeButton: DrawBrushSizeComponent;
+
+  private readonly undoButton: DrawUndoComponent;
+  private readonly redoButton: DrawRedoComponent;
 
   constructor(private rect: PinRectangle, private parent: PinComponent) {
-    this.pencil = new DrawPencilComponent();
-    this.line = new DrawLineComponent();
-    this.erase = new DrawEraseComponent();
+    this.pencil = new DrawPencilComponent(this);
+    this.line = new DrawLineComponent(this);
+    this.fill = new DrawFillComponent(this);
+    this.erase = new DrawEraseComponent(this);
 
     this.colorPicker = new DrawColorPickerComponent(rect, parent);
-    this.size = new DrawBrushSizeComponent();
+    this.sizeButton = new DrawBrushSizeComponent(parent);
 
-    this.undo = new DrawUndoComponent();
-    this.redo = new DrawRedoComponent();
+    this.undoButton = new DrawUndoComponent(this);
+    this.redoButton = new DrawRedoComponent(this);
+  }
+
+  setTool(tool: DrawToolDto): void {
+    switch (tool) {
+      case DrawToolDto.Pencil:
+        this.pencil.select();
+        this.line.unselect();
+        this.fill.unselect();
+        this.erase.unselect();
+        break;
+      case DrawToolDto.Line:
+        this.pencil.unselect();
+        this.line.select();
+        this.fill.unselect();
+        this.erase.unselect();
+        break;
+      case DrawToolDto.Erase:
+        this.pencil.unselect();
+        this.line.unselect();
+        this.fill.unselect();
+        this.erase.select();
+        break;
+      case DrawToolDto.Fill:
+        this.pencil.unselect();
+        this.line.unselect();
+        this.fill.select();
+        this.erase.unselect();
+        break;
+    }
+    this.toolValue = tool;
+  }
+
+  undo(): void {
+    this.parent.drawComponent.drawArea.undo();
+  }
+
+  redo(): void {
+    this.parent.drawComponent.drawArea.redo();
+  }
+
+  size(): number {
+    return this.sizeButton.value();
+  }
+
+  tool(): DrawToolDto {
+    return this.toolValue;
+  }
+
+  setSize(value: number): void {
+    this.sizeButton.setSize(value);
   }
 
   color(): string {
@@ -91,13 +148,14 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   cleanup(): void {
     this.pencil.cleanup();
     this.line.cleanup();
+    this.fill.cleanup();
     this.erase.cleanup();
 
     this.colorPicker.cleanup();
-    this.size.cleanup();
+    this.sizeButton.cleanup();
 
-    this.undo.cleanup();
-    this.redo.cleanup();
+    this.undoButton.cleanup();
+    this.redoButton.cleanup();
   }
 
   render(): HTMLElement {
@@ -106,13 +164,14 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
     this.placeComponent(this.pencil.render(), 5);
     this.placeComponent(this.line.render(), 29);
-    this.placeComponent(this.erase.render(), 53);
+    this.placeComponent(this.fill.render(), 53);
+    this.placeComponent(this.erase.render(), 77);
 
-    this.placeComponent(this.colorPicker.render(), 97);
-    this.placeComponent(this.size.render(), 121);
+    this.placeComponent(this.colorPicker.render(), 121);
+    this.placeComponent(this.sizeButton.render(), 145);
 
-    this.placeComponent(this.undo.render(), 165);
-    this.placeComponent(this.redo.render(), 189);
+    this.placeComponent(this.undoButton.render(), 169);
+    this.placeComponent(this.redoButton.render(), 193);
 
     return this.el;
   }

@@ -18,6 +18,7 @@ import { HtmlComponent, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
+import { DrawToolDto } from '../../common/model/obj-draw.model';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
@@ -38,7 +39,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private readonly topBar: TopBarComponent;
   readonly text: TextContainerComponent;
 
-  private readonly drawComponent: DrawContainerComponent;
+  readonly drawComponent: DrawContainerComponent;
   readonly drawBar: DrawBarComponent;
 
   private rect: PinRectangle;
@@ -101,6 +102,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.top.appendChild(this.drawComponent.render());
     this.top.appendChild(this.drawBar.render());
+    this.drawBar.setSize(4);
+    this.drawBar.setTool(DrawToolDto.Pencil);
 
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;

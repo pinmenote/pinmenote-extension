@@ -18,15 +18,13 @@ import { ObjPoint } from '../../../../common/model/obj-utils.model';
 
 export class EraserDraw {
   private static points: ObjPoint[];
-  private static color: string;
   private static lineWidth: number;
 
   private static from: ObjPoint;
 
-  static startDraw(from: ObjPoint, color: string, lineWidth: number, ctx: CanvasRenderingContext2D): void {
+  static startDraw(from: ObjPoint, lineWidth: number, ctx: CanvasRenderingContext2D): void {
     this.points = [];
     this.from = from;
-    this.color = color;
     this.lineWidth = lineWidth;
     this.draw(from, ctx);
   }
@@ -39,19 +37,19 @@ export class EraserDraw {
     ctx.beginPath();
     ctx.moveTo(this.from.x, this.from.y);
     ctx.lineTo(to.x, to.y);
-    ctx.strokeStyle = this.color;
+    ctx.strokeStyle = '#ffffff00';
     ctx.lineWidth = this.lineWidth;
-    ctx.lineCap = 'square';
-    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'miter';
     ctx.stroke();
     ctx.closePath();
     this.from = to;
     this.points.push(to);
   }
 
-  static raster(points: ObjPoint[], color: string, lineWidth: number, ctx: CanvasRenderingContext2D): void {
+  static raster(points: ObjPoint[], lineWidth: number, ctx: CanvasRenderingContext2D): void {
     const from = points[0];
-    this.startDraw(from, color, lineWidth, ctx);
+    this.startDraw(from, lineWidth, ctx);
     for (let i = 1; i < points.length; i++) {
       this.draw(points[i], ctx);
     }
