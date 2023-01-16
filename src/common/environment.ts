@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-type ScreenshotFormat = 'jpeg' | 'png';
+export type ScreenshotFormat = 'jpeg' | 'png';
 
 export interface SettingsConfig {
   version: number;

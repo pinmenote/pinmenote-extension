@@ -17,7 +17,6 @@
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
 import { DrawComponent } from './draw/draw.component';
 import { PinComponent } from './pin.component';
-import { PinObject } from '../../common/model/pin.model';
 import { applyStylesToElement } from '../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
@@ -26,7 +25,7 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   readonly drawArea: DrawComponent;
 
-  constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
+  constructor(private rect: PinRectangle, private parent: PinComponent) {
     this.drawArea = new DrawComponent(this.rect, parent);
   }
 

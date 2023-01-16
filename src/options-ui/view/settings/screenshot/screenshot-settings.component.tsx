@@ -16,8 +16,8 @@
  */
 import { Input, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
+import { ScreenshotFormat, SettingsConfig } from '../../../../common/environment';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { ContentSettingsData } from '../../../../common/model/settings.model';
 import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../store/settings.store';
 import Typography from '@mui/material/Typography';
@@ -28,34 +28,29 @@ const borderContainer: CSSProperties = {
   alignItems: 'center'
 };
 
-export const ScreenshotSettingsComponent: FunctionComponent<{ format: string; quality: number }> = ({
-  format,
-  quality
-}) => {
-  const [screenshotFormat, setScreenshotFormat] = useState<string>(format);
-  const [screenshotQuality, setScreenshotQuality] = useState<number>(quality);
+export const ScreenshotSettingsComponent: FunctionComponent = () => {
+  const [screenshotFormat, setScreenshotFormat] = useState<string>(SettingsStore.settings?.screenshotFormat || 'jpeg');
+  const [screenshotQuality, setScreenshotQuality] = useState<number>(SettingsStore.settings?.screenshotQuality || 0);
 
   useEffect(() => {
-    if (quality !== screenshotQuality) {
-      setScreenshotQuality(quality);
-    }
-    if (format !== screenshotFormat) {
-      setScreenshotFormat(format);
-    }
+    setScreenshotQuality(SettingsStore.settings?.screenshotQuality || 0);
+    setScreenshotFormat(SettingsStore.settings?.screenshotFormat || 'jpeg');
   });
 
   const handleScreenshotQuality = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
-    const value = Math.max(0, Math.min(parseInt(e.target.value), 100));
-    SettingsStore.settings.screenshotQuality = value;
-    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    const value = parseInt(e.target.value);
+    if (value > 0 && value <= 100) {
+      SettingsStore.settings.screenshotQuality = value;
+      await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    }
     setScreenshotQuality(value);
   };
 
   const handleScreenshotFormat = async (e: SelectChangeEvent): Promise<void> => {
     if (!SettingsStore.settings) return;
-    SettingsStore.settings.screenshotFormat = e.target.value;
-    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    SettingsStore.settings.screenshotFormat = e.target.value as ScreenshotFormat;
+    await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     setScreenshotFormat(e.target.value);
   };
 

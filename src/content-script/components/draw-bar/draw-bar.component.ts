@@ -153,20 +153,23 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   focusin(): void {
     if (this.visible) this.el.style.display = 'inline-block';
     this.colorPicker.focusin();
+    this.sizeButton.focusin();
   }
 
   focusout(): void {
     this.el.style.display = 'none';
     this.colorPicker.focusout();
+    this.sizeButton.focusout();
   }
 
-  toggle(): void {
-    this.visible = !this.visible;
-    if (this.visible) {
-      this.focusin();
-    } else {
-      this.focusout();
-    }
+  show(): void {
+    this.visible = true;
+    this.focusin();
+  }
+
+  hide(): void {
+    this.visible = false;
+    this.focusout();
   }
 
   cleanup(): void {

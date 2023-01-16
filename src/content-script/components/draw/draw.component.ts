@@ -127,6 +127,7 @@ export class DrawComponent {
     this.drawCanvas.height = rect.height;
     this.drawCanvas.style.width = `${rect.width}px`;
     this.drawCanvas.style.height = `${rect.height}px`;
+    this.drawCtx?.drawImage(this.rasterCanvas, 0, 0);
     this.rasterCanvas.width = rect.width;
     this.rasterCanvas.height = rect.height;
     this.rasterCanvas.style.width = `${rect.width}px`;

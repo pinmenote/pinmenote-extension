@@ -16,6 +16,7 @@
  */
 import { HtmlComponent, PageComponent } from '../../common/model/html.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj-draw.model';
@@ -42,6 +43,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly drawComponent: DrawContainerComponent;
   readonly drawBar: DrawBarComponent;
 
+  readonly downloadBar: DownloadBarComponent;
+
   private rect: PinRectangle;
 
   private refValue: HTMLElement;
@@ -58,7 +61,9 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
 
     this.drawBar = new DrawBarComponent(this.rect, this);
-    this.drawComponent = new DrawContainerComponent(this.object, this.rect, this);
+    this.drawComponent = new DrawContainerComponent(this.rect, this);
+
+    this.downloadBar = new DownloadBarComponent(this);
   }
 
   setNewRef(ref: HTMLElement): void {
@@ -104,6 +109,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.top.appendChild(this.drawBar.render());
     this.drawBar.setSize(4);
     this.drawBar.setTool(DrawToolDto.Pencil);
+
+    this.top.appendChild(this.topBar.render());
 
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
@@ -159,14 +166,24 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   startDraw = () => {
     this.topBar.moveup();
-    this.drawBar.toggle();
+    this.drawBar.show();
     this.drawComponent.focusin();
   };
 
   stopDraw = () => {
     this.topBar.movedown();
-    this.drawBar.toggle();
+    this.drawBar.hide();
     this.drawComponent.focusout();
+  };
+
+  startDownload = () => {
+    this.topBar.moveup();
+    this.downloadBar.show();
+  };
+
+  stopDownload = () => {
+    this.topBar.movedown();
+    this.downloadBar.hide();
   };
 
   isHidden(): boolean {
