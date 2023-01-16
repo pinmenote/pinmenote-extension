@@ -52,6 +52,7 @@ export class DrawAreaComponent {
     applyStylesToElement(this.drawCanvas, canvasStyles);
     this.drawCanvas.innerText = 'no javascript enabled - drawing not working';
     this.drawCtx = this.drawCanvas.getContext('2d');
+    if (this.drawCtx) this.drawCtx.imageSmoothingEnabled = false;
 
     this.rasterCanvas.width = rect.width;
     this.rasterCanvas.height = rect.height;
@@ -60,6 +61,7 @@ export class DrawAreaComponent {
     applyStylesToElement(this.rasterCanvas, canvasStyles);
     this.rasterCanvas.innerText = 'no javascript enabled - drawing not working';
     this.rasterCtx = this.rasterCanvas.getContext('2d');
+    if (this.rasterCtx) this.rasterCtx.imageSmoothingEnabled = false;
   }
 
   canUndo(): boolean {

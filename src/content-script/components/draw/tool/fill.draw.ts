@@ -26,6 +26,7 @@ export class FillDraw {
     const index = (from.y * ctx.canvas.width + from.x) * 4;
     const newColor = ColorUtils.stringToRgb(color);
     const prevColor = { r: pixelData[index], g: pixelData[index + 1], b: pixelData[index + 2] };
+    if (newColor.r === prevColor.r && newColor.g === prevColor.g && newColor.b === prevColor.b) return [from];
 
     const stack: ObjPoint[] = [];
     stack.push(from);
