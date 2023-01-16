@@ -130,6 +130,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.text.resize(this.rect);
     this.topBar.resize(this.rect);
     this.drawComponent.resize(this.rect);
+    this.drawBar.resize(this.rect);
   }
 
   cleanup(): void {
