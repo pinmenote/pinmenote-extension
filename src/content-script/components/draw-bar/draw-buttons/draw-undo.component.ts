@@ -43,10 +43,12 @@ export class DrawUndoComponent implements HtmlComponent<HTMLElement> {
 
   select(): void {
     this.canUndo = true;
+    (this.el.firstChild as SVGElement).setAttribute('fill', '#ff0000');
   }
 
   unselect(): void {
     this.canUndo = false;
+    (this.el.firstChild as SVGElement).setAttribute('fill', '#000000');
   }
 
   private handleClick = () => {

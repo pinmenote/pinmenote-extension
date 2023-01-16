@@ -76,17 +76,27 @@ export class DrawComponent {
     if (data) {
       this.drawRedoData.push(data);
       this.rasterCtx.clearRect(0, 0, this.rasterCanvas.width, this.rasterCanvas.height);
-      // TODO redraw
+      for (let i = 0; i < this.drawData.length; i++) {
+        this.drawOne(this.drawData[i]);
+      }
       return true;
     }
     return false;
   }
 
   redo(): boolean {
-    if (!this.rasterCtx) return false;
     const data = this.drawRedoData.pop();
     if (data) {
       this.drawData.push(data);
+      this.drawOne(data);
+      return true;
+    }
+    return false;
+  }
+
+  private drawOne(data: ObjDrawDto): void {
+    if (!this.rasterCtx) return;
+    if (data) {
       switch (this.tool) {
         case DrawToolDto.Pencil:
           PencilDraw.raster(data.points, data.color, data.size, this.rasterCtx);
@@ -102,7 +112,6 @@ export class DrawComponent {
           break;
       }
     }
-    return false;
   }
 
   render(): void {
@@ -135,6 +144,12 @@ export class DrawComponent {
     if (!this.drawing) return;
     if (!this.drawCtx || !this.rasterCtx) return;
     this.drawing = false;
+
+    // we can undo
+    this.parent.drawBar.undoSelect();
+
+    // show back raster canvas
+    this.rasterCanvas.style.display = 'inline-block';
     let points: ObjPoint[] = [];
     switch (this.tool) {
       case DrawToolDto.Pencil:
@@ -146,7 +161,7 @@ export class DrawComponent {
         LineDraw.raster(points, this.color, this.size, this.rasterCtx);
         break;
       case DrawToolDto.Erase:
-        points = EraserDraw.stopDraw();
+        points = EraserDraw.stopDraw(this.drawCtx);
         EraserDraw.raster(points, this.size, this.rasterCtx);
         break;
       case DrawToolDto.Fill:
@@ -154,6 +169,7 @@ export class DrawComponent {
         FillDraw.raster(points, this.color, this.rasterCtx);
         break;
     }
+    // clear draw canvas
     this.drawCtx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
     this.drawData.push({
       tool: this.tool,
@@ -170,6 +186,8 @@ export class DrawComponent {
         PencilDraw.draw({ x: e.offsetX, y: e.offsetY }, this.drawCtx);
         break;
       case DrawToolDto.Line:
+        this.drawCtx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+        this.drawCtx.drawImage(this.rasterCanvas, 0, 0);
         LineDraw.draw({ x: e.offsetX, y: e.offsetY }, this.drawCtx);
         break;
       case DrawToolDto.Erase:
@@ -179,11 +197,21 @@ export class DrawComponent {
   };
 
   private handleMouseDown = (e: MouseEvent) => {
-    if (!this.drawCtx) return;
+    if (!this.drawCtx || !this.rasterCtx) return;
     this.drawing = true;
+    // cleanup redo
+    this.drawRedoData = [];
+    this.parent.drawBar.redoUnselect();
+
+    // set draw data from draw bar
     this.tool = this.parent.drawBar.tool();
     this.size = this.parent.drawBar.size();
     this.color = this.parent.drawBar.color();
+
+    // draw from raster to draw and hide raster canvas
+    this.drawCtx.drawImage(this.rasterCanvas, 0, 0);
+    this.rasterCanvas.style.display = 'none';
+
     switch (this.tool) {
       case DrawToolDto.Pencil:
         PencilDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.color, this.size, this.drawCtx);

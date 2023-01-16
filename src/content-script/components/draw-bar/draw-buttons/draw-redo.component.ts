@@ -44,10 +44,12 @@ export class DrawRedoComponent implements HtmlComponent<HTMLElement> {
 
   select(): void {
     this.canRedo = true;
+    (this.el.firstChild as SVGElement).setAttribute('fill', '#ff0000');
   }
 
   unselect(): void {
     this.canRedo = false;
+    (this.el.firstChild as SVGElement).setAttribute('fill', '#000000');
   }
 
   private handleClick = () => {

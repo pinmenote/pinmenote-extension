@@ -50,7 +50,6 @@ export class DrawFillComponent implements HtmlComponent<HTMLElement> {
   select() {
     this.selected = false;
     (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#ff0000');
-    this.drawBar.setTool(DrawToolDto.Fill);
   }
 
   unselect() {
@@ -59,6 +58,11 @@ export class DrawFillComponent implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = () => {
-    this.selected ? this.unselect() : this.select();
+    if (this.selected) {
+      this.unselect();
+    } else {
+      this.select();
+      this.drawBar.setTool(DrawToolDto.Fill);
+    }
   };
 }

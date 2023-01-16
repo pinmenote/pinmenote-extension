@@ -26,19 +26,21 @@ export class EraserDraw {
     this.points = [];
     this.from = from;
     this.lineWidth = lineWidth;
+    ctx.globalCompositeOperation = 'destination-out';
     this.draw(from, ctx);
   }
 
-  static stopDraw(): ObjPoint[] {
+  static stopDraw(ctx: CanvasRenderingContext2D): ObjPoint[] {
+    ctx.globalCompositeOperation = 'source-over';
     return this.points;
   }
 
   static draw(to: ObjPoint, ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
+    ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+    ctx.lineWidth = this.lineWidth;
     ctx.moveTo(this.from.x, this.from.y);
     ctx.lineTo(to.x, to.y);
-    ctx.strokeStyle = '#ffffff00';
-    ctx.lineWidth = this.lineWidth;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'miter';
     ctx.stroke();
@@ -53,5 +55,6 @@ export class EraserDraw {
     for (let i = 1; i < points.length; i++) {
       this.draw(points[i], ctx);
     }
+    ctx.globalCompositeOperation = 'source-over';
   }
 }

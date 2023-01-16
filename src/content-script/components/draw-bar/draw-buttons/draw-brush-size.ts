@@ -18,7 +18,7 @@ import { HtmlComponent } from '../../../../common/model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 
 const elStyles = {
-  width: '50px',
+  width: '75px',
   height: '25px',
   display: 'none',
   left: '90px',
@@ -26,7 +26,8 @@ const elStyles = {
 };
 
 const inputStyles = {
-  width: '50px',
+  'font-size': '1em',
+  width: '75px',
   height: '25px',
   outline: 'none',
   border: '2px solid #000000'
@@ -42,6 +43,7 @@ export class DrawBrushSize implements HtmlComponent<HTMLElement> {
 
     this.input.type = 'number';
     this.el.appendChild(this.input);
+    applyStylesToElement(this.input, inputStyles);
     return this.el;
   }
 

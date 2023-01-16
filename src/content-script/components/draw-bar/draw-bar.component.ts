@@ -104,10 +104,34 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
   undo(): void {
     this.parent.drawComponent.drawArea.undo();
+    if (this.parent.drawComponent.drawArea.canUndo()) {
+      this.undoButton.select();
+    } else {
+      this.undoButton.unselect();
+    }
+    if (this.parent.drawComponent.drawArea.canRedo()) {
+      this.redoButton.select();
+    }
   }
 
   redo(): void {
     this.parent.drawComponent.drawArea.redo();
+    if (this.parent.drawComponent.drawArea.canRedo()) {
+      this.redoButton.select();
+    } else {
+      this.redoButton.unselect();
+    }
+    if (this.parent.drawComponent.drawArea.canUndo()) {
+      this.undoButton.select();
+    }
+  }
+
+  undoSelect(): void {
+    this.undoButton.select();
+  }
+
+  redoUnselect(): void {
+    this.redoButton.unselect();
   }
 
   size(): number {

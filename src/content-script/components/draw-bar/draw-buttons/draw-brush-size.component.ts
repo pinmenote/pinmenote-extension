@@ -32,8 +32,9 @@ export class DrawBrushSizeComponent implements HtmlComponent<HTMLElement>, HtmlC
   }
 
   render(): HTMLElement {
+    const fill = this.visible ? '#ff0000' : '#000000';
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-            <circle cx="12" cy="12" r="4" fill="#000000" />
+            <circle cx="12" cy="12" r="4" fill="${fill}" />
         </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
@@ -67,8 +68,10 @@ export class DrawBrushSizeComponent implements HtmlComponent<HTMLElement>, HtmlC
     this.visible = !this.visible;
     if (this.visible) {
       this.sizeInput.show();
+      (this.el.firstChild?.childNodes[1] as SVGCircleElement).setAttribute('fill', '#ff0000');
     } else {
       this.sizeInput.hide();
+      (this.el.firstChild?.childNodes[1] as SVGCircleElement).setAttribute('fill', '#000000');
     }
   };
 }

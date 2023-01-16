@@ -33,9 +33,10 @@ export class DrawColorPickerComponent implements HtmlComponent<HTMLElement>, Htm
   }
 
   render(): HTMLElement {
+    const stroke = this.visible ? '#ff0000' : '#000000';
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
         <g>
-            <rect fill="#00ff00" opacity="1" stroke="#000000" stroke-width="2" height="18" width="18"/>
+            <rect fill="#00ff00" opacity="1" stroke="${stroke}" stroke-width="2" height="18" width="18"/>
         </g>
     </svg>`;
     this.el.addEventListener('click', this.handleClick);
@@ -71,8 +72,10 @@ export class DrawColorPickerComponent implements HtmlComponent<HTMLElement>, Htm
     this.visible = !this.visible;
     if (this.visible) {
       this.picker.show();
+      (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute('stroke', '#ff0000');
     } else {
       this.picker.hide();
+      (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute('stroke', '#000000');
     }
   };
 }

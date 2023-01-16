@@ -35,7 +35,7 @@ export class LineDraw {
   }
 
   static draw(to: ObjPoint, ctx: CanvasRenderingContext2D): void {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    this.to = to;
     ctx.beginPath();
     ctx.moveTo(this.from.x, this.from.y);
     ctx.lineTo(to.x, to.y);

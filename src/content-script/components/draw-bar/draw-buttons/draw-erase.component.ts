@@ -53,7 +53,6 @@ export class DrawEraseComponent implements HtmlComponent<HTMLElement> {
   select() {
     this.selected = false;
     (this.el.firstChild?.childNodes[1] as SVGPathElement).setAttribute('stroke', '#ff0000');
-    this.drawBar.setTool(DrawToolDto.Erase);
   }
 
   unselect() {
@@ -62,6 +61,11 @@ export class DrawEraseComponent implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = () => {
-    this.selected ? this.unselect() : this.select();
+    if (this.selected) {
+      this.unselect();
+    } else {
+      this.select();
+      this.drawBar.setTool(DrawToolDto.Erase);
+    }
   };
 }
