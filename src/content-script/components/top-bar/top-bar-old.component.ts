@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoldButtonComponent } from '../text-bar/text-bar-buttons/bold-button.component';
-import { BulletListButtonComponent } from '../text-bar/text-bar-buttons/bullet-list-button.component';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { ItalicButtonComponent } from '../text-bar/text-bar-buttons/italic-button.component';
 import { ParentIconComponent } from './action-buttons/parent-icon.component';
 import { PinComponent } from '../pin.component';
 import { PinObject } from '../../../common/model/pin.model';
 import { RemoveIconComponent } from './action-buttons/remove-icon.component';
+import { TextBoldButton } from '../text-bar/text-bar-buttons/text-bold.button';
+import { TextBulletListButton } from '../text-bar/text-bar-buttons/text-bullet-list.button';
+import { TextItalicButton } from '../text-bar/text-bar-buttons/text-italic.button';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { applyStylesToElement } from '../../../common/style.utils';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -56,9 +56,9 @@ export class TopBarOldComponent {
   private editbar = document.createElement('div');
   private toolbar = document.createElement('div');
 
-  private bold: BoldButtonComponent;
-  private italic: ItalicButtonComponent;
-  private bulletList: BulletListButtonComponent;
+  private bold: TextBoldButton;
+  private italic: TextItalicButton;
+  private bulletList: TextBulletListButton;
 
   private parentIcon: ParentIconComponent;
   private removeIcon: RemoveIconComponent;
@@ -72,9 +72,9 @@ export class TopBarOldComponent {
   private editor?: EditorView;
 
   constructor(private pin: PinObject, private parent: PinComponent) {
-    this.bold = new BoldButtonComponent();
-    this.italic = new ItalicButtonComponent();
-    this.bulletList = new BulletListButtonComponent();
+    this.bold = new TextBoldButton();
+    this.italic = new TextItalicButton();
+    this.bulletList = new TextBulletListButton();
 
     this.parentIcon = new ParentIconComponent(pin, parent);
     this.removeIcon = new RemoveIconComponent(pin);

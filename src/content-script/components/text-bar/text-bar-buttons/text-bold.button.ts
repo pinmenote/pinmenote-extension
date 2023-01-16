@@ -19,11 +19,14 @@ import { EditorView } from 'prosemirror-view';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { editorBarButtonStyles } from './editor-bar-button.styles';
 import { schema } from 'prosemirror-markdown';
-import { wrapInList } from 'prosemirror-schema-list';
+import { toggleMark } from 'prosemirror-commands';
 
-export class BulletListButtonComponent {
+export class TextBoldButton {
   private el = document.createElement('div');
-  private listCommand?: Command;
+  private boldCommand?: Command;
+
+  private clicked = false;
+  private selected = false;
 
   private editor?: EditorView;
 
@@ -32,30 +35,51 @@ export class BulletListButtonComponent {
   }
 
   render(): HTMLDivElement {
-    const li = document.createElement('li');
-    li.style.paddingLeft = '5px';
-    li.style.paddingBottom = '10px';
-    this.el.appendChild(li);
+    this.el.innerText = 'B';
     this.el.addEventListener('mousedown', this.handleMouseDown);
-    this.el.addEventListener('click', this.handleListClick);
+    this.el.addEventListener('click', this.handleBoldClick);
     applyStylesToElement(this.el, editorBarButtonStyles);
+    this.el.style.fontWeight = 'bold';
 
-    this.listCommand = wrapInList(schema.nodes.bullet_list);
+    this.boldCommand = toggleMark(schema.marks.strong);
 
     return this.el;
   }
 
   cleanup(): void {
-    this.el.removeEventListener('click', this.handleListClick);
+    this.el.removeEventListener('click', this.handleBoldClick);
     this.el.removeEventListener('mousedown', this.handleMouseDown);
   }
 
-  private handleListClick = (e: MouseEvent) => {
+  select(force = false): void {
+    if (this.clicked && !force) {
+      this.clicked = false;
+      return;
+    }
+    this.el.style.backgroundColor = '#000000';
+    this.el.style.color = '#ffffff';
+    this.selected = true;
+  }
+
+  unselect(force = false): void {
+    if (this.clicked && !force) {
+      this.clicked = false;
+      return;
+    }
+    this.el.style.backgroundColor = '#ffffff';
+    this.el.style.color = '#000000';
+    this.selected = false;
+  }
+
+  private handleBoldClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopImmediatePropagation();
 
     //eslint-disable-next-line @typescript-eslint/unbound-method
-    if (this.editor && this.listCommand) this.listCommand(this.editor.state, this.editor.dispatch, this.editor);
+    if (this.editor && this.boldCommand) this.boldCommand(this.editor.state, this.editor.dispatch, this.editor);
+
+    this.selected ? this.unselect(true) : this.select(true);
+    this.clicked = true;
   };
 
   private handleMouseDown = (e: MouseEvent) => {

@@ -20,7 +20,7 @@ import { HtmlComponent } from '../../../../common/model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawPencilComponent implements HtmlComponent<HTMLElement> {
+export class DrawEraseButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   private selected = false;
@@ -28,11 +28,19 @@ export class DrawPencilComponent implements HtmlComponent<HTMLElement> {
   constructor(private drawBar: DrawBarComponent) {}
 
   render(): HTMLElement {
-    const fill = this.selected ? '#ff0000' : '#000000';
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path fill="${fill}" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-            </svg>`;
+    const stroke = this.selected ? '#ff0000' : '#000000';
+    this.el.innerHTML = `<svg height="24" viewBox="0 0 24 24" width="24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+<g stroke="${stroke}">
+<path d="M3.23657 20.2399L21.6576 20.1008" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
+<path d="M9.67757 7.86098L15.6261 13.7952" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
+<path d="M3.27042 13.6276L14.8388 2.02445" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
+<path d="M14.897 1.98029L21.3661 8.10477" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
+<path d="M9.85537 19.938L3.36094 13.6994" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
+<path d="M9.84363 19.7414L21.412 8.1383" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
+</g>
+
+</svg>
+`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 
@@ -42,15 +50,14 @@ export class DrawPencilComponent implements HtmlComponent<HTMLElement> {
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
   }
-
   select() {
     this.selected = false;
-    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#ff0000');
+    (this.el.firstChild?.childNodes[1] as SVGPathElement).setAttribute('stroke', '#ff0000');
   }
 
   unselect() {
     this.selected = false;
-    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#000000');
+    (this.el.firstChild?.childNodes[1] as SVGPathElement).setAttribute('stroke', '#000000');
   }
 
   private handleClick = () => {
@@ -58,7 +65,7 @@ export class DrawPencilComponent implements HtmlComponent<HTMLElement> {
       this.unselect();
     } else {
       this.select();
-      this.drawBar.setTool(DrawToolDto.Pencil);
+      this.drawBar.setTool(DrawToolDto.Erase);
     }
   };
 }

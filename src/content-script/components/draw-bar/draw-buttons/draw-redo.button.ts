@@ -15,27 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { DrawBarComponent } from '../draw-bar.component';
-import { DrawToolDto } from '../../../../common/model/obj-draw.model';
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawFillComponent implements HtmlComponent<HTMLElement> {
+export class DrawRedoButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  private selected = false;
+  private canRedo = false;
 
   constructor(private drawBar: DrawBarComponent) {}
 
   render(): HTMLElement {
-    const fill = this.selected ? '#ff0000' : '#000000';
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-        <g>
-          <rect fill="none" height="24" width="24"/>
-        </g>
-        <g fill="${fill}">
-          <path d="M16.56,8.94L7.62,0L6.21,1.41l2.38,2.38L3.44,8.94c-0.59,0.59-0.59,1.54,0,2.12l5.5,5.5C9.23,16.85,9.62,17,10,17 s0.77-0.15,1.06-0.44l5.5-5.5C17.15,10.48,17.15,9.53,16.56,8.94z M5.21,10L10,5.21L14.79,10H5.21z M19,11.5c0,0-2,2.17-2,3.5 c0,1.1,0.9,2,2,2s2-0.9,2-2C21,13.67,19,11.5,19,11.5z M1,20h20v2H1V20z"/>
-        </g>
+    const fill = this.canRedo ? '#ff0000' : '#000000';
+    this.el.innerHTML = `<svg fill="${fill}" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+
+<path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/>
 </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
@@ -47,22 +42,17 @@ export class DrawFillComponent implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  select() {
-    this.selected = false;
-    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#ff0000');
+  select(): void {
+    this.canRedo = true;
+    (this.el.firstChild as SVGElement).setAttribute('fill', '#ff0000');
   }
 
-  unselect() {
-    this.selected = false;
-    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#000000');
+  unselect(): void {
+    this.canRedo = false;
+    (this.el.firstChild as SVGElement).setAttribute('fill', '#000000');
   }
 
   private handleClick = () => {
-    if (this.selected) {
-      this.unselect();
-    } else {
-      this.select();
-      this.drawBar.setTool(DrawToolDto.Fill);
-    }
+    this.drawBar.redo();
   };
 }

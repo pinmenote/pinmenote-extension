@@ -21,7 +21,7 @@ import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
-export class DrawColorPickerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
+export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
 
   private picker: DrawColorPicker;

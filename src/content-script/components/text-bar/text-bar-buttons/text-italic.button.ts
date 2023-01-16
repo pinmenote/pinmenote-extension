@@ -21,7 +21,7 @@ import { editorBarButtonStyles } from './editor-bar-button.styles';
 import { schema } from 'prosemirror-markdown';
 import { toggleMark } from 'prosemirror-commands';
 
-export class ItalicButtonComponent {
+export class TextItalicButton {
   private el = document.createElement('div');
   private italicCommand?: Command;
 

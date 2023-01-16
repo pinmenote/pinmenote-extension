@@ -14,64 +14,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../../common/model/html.model';
-import { DrawBrushSize } from './draw-brush-size';
-import { PinComponent } from '../../pin.component';
+import { DrawBarComponent } from '../draw-bar.component';
+import { DrawToolDto } from '../../../../common/model/obj-draw.model';
+import { HtmlComponent } from '../../../../common/model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawBrushSizeComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
+export class DrawPencilButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  private visible = false;
+  private selected = false;
 
-  private sizeInput: DrawBrushSize;
-
-  constructor(private parent: PinComponent) {
-    this.sizeInput = new DrawBrushSize();
-  }
+  constructor(private drawBar: DrawBarComponent) {}
 
   render(): HTMLElement {
-    const fill = this.visible ? '#ff0000' : '#000000';
+    const fill = this.selected ? '#ff0000' : '#000000';
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-            <circle cx="12" cy="12" r="4" fill="${fill}" />
-        </svg>`;
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path fill="${fill}" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+            </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 
-    this.parent.top.appendChild(this.sizeInput.render());
-
     return this.el;
-  }
-
-  setSize(value: number) {
-    this.sizeInput.setSize(value);
-  }
-
-  value(): number {
-    return this.sizeInput.value();
-  }
-
-  focusin() {
-    if (this.visible) this.sizeInput.show();
-  }
-
-  focusout() {
-    this.sizeInput.hide();
   }
 
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
   }
 
+  select() {
+    this.selected = false;
+    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#ff0000');
+  }
+
+  unselect() {
+    this.selected = false;
+    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#000000');
+  }
+
   private handleClick = () => {
-    this.visible = !this.visible;
-    if (this.visible) {
-      this.sizeInput.show();
-      (this.el.firstChild?.childNodes[1] as SVGCircleElement).setAttribute('fill', '#ff0000');
+    if (this.selected) {
+      this.unselect();
     } else {
-      this.sizeInput.hide();
-      (this.el.firstChild?.childNodes[1] as SVGCircleElement).setAttribute('fill', '#000000');
+      this.select();
+      this.drawBar.setTool(DrawToolDto.Pencil);
     }
   };
 }

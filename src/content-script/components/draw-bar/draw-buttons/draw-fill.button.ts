@@ -20,7 +20,7 @@ import { HtmlComponent } from '../../../../common/model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawEraseComponent implements HtmlComponent<HTMLElement> {
+export class DrawFillButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   private selected = false;
@@ -28,19 +28,15 @@ export class DrawEraseComponent implements HtmlComponent<HTMLElement> {
   constructor(private drawBar: DrawBarComponent) {}
 
   render(): HTMLElement {
-    const stroke = this.selected ? '#ff0000' : '#000000';
-    this.el.innerHTML = `<svg height="24" viewBox="0 0 24 24" width="24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-<g stroke="${stroke}">
-<path d="M3.23657 20.2399L21.6576 20.1008" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
-<path d="M9.67757 7.86098L15.6261 13.7952" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
-<path d="M3.27042 13.6276L14.8388 2.02445" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
-<path d="M14.897 1.98029L21.3661 8.10477" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
-<path d="M9.85537 19.938L3.36094 13.6994" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
-<path d="M9.84363 19.7414L21.412 8.1383" opacity="1" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1.5"/>
-</g>
-
-</svg>
-`;
+    const fill = this.selected ? '#ff0000' : '#000000';
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+        <g>
+          <rect fill="none" height="24" width="24"/>
+        </g>
+        <g fill="${fill}">
+          <path d="M16.56,8.94L7.62,0L6.21,1.41l2.38,2.38L3.44,8.94c-0.59,0.59-0.59,1.54,0,2.12l5.5,5.5C9.23,16.85,9.62,17,10,17 s0.77-0.15,1.06-0.44l5.5-5.5C17.15,10.48,17.15,9.53,16.56,8.94z M5.21,10L10,5.21L14.79,10H5.21z M19,11.5c0,0-2,2.17-2,3.5 c0,1.1,0.9,2,2,2s2-0.9,2-2C21,13.67,19,11.5,19,11.5z M1,20h20v2H1V20z"/>
+        </g>
+</svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 
@@ -50,14 +46,15 @@ export class DrawEraseComponent implements HtmlComponent<HTMLElement> {
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
   }
+
   select() {
     this.selected = false;
-    (this.el.firstChild?.childNodes[1] as SVGPathElement).setAttribute('stroke', '#ff0000');
+    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#ff0000');
   }
 
   unselect() {
     this.selected = false;
-    (this.el.firstChild?.childNodes[1] as SVGPathElement).setAttribute('stroke', '#000000');
+    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#000000');
   }
 
   private handleClick = () => {
@@ -65,7 +62,7 @@ export class DrawEraseComponent implements HtmlComponent<HTMLElement> {
       this.unselect();
     } else {
       this.select();
-      this.drawBar.setTool(DrawToolDto.Erase);
+      this.drawBar.setTool(DrawToolDto.Fill);
     }
   };
 }

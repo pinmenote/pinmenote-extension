@@ -15,15 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
-import { DrawBrushSizeComponent } from './draw-buttons/draw-brush-size.component';
-import { DrawColorPickerComponent } from './draw-buttons/draw-color-picker.component';
-import { DrawEraseComponent } from './draw-buttons/draw-erase.component';
-import { DrawFillComponent } from './draw-buttons/draw-fill.component';
-import { DrawLineComponent } from './draw-buttons/draw-line.component';
-import { DrawPencilComponent } from './draw-buttons/draw-pencil.component';
-import { DrawRedoComponent } from './draw-buttons/draw-redo.component';
+import { DrawBrushSizeButton } from './draw-buttons/draw-brush-size.button';
+import { DrawColorPickerButton } from './draw-buttons/draw-color-picker.button';
+import { DrawEraseButton } from './draw-buttons/draw-erase.button';
+import { DrawFillButton } from './draw-buttons/draw-fill.button';
+import { DrawLineButton } from './draw-buttons/draw-line.button';
+import { DrawPencilButton } from './draw-buttons/draw-pencil.button';
+import { DrawRedoButton } from './draw-buttons/draw-redo.button';
 import { DrawToolDto } from '../../../common/model/obj-draw.model';
-import { DrawUndoComponent } from './draw-buttons/draw-undo.component';
+import { DrawUndoButton } from './draw-buttons/draw-undo.button';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
@@ -48,28 +48,28 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private visible = false;
   private toolValue: DrawToolDto = DrawToolDto.Pencil;
 
-  private readonly pencil: DrawPencilComponent;
-  private readonly line: DrawLineComponent;
-  private readonly fill: DrawFillComponent;
-  private readonly erase: DrawEraseComponent;
+  private readonly pencil: DrawPencilButton;
+  private readonly line: DrawLineButton;
+  private readonly fill: DrawFillButton;
+  private readonly erase: DrawEraseButton;
 
-  private readonly colorPicker: DrawColorPickerComponent;
-  private readonly sizeButton: DrawBrushSizeComponent;
+  private readonly colorPicker: DrawColorPickerButton;
+  private readonly sizeButton: DrawBrushSizeButton;
 
-  private readonly undoButton: DrawUndoComponent;
-  private readonly redoButton: DrawRedoComponent;
+  private readonly undoButton: DrawUndoButton;
+  private readonly redoButton: DrawRedoButton;
 
   constructor(private rect: PinRectangle, private parent: PinComponent) {
-    this.pencil = new DrawPencilComponent(this);
-    this.line = new DrawLineComponent(this);
-    this.fill = new DrawFillComponent(this);
-    this.erase = new DrawEraseComponent(this);
+    this.pencil = new DrawPencilButton(this);
+    this.line = new DrawLineButton(this);
+    this.fill = new DrawFillButton(this);
+    this.erase = new DrawEraseButton(this);
 
-    this.colorPicker = new DrawColorPickerComponent(rect, parent);
-    this.sizeButton = new DrawBrushSizeComponent(parent);
+    this.colorPicker = new DrawColorPickerButton(rect, parent);
+    this.sizeButton = new DrawBrushSizeButton(parent);
 
-    this.undoButton = new DrawUndoComponent(this);
-    this.redoButton = new DrawRedoComponent(this);
+    this.undoButton = new DrawUndoButton(this);
+    this.redoButton = new DrawRedoButton(this);
   }
 
   setTool(tool: DrawToolDto): void {
