@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
-import { DrawComponent } from './draw/draw.component';
+import { DrawAreaComponent } from './draw/draw-area.component';
 import { PinComponent } from './pin.component';
 import { applyStylesToElement } from '../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
@@ -23,10 +23,10 @@ import PinRectangle = Pinmenote.Pin.PinRectangle;
 export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
-  readonly drawArea: DrawComponent;
+  readonly drawArea: DrawAreaComponent;
 
   constructor(private rect: PinRectangle, private parent: PinComponent) {
-    this.drawArea = new DrawComponent(this.rect, parent);
+    this.drawArea = new DrawAreaComponent(this.rect, parent);
   }
 
   render(): HTMLElement {

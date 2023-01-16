@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ColorUtils, HSVColor } from './draw-color.utils';
+import { ColorUtils, RGBColor } from './draw-color.utils';
 import { DrawColorPickerComponent } from './draw-color-picker.component';
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
@@ -58,11 +58,10 @@ const elStyles = {
 };
 
 const brightnessSelectorStyles = {
-  border: '2px solid black',
+  border: '1px solid black',
   position: 'absolute',
   width: '4px',
   height: '4px',
-  'border-radius': '5px',
   top: '0px',
   left: '0px',
   'user-select': 'none',
@@ -77,7 +76,21 @@ const hueSelectorStyles = {
   height: '2px',
   left: '174px',
   top: '0px',
-  'user-select': 'none'
+  'user-select': 'none',
+  'pointer-events': 'none'
+};
+
+const colorInputStyles = {
+  position: 'absolute',
+  width: '200px',
+  height: '25px',
+  top: '175px',
+  left: '0px',
+  outline: 'none',
+  'font-size': '1em',
+  'background-color': '#ffffff',
+  color: '#000000',
+  border: '2px solid #000000'
 };
 
 export class DrawColorPicker implements HtmlComponent<HTMLElement> {
@@ -92,7 +105,9 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
   private readonly hueSelector = document.createElement('div');
   private hueMove = false;
 
-  private color: HSVColor = { h: 0, s: 1, v: 1 };
+  private colorInput = document.createElement('input');
+
+  private color: RGBColor = { r: 255, g: 0, b: 0 };
 
   constructor(private rect: PinRectangle, private colorDisplay: DrawColorPickerComponent) {}
 
@@ -114,6 +129,10 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
     this.el.appendChild(this.hue);
     this.el.appendChild(this.hueSelector);
 
+    applyStylesToElement(this.colorInput, colorInputStyles);
+    this.el.appendChild(this.colorInput);
+    this.colorInput.addEventListener('input', this.handleInput);
+
     applyStylesToElement(this.el, elStyles);
 
     return this.el;
@@ -123,6 +142,7 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('mousedown', this.handleDown);
     this.el.removeEventListener('mousemove', this.handleMove);
     this.el.removeEventListener('mouseup', this.handleUp);
+    this.colorInput.removeEventListener('input', this.handleInput);
   }
 
   show(): void {
@@ -135,19 +155,23 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
   }
 
   hexColor(): string {
-    const rgb = ColorUtils.hsvToRgb(this.color.h, this.color.s, this.color.v);
-    return ColorUtils.rgbToHex(rgb.r, rgb.g, rgb.b);
+    return ColorUtils.rgbToHex(this.color.r, this.color.g, this.color.b);
   }
 
-  setColor(hex: string): void {
-    const value = ColorUtils.stringToNumber(hex);
-    const rgb = ColorUtils.numberToRgb(value);
+  setColor(hex: string, updateInput = true): void {
+    if (updateInput) this.colorInput.value = hex;
+    const rgb = ColorUtils.stringToRgb(hex);
     const hsv = ColorUtils.rgbToHsv(rgb.r, rgb.g, rgb.b);
-    this.updateHue((1 - hsv.h) * 175);
-    this.updateSaturation(175 * hsv.s, (1 - hsv.v) * 175);
+    this.updateHue((1 - hsv.h) * 175, false);
+    this.updateSaturation(175 * hsv.s, (1 - hsv.v) * 175, false);
   }
+
+  private handleInput = () => {
+    this.setColor(this.colorInput.value, false);
+  };
 
   private handleDown = (e: MouseEvent) => {
+    if ((e.target as HTMLElement).tagName === 'INPUT') return;
     if (e.offsetX < 175 && e.offsetY < 175) {
       this.saturationMove = true;
       this.updateSaturation(e.offsetX, e.offsetY);
@@ -159,6 +183,7 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
 
   private handleMove = (e: MouseEvent) => {
     if (!this.saturationMove && !this.hueMove) return;
+    if (this.saturationMove && this.hueMove) return;
     if (this.saturationMove && e.offsetX < 170) {
       this.updateSaturation(e.offsetX, e.offsetY);
     }
@@ -167,27 +192,34 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
     }
   };
 
-  private updateHue(value: number): void {
-    const top = ColorUtils.clamp(value - 2, 0, 175);
+  private updateHue(value: number, updateInput = true): void {
+    const top = ColorUtils.clamp(value, 0, 175);
     this.hueSelector.style.top = `${top}px`;
-    this.color.h = 1 - top / 175;
-    const hueColor = ColorUtils.hsvToRgb(this.color.h, 1, 1);
+    const hsv = ColorUtils.rgbToHsv(this.color.r, this.color.g, this.color.b);
+    hsv.h = 1 - top / 175;
+    this.color = ColorUtils.hsvToRgb(hsv.h, hsv.s, hsv.v);
     this.saturation.style.background = `linear-gradient(to right, #ffffff, ${ColorUtils.rgbToHex(
-      hueColor.r,
-      hueColor.g,
-      hueColor.b
+      this.color.r,
+      this.color.g,
+      this.color.b
     )})`;
-    this.colorDisplay.updateColor(this.hexColor());
+    const hex = this.hexColor();
+    this.colorDisplay.updateColor(hex);
+    if (updateInput) this.colorInput.value = hex;
   }
 
-  private updateSaturation(x: number, y: number) {
-    const left = ColorUtils.clamp(x - 6, 0, 175);
-    const top = ColorUtils.clamp(y - 6, 0, 175);
+  private updateSaturation(x: number, y: number, updateInput = true) {
+    const left = ColorUtils.clamp(x - 2, 0, 175);
+    const top = ColorUtils.clamp(y - 2, 0, 175);
     this.saturationSelector.style.top = `${top}px`;
     this.saturationSelector.style.left = `${left}px`;
-    this.color.s = left / 175;
-    this.color.v = 1 - top / 175;
-    this.colorDisplay.updateColor(this.hexColor());
+    const hsv = ColorUtils.rgbToHsv(this.color.r, this.color.g, this.color.b);
+    hsv.s = left / 175;
+    hsv.v = 1 - top / 175;
+    this.color = ColorUtils.hsvToRgb(hsv.h, hsv.s, hsv.v);
+    const hex = this.hexColor();
+    this.colorDisplay.updateColor(hex);
+    if (updateInput) this.colorInput.value = hex;
   }
 
   private handleUp = () => {

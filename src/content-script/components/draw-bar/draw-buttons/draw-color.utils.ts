@@ -28,63 +28,93 @@ export interface RGBColor {
 
 export class ColorUtils {
   static hsvToRgb = (h: number, s: number, v: number): RGBColor => {
+    if (s === 0) {
+      return { r: Math.round(v * 255), g: Math.round(v * 255), b: Math.round(v * 255) };
+    }
     h *= 6;
     const i = Math.floor(h);
     const f = h - i;
     const p = v * (1 - s);
-    const q = v * (1 - f * s);
-    const t = v * (1 - (1 - f) * s);
+    const q = v * (1 - s * f);
+    const t = v * (1 - s * (1 - f));
     const mod = i % 6;
-    const r = [v, q, p, p, t, v][mod];
-    const g = [t, v, v, q, p, p][mod];
-    const b = [p, p, t, v, v, q][mod];
-
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    if (mod == 0) {
+      r = v;
+      g = t;
+      b = p;
+    } else if (mod == 1) {
+      r = q;
+      g = v;
+      b = p;
+    } else if (mod == 2) {
+      r = p;
+      g = v;
+      b = t;
+    } else if (mod == 3) {
+      r = p;
+      g = q;
+      b = v;
+    } else if (mod == 4) {
+      r = t;
+      g = p;
+      b = v;
+    } else if (mod == 5) {
+      r = v;
+      g = p;
+      b = q;
+    }
+    r = Math.round(r * 255);
+    g = Math.round(g * 255);
+    b = Math.round(b * 255);
     return { r, g, b };
   };
 
   static rgbToHsv = (r: number, g: number, b: number): HSVColor => {
+    r /= 255;
+    g /= 255;
+    b /= 255;
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
-    const d = max - min;
-    const s = max === 0 ? 0 : d / max;
+    const range = max - min;
     const v = max;
-
-    let h = 0;
-
-    if (max == min) {
-      h = 0;
-    } else {
-      switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0);
-          break;
-        case g:
-          h = (b - r) / d + 2;
-          break;
-        case b:
-          h = (r - g) / d + 4;
-          break;
-      }
-      h /= 6;
+    if (max === min) {
+      return { h: 0, s: 0, v };
     }
+    const s = max === 0 ? 0 : range / max;
+    const rc = (max - r) / range;
+    const gc = (max - g) / range;
+    const bc = (max - b) / range;
+    let h = 0;
+    if (r == max) {
+      h = bc - gc;
+    } else if (g == max) {
+      h = 2 + rc - bc;
+    } else {
+      h = 4 + gc - rc;
+    }
+    h = (h / 6) % 1;
     return { h, s, v };
   };
 
   static rgbToHex = (r: number, g: number, b: number): string => {
     const hex = [
       '#',
-      this.pad2(Math.round(r * 255).toString(16)),
-      this.pad2(Math.round(g * 255).toString(16)),
-      this.pad2(Math.round(b * 255).toString(16))
+      this.pad2(Math.round(r).toString(16)),
+      this.pad2(Math.round(g).toString(16)),
+      this.pad2(Math.round(b).toString(16))
     ];
     return hex.join('').toUpperCase();
   };
 
-  static numberToRgb = (value: number): RGBColor => {
-    const r = (value >> 16) & 255;
-    const g = (value >> 8) & 255;
-    const b = value & 255;
-    return { r, g, b };
+  static stringToRgb = (value: string): RGBColor => {
+    return {
+      r: parseInt(value.substring(1, 3), 16),
+      g: parseInt(value.substring(3, 5), 16),
+      b: parseInt(value.substring(5, 7), 16)
+    };
   };
 
   static stringToNumber = (value: string): number => {

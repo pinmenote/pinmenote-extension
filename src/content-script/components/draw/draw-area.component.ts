@@ -30,7 +30,7 @@ const canvasStyles = {
   left: '0px'
 };
 
-export class DrawComponent {
+export class DrawAreaComponent {
   readonly rasterCanvas: HTMLCanvasElement = document.createElement('canvas');
   readonly drawCanvas: HTMLCanvasElement = document.createElement('canvas');
   private readonly drawCtx: CanvasRenderingContext2D | null;
@@ -97,7 +97,7 @@ export class DrawComponent {
   private drawOne(data: ObjDrawDto): void {
     if (!this.rasterCtx) return;
     if (data) {
-      switch (this.tool) {
+      switch (data.tool) {
         case DrawToolDto.Pencil:
           PencilDraw.raster(data.points, data.color, data.size, this.rasterCtx);
           break;

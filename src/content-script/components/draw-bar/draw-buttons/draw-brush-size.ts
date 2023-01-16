@@ -26,11 +26,13 @@ const elStyles = {
 };
 
 const inputStyles = {
-  'font-size': '1em',
   width: '75px',
   height: '25px',
   outline: 'none',
-  border: '2px solid #000000'
+  border: '2px solid #000000',
+  'background-color': '#ffffff',
+  color: '#000000',
+  'font-size': '1em'
 };
 
 export class DrawBrushSize implements HtmlComponent<HTMLElement> {
