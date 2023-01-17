@@ -15,20 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
 import { SettingsConfig } from '../../../common/environment';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 export class SettingsStore {
-  private static sent = false;
   static settings?: SettingsConfig;
-
-  static dispatchInit(): void {
-    if (this.sent) return;
-    TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_GET_SETTINGS_DATA, undefined);
-    this.sent = true;
-  }
 
   static fetchData = async (): Promise<void> => {
     this.settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);

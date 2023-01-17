@@ -33,8 +33,11 @@ export const ContentSettingsComponent: FunctionComponent = () => {
   const [borderStyle, setBorderStyle] = useState<string>('');
 
   useEffect(() => {
-    setBorderRadius(SettingsStore.settings?.borderRadius || '5px');
-    setBorderStyle(SettingsStore.settings?.borderStyle || '2px solid #ff0000');
+    setTimeout(async () => {
+      await SettingsStore.fetchData();
+      setBorderRadius(SettingsStore.settings?.borderRadius || '5px');
+      setBorderStyle(SettingsStore.settings?.borderStyle || '2px solid #ff0000');
+    }, 0);
   });
 
   const handleBorderRadiusChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {

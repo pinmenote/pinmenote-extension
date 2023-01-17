@@ -32,7 +32,6 @@ export enum BusMessageType {
   // Internal options tab
   OPT_PIN_SHOW_IMAGE = 'opt.pin.show.image',
   OPT_GET_LEFT_MENU_DATA = 'opt.get.left.menu.data',
-  OPT_GET_SETTINGS_DATA = 'opt.get.settings.data',
   OPT_REFRESH_BOARD = 'opt.refresh.board',
   // Internal popup
   POP_CONSOLE_LOG = 'pop.console.log',

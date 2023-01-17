@@ -29,12 +29,15 @@ const borderContainer: CSSProperties = {
 };
 
 export const ScreenshotSettingsComponent: FunctionComponent = () => {
-  const [screenshotFormat, setScreenshotFormat] = useState<string>(SettingsStore.settings?.screenshotFormat || 'jpeg');
-  const [screenshotQuality, setScreenshotQuality] = useState<number>(SettingsStore.settings?.screenshotQuality || 0);
+  const [screenshotFormat, setScreenshotFormat] = useState<string>('');
+  const [screenshotQuality, setScreenshotQuality] = useState<number>(0);
 
   useEffect(() => {
-    setScreenshotQuality(SettingsStore.settings?.screenshotQuality || 0);
-    setScreenshotFormat(SettingsStore.settings?.screenshotFormat || 'jpeg');
+    setTimeout(async () => {
+      await SettingsStore.fetchData();
+      setScreenshotQuality(SettingsStore.settings?.screenshotQuality || 0);
+      setScreenshotFormat(SettingsStore.settings?.screenshotFormat || 'jpeg');
+    }, 0);
   });
 
   const handleScreenshotQuality = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {

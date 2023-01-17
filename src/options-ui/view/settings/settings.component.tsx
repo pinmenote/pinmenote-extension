@@ -14,17 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { CSSProperties, FunctionComponent, useEffect } from 'react';
-import { BusMessageType } from '../../../common/model/bus.model';
+import React, { CSSProperties, FunctionComponent } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ContentSettingsComponent } from './content/content-settings.component';
 import { CryptoSettingsCommand } from './crypto/crypto-settings.command';
 import { IconButton } from '@mui/material';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import { ServerSettingsComponent } from './server/server-settings.component';
-import { SettingsStore } from '../store/settings.store';
 import { SyncSettingsComponent } from './sync/sync-settings.component';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
 const containerStyle: CSSProperties = {
@@ -36,16 +33,6 @@ const containerStyle: CSSProperties = {
 };
 
 export const SettingsComponent: FunctionComponent = () => {
-  useEffect(() => {
-    const settingsKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.OPT_GET_SETTINGS_DATA, async () => {
-      await SettingsStore.fetchData();
-    });
-    SettingsStore.dispatchInit();
-    return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.OPT_GET_SETTINGS_DATA, settingsKey);
-    };
-  });
-
   const handleCloseClick = () => {
     window.location.hash = '';
   };
