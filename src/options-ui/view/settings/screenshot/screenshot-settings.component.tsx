@@ -40,18 +40,18 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
   const handleScreenshotQuality = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
     const value = parseInt(e.target.value);
+    setScreenshotQuality(value);
     if (value > 0 && value <= 100) {
       SettingsStore.settings.screenshotQuality = value;
       await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     }
-    setScreenshotQuality(value);
   };
 
   const handleScreenshotFormat = async (e: SelectChangeEvent): Promise<void> => {
     if (!SettingsStore.settings) return;
+    setScreenshotFormat(e.target.value);
     SettingsStore.settings.screenshotFormat = e.target.value as ScreenshotFormat;
     await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
-    setScreenshotFormat(e.target.value);
   };
 
   return (

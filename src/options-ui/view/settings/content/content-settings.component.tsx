@@ -16,8 +16,8 @@
  */
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { ContentSettingsData } from '../../../../common/model/settings.model';
 import { Input } from '@mui/material';
+import { SettingsConfig } from '../../../../common/environment';
 import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../store/settings.store';
 import Typography from '@mui/material/Typography';
@@ -28,31 +28,27 @@ const borderContainer: CSSProperties = {
   alignItems: 'center'
 };
 
-export const ContentSettingsComponent: FunctionComponent<{ radius: string; style: string }> = ({ radius, style }) => {
-  const [borderRadius, setBorderRadius] = useState<string>(radius);
-  const [borderStyle, setBorderStyle] = useState<string>(style);
+export const ContentSettingsComponent: FunctionComponent = () => {
+  const [borderRadius, setBorderRadius] = useState<string>('');
+  const [borderStyle, setBorderStyle] = useState<string>('');
 
   useEffect(() => {
-    if (radius !== borderRadius) {
-      setBorderRadius(radius);
-    }
-    if (style !== borderStyle) {
-      setBorderStyle(style);
-    }
+    setBorderRadius(SettingsStore.settings?.borderRadius || '5px');
+    setBorderStyle(SettingsStore.settings?.borderStyle || '2px solid #ff0000');
   });
 
   const handleBorderRadiusChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
-    SettingsStore.settings.borderRadius = e.target.value;
-    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     setBorderRadius(e.target.value);
+    SettingsStore.settings.borderRadius = e.target.value;
+    await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
   const handleBorderStyleChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
-    SettingsStore.settings.borderStyle = e.target.value;
-    await BrowserStorageWrapper.set<ContentSettingsData>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     setBorderStyle(e.target.value);
+    SettingsStore.settings.borderStyle = e.target.value;
+    await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
   return (

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { CSSProperties, FunctionComponent, useEffect, useState } from 'react';
+import React, { CSSProperties, FunctionComponent, useEffect } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ContentSettingsComponent } from './content/content-settings.component';
@@ -22,7 +22,6 @@ import { CryptoSettingsCommand } from './crypto/crypto-settings.command';
 import { IconButton } from '@mui/material';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import { ServerSettingsComponent } from './server/server-settings.component';
-import { SettingsConfig } from '../../../common/environment';
 import { SettingsStore } from '../store/settings.store';
 import { SyncSettingsComponent } from './sync/sync-settings.component';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
@@ -37,11 +36,9 @@ const containerStyle: CSSProperties = {
 };
 
 export const SettingsComponent: FunctionComponent = () => {
-  const [settings, setSettings] = useState<SettingsConfig | undefined>(SettingsStore.settings);
   useEffect(() => {
     const settingsKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.OPT_GET_SETTINGS_DATA, async () => {
       await SettingsStore.fetchData();
-      setSettings(SettingsStore.settings);
     });
     SettingsStore.dispatchInit();
     return () => {
@@ -65,16 +62,10 @@ export const SettingsComponent: FunctionComponent = () => {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto', height: '90vh', marginBottom: 50 }}>
         <div style={containerStyle}>
-          <ScreenshotSettingsComponent
-            format={settings?.screenshotFormat || ''}
-            quality={settings?.screenshotQuality || 0}
-          ></ScreenshotSettingsComponent>
+          <ScreenshotSettingsComponent></ScreenshotSettingsComponent>
         </div>
         <div style={containerStyle}>
-          <ContentSettingsComponent
-            radius={settings?.borderRadius || ''}
-            style={settings?.borderStyle || ''}
-          ></ContentSettingsComponent>
+          <ContentSettingsComponent></ContentSettingsComponent>
         </div>
         <div style={containerStyle}>
           <CryptoSettingsCommand></CryptoSettingsCommand>
