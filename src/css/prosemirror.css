@@ -42,13 +42,13 @@
 }
 
 .ProseMirror ol {
-    padding-left: 15px;
+    padding-left: 20px;
     border: none;
     list-style-type: decimal;
 }
 
 .ProseMirror ul {
-    padding-left: 15px;
+    padding-left: 20px;
     border: none;
     list-style-type: disc;
 }
