@@ -23,12 +23,12 @@ import PinRectangle = Pinmenote.Pin.PinRectangle;
 export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
 
-  private textBar: TextBarComponent;
+  readonly textBar: TextBarComponent;
   private textEditor: TextEditorComponent;
 
   constructor(private object: PinObject, rect: PinRectangle) {
     this.textBar = new TextBarComponent();
-    this.textEditor = new TextEditorComponent(object, rect);
+    this.textEditor = new TextEditorComponent(object, rect, this);
   }
 
   render(): HTMLElement {
@@ -36,6 +36,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
     const text = this.textEditor.render();
     this.el.appendChild(bar);
     this.el.appendChild(text);
+    this.textBar.setEditor(this.textEditor.editor);
     return this.el;
   }
 
@@ -45,6 +46,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   resize(rect: PinRectangle): void {
     this.textEditor.resize(rect);
+    this.textBar.resize(rect);
   }
 
   show(): void {
@@ -57,13 +59,16 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   cleanup(): void {
     this.textEditor.cleanup();
+    this.textBar.cleanup();
   }
 
   focusin(): void {
     this.textEditor.focusin();
+    this.textBar.focusin();
   }
 
   focusout(): void {
     this.textEditor.focusout();
+    this.textBar.focusout();
   }
 }

@@ -15,13 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
-import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
 import { ObjUpdateHashtagsCommand } from '../../common/command/obj/hashtag/obj-update-hashtags.command';
 import { PinObject } from '../../common/model/pin.model';
 import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
-import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { TextContainerComponent } from './text-container.component';
 import { createTextEditorState } from '../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -33,7 +32,11 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
   private editorView?: EditorView;
 
-  constructor(private pin: PinObject, private rect: PinRectangle) {}
+  constructor(private pin: PinObject, private rect: PinRectangle, private parent: TextContainerComponent) {}
+
+  get editor(): EditorView | undefined {
+    return this.editorView;
+  }
 
   render(): HTMLElement {
     this.editorView = this.createEditor();
@@ -83,7 +86,7 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
         } catch (e) {
           fnConsoleLog('ERROR UPDATE PIN', e);
         }
-        TinyEventDispatcher.dispatch(BusMessageType.CNT_EDITOR_MARKS, state);
+        this.parent.textBar.setState(state);
       }
     });
   }

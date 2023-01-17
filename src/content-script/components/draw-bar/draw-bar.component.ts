@@ -210,8 +210,6 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   }
 
   resize(rect: PinRectangle): void {
-    applyStylesToElement(this.el, {
-      width: `${rect.width}px`
-    });
+    this.el.style.width = `${rect.width}px`;
   }
 }
