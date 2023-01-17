@@ -20,6 +20,7 @@ import { HtmlComponent } from '../../../common/model/html.model';
 import { TextBoldButton } from './text-bar-buttons/text-bold.button';
 import { TextBulletListButton } from './text-bar-buttons/text-bullet-list.button';
 import { TextItalicButton } from './text-bar-buttons/text-italic.button';
+import { TextNumericListButton } from './text-bar-buttons/text-numeric-list.button';
 import { applyStylesToElement } from '../../../common/style.utils';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
@@ -38,6 +39,7 @@ export class TextBarComponent implements HtmlComponent<HTMLElement> {
   private bold: TextBoldButton;
   private italic: TextItalicButton;
   private bulletList: TextBulletListButton;
+  private numericList: TextNumericListButton;
 
   private marks = {
     strong: false,
@@ -50,6 +52,7 @@ export class TextBarComponent implements HtmlComponent<HTMLElement> {
     this.bold = new TextBoldButton();
     this.italic = new TextItalicButton();
     this.bulletList = new TextBulletListButton();
+    this.numericList = new TextNumericListButton();
   }
 
   setEditor(editor: EditorView | undefined): void {
@@ -57,6 +60,7 @@ export class TextBarComponent implements HtmlComponent<HTMLElement> {
     this.bold.setEditor(this.editor);
     this.italic.setEditor(this.editor);
     this.bulletList.setEditor(this.editor);
+    this.numericList.setEditor(this.editor);
   }
 
   setState(state: EditorState): void {
@@ -99,6 +103,7 @@ export class TextBarComponent implements HtmlComponent<HTMLElement> {
     this.el.appendChild(this.bold.render());
     this.el.appendChild(this.italic.render());
     this.el.appendChild(this.bulletList.render());
+    this.el.appendChild(this.numericList.render());
 
     applyStylesToElement(this.el, elStyles);
 
@@ -121,5 +126,6 @@ export class TextBarComponent implements HtmlComponent<HTMLElement> {
     this.bold.cleanup();
     this.italic.cleanup();
     this.bulletList.cleanup();
+    this.numericList.cleanup();
   }
 }

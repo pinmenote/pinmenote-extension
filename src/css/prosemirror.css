@@ -41,16 +41,19 @@
     border: none;
 }
 
-.ProseMirror ul, .ProseMirror ol {
-    padding-left: 20px;
-    list-style-type: disc;
-    list-style-position: outside;
+.ProseMirror ol {
+    padding-left: 15px;
     border: none;
+    list-style-type: decimal;
+}
+
+.ProseMirror ul {
+    padding-left: 15px;
+    border: none;
+    list-style-type: disc;
 }
 
 .ProseMirror li {
-    list-style-type: disc;
-    list-style-position: outside;
     position: relative;
     border: none;
 }
