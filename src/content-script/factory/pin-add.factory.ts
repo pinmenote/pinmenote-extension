@@ -30,6 +30,7 @@ export class PinAddFactory {
 
   static clear(): void {
     if (!this.currentElement) return;
+    this.currentElement?.removeEventListener('click', this.handleElementClick);
     this.currentElement.style.border = this.borderStyle;
     this.currentElement.style.borderRadius = this.borderRadius;
     this.borderStyle = '';
@@ -39,6 +40,7 @@ export class PinAddFactory {
 
   static updateElement(element: HTMLElement): void {
     if (this.currentElement !== element) {
+      this.currentElement?.removeEventListener('click', this.handleElementClick);
       this.currentElement = element;
       this.currentElement.addEventListener('click', this.handleElementClick);
       this.borderStyle = this.currentElement.style.border;
