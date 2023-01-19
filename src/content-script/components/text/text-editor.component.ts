@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
-import { ContentSettingsStore } from '../store/content-settings.store';
+import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { ContentSettingsStore } from '../../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
-import { ObjUpdateHashtagsCommand } from '../../common/command/obj/hashtag/obj-update-hashtags.command';
-import { PinObject } from '../../common/model/pin.model';
-import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
+import { ObjUpdateHashtagsCommand } from '../../../common/command/obj/hashtag/obj-update-hashtags.command';
+import { PinObject } from '../../../common/model/pin.model';
+import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { TextContainerComponent } from './text-container.component';
-import { createTextEditorState } from '../../common/components/text-editor/text.editor.state';
+import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
-import { fnConsoleLog } from '../../common/fn/console.fn';
-import { scrollToElementFn } from '../fn/scroll-to-element.fn';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { scrollToElementFn } from '../../fn/scroll-to-element.fn';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {

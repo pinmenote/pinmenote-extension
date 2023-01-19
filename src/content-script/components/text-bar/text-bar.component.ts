@@ -30,7 +30,9 @@ const elStyles = {
   'flex-direction': 'row',
   'align-items': 'center',
   'background-color': '#ffffff',
-  color: '#000000'
+  color: '#000000',
+  height: '24px',
+  'padding-left': '5px'
 };
 
 export class TextBarComponent implements HtmlComponent<HTMLElement> {

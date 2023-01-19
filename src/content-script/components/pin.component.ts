@@ -23,7 +23,7 @@ import { DrawToolDto } from '../../common/model/obj-draw.model';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
-import { TextContainerComponent } from './text-container.component';
+import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
