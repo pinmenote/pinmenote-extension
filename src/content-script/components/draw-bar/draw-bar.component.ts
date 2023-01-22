@@ -217,6 +217,10 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.adjustTop();
   }
 
+  /**
+   * Element is on top of page that's why we show bar overlapping element
+   * @private
+   */
   private adjustTop(): void {
     if (this.rect.y === 0) {
       this.el.style.top = '24px';

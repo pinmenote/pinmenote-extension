@@ -178,6 +178,10 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.parentIcon.cleanup();
   }
 
+  /**
+   * Element is on top of page that's why we show bar overlapping element
+   * @private
+   */
   private adjustTop(): void {
     if (this.rect.y === 0) {
       this.el.style.top = '0px';
