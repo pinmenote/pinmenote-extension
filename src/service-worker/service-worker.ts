@@ -111,36 +111,11 @@ const handleInstalled = async (event: unknown): Promise<void> => {
   fnConsoleLog('INSTALLED', event, BrowserApi.runtime.id);
   // Initial Content Settings
   await new SwInitSettingsCommand().execute();
-  reloadActiveTabScript();
-};
-
-const reloadActiveTabScript = (): void => {
-  try {
-    /* eslint-disable @typescript-eslint/no-floating-promises */
-    BrowserApi.tabs // eslint-disable-line @typescript-eslint/no-unsafe-call
-      .query({ active: true, currentWindow: true }, async (tabs: chrome.tabs.Tab[]) => {
-        const currentTab = tabs[0];
-        if (!currentTab?.url) return;
-        if (currentTab?.url.startsWith('chrome')) return;
-        if (!currentTab?.id) return;
-        await BrowserApi.reloadContentScript(currentTab.id);
-      });
-    /* eslint-enable @typescript-eslint/no-floating-promises */
-  } catch (e) {
-    fnConsoleLog('Error reloadActiveTabScript', e);
-  }
 };
 
 const handleSuspend = () => {
   fnConsoleLog('handleSuspend->suspend');
 };
-
-const handleTabActivated = async (activeInfo: chrome.tabs.TabActiveInfo): Promise<void> => {
-  fnConsoleLog('handleTabActivated', activeInfo.tabId);
-  await BrowserApi.reloadContentScript(activeInfo.tabId);
-};
-
-BrowserApi.tabs.onActivated.addListener(handleTabActivated);
 
 BrowserApi.runtime.onInstalled.addListener(handleInstalled);
 BrowserApi.runtime.onMessage.addListener(handleMessage);

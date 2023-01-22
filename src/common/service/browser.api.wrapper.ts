@@ -129,39 +129,5 @@ export class BrowserApi {
       }
     });
   };
-
-  static reloadContentScript = async (tabId: number): Promise<void> => {
-    const scripts = chrome.runtime.getManifest().content_scripts;
-    if (!scripts) return;
-    try {
-      fnConsoleLog('reloadContentScript', scripts);
-      await insertJsFiles(tabId, scripts[0]?.js);
-      await insertCssFiles(tabId, scripts[0].css);
-    } catch (e) {
-      fnConsoleLog('Error', e);
-    }
-  };
 }
 BrowserApi.init();
-
-const insertJsFiles = async (tabId: number, files: string[] | undefined): Promise<void> => {
-  if (!files) return;
-  if (BrowserApi.isChrome) {
-    await chrome.scripting.executeScript({ target: { tabId }, files });
-  } else {
-    for (const file of files) {
-      await browser.tabs.executeScript(tabId, { file });
-    }
-  }
-};
-
-const insertCssFiles = async (tabId: number, files: string[] | undefined): Promise<void> => {
-  if (!files) return;
-  if (BrowserApi.isChrome) {
-    await chrome.scripting.insertCSS({ target: { tabId }, files });
-  } else {
-    for (const file of files) {
-      await browser.tabs.insertCSS(tabId, { file });
-    }
-  }
-};
