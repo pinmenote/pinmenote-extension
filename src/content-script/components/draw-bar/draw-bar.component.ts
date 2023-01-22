@@ -200,6 +200,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.placeComponent(this.undoButton.render(), 169);
     this.placeComponent(this.redoButton.render(), 193);
 
+    this.adjustTop();
+
     return this.el;
   }
 
@@ -210,6 +212,16 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   }
 
   resize(rect: PinRectangle): void {
+    this.rect = rect;
     this.el.style.width = `${rect.width}px`;
+    this.adjustTop();
+  }
+
+  private adjustTop(): void {
+    if (this.rect.y === 0) {
+      this.el.style.top = '24px';
+    } else {
+      this.el.style.top = '-24px';
+    }
   }
 }

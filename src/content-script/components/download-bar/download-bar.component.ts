@@ -27,7 +27,10 @@ const downloadBarStyles = {
   position: 'absolute',
   'background-color': '#ffffff',
   display: 'none',
-  'justify-content': 'right'
+  'font-size': '20px',
+  'justify-content': 'right',
+  'align-items': 'center',
+  color: '#000000'
 };
 
 export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
@@ -70,15 +73,27 @@ export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
     this.el.appendChild(this.csvButton.render());
     this.el.appendChild(this.imageButton.render());
 
+    this.adjustTop();
+
     return this.el;
   }
 
   resize(rect: PinRectangle): void {
+    this.rect = rect;
     this.el.style.width = `${rect.width}px`;
+    this.adjustTop();
   }
 
   cleanup() {
     this.csvButton.cleanup();
     this.imageButton.cleanup();
+  }
+
+  private adjustTop(): void {
+    if (this.rect.y === 0) {
+      this.el.style.top = '24px';
+    } else {
+      this.el.style.top = '-24px';
+    }
   }
 }

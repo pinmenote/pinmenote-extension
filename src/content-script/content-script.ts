@@ -120,6 +120,7 @@ class PinMeScript {
         type: BusMessageType.CONTENT_INVALIDATE
       });
     } catch (e) {
+      fnConsoleLog('invalidateContentScript->cleanup', e);
       this.cleanup();
     }
   };

@@ -55,7 +55,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.refValue = ref;
     this.object = pin;
     this.rect = PinPointFactory.calculateRect(this.refValue);
-    this.topBar = new TopBarComponent(this.object, this.rect, this);
+    this.topBar = new TopBarComponent(this, this.object, this.rect);
     this.text = new TextContainerComponent(this.object, this.rect);
 
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);

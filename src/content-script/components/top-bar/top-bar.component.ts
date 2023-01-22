@@ -88,7 +88,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   private readonly textIcon: TextIconComponent;
   private readonly drawIcon: DrawIconComponent;
 
-  constructor(private object: PinObject, private rect: PinRectangle, private parent: PinComponent) {
+  constructor(private parent: PinComponent, private object: PinObject, private rect: PinRectangle) {
     this.addIcon = new AddIconComponent(parent);
     this.removeIcon = new RemoveIconComponent(this.object);
     this.parentIcon = new ParentIconComponent(this.object, parent);
@@ -108,15 +108,20 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   }
 
   moveup(): void {
-    this.el.style.top = '-48px';
+    if (this.rect.y > 0) {
+      this.el.style.top = '-48px';
+    }
   }
 
   movedown(): void {
-    this.el.style.top = '-24px';
+    if (this.rect.y > 0) {
+      this.el.style.top = '-24px';
+    }
   }
 
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.rect.width}px` }, topBarStyles);
+
     applyStylesToElement(this.el, style);
 
     // right side
@@ -149,6 +154,8 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.el.appendChild(textComponent);
     applyStylesToElement(textComponent, textIconStyles);
 
+    this.adjustTop();
+
     return this.el;
   }
 
@@ -161,13 +168,21 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   }
 
   resize(rect: PinRectangle): void {
-    applyStylesToElement(this.el, {
-      width: `${rect.width}px`
-    });
+    this.rect = rect;
+    this.el.style.width = `${rect.width}px`;
+    this.adjustTop();
   }
 
   cleanup(): void {
     this.removeIcon.cleanup();
     this.parentIcon.cleanup();
+  }
+
+  private adjustTop(): void {
+    if (this.rect.y === 0) {
+      this.el.style.top = '0px';
+    } else {
+      this.el.style.top = '-24px';
+    }
   }
 }
