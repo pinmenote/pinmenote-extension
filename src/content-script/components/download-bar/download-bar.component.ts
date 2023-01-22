@@ -14,28 +14,71 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { DownloadCsvButton } from './download-buttons/download-csv.button';
+import { DownloadImageButton } from './download-buttons/download-image.button';
 import { HtmlComponent } from '../../../common/model/html.model';
 import { PinComponent } from '../pin.component';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { applyStylesToElement } from '../../../common/style.utils';
+import PinRectangle = Pinmenote.Pin.PinRectangle;
+
+const downloadBarStyles = {
+  top: '-24px',
+  height: '24px',
+  position: 'absolute',
+  'background-color': '#ffffff',
+  display: 'none',
+  'justify-content': 'right'
+};
 
 export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
   private readonly el = document.createElement('div');
 
-  constructor(private parent: PinComponent) {}
+  private visible = false;
+
+  private imageButton: DownloadImageButton;
+  private csvButton: DownloadCsvButton;
+
+  constructor(private parent: PinComponent, private rect: PinRectangle) {
+    this.imageButton = new DownloadImageButton(parent);
+    this.csvButton = new DownloadCsvButton(parent);
+  }
 
   show(): void {
-    fnConsoleLog('show');
+    this.visible = true;
+    this.focusin();
   }
 
   hide(): void {
-    fnConsoleLog('hide');
+    this.visible = false;
+    this.focusout();
+  }
+
+  focusin(): void {
+    if (this.visible) this.el.style.display = 'flex';
+    if (this.csvButton.visible()) this.csvButton.show();
+  }
+
+  focusout(): void {
+    this.el.style.display = 'none';
+    this.csvButton.hide();
   }
 
   render(): HTMLElement {
+    const style = Object.assign({ width: `${this.rect.width}px` }, downloadBarStyles);
+    applyStylesToElement(this.el, style);
+
+    this.el.appendChild(this.csvButton.render());
+    this.el.appendChild(this.imageButton.render());
+
     return this.el;
   }
 
+  resize(rect: PinRectangle): void {
+    this.el.style.width = `${rect.width}px`;
+  }
+
   cleanup() {
-    fnConsoleLog('cleanup');
+    this.csvButton.cleanup();
+    this.imageButton.cleanup();
   }
 }

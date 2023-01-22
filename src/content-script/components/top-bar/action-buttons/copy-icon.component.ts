@@ -38,7 +38,14 @@ export class CopyIconComponent implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = async () => {
-    const text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
+    let text = '';
+    const clipboardCopy = this.parent.ref.getElementsByTagName('clipboard-copy');
+    if (clipboardCopy.length > 0) {
+      text = clipboardCopy[0].getAttribute('value') || '';
+    }
+    if (!text) {
+      text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
+    }
     await navigator.clipboard.writeText(text);
   };
 }

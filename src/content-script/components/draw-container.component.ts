@@ -25,8 +25,8 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   readonly drawArea: DrawAreaComponent;
 
-  constructor(private rect: PinRectangle, private parent: PinComponent) {
-    this.drawArea = new DrawAreaComponent(this.rect, parent);
+  constructor(private parent: PinComponent, private rect: PinRectangle) {
+    this.drawArea = new DrawAreaComponent(parent, rect);
   }
 
   render(): HTMLElement {

@@ -41,10 +41,10 @@ export class TextIconComponent implements HtmlComponent<HTMLElement> {
   private handleClick = () => {
     this.visible = !this.visible;
     if (this.visible) {
-      this.parent.text.show();
+      this.parent.showText();
       this.fillColor = '#ff0000';
     } else {
-      this.parent.text.hide();
+      this.parent.hideText();
       this.fillColor = '#000000';
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);

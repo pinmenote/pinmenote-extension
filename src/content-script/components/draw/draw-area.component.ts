@@ -44,7 +44,7 @@ export class DrawAreaComponent {
   private drawData: ObjDrawDto[] = [];
   private drawRedoData: ObjDrawDto[] = [];
 
-  constructor(private rect: PinRectangle, private parent: PinComponent) {
+  constructor(private parent: PinComponent, private rect: PinRectangle) {
     this.drawCanvas.width = rect.width;
     this.drawCanvas.height = rect.height;
     this.drawCanvas.style.width = `${rect.width}px`;

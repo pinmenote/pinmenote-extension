@@ -38,7 +38,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private readonly mouseManager: PinMouseManager;
 
   private readonly topBar: TopBarComponent;
-  readonly text: TextContainerComponent;
+  private readonly text: TextContainerComponent;
 
   readonly drawComponent: DrawContainerComponent;
   readonly drawBar: DrawBarComponent;
@@ -60,10 +60,10 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
 
-    this.drawBar = new DrawBarComponent(this.rect, this);
-    this.drawComponent = new DrawContainerComponent(this.rect, this);
+    this.drawBar = new DrawBarComponent(this, this.rect);
+    this.drawComponent = new DrawContainerComponent(this, this.rect);
 
-    this.downloadBar = new DownloadBarComponent(this);
+    this.downloadBar = new DownloadBarComponent(this, this.rect);
   }
 
   setNewRef(ref: HTMLElement): void {
@@ -105,15 +105,20 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.top.appendChild(this.topBar.render());
 
+    // Draw
     this.top.appendChild(this.drawComponent.render());
     this.top.appendChild(this.drawBar.render());
     this.drawBar.setSize(4);
     this.drawBar.setTool(DrawToolDto.Pencil);
 
+    // Download
+    this.top.appendChild(this.downloadBar.render());
+
     this.top.appendChild(this.topBar.render());
 
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
+
     document.body.appendChild(this.top);
     document.body.appendChild(this.bottom);
     this.mouseManager.start();
@@ -131,6 +136,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.topBar.resize(this.rect);
     this.drawComponent.resize(this.rect);
     this.drawBar.resize(this.rect);
+    this.downloadBar.resize(this.rect);
   }
 
   cleanup(): void {
@@ -154,6 +160,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.text.focusin();
     this.topBar.focusin();
     this.drawBar.focusin();
+    this.downloadBar.focusin();
   };
 
   private handleMouseOut = () => {
@@ -162,6 +169,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
       this.text.focusout();
       this.topBar.focusout();
       this.drawBar.focusout();
+      this.downloadBar.focusout();
     }, 1000);
   };
 
@@ -185,6 +193,14 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   stopDownload = () => {
     this.topBar.movedown();
     this.downloadBar.hide();
+  };
+
+  showText = () => {
+    this.text.show();
+  };
+
+  hideText = () => {
+    this.text.hide();
   };
 
   isHidden(): boolean {

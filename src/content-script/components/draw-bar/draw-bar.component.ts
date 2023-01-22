@@ -59,7 +59,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private readonly undoButton: DrawUndoButton;
   private readonly redoButton: DrawRedoButton;
 
-  constructor(private rect: PinRectangle, private parent: PinComponent) {
+  constructor(private parent: PinComponent, private rect: PinRectangle) {
     this.pencil = new DrawPencilButton(this);
     this.line = new DrawLineButton(this);
     this.fill = new DrawFillButton(this);
