@@ -36,7 +36,8 @@ export class DownloadImageButton {
   constructor(private parent: PinComponent) {}
 
   render(): HTMLElement {
-    this.el.innerText = 'image';
+    this.el.innerText = 'visible area';
+    this.el.setAttribute('title', 'only area visible on screen');
     this.el.addEventListener('click', this.handleClick);
 
     applyStylesToElement(this.el, elStyles);

@@ -68,21 +68,12 @@ export class DownloadCsvButton {
   };
 
   private downloadTable = async (table: HTMLTableElement): Promise<void> => {
-    const tableRows = Array.from(table.rows);
-    const csvData: string[][] = [];
-    for (let i = 0; i < tableRows.length; i++) {
-      const row = tableRows[i];
-      const rowCells = Array.from(row.cells);
-      const cellData = [];
-      for (let j = 0; j < rowCells.length; j++) {
-        const cell = rowCells[j];
-        cellData.push(cell.innerText);
-      }
-      csvData.push(cellData);
-    }
-    const blob = new Blob([this.makeCsv(csvData)], { type: 'text/csv' });
+    const tableData = this.tableToArray(table);
+
+    const blob = new Blob([this.makeCsv(tableData)], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const filename = `${fnUid()}.csv`;
+
     await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({
       type: BusMessageType.CONTENT_DOWNLOAD_DATA,
       data: {
@@ -92,18 +83,38 @@ export class DownloadCsvButton {
     });
   };
 
+  private tableToArray(table: HTMLTableElement): string[][] {
+    // TODO handle colspan, rowspan
+    const tableRows = Array.from(table.rows);
+    const tableData: string[][] = [];
+
+    for (let i = 0; i < tableRows.length; i++) {
+      const row = tableRows[i];
+      const rowCells = Array.from(row.cells);
+      const cellData = [];
+
+      for (let j = 0; j < rowCells.length; j++) {
+        const cell = rowCells[j];
+        cellData.push(cell.innerText);
+      }
+
+      tableData.push(cellData);
+    }
+    return tableData;
+  }
+
   private makeCsv(csvData: string[][]): string {
     let out = '';
     const separator = ';';
+
     for (let i = 0; i < csvData.length; i++) {
       const row = csvData[i];
+
       for (let j = 0; j < row.length; j++) {
-        let value = row[j];
-        value = value.replace(/"/g, '""');
-        const sep = j === row.length - 1 ? '' : separator;
+        const sep = j === row.length - 1 ? '\n' : separator;
+        const value = row[j].replace(/"/g, '""');
         out += `"${value}"${sep}`;
       }
-      out += '\n';
     }
     return out;
   }

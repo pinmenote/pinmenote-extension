@@ -41,6 +41,12 @@ export class DownloadIconComponent implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
+  turnoff(): void {
+    this.visible = false;
+    this.fillColor = '#000000';
+    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+  }
+
   private handleClick = () => {
     this.visible = !this.visible;
     if (this.visible) {

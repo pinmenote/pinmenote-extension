@@ -152,6 +152,14 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     return this.el;
   }
 
+  downloadTurnoff(): void {
+    this.downloadIcon.turnoff();
+  }
+
+  drawTurnoff(): void {
+    this.drawIcon.turnoff();
+  }
+
   resize(rect: PinRectangle): void {
     applyStylesToElement(this.el, {
       width: `${rect.width}px`

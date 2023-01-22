@@ -176,6 +176,11 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   startDraw = () => {
     this.topBar.moveup();
     this.drawBar.show();
+
+    // download cleanup
+    this.downloadBar.hide();
+    this.topBar.downloadTurnoff();
+
     this.drawComponent.focusin();
   };
 
@@ -187,6 +192,11 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   startDownload = () => {
     this.topBar.moveup();
+
+    // Draw cleanup
+    this.drawBar.hide();
+    this.topBar.drawTurnoff();
+
     this.downloadBar.show();
   };
 
