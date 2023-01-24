@@ -28,7 +28,6 @@ import { applyStylesToElement } from '../../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const topBarStyles = {
-  top: '-24px',
   height: '24px',
   position: 'absolute',
   'background-color': '#ffffff'
@@ -88,6 +87,8 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   private readonly textIcon: TextIconComponent;
   private readonly drawIcon: DrawIconComponent;
 
+  private topMargin = '-24px';
+
   constructor(private parent: PinComponent, private object: PinObject, private rect: PinRectangle) {
     this.addIcon = new AddIconComponent(parent);
     this.removeIcon = new RemoveIconComponent(this.object);
@@ -109,13 +110,15 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   moveup(): void {
     if (this.rect.y > 0) {
-      this.el.style.top = '-48px';
+      this.topMargin = '-48px';
+      this.adjustTop();
     }
   }
 
   movedown(): void {
     if (this.rect.y > 0) {
-      this.el.style.top = '-24px';
+      this.topMargin = '-24px';
+      this.adjustTop();
     }
   }
 
@@ -169,6 +172,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   resize(rect: PinRectangle): void {
     this.rect = rect;
+    if (rect.y === 0) this.topMargin = '0px';
     this.el.style.width = `${rect.width}px`;
     this.adjustTop();
   }
@@ -183,10 +187,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
    * @private
    */
   private adjustTop(): void {
-    if (this.rect.y === 0) {
-      this.el.style.top = '0px';
-    } else {
-      this.el.style.top = '-24px';
-    }
+    this.el.style.top = this.topMargin;
   }
 }
