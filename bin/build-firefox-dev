@@ -4,7 +4,7 @@ export NODE_ENV=development
 mv src/manifest.json src/manifest.ch.json
 mv src/manifest.ff.json src/manifest.json
 # build
-npm run build:ff:dev
+npm run dev:ff
 # swap manifests back
 mv src/manifest.json src/manifest.ff.json
 mv src/manifest.ch.json src/manifest.json
