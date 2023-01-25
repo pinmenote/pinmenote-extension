@@ -15,23 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
-import { PinComponent } from '../../pin.component';
+import { PinObject } from '../../../../common/model/pin.model';
+import { PinRemoveCommand } from '../../../../common/command/pin/pin-remove.command';
+import { PinStore } from '../../../store/pin.store';
+import { SettingsStore } from '../../../../options-ui/view/store/settings.store';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawIconComponent implements HtmlComponent<HTMLElement> {
-  private readonly el = document.createElement('div');
-
-  private visible = false;
-
-  private fillColor = '#000000';
-
-  constructor(private parent: PinComponent) {}
+export class ActionRemoveButton implements HtmlComponent<HTMLElement> {
+  private el = document.createElement('div');
+  constructor(private pin: PinObject) {}
 
   render(): HTMLElement {
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" height="24" viewBox="0 0 24 24" width="24">
-        <path d="M0 0h24v24H0z" fill="none"/><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/>
-    </svg>`;
+    const fillColor = SettingsStore.settings?.themeColor || '#ff0000';
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${fillColor}" height="24" viewBox="0 0 24 24" width="24">    
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+  </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
     return this.el;
@@ -41,21 +40,9 @@ export class DrawIconComponent implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  turnoff(): void {
-    this.visible = false;
-    this.fillColor = '#000000';
-    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
-  }
-
-  handleClick = () => {
-    this.visible = !this.visible;
-    if (this.visible) {
-      this.parent.startDraw();
-      this.fillColor = '#ff0000';
-    } else {
-      this.parent.stopDraw();
-      this.fillColor = '#000000';
-    }
-    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+  private handleClick = async () => {
+    this.el.removeEventListener('click', this.handleClick);
+    await new PinRemoveCommand(this.pin).execute();
+    PinStore.delByUid(this.pin.uid);
   };
 }

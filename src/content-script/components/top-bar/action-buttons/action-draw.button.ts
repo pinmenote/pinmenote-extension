@@ -19,33 +19,43 @@ import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class CopyIconComponent implements HtmlComponent<HTMLElement> {
-  private el = document.createElement('div');
+export class ActionDrawButton implements HtmlComponent<HTMLElement> {
+  private readonly el = document.createElement('div');
+
+  private visible = false;
+
+  private fillColor = '#000000';
+
   constructor(private parent: PinComponent) {}
 
   render(): HTMLElement {
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#ff0000" height="24" viewBox="0 0 24 24" width="24">
-<path d="M0 0h24v24H0z" fill="none"/><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-</svg>`;
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" height="24" viewBox="0 0 24 24" width="24">
+        <path d="M0 0h24v24H0z" fill="none"/><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/>
+    </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
-
     return this.el;
   }
 
-  cleanup() {
+  cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  private handleClick = async () => {
-    let text = '';
-    const clipboardCopy = this.parent.ref.getElementsByTagName('clipboard-copy');
-    if (clipboardCopy.length > 0) {
-      text = clipboardCopy[0].getAttribute('value') || '';
+  turnoff(): void {
+    this.visible = false;
+    this.fillColor = '#000000';
+    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+  }
+
+  handleClick = () => {
+    this.visible = !this.visible;
+    if (this.visible) {
+      this.parent.startDraw();
+      this.fillColor = '#ff0000';
+    } else {
+      this.parent.stopDraw();
+      this.fillColor = '#000000';
     }
-    if (!text) {
-      text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
-    }
-    await navigator.clipboard.writeText(text);
+    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
   };
 }

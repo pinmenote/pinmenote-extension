@@ -20,7 +20,7 @@ import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class AddIconComponent implements HtmlComponent<HTMLElement> {
+export class EditBarAddButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   constructor(private parent: PinComponent) {}

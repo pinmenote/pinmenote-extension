@@ -20,6 +20,7 @@ import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj-draw.model';
+import { PinEditBarComponent } from './pin-edit-bar/pin-edit-bar.component';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
@@ -29,6 +30,13 @@ import { applyStylesToElement } from '../../common/style.utils';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
+
+enum VisibleBar {
+  None = 1,
+  DrawBar,
+  EditBar,
+  DownloadBar
+}
 
 export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly content = document.createElement('div');
@@ -44,6 +52,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly drawBar: DrawBarComponent;
 
   readonly downloadBar: DownloadBarComponent;
+
+  readonly editBar: PinEditBarComponent;
 
   private rect: PinRectangle;
 
@@ -64,6 +74,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawComponent = new DrawContainerComponent(this, this.rect);
 
     this.downloadBar = new DownloadBarComponent(this, this.rect);
+
+    this.editBar = new PinEditBarComponent(this, this.rect);
   }
 
   setNewRef(ref: HTMLElement): void {
@@ -114,6 +126,9 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     // Download
     this.top.appendChild(this.downloadBar.render());
 
+    // Edit
+    this.top.appendChild(this.editBar.render());
+
     this.top.appendChild(this.topBar.render());
 
     this.refValue.style.border = ContentSettingsStore.borderStyle;
@@ -137,6 +152,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawComponent.resize(this.rect);
     this.drawBar.resize(this.rect);
     this.downloadBar.resize(this.rect);
+    this.editBar.resize(this.rect);
   }
 
   cleanup(): void {
@@ -151,6 +167,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.drawComponent.cleanup();
     this.drawBar.cleanup();
+    this.editBar.cleanup();
   }
 
   private timeoutId = -1;
@@ -174,35 +191,27 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   };
 
   startDraw = () => {
-    this.topBar.moveup();
-    this.drawBar.show();
-
-    // download cleanup
-    this.downloadBar.hide();
-    this.topBar.downloadTurnoff();
-
-    this.drawComponent.focusin();
+    this.changeVisibleBar(VisibleBar.DrawBar);
   };
 
   stopDraw = () => {
-    this.topBar.movedown();
-    this.drawBar.hide();
-    this.drawComponent.focusout();
+    this.changeVisibleBar(VisibleBar.None);
   };
 
   startDownload = () => {
-    this.topBar.moveup();
-
-    // Draw cleanup
-    this.drawBar.hide();
-    this.topBar.drawTurnoff();
-
-    this.downloadBar.show();
+    this.changeVisibleBar(VisibleBar.DownloadBar);
   };
 
   stopDownload = () => {
-    this.topBar.movedown();
-    this.downloadBar.hide();
+    this.changeVisibleBar(VisibleBar.None);
+  };
+
+  startEdit = () => {
+    this.changeVisibleBar(VisibleBar.EditBar);
+  };
+
+  stopEdit = () => {
+    this.changeVisibleBar(VisibleBar.None);
   };
 
   showText = () => {
@@ -215,5 +224,58 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   isHidden(): boolean {
     return isElementHiddenFn(this.refValue);
+  }
+
+  private changeVisibleBar(bar: VisibleBar) {
+    switch (bar) {
+      case VisibleBar.None:
+        this.topBar.movedown();
+        this.downloadBar.hide();
+        this.drawBar.hide();
+        this.editBar.hide();
+        this.drawComponent.focusout();
+        break;
+      case VisibleBar.EditBar:
+        this.topBar.moveup();
+
+        // Draw cleanup
+        this.drawBar.hide();
+        this.topBar.drawTurnoff();
+
+        // Download cleanup
+        this.downloadBar.hide();
+        this.topBar.downloadTurnoff();
+
+        this.editBar.show();
+        break;
+      case VisibleBar.DrawBar:
+        this.topBar.moveup();
+
+        // Download cleanup
+        this.downloadBar.hide();
+        this.topBar.downloadTurnoff();
+
+        // Edit cleanup
+        this.editBar.hide();
+        this.topBar.editTurnOff();
+
+        this.drawComponent.focusin();
+
+        this.drawBar.show();
+        break;
+      case VisibleBar.DownloadBar:
+        this.topBar.moveup();
+
+        // Draw cleanup
+        this.drawBar.hide();
+        this.topBar.drawTurnoff();
+
+        // Edit cleanup
+        this.editBar.hide();
+        this.topBar.editTurnOff();
+
+        this.downloadBar.show();
+        break;
+    }
   }
 }

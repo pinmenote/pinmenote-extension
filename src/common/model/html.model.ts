@@ -70,7 +70,7 @@ export interface PageComponent {
 
 export interface HtmlComponent<T> {
   render(): T;
-  cleanup(): void;
+  cleanup?: () => void;
 }
 
 export interface HtmlObject extends LinkDto {

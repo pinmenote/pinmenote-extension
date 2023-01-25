@@ -15,15 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
-import { AddIconComponent } from './action-buttons/add-icon.component';
-import { CopyIconComponent } from './action-buttons/copy-icon.component';
-import { DownloadIconComponent } from './action-buttons/download-icon.component';
-import { DrawIconComponent } from './action-buttons/draw-icon.component';
-import { ParentIconComponent } from './action-buttons/parent-icon.component';
+import { ActionCopyButton } from './action-buttons/action-copy.button';
+import { ActionDownloadButton } from './action-buttons/action-download.button';
+import { ActionDrawButton } from './action-buttons/action-draw.button';
+import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
+import { ActionRemoveButton } from './action-buttons/action-remove.button';
+import { ActionTextButton } from './action-buttons/action-text.button';
 import { PinComponent } from '../pin.component';
 import { PinObject } from '../../../common/model/pin.model';
-import { RemoveIconComponent } from './action-buttons/remove-icon.component';
-import { TextIconComponent } from './action-buttons/text-icon.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
 
@@ -39,26 +38,20 @@ const removeIconStyles = {
   'background-color': '#ffffff00'
 };
 
-const parentIconStyles = {
-  right: `20px`,
-  position: 'absolute',
-  'background-color': '#ffffff00'
-};
-
-const addIconStyles = {
-  right: '48px',
+const editIconStyles = {
+  right: `26px`,
   position: 'absolute',
   'background-color': '#ffffff00'
 };
 
 const copyIconStyles = {
-  right: '72px',
+  right: '54px',
   position: 'absolute',
   'background-color': '#ffffff00'
 };
 
 const downloadIconStyles = {
-  right: '96px',
+  right: '80px',
   position: 'absolute',
   'background-color': '#ffffff00'
 };
@@ -70,7 +63,7 @@ const drawIconStyles = {
 };
 
 const textIconStyles = {
-  left: '24px',
+  left: '26px',
   position: 'absolute',
   'background-color': '#ffffff00'
 };
@@ -78,26 +71,24 @@ const textIconStyles = {
 export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
-  private readonly addIcon: AddIconComponent;
-  private readonly removeIcon: RemoveIconComponent;
-  private readonly parentIcon: ParentIconComponent;
-  private readonly copyIcon: CopyIconComponent;
-  private readonly downloadIcon: DownloadIconComponent;
+  private readonly editIcon: ActionPinEditButton;
+  private readonly removeIcon: ActionRemoveButton;
+  private readonly copyIcon: ActionCopyButton;
+  private readonly downloadIcon: ActionDownloadButton;
 
-  private readonly textIcon: TextIconComponent;
-  private readonly drawIcon: DrawIconComponent;
+  private readonly textIcon: ActionTextButton;
+  private readonly drawIcon: ActionDrawButton;
 
   private topMargin = '-24px';
 
   constructor(private parent: PinComponent, private object: PinObject, private rect: PinRectangle) {
-    this.addIcon = new AddIconComponent(parent);
-    this.removeIcon = new RemoveIconComponent(this.object);
-    this.parentIcon = new ParentIconComponent(this.object, parent);
-    this.copyIcon = new CopyIconComponent(parent);
-    this.downloadIcon = new DownloadIconComponent(parent);
+    this.editIcon = new ActionPinEditButton(parent, this.object);
+    this.removeIcon = new ActionRemoveButton(this.object);
+    this.copyIcon = new ActionCopyButton(parent);
+    this.downloadIcon = new ActionDownloadButton(parent);
 
-    this.textIcon = new TextIconComponent(parent);
-    this.drawIcon = new DrawIconComponent(parent);
+    this.textIcon = new ActionTextButton(parent);
+    this.drawIcon = new ActionDrawButton(parent);
   }
 
   focusin(): void {
@@ -130,13 +121,9 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.el.appendChild(removeComponent);
     applyStylesToElement(removeComponent, removeIconStyles);
 
-    const parentComponent = this.parentIcon.render();
-    this.el.appendChild(parentComponent);
-    applyStylesToElement(parentComponent, parentIconStyles);
-
-    const addComponent = this.addIcon.render();
-    this.el.appendChild(addComponent);
-    applyStylesToElement(addComponent, addIconStyles);
+    const editComponent = this.editIcon.render();
+    this.el.appendChild(editComponent);
+    applyStylesToElement(editComponent, editIconStyles);
 
     const copyComponent = this.copyIcon.render();
     this.el.appendChild(copyComponent);
@@ -168,6 +155,10 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.drawIcon.turnoff();
   }
 
+  editTurnOff(): void {
+    this.editIcon.turnoff();
+  }
+
   resize(rect: PinRectangle): void {
     this.rect = rect;
     if (rect.y === 0) this.topMargin = '0px';
@@ -176,8 +167,13 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   }
 
   cleanup(): void {
+    this.editIcon.cleanup();
     this.removeIcon.cleanup();
-    this.parentIcon.cleanup();
+    this.copyIcon.cleanup();
+    this.downloadIcon.cleanup();
+
+    this.textIcon.cleanup();
+    this.drawIcon.cleanup();
   }
 
   /**

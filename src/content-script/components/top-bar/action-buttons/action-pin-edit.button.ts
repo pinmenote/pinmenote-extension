@@ -15,34 +15,48 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
+import { PinComponent } from '../../pin.component';
 import { PinObject } from '../../../../common/model/pin.model';
-import { PinRemoveCommand } from '../../../../common/command/pin/pin-remove.command';
-import { PinStore } from '../../../store/pin.store';
-import { SettingsStore } from '../../../../options-ui/view/store/settings.store';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class RemoveIconComponent implements HtmlComponent<HTMLElement> {
-  private el = document.createElement('div');
-  constructor(private pin: PinObject) {}
+export class ActionPinEditButton implements HtmlComponent<HTMLElement> {
+  private readonly el = document.createElement('div');
 
-  render(): HTMLElement {
-    const fillColor = SettingsStore.settings?.themeColor || '#ff0000';
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${fillColor}" height="24" viewBox="0 0 24 24" width="24">    
-    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-  </svg>`;
+  private visible = true;
+  private fillColor = '#000000';
+
+  constructor(private parent: PinComponent, private object: PinObject) {}
+
+  render() {
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" height="24" viewBox="0 0 24 24" width="24">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+</svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
     return this.el;
   }
 
-  cleanup(): void {
+  cleanup() {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  private handleClick = async () => {
-    this.el.removeEventListener('click', this.handleClick);
-    await new PinRemoveCommand(this.pin).execute();
-    PinStore.delByUid(this.pin.uid);
+  turnoff(): void {
+    this.visible = false;
+    this.fillColor = '#000000';
+    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+  }
+
+  private handleClick = () => {
+    this.visible = !this.visible;
+    if (this.visible) {
+      this.parent.startEdit();
+      this.fillColor = '#ff0000';
+    } else {
+      this.parent.stopEdit();
+      this.fillColor = '#000000';
+    }
+    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
   };
 }

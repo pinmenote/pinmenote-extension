@@ -87,15 +87,23 @@ export class DownloadCsvButton {
     const out: string[] = [];
     const row = Array.from(ref.children);
     for (const col of row) {
-      if (col.children.length > 0) {
+      /*if (col.children.length > 0) {
         const colChildList = Array.from(col.children);
         for (const colChild of colChildList) {
           const txt = (colChild as HTMLElement).innerText;
           txt ? out.push(txt) : out.push('-');
         }
       } else {
-        out.push((col as HTMLElement).innerText);
+
+      }*/
+      if (col.hasAttribute('href')) {
+        let href = col.getAttribute('href') || '/';
+        if (href?.startsWith('/')) {
+          href = location.origin + href;
+        }
+        out.push(href);
       }
+      out.push((col as HTMLElement).innerText);
     }
     return out;
   }
