@@ -23,7 +23,7 @@ import { iconButtonStyles } from '../../styles/icon-button.styles';
 export class ActionPinEditButton implements HtmlComponent<HTMLElement> {
   private readonly el = document.createElement('div');
 
-  private visible = true;
+  private visible = false;
   private fillColor = '#000000';
 
   constructor(private parent: PinComponent, private object: PinObject) {}

@@ -27,6 +27,7 @@ import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 import PinRectangle = Pinmenote.Pin.PinRectangle;
@@ -227,12 +228,16 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   }
 
   private changeVisibleBar(bar: VisibleBar) {
+    fnConsoleLog('PinComponent->changeVisibleBar', bar);
     switch (bar) {
       case VisibleBar.None:
         this.topBar.movedown();
+
         this.downloadBar.hide();
-        this.drawBar.hide();
+
         this.editBar.hide();
+
+        this.drawBar.hide();
         this.drawComponent.focusout();
         break;
       case VisibleBar.EditBar:
