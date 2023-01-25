@@ -44,12 +44,12 @@ export class DrawPencilButton implements HtmlComponent<HTMLElement> {
 
   select() {
     this.selected = false;
-    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#ff0000');
+    (this.el.firstChild?.childNodes[1] as SVGPathElement).setAttribute('fill', '#ff0000');
   }
 
   unselect() {
     this.selected = false;
-    (this.el.firstChild?.childNodes[3] as SVGPathElement).setAttribute('fill', '#000000');
+    (this.el.firstChild?.childNodes[1] as SVGPathElement).setAttribute('fill', '#000000');
   }
 
   private handleClick = () => {
