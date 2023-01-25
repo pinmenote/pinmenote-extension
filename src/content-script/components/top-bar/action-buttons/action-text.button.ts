@@ -22,8 +22,8 @@ import { iconButtonStyles } from '../../styles/icon-button.styles';
 export class ActionTextButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  private visible = true;
-  private fillColor = '#ff0000';
+  private visible = false;
+  private fillColor = '#000000';
 
   constructor(private parent: PinComponent) {}
 

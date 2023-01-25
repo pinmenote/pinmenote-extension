@@ -33,10 +33,14 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   render(): HTMLElement {
     const bar = this.textBar.render();
-    const text = this.textEditor.render();
     this.el.appendChild(bar);
+
+    const text = this.textEditor.render();
     this.el.appendChild(text);
+
     this.textBar.setEditor(this.textEditor.editor);
+    this.el.style.display = 'none';
+
     return this.el;
   }
 
