@@ -46,7 +46,11 @@ export class DownloadCsvButton {
   }
 
   visible(): boolean {
-    return this.parent.ref.tagName === 'TABLE' || this.parent.ref.getElementsByTagName('table').length > 0;
+    return (
+      this.parent.ref.tagName === 'TABLE' ||
+      this.parent.ref.getElementsByTagName('table').length > 0 ||
+      document.getElementsByClassName(this.parent.ref.className).length > 1
+    );
   }
 
   show(): void {
@@ -64,23 +68,41 @@ export class DownloadCsvButton {
       await this.downloadTable(table);
     } else if (this.parent.ref.tagName === 'TABLE') {
       await this.downloadTable(this.parent.ref as HTMLTableElement);
+    } else {
+      await this.downloadSameClass(this.parent.ref);
     }
   };
 
+  private downloadSameClass = async (element: HTMLElement): Promise<void> => {
+    const refList = Array.from(document.getElementsByClassName(element.className));
+    const data: string[][] = [];
+    for (const ref of refList) {
+      const row = this.refStringList(ref as HTMLElement);
+      data.push(row);
+    }
+    await this.downloadCsv(data);
+  };
+
+  private refStringList(ref: HTMLElement): string[] {
+    const out: string[] = [];
+    const row = Array.from(ref.children);
+    for (const col of row) {
+      if (col.children.length > 0) {
+        const colChildList = Array.from(col.children);
+        for (const colChild of colChildList) {
+          const txt = (colChild as HTMLElement).innerText;
+          txt ? out.push(txt) : out.push('-');
+        }
+      } else {
+        out.push((col as HTMLElement).innerText);
+      }
+    }
+    return out;
+  }
+
   private downloadTable = async (table: HTMLTableElement): Promise<void> => {
     const tableData = this.tableToArray(table);
-
-    const blob = new Blob([this.makeCsv(tableData)], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const filename = `${fnUid()}.csv`;
-
-    await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({
-      type: BusMessageType.CONTENT_DOWNLOAD_DATA,
-      data: {
-        url,
-        filename
-      }
-    });
+    await this.downloadCsv(tableData);
   };
 
   private tableToArray(table: HTMLTableElement): string[][] {
@@ -102,6 +124,20 @@ export class DownloadCsvButton {
     }
     return tableData;
   }
+
+  private downloadCsv = async (tableData: string[][]): Promise<void> => {
+    const blob = new Blob([this.makeCsv(tableData)], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const filename = `${fnUid()}.csv`;
+
+    await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({
+      type: BusMessageType.CONTENT_DOWNLOAD_DATA,
+      data: {
+        url,
+        filename
+      }
+    });
+  };
 
   private makeCsv(csvData: string[][]): string {
     let out = '';
