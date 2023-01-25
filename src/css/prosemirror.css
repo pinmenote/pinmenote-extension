@@ -22,15 +22,6 @@
     outline: none;
 }
 
-.ProseMirror h1 {
-    font-size: 2em;
-    font-weight: bold;
-    line-height: 100%;
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-
 .ProseMirror p:first-child {
     margin: 0px 0px 4px;
 }
@@ -56,4 +47,48 @@
 .ProseMirror li {
     position: relative;
     border: none;
+}
+
+/* HEADER STYLES */
+
+.ProseMirror h1 {
+    display: block;
+    font-size: 2em;
+    margin: 0.67em 0;
+    font-weight: bold;
+}
+
+.ProseMirror h2 {
+    display: block;
+    font-size: 1.5em;
+    margin: 0.83em 0;
+    font-weight: bold;
+}
+
+.ProseMirror h3 {
+    display: block;
+    font-size: 1.17em;
+    margin: 1em 0;
+    font-weight: bold;
+}
+
+.ProseMirror h4 {
+    display: block;
+    font-size: 1em;
+    margin: 1.33em 0;
+    font-weight: bold;
+}
+
+.ProseMirror h5 {
+    display: block;
+    font-size: .83em;
+    margin: 1.67em 0;
+    font-weight: bold;
+}
+
+.ProseMirror h6 {
+    display: block;
+    font-size: .67em;
+    margin: 2.33em 0;
+    font-weight: bold;
 }

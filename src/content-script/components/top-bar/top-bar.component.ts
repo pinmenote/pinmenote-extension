@@ -116,10 +116,8 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   }
 
   movedown(): void {
-    if (this.rect.y > 0) {
-      this.topMargin = '-24px';
-      this.adjustTop();
-    }
+    this.topMargin = '-24px';
+    this.adjustTop();
   }
 
   render(): HTMLElement {
