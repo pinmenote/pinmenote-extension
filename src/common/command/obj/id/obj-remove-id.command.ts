@@ -21,18 +21,30 @@ import ICommand = Pinmenote.Common.ICommand;
 export class ObjRemoveIdCommand implements ICommand<Promise<void>> {
   constructor(private id: number) {}
   async execute(): Promise<void> {
-    const ids = await this.getIds();
-    for (let i = 0; i < ids.length; i++) {
-      if (ids[i] === this.id) {
-        ids.splice(i, 1);
-        await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID_LIST, ids);
-        return;
-      }
+    const listId = await this.getListId();
+    await this.removeFromList(listId);
+  }
+
+  private async removeFromList(listId: number): Promise<void> {
+    const ids = await this.getList(listId);
+    const idIndex = ids.indexOf(this.id);
+    if (idIndex > -1) {
+      ids.splice(idIndex, 1);
+      const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
+      await BrowserStorageWrapper.set(key, ids);
+    } else if (listId > 1) {
+      return this.removeFromList(listId - 1);
     }
   }
 
-  private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
+  private async getListId(): Promise<number> {
+    const value = await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
+    return value || 1;
+  }
+
+  private async getList(listId: number): Promise<number[]> {
+    const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
   }
 }

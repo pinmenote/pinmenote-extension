@@ -25,16 +25,10 @@ import { PinBoardStore } from './view/store/pin-board.store';
 import { SettingsComponent } from './view/settings/settings.component';
 import { createRoot } from 'react-dom/client';
 
-const initPinBoardStore = () => {
+const initPinBoardStore = async () => {
   fnConsoleLog('initPinBoardStore');
-  PinBoardStore.clearSearch();
-  PinBoardStore.sendRange()
-    .then(() => {
-      /* Empty*/
-    })
-    .catch(() => {
-      /* Empty*/
-    });
+  await PinBoardStore.clearSearch();
+  await PinBoardStore.sendRange();
 };
 
 const App: FunctionComponent = () => {
@@ -42,7 +36,7 @@ const App: FunctionComponent = () => {
 
   useEffect(() => {
     if (!showSettings) {
-      initPinBoardStore();
+      setTimeout(initPinBoardStore, 0);
     }
     window.addEventListener('hashchange', handleHashChange);
     return () => {

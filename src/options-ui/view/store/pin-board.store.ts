@@ -14,26 +14,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinRangeRequest } from '../../../common/model/pin.model';
+import { PinObject, PinRangeRequest, PinRangeResponse } from '../../../common/model/pin.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PinBoardStore {
-  static pins: PinObject[] = [];
+  static pinData: PinObject[] = [];
 
   private static loading = false;
   private static isLastValue = false;
   private static readonly search: PinRangeRequest = {
-    from: 0,
-    limit: 10
+    from: -1,
+    limit: 10,
+    listId: -1
   };
 
+  static get pins(): PinObject[] {
+    return this.pinData;
+  }
+
+  static setData(value: PinRangeResponse): void {
+    const lastId = value.data[value.data.length - 1].id;
+    if (this.search.from === lastId) {
+      this.isLastValue = true;
+      // Only one element so add it :/
+      if (this.pinData.length === 0) {
+        this.pinData.push(...value.data);
+      }
+    } else {
+      this.search.listId = value.listId;
+      this.search.from = lastId;
+      this.pinData.push(...value.data);
+    }
+  }
+
   static removePin = async (value: PinObject): Promise<boolean> => {
-    for (let i = 0; i < this.pins.length; i++) {
-      if (this.pins[i].id == value.id) {
-        this.pins.splice(i, 1);
+    for (let i = 0; i < this.pinData.length; i++) {
+      if (this.pinData[i].id == value.id) {
+        this.pinData.splice(i, 1);
         await new PinRemoveCommand(value).execute();
         return true;
       }
@@ -41,19 +63,15 @@ export class PinBoardStore {
     return false;
   };
 
-  static setIsLast(): void {
-    this.isLastValue = true;
-  }
-
   static get isLast(): boolean {
     return this.isLastValue;
   }
 
-  static clearSearch(): void {
+  static async clearSearch(): Promise<void> {
     this.isLastValue = false;
-    this.search.from = 0;
+    this.search.from = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
     this.search.search = undefined;
-    this.pins = [];
+    this.search.listId = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
   }
 
   static setLoading(value: boolean): void {
@@ -66,20 +84,12 @@ export class PinBoardStore {
 
   static timeout?: number;
 
-  static setFrom(from: number): void {
-    this.search.from = from;
-  }
-
   static setSearch(search?: string): void {
     this.search.search = search;
   }
 
   static getSearch(): string | undefined {
     return this.search.search;
-  }
-
-  static getFrom(): number {
-    return this.search.from;
   }
 
   static async sendRange(): Promise<void> {

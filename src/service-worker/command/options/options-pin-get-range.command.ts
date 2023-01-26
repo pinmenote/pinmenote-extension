@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinRangeRequest } from '../../../common/model/pin.model';
+import { PinObject, PinRangeRequest, PinRangeResponse } from '../../../common/model/pin.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
@@ -28,30 +29,31 @@ export class OptionsPinGetRangeCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const data = await this.getRange(ObjectStoreKeys.OBJECT_ID, this.data);
-      await BrowserApi.sendRuntimeMessage<PinObject[]>({ type: BusMessageType.OPTIONS_PIN_GET_RANGE, data });
+      await BrowserApi.sendRuntimeMessage<PinRangeResponse>({ type: BusMessageType.OPTIONS_PIN_GET_RANGE, data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }
   }
 
-  private async getRange(idKey: string, range: PinRangeRequest): Promise<PinObject[]> {
-    if (range.from === undefined || !range.limit) return [];
+  private async getRange(idKey: string, range: PinRangeRequest): Promise<PinRangeResponse> {
+    if (range.from === undefined || !range.limit) return { listId: range.listId || -1, data: [] };
     // Get ids - can optimise reverse by looking in reverse later
-    const ids = (await this.getIds()).reverse();
-
-    // Get ids
-    const out: PinObject[] = [];
-    const getIds: number[] = ids.slice(range.from, range.from + range.limit);
-    for (let i = 0; i < getIds.length; i++) {
-      const key = `${idKey}:${getIds[i]}`;
+    if (!range.listId) range.listId = await this.getListId();
+    const data = await new ObjRangeIdCommand(range.listId, range.from, range.limit, true).execute();
+    const out = [];
+    for (let i = 0; i < data.ids.length; i++) {
+      const key = `${idKey}:${data.ids[i]}`;
       const pin = await BrowserStorageWrapper.get<PinObject>(key);
       out.push(pin);
     }
-    return out;
+    return {
+      listId: data.listId,
+      data: out
+    };
   }
 
-  private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
-    return value || [];
+  private async getListId(): Promise<number> {
+    const value = await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
+    return value || 1;
   }
 }

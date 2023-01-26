@@ -55,7 +55,7 @@ interface MenuLinkItemProps {
 
 export const MenuLinkItem: FunctionComponent<MenuLinkItemProps> = ({ url }) => {
   const handleClick = async () => {
-    PinBoardStore.clearSearch();
+    await PinBoardStore.clearSearch();
     if (url === MenuStore.ALL_URLS) {
       await PinBoardStore.sendRange();
     } else {

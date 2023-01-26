@@ -25,11 +25,13 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export const BoardSearchInput: FunctionComponent = () => {
   const [searchValue, setSearchValue] = useState<string>(PinBoardStore.getSearch() || '');
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     fnConsoleLog('handleSearchChange');
     clearTimeout(PinBoardStore.timeout);
     setSearchValue(e.target.value);
-    PinBoardStore.clearSearch();
+
+    await PinBoardStore.clearSearch();
+
     // setPinData([]);
     if (e.target.value.length <= 2) {
       PinBoardStore.timeout = window.setTimeout(async () => {
@@ -47,7 +49,7 @@ export const BoardSearchInput: FunctionComponent = () => {
   const handleClearSearch = async () => {
     fnConsoleLog('handleClearSearch');
     setSearchValue('');
-    PinBoardStore.clearSearch();
+    await PinBoardStore.clearSearch();
     await PinBoardStore.sendRange();
   };
   return (

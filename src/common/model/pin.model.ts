@@ -47,8 +47,14 @@ export interface PinObject extends HtmlObject {
 
 export interface PinRangeRequest {
   from: number;
-  limit?: number;
+  listId: number;
+  limit: number;
   search?: string;
+}
+
+export interface PinRangeResponse {
+  listId: number;
+  data: PinObject[];
 }
 
 export interface PinByIdRequest {

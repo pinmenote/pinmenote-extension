@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { PinObject, PinRangeResponse } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardSearchInput } from '../menu/board-search.input';
 import Box from '@mui/material/Box';
@@ -21,7 +22,6 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { IconButton } from '@mui/material';
 import { PinBoardStore } from '../store/pin-board.store';
 import { PinElement } from './pin.element';
-import { PinObject } from '../../../common/model/pin.model';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
@@ -40,24 +40,19 @@ export const PinBoard: FunctionComponent = () => {
       setPinData(PinBoardStore.pins.concat());
     });
 
-    const pinSearch = TinyEventDispatcher.addListener<PinObject[]>(
+    const pinSearch = TinyEventDispatcher.addListener<PinRangeResponse>(
       BusMessageType.OPTIONS_PIN_SEARCH,
       (event, key, value) => {
-        PinBoardStore.pins.push(...value);
-        // setSearchValue(PinBoardStore.getSearch() || '');
+        PinBoardStore.setData(value);
         setPinData(PinBoardStore.pins.concat());
         PinBoardStore.setLoading(false);
       }
     );
-    const pinRange = TinyEventDispatcher.addListener<PinObject[]>(
+    const pinRange = TinyEventDispatcher.addListener<PinRangeResponse>(
       BusMessageType.OPTIONS_PIN_GET_RANGE,
       (event, key, value) => {
-        if (value.length > 0) {
-          PinBoardStore.pins.push(...value);
-          setPinData(PinBoardStore.pins.concat());
-        } else {
-          PinBoardStore.setIsLast();
-        }
+        PinBoardStore.setData(value);
+        setPinData(PinBoardStore.pins.concat());
         PinBoardStore.setLoading(false);
       }
     );
@@ -83,15 +78,10 @@ export const PinBoard: FunctionComponent = () => {
     // Search for value from last one
     if (PinBoardStore.getSearch()) {
       PinBoardStore.timeout = window.setTimeout(async () => {
-        // Last id found
-        PinBoardStore.setFrom(PinBoardStore.pins[PinBoardStore.pins.length - 1].id);
         await PinBoardStore.sendSearch();
       }, 1000);
       return;
     }
-
-    // We can proceed
-    PinBoardStore.setFrom(PinBoardStore.getFrom() + 10);
     window.setTimeout(async () => {
       await PinBoardStore.sendRange();
     }, 250);
