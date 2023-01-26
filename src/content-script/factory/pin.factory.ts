@@ -32,14 +32,12 @@ import { fnUid } from '../../common/fn/uid.fn';
 export class PinFactory {
   static objPagePinNew = (ref: HTMLElement): ObjPagePinDto => {
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'drak';
-    const xpath = XpathFactory.newXPathString(ref);
-    const htmlData = HtmlFactory.computePinHTMLData(ref);
     return {
-      title: document.title,
       theme,
-      xpath,
+      xpath: XpathFactory.newXPathString(ref),
+      value: '',
       url: contentPinNewUrl(),
-      html: [htmlData],
+      html: [HtmlFactory.computePinHTMLData(ref)],
       video: [],
       draw: []
     };

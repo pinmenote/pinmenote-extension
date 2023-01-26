@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto } from '../../model/obj.model';
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../model/obj.model';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import ICommand = Pinmenote.Common.ICommand;
@@ -24,7 +24,16 @@ export class ObjUpdateCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.id}`;
     const obj = await BrowserStorageWrapper.get<ObjDto>(key);
+    this.updateInternal(obj.type);
     obj.data = this.data;
     await BrowserStorageWrapper.set(key, obj);
+  }
+
+  private updateInternal(type: ObjTypeDto): void {
+    switch (type) {
+      case ObjTypeDto.PageElementPin: {
+        break;
+      }
+    }
   }
 }
