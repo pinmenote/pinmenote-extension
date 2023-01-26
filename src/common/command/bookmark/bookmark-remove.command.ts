@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ObjRemoveIdCommand } from '../obj/obj-remove-id.command';
+import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 import ICommand = Pinmenote.Common.ICommand;

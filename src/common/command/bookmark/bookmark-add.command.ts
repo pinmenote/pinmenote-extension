@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ObjAddIdCommand } from '../obj/obj-add-id.command';
-import { ObjNextIdCommand } from '../obj/obj-next-id.command';
+import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
+import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjUrlDto } from '../../model/obj.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import ICommand = Pinmenote.Common.ICommand;

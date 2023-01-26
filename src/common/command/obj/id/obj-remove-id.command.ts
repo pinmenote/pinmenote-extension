@@ -14,15 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import ICommand = Pinmenote.Common.ICommand;
 
-const HASHTAG_REGEX = new RegExp(/#(\w+)/g);
+export class ObjRemoveIdCommand implements ICommand<Promise<void>> {
+  constructor(private id: number) {}
+  async execute(): Promise<void> {
+    const ids = await this.getIds();
+    for (let i = 0; i < ids.length; i++) {
+      if (ids[i] === this.id) {
+        ids.splice(i, 1);
+        await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID_LIST, ids);
+        return;
+      }
+    }
+  }
 
-export class ObjFindHashtagCommand implements ICommand<string[]> {
-  constructor(private value: string) {}
-
-  execute(): string[] {
-    const match = this.value.match(HASHTAG_REGEX);
-    return match ? Array.from(match) : [];
+  private async getIds(): Promise<number[]> {
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
+    return value || [];
   }
 }

@@ -17,7 +17,7 @@
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
-import { ObjAddIdCommand } from '../obj/obj-add-id.command';
+import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';

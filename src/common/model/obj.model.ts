@@ -23,9 +23,11 @@ export enum ObjViewTypeDto {
   Html = 'HTML'
 }
 
+export const OBJ_DTO_VERSION = 1;
+
 export interface ObjLocalDto {
-  drawVisible: boolean;
-  currentView: ObjViewTypeDto;
+  drawVisible?: boolean;
+  currentView?: string;
 }
 
 export interface ObjUrlDto {
@@ -37,7 +39,7 @@ export interface ObjUrlDto {
 
 export interface ObjLinkDto {
   url: ObjUrlDto;
-  xpath?: string;
+  xpath: string;
 }
 
 export interface ObjIdentityDto {
@@ -51,14 +53,14 @@ export interface ObjEncryptionDto {
 export enum ObjTypeDto {
   PageBookmark = 'PAGE_BOOKMARK',
   PageNote = 'PAGE_NOTE',
-  ElementPin = 'ELEMENT_PIN',
+  PageElementPin = 'ELEMENT_PIN',
   CanvasPin = 'CANVAS_PIN',
   PageLink = 'PAGE_LINK',
   Note = 'NOTE',
   Drawing = 'DRAWING'
 }
 
-type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto;
+export type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto;
 
 export interface ObjDto {
   id: number;
@@ -67,9 +69,9 @@ export interface ObjDto {
   type: ObjTypeDto;
   updatedAt: string;
   createdAt: string;
-  local: ObjLocalDto;
+  local?: ObjLocalDto;
   identity?: ObjIdentityDto;
   encryption: ObjEncryptionDto;
-  hashtag: string[];
-  data: ObjDataDto;
+  hashtags: string[];
+  data?: ObjDataDto;
 }

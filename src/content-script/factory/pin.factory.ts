@@ -20,7 +20,8 @@ import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { HtmlFactory } from './html.factory';
 import { ImageResizeFactory } from '../../common/factory/image-resize.factory';
-import { ObjNextIdCommand } from '../../common/command/obj/obj-next-id.command';
+import { ObjNextIdCommand } from '../../common/command/obj/id/obj-next-id.command';
+import { ObjPagePinDto } from '../../common/model/obj-pin.model';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
@@ -29,17 +30,20 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnUid } from '../../common/fn/uid.fn';
 
 export class PinFactory {
-  /*static objPinNew = async (ref: HTMLElement): Promise<ObjPagePinDto> => {
-    const theme = window.matchMedia('(prefers-color-scheme: light)').matches
-        ? ExtensionThemeDto.LIGHT
-        : ExtensionThemeDto.DARK;
+  static objPagePinNew = (ref: HTMLElement): ObjPagePinDto => {
+    const theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'drak';
+    const xpath = XpathFactory.newXPathString(ref);
     const htmlData = HtmlFactory.computePinHTMLData(ref);
     return {
       title: document.title,
       theme,
-      html: [htmlData]
-    }
-  }*/
+      xpath,
+      url: contentPinNewUrl(),
+      html: [htmlData],
+      video: [],
+      draw: []
+    };
+  };
   static contentPinNew = async (ref: HTMLElement): Promise<PinObject> => {
     // Roll back border to take snapshot
     const uid = fnUid();

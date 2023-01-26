@@ -42,6 +42,7 @@ export class HtmlFactory {
     }
     // fnConsoleLog('2:', htmlContent.cssStyles, parent);
     fnConsoleLog('START COMPUTE CSS !!!');
+    const css = CssFactory.computeCssContent(htmlContent.cssStyles);
     fnConsoleLog('STOP COMPUTE CSS !!!');
     return {
       parentStyle,
@@ -51,7 +52,8 @@ export class HtmlFactory {
       border: {
         style: ref.style.border,
         radius: ref.style.borderRadius
-      }
+      },
+      css
     };
   }
 

@@ -28,15 +28,13 @@ export class CreateLinkCommand implements ICommand<boolean> {
   constructor(private link: ObjLinkDto) {}
   execute(): boolean {
     if (this.link.url.href !== window.location.href) return false;
-    if (!this.link.xpath) return true;
     const value = XpathFactory.newXPathResult(this.link.xpath);
     const ref = value.singleNodeValue as HTMLElement;
     const rect = XpathFactory.computeRect(ref);
     const uid = fnUid();
     const dt = new Date().toISOString();
     const object = {
-      xpath: this.link.xpath,
-      url: this.link.url,
+      ...this.link,
       uid,
       type: ObjectTypeDto.Link,
       rect,

@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import ICommand = Pinmenote.Common.ICommand;
-import { ObjFindHashtagCommand } from './obj-find-hashtag.command';
+import { HashtagFindCommand } from './hashtag-find.command';
 import { ObjHashtagStore } from '../../../store/obj-hashtag.store';
 
 export class ObjUpdateHashtagsCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private oldValue: string, private newValue: string) {}
   async execute(): Promise<void> {
-    const oldHashtags = new ObjFindHashtagCommand(this.oldValue).execute();
-    const newHashtags = new ObjFindHashtagCommand(this.newValue).execute();
+    const oldHashtags = new HashtagFindCommand(this.oldValue).execute();
+    const newHashtags = new HashtagFindCommand(this.newValue).execute();
 
     const updateTags = this.shouldUpdateTags(newHashtags, oldHashtags);
     if (updateTags) {

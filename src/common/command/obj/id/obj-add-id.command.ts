@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ObjUpdateLastIdCommand } from './obj-update-last-id.command';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { environmentConfig } from '../../environment';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { environmentConfig } from '../../../environment';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ObjAddIdCommand implements ICommand<Promise<void>> {

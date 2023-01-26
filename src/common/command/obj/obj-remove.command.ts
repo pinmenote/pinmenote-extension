@@ -14,25 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { ObjDto } from '../../model/obj.model';
+import { ObjRemoveIdCommand } from './id/obj-remove-id.command';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class ObjRemoveIdCommand implements ICommand<Promise<void>> {
-  constructor(private id: number) {}
-  async execute(): Promise<void> {
-    const ids = await this.getIds();
-    for (let i = 0; i < ids.length; i++) {
-      if (ids[i] === this.id) {
-        ids.splice(i, 1);
-        await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID_LIST, ids);
-        return;
-      }
-    }
-  }
+export class ObjRemoveCommand implements ICommand<Promise<void>> {
+  constructor(private data: ObjDto) {}
 
-  private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
-    return value || [];
+  async execute(): Promise<void> {
+    await new ObjRemoveIdCommand(this.data.id).execute();
   }
 }
