@@ -17,6 +17,7 @@
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { ContentSettingsStore } from '../../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
+import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { ObjUpdateHashtagsCommand } from '../../../common/command/obj/hashtag/obj-update-hashtags.command';
 import { PinObject } from '../../../common/model/pin.model';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
@@ -25,14 +26,13 @@ import { createTextEditorState } from '../../../common/components/text-editor/te
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { scrollToElementFn } from '../../fn/scroll-to-element.fn';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
 
   private editorView?: EditorView;
 
-  constructor(private pin: PinObject, private rect: PinRectangle, private parent: TextContainerComponent) {}
+  constructor(private pin: PinObject, private rect: ObjRectangleDto, private parent: TextContainerComponent) {}
 
   get editor(): EditorView | undefined {
     return this.editorView;
@@ -49,7 +49,7 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
     this.editorView?.destroy();
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.el.style.width = `${rect.width}px`;
   }
 

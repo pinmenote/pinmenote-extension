@@ -14,15 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { DrawToolDto, ObjDrawDto } from '../../../common/model/obj-draw.model';
+import { DrawToolDto, ObjDrawDataDto } from '../../../common/model/obj-draw.model';
+import { ObjPointDto, ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { EraserDraw } from './tool/eraser.draw';
 import { FillDraw } from './tool/fill.draw';
 import { LineDraw } from './tool/line.draw';
-import { ObjPoint } from '../../../common/model/obj-utils.model';
 import { PencilDraw } from './tool/pencil.draw';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const canvasStyles = {
   position: 'absolute',
@@ -41,10 +40,10 @@ export class DrawAreaComponent {
   private color = '#ff0000';
 
   private drawing = false;
-  private drawData: ObjDrawDto[] = [];
-  private drawRedoData: ObjDrawDto[] = [];
+  private drawData: ObjDrawDataDto[] = [];
+  private drawRedoData: ObjDrawDataDto[] = [];
 
-  constructor(private parent: PinComponent, private rect: PinRectangle) {
+  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.drawCanvas.width = rect.width;
     this.drawCanvas.height = rect.height;
     this.drawCanvas.style.width = `${rect.width}px`;
@@ -96,7 +95,7 @@ export class DrawAreaComponent {
     return false;
   }
 
-  private drawOne(data: ObjDrawDto): void {
+  private drawOne(data: ObjDrawDataDto): void {
     if (!this.rasterCtx) return;
     if (data) {
       switch (data.tool) {
@@ -123,7 +122,7 @@ export class DrawAreaComponent {
     this.drawCanvas.addEventListener('mousemove', this.handleMouseMove);
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.rect = rect;
     this.drawCanvas.width = rect.width;
     this.drawCanvas.height = rect.height;
@@ -153,7 +152,7 @@ export class DrawAreaComponent {
 
     // show back raster canvas
     this.rasterCanvas.style.display = 'inline-block';
-    let points: ObjPoint[] = [];
+    let points: ObjPointDto[] = [];
     switch (this.tool) {
       case DrawToolDto.Pencil:
         points = PencilDraw.stopDraw();

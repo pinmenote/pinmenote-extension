@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { fnNormalizeHref, fnNormalizeOrigin } from '../normalize.url.fn';
-import PinUrl = Pinmenote.Pin.PinUrl;
+import { ObjUrlDto } from '../../model/obj.model';
 
-export const contentPinNewUrl = (): PinUrl => {
+export const contentPinNewUrl = (): ObjUrlDto => {
   return {
     href: fnNormalizeHref(window.location.href),
     origin: fnNormalizeOrigin(window.location.origin),

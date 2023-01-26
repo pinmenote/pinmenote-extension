@@ -15,19 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { ObjUrlDto } from '../../model/obj.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinHrefOriginStore } from '../../store/pin-href-origin.store';
 import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
-import PinUrl = Pinmenote.Pin.PinUrl;
 
 export class PinGetOriginCommand implements ICommand<Promise<PinObject[]>> {
-  constructor(private data: PinUrl, private filterHref: boolean = true) {}
+  constructor(private data: ObjUrlDto, private filterHref: boolean = true) {}
 
   async execute(): Promise<PinObject[]> {
     fnConsoleLog('WorkerPinManager->pinGetOrigin', this.data);
-    const pinIds = (await PinHrefOriginStore.originIds(this.data.origin)).reverse();
+    const pinIds = (await LinkHrefOriginStore.originIds(this.data.origin)).reverse();
     const out: PinObject[] = [];
     for (const id of pinIds) {
       const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;

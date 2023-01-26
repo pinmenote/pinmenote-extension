@@ -17,13 +17,13 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { HtmlComponent } from '../../../common/model/html.model';
+import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { TextBoldButton } from './text-bar-buttons/text-bold.button';
 import { TextBulletListButton } from './text-bar-buttons/text-bullet-list.button';
 import { TextItalicButton } from './text-bar-buttons/text-italic.button';
 import { TextNumericListButton } from './text-bar-buttons/text-numeric-list.button';
 import { applyStylesToElement } from '../../../common/style.utils';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const elStyles = {
   display: 'flex',
@@ -112,7 +112,7 @@ export class TextBarComponent implements HtmlComponent<HTMLElement> {
     return this.el;
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.el.style.width = `${rect.width}px`;
   }
 

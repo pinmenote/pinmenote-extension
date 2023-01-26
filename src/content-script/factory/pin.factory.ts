@@ -30,6 +30,12 @@ import { fnUid } from '../../common/fn/uid.fn';
 import LinkLocator = Pinmenote.Pin.LinkLocator;
 
 export class PinFactory {
+  /*static objPinNew = async (ref: HTMLElement): Promise<ObjPagePinDto> => {
+    return {
+      title: document.title,
+      theme:
+    }
+  }*/
   static contentPinNew = async (ref: HTMLElement): Promise<PinObject> => {
     // Roll back border to take snapshot
     const uid = fnUid();
@@ -95,7 +101,7 @@ export class PinFactory {
       });
   };
 
-  static addNewPinWithScreenshot = async (
+  private static addNewPinWithScreenshot = async (
     dto: PinObject,
     screenshot: string,
     resolve: (value: PinObject) => void

@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinObject } from '../../../common/model/pin.model';
 import { TextBarComponent } from '../text-bar/text-bar.component';
 import { TextEditorComponent } from './text-editor.component';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
@@ -26,7 +26,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
   readonly textBar: TextBarComponent;
   private textEditor: TextEditorComponent;
 
-  constructor(private object: PinObject, rect: PinRectangle) {
+  constructor(private object: PinObject, rect: ObjRectangleDto) {
     this.textBar = new TextBarComponent();
     this.textEditor = new TextEditorComponent(object, rect, this);
   }
@@ -48,7 +48,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
     this.textEditor.focus(goto);
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.textEditor.resize(rect);
     this.textBar.resize(rect);
   }

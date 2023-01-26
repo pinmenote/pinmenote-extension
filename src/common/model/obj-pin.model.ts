@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDrawDto } from './obj-draw.model';
-import { ObjRectangle } from './obj-utils.model';
+import { ObjRectangleDto } from './obj-utils.model';
 
-interface ObjPagePinDto {
+export interface ObjPagePinDto {
   title: string;
   theme: string;
   html: PinHtmlDataDto[];
@@ -38,7 +38,7 @@ interface PinHtmlDataDto {
   html: string;
   text: string; // innerText value of html
   xpath: string;
-  size: ObjRectangle;
+  size: ObjRectangleDto;
   border: PinBorderDataDto;
 }
 

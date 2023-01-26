@@ -16,10 +16,10 @@
  */
 import { PinObject, PinPopupInitData } from '../../common/model/pin.model';
 import { LogManager } from '../../common/popup/log.manager';
-import PinUrl = Pinmenote.Pin.PinUrl;
+import { ObjUrlDto } from '../../common/model/obj.model';
 
 export class ActiveTabStore {
-  private static urlValue?: PinUrl;
+  private static urlValue?: ObjUrlDto;
   private static isError = false;
   private static extensionUrl = false;
   private static isAddingNoteValue = false;
@@ -53,7 +53,7 @@ export class ActiveTabStore {
     return this.pageTitleValue;
   }
 
-  static get url(): PinUrl | undefined {
+  static get url(): ObjUrlDto | undefined {
     return this.urlValue;
   }
 

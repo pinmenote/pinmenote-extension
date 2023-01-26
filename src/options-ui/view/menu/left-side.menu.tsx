@@ -18,9 +18,9 @@ import { Button, Divider } from '@mui/material';
 import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
 import { ObjHashtagStore } from '../../../common/store/obj-hashtag.store';
 import { PinBoardStore } from '../store/pin-board.store';
-import { PinHrefOriginStore } from '../../../common/store/pin-href-origin.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
@@ -39,7 +39,7 @@ class MenuStore {
 
   static fetchData = async (): Promise<void> => {
     // url list
-    const urlList = await PinHrefOriginStore.getOriginUrls();
+    const urlList = await LinkHrefOriginStore.getOriginUrls();
     this.urlList = urlList.sort();
     urlList.unshift(MenuStore.ALL_URLS);
 

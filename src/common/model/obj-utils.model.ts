@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export interface ObjPoint {
+export interface ObjPointDto {
   x: number;
   y: number;
 }
 
-export interface ObjSize {
+export interface ObjSizeDto {
   width: number;
   height: number;
 }
 
-export type ObjRectangle = ObjPoint & ObjSize;
+export type ObjRectangleDto = ObjPointDto & ObjSizeDto;

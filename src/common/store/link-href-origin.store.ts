@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
-import PinUrl = Pinmenote.Pin.PinUrl;
+import { ObjUrlDto } from '../model/obj.model';
 
-export class PinHrefOriginStore {
+export class LinkHrefOriginStore {
   private static PIN_HREF = 'pin:href';
   private static PIN_ORIGIN = 'pin:origin';
   private static PIN_URL_LIST = 'pin:url:list';
 
-  static async addHrefOriginId(url: PinUrl, id: number): Promise<void> {
+  static async addHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
     const hrefIds = await this.hrefIds(url.href);
     hrefIds.push(id);
@@ -34,7 +34,7 @@ export class PinHrefOriginStore {
     await this.addOriginUrl(url);
   }
 
-  static async delHrefOriginId(url: PinUrl, id: number): Promise<void> {
+  static async delHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
     const hrefIds = await this.hrefIds(url.href);
     const newHref = hrefIds.filter((i) => i !== id);
@@ -70,7 +70,7 @@ export class PinHrefOriginStore {
     return value || [];
   }
 
-  private static async addOriginUrl(url: PinUrl): Promise<void> {
+  private static async addOriginUrl(url: ObjUrlDto): Promise<void> {
     const urls = await this.getOriginUrls();
     if (urls.indexOf(url.origin) === -1) {
       urls.push(url.origin);

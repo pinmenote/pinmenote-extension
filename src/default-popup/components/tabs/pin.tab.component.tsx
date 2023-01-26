@@ -18,6 +18,7 @@ import { PinObject, PinPopupInitData } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjUrlDto } from '../../../common/model/obj.model';
 import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
@@ -25,7 +26,6 @@ import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.comm
 import { PinGetOriginCommand } from '../../../common/command/pin/pin-get-origin.command';
 import { PinListOriginComponent } from '../pins/pin.list.origin.component';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import PinUrl = Pinmenote.Pin.PinUrl;
 
 export const PinTabComponent: FunctionComponent = () => {
   const [isError, setIsError] = useState<boolean>(ActiveTabStore.showErrorText);
@@ -47,7 +47,7 @@ export const PinTabComponent: FunctionComponent = () => {
     };
   });
 
-  const fillPinData = async (url: PinUrl) => {
+  const fillPinData = async (url: ObjUrlDto) => {
     ActiveTabStore.hrefPins = await new PinGetHrefCommand(url).execute();
     ActiveTabStore.originPins = await new PinGetOriginCommand(url).execute();
     setHrefPins(ActiveTabStore.hrefPins);

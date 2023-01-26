@@ -14,13 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjBookmarkDto } from './obj-bookmark.model';
+import { ObjNoteDto } from './obj-note.model';
+import { ObjPagePinDto } from './obj-pin.model';
+
 export enum ObjViewTypeDto {
   Screenshot = 'SCREENSHOT',
   Html = 'HTML'
 }
 
 export interface ObjLocalDto {
-  visible: boolean;
+  drawVisible: boolean;
   currentView: ObjViewTypeDto;
 }
 
@@ -53,6 +57,8 @@ export enum ObjTypeDto {
   Drawing = 'DRAWING'
 }
 
+type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto;
+
 export interface ObjDto {
   id: number;
   uid: string;
@@ -64,5 +70,6 @@ export interface ObjDto {
   link?: ObjLinkDto;
   identity?: ObjIdentityDto;
   encryption: ObjEncryptionDto;
-  data: any;
+  hashtag: string[];
+  data: ObjDataDto;
 }

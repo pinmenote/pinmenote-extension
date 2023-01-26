@@ -20,6 +20,7 @@ import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj-draw.model';
+import { ObjRectangleDto } from '../../common/model/obj-utils.model';
 import { PinEditBarComponent } from './pin-edit-bar/pin-edit-bar.component';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinObject } from '../../common/model/pin.model';
@@ -30,7 +31,6 @@ import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 enum VisibleBar {
   None = 1,
@@ -56,7 +56,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly editBar: PinEditBarComponent;
 
-  private rect: PinRectangle;
+  private rect: ObjRectangleDto;
 
   private refValue: HTMLElement;
 

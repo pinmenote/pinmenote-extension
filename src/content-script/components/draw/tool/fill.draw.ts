@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ColorUtils, RGBColor } from '../../draw-bar/draw-buttons/draw-color.utils';
-import { ObjPoint } from '../../../../common/model/obj-utils.model';
+import { ObjPointDto } from '../../../../common/model/obj-utils.model';
 
 export class FillDraw {
-  static fill(from: ObjPoint, color: string, ctx: CanvasRenderingContext2D): ObjPoint[] {
+  static fill(from: ObjPointDto, color: string, ctx: CanvasRenderingContext2D): ObjPointDto[] {
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
     const pixelData = ctx.getImageData(0, 0, width, height).data;
@@ -28,7 +28,7 @@ export class FillDraw {
     const prevColor = { r: pixelData[index], g: pixelData[index + 1], b: pixelData[index + 2] };
     if (newColor.r === prevColor.r && newColor.g === prevColor.g && newColor.b === prevColor.b) return [from];
 
-    const stack: ObjPoint[] = [];
+    const stack: ObjPointDto[] = [];
     stack.push(from);
     while (stack.length > 0) {
       const point = stack.pop();
@@ -89,7 +89,7 @@ export class FillDraw {
     return index;
   }
 
-  static raster(points: ObjPoint[], color: string, ctx: CanvasRenderingContext2D): void {
+  static raster(points: ObjPointDto[], color: string, ctx: CanvasRenderingContext2D): void {
     this.fill(points[0], color, ctx);
   }
 }

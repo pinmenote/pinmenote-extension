@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPoint } from '../../common/model/obj-utils.model';
+import { ObjPointDto } from '../../common/model/obj-utils.model';
 import { PinAddFactory } from '../factory/pin-add.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { pinStyles } from '../components/styles/pin.styles';
 
 export class DocumentMediator {
-  private static pinStart?: ObjPoint;
+  private static pinStart?: ObjPointDto;
   private static overlay?: HTMLDivElement;
   private static overlayCanvas?: HTMLCanvasElement;
 

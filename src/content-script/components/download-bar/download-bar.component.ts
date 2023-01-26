@@ -17,9 +17,9 @@
 import { DownloadCsvButton } from './download-buttons/download-csv.button';
 import { DownloadImageButton } from './download-buttons/download-image.button';
 import { HtmlComponent } from '../../../common/model/html.model';
+import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const downloadBarStyles = {
   top: '-24px',
@@ -41,7 +41,7 @@ export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
   private imageButton: DownloadImageButton;
   private csvButton: DownloadCsvButton;
 
-  constructor(private parent: PinComponent, private rect: PinRectangle) {
+  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.imageButton = new DownloadImageButton(parent);
     this.csvButton = new DownloadCsvButton(parent);
   }
@@ -78,7 +78,7 @@ export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
     return this.el;
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.rect = rect;
     this.el.style.width = `${rect.width}px`;
     this.adjustTop();

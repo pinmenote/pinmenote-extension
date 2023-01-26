@@ -1,8 +1,8 @@
 import { ContentSettingsStore } from '../../content-script/store/content-settings.store';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
+import { ObjRectangleDto } from '../model/obj-utils.model';
 
 export class ImageResizeFactory {
-  static resize = (size: PinRectangle, b64image: string): Promise<string> => {
+  static resize = (size: ObjRectangleDto, b64image: string): Promise<string> => {
     const rect = {
       x: size.x,
       y: size.y,

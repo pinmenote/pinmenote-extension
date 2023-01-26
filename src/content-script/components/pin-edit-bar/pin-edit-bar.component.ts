@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const editBarStyles = {
   top: '-24px',
@@ -33,7 +33,7 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
   private visible = false;
 
-  constructor(private parent: PinComponent, private rect: PinRectangle) {}
+  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {}
 
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.rect.width}px` }, editBarStyles);
@@ -66,7 +66,7 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
     this.focusout();
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.rect = rect;
     this.el.style.width = `${rect.width}px`;
     this.adjustTop();

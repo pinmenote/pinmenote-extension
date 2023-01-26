@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
 import { ObjAddIdCommand } from '../obj/obj-add-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinHrefOriginStore } from '../../store/pin-href-origin.store';
 import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
@@ -36,6 +36,6 @@ export class PinAddCommand implements ICommand<void> {
 
     await BrowserStorageWrapper.set(key, this.data);
 
-    await PinHrefOriginStore.addHrefOriginId(this.data.url, this.data.id);
+    await LinkHrefOriginStore.addHrefOriginId(this.data.url, this.data.id);
   }
 }

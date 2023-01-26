@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjRemoveHashtagsCommand } from '../obj/hashtag/obj-remove-hashtags.command';
 import { ObjRemoveIdCommand } from '../obj/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinHrefOriginStore } from '../../store/pin-href-origin.store';
 import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
@@ -28,7 +28,7 @@ export class PinRemoveCommand implements ICommand<void> {
   async execute(): Promise<void> {
     fnConsoleLog('WorkerPinManager->pinRemove', this.data);
     await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`);
-    await PinHrefOriginStore.delHrefOriginId(this.data.url, this.data.id);
+    await LinkHrefOriginStore.delHrefOriginId(this.data.url, this.data.id);
 
     await new ObjRemoveIdCommand(this.data.id).execute();
 

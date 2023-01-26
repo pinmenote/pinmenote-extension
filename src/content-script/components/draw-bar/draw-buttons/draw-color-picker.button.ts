@@ -16,10 +16,10 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../../common/model/html.model';
 import { DrawColorPicker } from './draw-color-picker';
+import { ObjRectangleDto } from '../../../../common/model/obj-utils.model';
 import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
@@ -28,7 +28,7 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
 
   private visible = false;
 
-  constructor(private rect: PinRectangle, private parent: PinComponent) {
+  constructor(private rect: ObjRectangleDto, private parent: PinComponent) {
     this.picker = new DrawColorPicker(rect, this);
   }
 

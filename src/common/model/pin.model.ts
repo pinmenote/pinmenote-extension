@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlContent, HtmlObject } from './html.model';
-import PinUrl = Pinmenote.Pin.PinUrl;
 import ShareUrlDto = Pinmenote.Share.ShareUrlDto;
+import { ObjUrlDto } from './obj.model';
 
 export enum PinViewType {
   SCREENSHOT = 1,
@@ -24,7 +24,7 @@ export enum PinViewType {
 }
 
 export interface PinPopupInitData {
-  url?: PinUrl;
+  url?: ObjUrlDto;
   isAddingNote: boolean;
   pageTitle: string;
 }

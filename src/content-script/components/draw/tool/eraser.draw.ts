@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPoint } from '../../../../common/model/obj-utils.model';
+import { ObjPointDto } from '../../../../common/model/obj-utils.model';
 
 export class EraserDraw {
-  private static points: ObjPoint[];
+  private static points: ObjPointDto[];
   private static lineWidth: number;
 
-  private static from: ObjPoint;
+  private static from: ObjPointDto;
 
-  static startDraw(from: ObjPoint, lineWidth: number, ctx: CanvasRenderingContext2D): void {
+  static startDraw(from: ObjPointDto, lineWidth: number, ctx: CanvasRenderingContext2D): void {
     this.points = [];
     this.from = from;
     this.lineWidth = lineWidth;
@@ -30,12 +30,12 @@ export class EraserDraw {
     this.draw(from, ctx);
   }
 
-  static stopDraw(ctx: CanvasRenderingContext2D): ObjPoint[] {
+  static stopDraw(ctx: CanvasRenderingContext2D): ObjPointDto[] {
     ctx.globalCompositeOperation = 'source-over';
     return this.points;
   }
 
-  static draw(to: ObjPoint, ctx: CanvasRenderingContext2D): void {
+  static draw(to: ObjPointDto, ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
     ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
     ctx.lineWidth = this.lineWidth;
@@ -49,7 +49,7 @@ export class EraserDraw {
     this.points.push(to);
   }
 
-  static raster(points: ObjPoint[], lineWidth: number, ctx: CanvasRenderingContext2D): void {
+  static raster(points: ObjPointDto[], lineWidth: number, ctx: CanvasRenderingContext2D): void {
     const from = points[0];
     this.startDraw(from, lineWidth, ctx);
     for (let i = 1; i < points.length; i++) {

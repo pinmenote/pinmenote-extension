@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPoint } from './obj-utils.model';
+import { ObjPointDto, ObjSizeDto } from './obj-utils.model';
 
 export enum DrawToolDto {
   Pencil = 'PENCIL',
@@ -24,7 +24,12 @@ export enum DrawToolDto {
 }
 
 export interface ObjDrawDto {
-  points: ObjPoint[];
+  data: ObjDrawDataDto[];
+  size: ObjSizeDto;
+}
+
+export interface ObjDrawDataDto {
+  points: ObjPointDto[];
   size: number;
   color: string;
   tool: DrawToolDto;

@@ -14,27 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPoint } from '../../../../common/model/obj-utils.model';
+import { ObjPointDto } from '../../../../common/model/obj-utils.model';
 
 export class LineDraw {
   private static color: string;
   private static lineWidth: number;
 
-  private static from: ObjPoint;
-  private static to: ObjPoint;
+  private static from: ObjPointDto;
+  private static to: ObjPointDto;
 
-  static startDraw(from: ObjPoint, color: string, lineWidth: number, ctx: CanvasRenderingContext2D): void {
+  static startDraw(from: ObjPointDto, color: string, lineWidth: number, ctx: CanvasRenderingContext2D): void {
     this.from = from;
     this.color = color;
     this.lineWidth = lineWidth;
     this.draw(from, ctx);
   }
 
-  static stopDraw(): ObjPoint[] {
+  static stopDraw(): ObjPointDto[] {
     return [this.from, this.to];
   }
 
-  static draw(to: ObjPoint, ctx: CanvasRenderingContext2D): void {
+  static draw(to: ObjPointDto, ctx: CanvasRenderingContext2D): void {
     this.to = to;
     ctx.beginPath();
     ctx.moveTo(this.from.x, this.from.y);
@@ -47,7 +47,7 @@ export class LineDraw {
     ctx.closePath();
   }
 
-  static raster(points: ObjPoint[], color: string, lineWidth: number, ctx: CanvasRenderingContext2D): void {
+  static raster(points: ObjPointDto[], color: string, lineWidth: number, ctx: CanvasRenderingContext2D): void {
     this.startDraw(points[0], color, lineWidth, ctx);
     this.draw(points[1], ctx);
   }

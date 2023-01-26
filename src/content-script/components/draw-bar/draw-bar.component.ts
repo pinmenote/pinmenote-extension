@@ -24,9 +24,9 @@ import { DrawPencilButton } from './draw-buttons/draw-pencil.button';
 import { DrawRedoButton } from './draw-buttons/draw-redo.button';
 import { DrawToolDto } from '../../../common/model/obj-draw.model';
 import { DrawUndoButton } from './draw-buttons/draw-undo.button';
+import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const drawBarStyles = {
   top: '-24px',
@@ -59,7 +59,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private readonly undoButton: DrawUndoButton;
   private readonly redoButton: DrawRedoButton;
 
-  constructor(private parent: PinComponent, private rect: PinRectangle) {
+  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.pencil = new DrawPencilButton(this);
     this.line = new DrawLineButton(this);
     this.fill = new DrawFillButton(this);
@@ -211,7 +211,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     applyStylesToElement(component, iconStyles);
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.rect = rect;
     this.el.style.width = `${rect.width}px`;
     this.adjustTop();

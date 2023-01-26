@@ -17,8 +17,8 @@
 import { ColorUtils, RGBColor } from './draw-color.utils';
 import { DrawColorPickerButton } from './draw-color-picker.button';
 import { HtmlComponent } from '../../../../common/model/html.model';
+import { ObjRectangleDto } from '../../../../common/model/obj-utils.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const saturationStyles = {
   background: 'linear-gradient(to right, #FFFFFF, #FF0000)',
@@ -109,7 +109,7 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
 
   private color: RGBColor = { r: 255, g: 0, b: 0 };
 
-  constructor(private rect: PinRectangle, private colorDisplay: DrawColorPickerButton) {}
+  constructor(private rect: ObjRectangleDto, private colorDisplay: DrawColorPickerButton) {}
 
   render(): HTMLElement {
     applyStylesToElement(this.saturation, saturationStyles);

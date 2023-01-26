@@ -16,16 +16,16 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
 import { DrawAreaComponent } from './draw/draw-area.component';
+import { ObjRectangleDto } from '../../common/model/obj-utils.model';
 import { PinComponent } from './pin.component';
 import { applyStylesToElement } from '../../common/style.utils';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
   readonly drawArea: DrawAreaComponent;
 
-  constructor(private parent: PinComponent, private rect: PinRectangle) {
+  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.drawArea = new DrawAreaComponent(parent, rect);
   }
 
@@ -44,7 +44,7 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
     return this.el;
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     if (rect.width === this.rect.width && this.rect.height === rect.height) return;
     this.rect = rect;
     this.drawArea.resize(rect);

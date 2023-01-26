@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import PinRectangle = Pinmenote.Pin.PinRectangle;
+import { ObjRectangleDto } from '../../common/model/obj-utils.model';
 
 export class PinPointFactory {
-  static calculateRect(ref: HTMLElement): PinRectangle {
+  static calculateRect(ref: HTMLElement): ObjRectangleDto {
     const rect = ref.getBoundingClientRect();
     const width = rect.width < 200 ? 200 : rect.width;
     return {

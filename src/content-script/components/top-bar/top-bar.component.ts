@@ -21,10 +21,10 @@ import { ActionDrawButton } from './action-buttons/action-draw.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
 import { ActionTextButton } from './action-buttons/action-text.button';
+import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinComponent } from '../pin.component';
 import { PinObject } from '../../../common/model/pin.model';
 import { applyStylesToElement } from '../../../common/style.utils';
-import PinRectangle = Pinmenote.Pin.PinRectangle;
 
 const topBarStyles = {
   height: '24px',
@@ -81,7 +81,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   private topMargin = '-24px';
 
-  constructor(private parent: PinComponent, private object: PinObject, private rect: PinRectangle) {
+  constructor(private parent: PinComponent, private object: PinObject, private rect: ObjRectangleDto) {
     this.editIcon = new ActionPinEditButton(parent, this.object);
     this.removeIcon = new ActionRemoveButton(this.object);
     this.copyIcon = new ActionCopyButton(parent);
@@ -159,7 +159,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.editIcon.turnoff();
   }
 
-  resize(rect: PinRectangle): void {
+  resize(rect: ObjRectangleDto): void {
     this.rect = rect;
     if (rect.y === 0) this.topMargin = '0px';
     this.el.style.width = `${rect.width}px`;
