@@ -48,16 +48,22 @@ export class DownloadImageButton {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  private handleClick = async () => {
+  private handleClick = () => {
     // Switch to original border
     this.parent.ref.style.border = this.parent.object.border.style;
     this.parent.ref.style.borderRadius = this.parent.object.border.radius;
 
-    const screenshot = await ScreenshotFactory.takeScreenshot(this.parent.ref.getBoundingClientRect());
-    await this.downloadScreenshot(screenshot);
+    this.parent.hideScreenshot();
 
-    this.parent.ref.style.border = ContentSettingsStore.borderStyle;
-    this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
+    setTimeout(async () => {
+      const screenshot = await ScreenshotFactory.takeScreenshot(this.parent.ref.getBoundingClientRect());
+      await this.downloadScreenshot(screenshot);
+
+      this.parent.showScreenshot();
+
+      this.parent.ref.style.border = ContentSettingsStore.borderStyle;
+      this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
+    }, 0);
   };
 
   private downloadScreenshot = async (screenshot: string): Promise<void> => {

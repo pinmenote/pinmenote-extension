@@ -62,6 +62,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly object: PinObject;
 
+  private takingScreenshot = false;
+
   constructor(ref: HTMLElement, pin: PinObject) {
     this.refValue = ref;
     this.object = pin;
@@ -176,7 +178,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private handleMouseOver = () => {
     window.clearTimeout(this.timeoutId);
     this.text.focusin();
-    this.topBar.focusin();
+    if (!this.takingScreenshot) this.topBar.focusin();
     this.drawBar.focusin();
     this.downloadBar.focusin();
   };
@@ -283,4 +285,16 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
         break;
     }
   }
+
+  hideScreenshot = (): void => {
+    this.takingScreenshot = true;
+    this.topBar.focusout();
+    this.downloadBar.hide();
+  };
+
+  showScreenshot = (): void => {
+    this.takingScreenshot = false;
+    this.topBar.focusin();
+    this.downloadBar.show();
+  };
 }
