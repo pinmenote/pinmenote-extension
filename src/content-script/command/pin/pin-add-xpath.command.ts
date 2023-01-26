@@ -24,7 +24,7 @@ import ICommand = Pinmenote.Common.ICommand;
 export class PinAddXpathCommand implements ICommand<boolean> {
   constructor(private pin: PinObject) {}
   execute(): boolean {
-    const value = XpathFactory.newXPathResult(this.pin.locator.xpath);
+    const value = XpathFactory.newXPathResult(this.pin.xpath);
     const node = value.singleNodeValue as HTMLElement;
     if (!this.pin.visible || !node || isElementHiddenFn(node)) {
       // will be created on invalidate

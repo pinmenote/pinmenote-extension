@@ -27,22 +27,28 @@ import { XpathFactory } from '../../common/factory/xpath.factory';
 import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnUid } from '../../common/fn/uid.fn';
-import LinkLocator = Pinmenote.Pin.LinkLocator;
 
 export class PinFactory {
   /*static objPinNew = async (ref: HTMLElement): Promise<ObjPagePinDto> => {
+    const theme = window.matchMedia('(prefers-color-scheme: light)').matches
+        ? ExtensionThemeDto.LIGHT
+        : ExtensionThemeDto.DARK;
+    const htmlData = HtmlFactory.computePinHTMLData(ref);
     return {
       title: document.title,
-      theme:
+      theme,
+      html: [htmlData]
     }
   }*/
   static contentPinNew = async (ref: HTMLElement): Promise<PinObject> => {
     // Roll back border to take snapshot
     const uid = fnUid();
-    const locator: LinkLocator = PinFactory.computeLinkLocator(ref);
+    // const locator: LinkLocator = PinFactory.computeLinkLocator(ref);
     const content: HtmlContent = HtmlFactory.computeHtmlContent(ref);
     const dt = new Date().toISOString();
     const id = await new ObjNextIdCommand().execute();
+    const xpath = XpathFactory.newXPathString(ref);
+    const rect = XpathFactory.computeRect(ref);
     const dto: PinObject = {
       id,
       uid,
@@ -53,7 +59,8 @@ export class PinFactory {
       updatedAt: dt,
       viewType: PinViewType.SCREENSHOT,
       url: contentPinNewUrl(),
-      locator,
+      xpath,
+      rect,
       content,
       value: '',
       border: {
@@ -72,20 +79,6 @@ export class PinFactory {
       );
       PinFactory.sendGetPinTakeScreenshot(reject);
     });
-  };
-
-  static computeLinkLocator = (ref: HTMLElement): LinkLocator => {
-    const rect = ref.getBoundingClientRect();
-    const xpath = XpathFactory.newXPathString(ref);
-    return {
-      xpath,
-      rect: {
-        x: Math.round(rect.x),
-        y: Math.round(rect.y),
-        width: Math.round(rect.width),
-        height: Math.round(rect.height)
-      }
-    };
   };
 
   static sendGetPinTakeScreenshot = (reject: (value: string) => void) => {
@@ -108,7 +101,7 @@ export class PinFactory {
   ): Promise<void> => {
     // Let's resize screenshot and resolve promise
     try {
-      screenshot = await ImageResizeFactory.resize(dto.locator.rect, screenshot);
+      screenshot = await ImageResizeFactory.resize(dto.rect, screenshot);
     } finally {
       dto.screenshot = screenshot;
     }

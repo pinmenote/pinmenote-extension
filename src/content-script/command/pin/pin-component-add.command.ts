@@ -20,9 +20,9 @@ import { PinObject } from '../../../common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class PinComponentAddCommand implements ICommand<HtmlComponent | undefined> {
+export class PinComponentAddCommand implements ICommand<HtmlComponent<HTMLElement> | undefined> {
   constructor(private ref: HTMLElement, private dto: PinObject, private focus = false) {}
-  execute(): HtmlComponent | undefined {
+  execute(): HtmlComponent<HTMLElement> | undefined {
     const pinComponent = new PinComponent(this.ref, this.dto);
     pinComponent.render();
     if (this.focus) pinComponent.focus();

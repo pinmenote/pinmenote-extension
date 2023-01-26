@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import LinkDto = Pinmenote.Pin.LinkDto;
+import { ObjRectangleDto } from './obj-utils.model';
+import { ObjUrlDto } from './obj.model';
 
 export enum ObjectTypeDto {
   Pin = 1,
@@ -73,7 +74,13 @@ export interface HtmlComponent<T> {
   cleanup?: () => void;
 }
 
-export interface HtmlObject extends LinkDto {
+export interface HtmlObject {
+  updatedAt: string;
+  createdAt: string;
+  value: string;
+  xpath: string;
+  rect: ObjRectangleDto;
+  url: ObjUrlDto;
   uid: string;
   type: ObjectTypeDto;
 }

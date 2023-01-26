@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentExtensionData, ExtensionTheme } from '../../../common/model/settings.model';
+import { ContentExtensionData, ExtensionThemeDto } from '../../../common/model/settings.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import icon128 from '../../../assets/icon/light/128.png';
@@ -48,7 +48,7 @@ export class ContentThemeCommand implements ICommand<void> {
   constructor(private data: ContentExtensionData) {}
   async execute(): Promise<void> {
     try {
-      if (this.data.theme === ExtensionTheme.DARK) {
+      if (this.data.theme === ExtensionThemeDto.DARK) {
         await BrowserApi.browserAction.setIcon(lightIcons());
       }
     } catch (e) {

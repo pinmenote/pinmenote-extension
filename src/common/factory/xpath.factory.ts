@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjRectangleDto } from '../model/obj-utils.model';
+
 interface XPathElement {
   position: number;
   tagName: string;
@@ -54,4 +56,14 @@ export class XpathFactory {
   static newXPathResult(xpath: string): XPathResult {
     return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE);
   }
+
+  static computeRect = (ref: HTMLElement): ObjRectangleDto => {
+    const rect = ref.getBoundingClientRect();
+    return {
+      x: Math.round(rect.x),
+      y: Math.round(rect.y),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height)
+    };
+  };
 }

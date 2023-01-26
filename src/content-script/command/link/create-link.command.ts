@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlLinkComponent } from '../../components/html-link.component';
+import { ObjLinkDto } from '../../../common/model/obj.model';
 import { ObjectTypeDto } from '../../../common/model/html.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
@@ -22,16 +23,27 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
 import ICommand = Pinmenote.Common.ICommand;
-import LinkDto = Pinmenote.Pin.LinkDto;
 
 export class CreateLinkCommand implements ICommand<boolean> {
-  constructor(private link: LinkDto) {}
+  constructor(private link: ObjLinkDto) {}
   execute(): boolean {
     if (this.link.url.href !== window.location.href) return false;
-    const value = XpathFactory.newXPathResult(this.link.locator.xpath);
+    if (!this.link.xpath) return true;
+    const value = XpathFactory.newXPathResult(this.link.xpath);
     const ref = value.singleNodeValue as HTMLElement;
+    const rect = XpathFactory.computeRect(ref);
     const uid = fnUid();
-    const object = { uid, type: ObjectTypeDto.Link, ...this.link };
+    const dt = new Date().toISOString();
+    const object = {
+      xpath: this.link.xpath,
+      url: this.link.url,
+      uid,
+      type: ObjectTypeDto.Link,
+      rect,
+      updatedAt: dt,
+      createdAt: dt,
+      value: ''
+    };
     fnConsoleLog('CreateLinkCommand->ref', ref, this.link);
     if (!ref || isElementHiddenFn(ref)) {
       PinPendingStore.add(object);

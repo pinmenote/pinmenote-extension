@@ -37,6 +37,7 @@ export interface ObjUrlDto {
 
 export interface ObjLinkDto {
   url: ObjUrlDto;
+  xpath?: string;
 }
 
 export interface ObjIdentityDto {
@@ -67,7 +68,6 @@ export interface ObjDto {
   updatedAt: string;
   createdAt: string;
   local: ObjLocalDto;
-  link?: ObjLinkDto;
   identity?: ObjIdentityDto;
   encryption: ObjEncryptionDto;
   hashtag: string[];

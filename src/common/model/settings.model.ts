@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum ExtensionTheme {
+export enum ExtensionThemeDto {
   LIGHT = 'light',
   DARK = 'dark'
 }
 
 export interface ContentExtensionData {
-  theme: ExtensionTheme;
+  theme: string;
 }

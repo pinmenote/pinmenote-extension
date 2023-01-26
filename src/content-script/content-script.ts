@@ -23,7 +23,7 @@ import '@fontsource/roboto/700.css';
 
 import '../css/prosemirror.css';
 
-import { ContentExtensionData, ExtensionTheme } from '../common/model/settings.model';
+import { ContentExtensionData, ExtensionThemeDto } from '../common/model/settings.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
@@ -66,8 +66,8 @@ class PinMeScript {
     this.initTimeout();
 
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches
-      ? ExtensionTheme.LIGHT
-      : ExtensionTheme.DARK;
+      ? ExtensionThemeDto.LIGHT
+      : ExtensionThemeDto.DARK;
     await BrowserApi.sendRuntimeMessage<ContentExtensionData>({
       type: BusMessageType.CONTENT_THEME,
       data: {

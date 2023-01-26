@@ -16,19 +16,53 @@
  */
 import { ContentVideoTime, HtmlContent, HtmlIntermediateData, HtmlParentStyles } from '../../common/model/html.model';
 import { CssFactory } from './css.factory';
+import { PinHtmlDataDto } from '../../common/model/obj-pin.model';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class HtmlFactory {
+  static computePinHTMLData(ref: HTMLElement): PinHtmlDataDto {
+    const parentStyle = document.body.getAttribute('style') || '';
+    const htmlContent = this.computeHtmlIntermediateData(ref);
+    // fnConsoleLog('HTML :', htmlContent);
+    let parent = ref.parentElement;
+    // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
+    // const htmlParentData = HtmlFactory.computeHtmlParentStyles(ref.parentElement);
+    // fnConsoleLog('1: ', htmlContent.cssStyles, parent);
+    while (parent && parent.tagName.toLowerCase() !== 'html') {
+      const attr = parent.getAttributeNode('class');
+      if (attr) {
+        const a = attr.value.split(' ').filter((e) => !!e);
+        htmlContent.cssStyles.push(...a.map((e) => `.${e}`));
+      }
+      // fnConsoleLog('ADD : ', parent.tagName);
+      htmlContent.cssStyles.push(parent.tagName);
+      parent = parent.parentElement;
+    }
+    // fnConsoleLog('2:', htmlContent.cssStyles, parent);
+    fnConsoleLog('START COMPUTE CSS !!!');
+    fnConsoleLog('STOP COMPUTE CSS !!!');
+    return {
+      parentStyle,
+      html: htmlContent.html,
+      text: ref.innerText,
+      rect: XpathFactory.computeRect(ref),
+      border: {
+        style: ref.style.border,
+        radius: ref.style.borderRadius
+      }
+    };
+  }
+
   static computeHtmlContent(ref: HTMLElement): HtmlContent {
     const bodyStyle = document.body.getAttribute('style') || undefined;
     const title = document.title;
     const htmlContent = this.computeHtmlIntermediateData(ref);
-    const htmlParentData = HtmlFactory.computeHtmlParentStyles(ref);
     // fnConsoleLog('HTML :', htmlContent);
     let parent = ref.parentElement;
     // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
+    // const htmlParentData = HtmlFactory.computeHtmlParentStyles(parent);
     // fnConsoleLog('1: ', htmlContent.cssStyles, parent);
     while (parent && parent.tagName.toLowerCase() !== 'html') {
       const attr = parent.getAttributeNode('class');
@@ -130,8 +164,7 @@ export class HtmlFactory {
     };
   };
 
-  static computeHtmlParentStyles = (ref: Element): HtmlParentStyles => {
-    let parent = ref.parentElement;
+  static computeHtmlParentStyles = (parent: Element | null): HtmlParentStyles => {
     const cssStyles: string[] = [];
     while (parent && parent.tagName.toLowerCase() !== 'body') {
       const clazz = parent.getAttribute('class');

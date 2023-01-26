@@ -22,10 +22,10 @@ import { HtmlComponent } from '../../../../common/model/html.model';
 import { HtmlFactory } from '../../../factory/html.factory';
 import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
 import { PinComponent } from '../../pin.component';
-import { PinFactory } from '../../../factory/pin.factory';
 import { PinObject } from '../../../../common/model/pin.model';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
+import { XpathFactory } from '../../../../common/factory/xpath.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { fnSleep } from '../../../../common/fn/sleep.fn';
@@ -69,7 +69,8 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       this.parent.object.content.html = htmlContent.html;
       this.parent.object.content.videoTime = htmlContent.videoTime;
       this.parent.object.content.css = css;
-      this.parent.object.locator = PinFactory.computeLinkLocator(this.parent.ref.parentElement);
+      this.parent.object.xpath = XpathFactory.newXPathString(this.parent.ref.parentElement);
+      this.parent.object.rect = XpathFactory.computeRect(this.parent.ref.parentElement);
 
       return new Promise((resolve, reject) => {
         BrowserApi.sendRuntimeMessage<undefined>({
@@ -93,7 +94,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
             this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
           }
 
-          this.parent.object.screenshot = await ImageResizeFactory.resize(this.parent.object.locator.rect, value);
+          this.parent.object.screenshot = await ImageResizeFactory.resize(this.parent.object.rect, value);
 
           await new PinUpdateCommand(this.parent.object).execute();
           this.parent.resize();
