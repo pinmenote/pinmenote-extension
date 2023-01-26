@@ -16,17 +16,13 @@
  */
 import { HtmlContent, ObjectTypeDto } from '../../common/model/html.model';
 import { PinObject, PinViewType } from '../../common/model/pin.model';
-import { BrowserApi } from '../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../common/model/bus.model';
 import { HtmlFactory } from './html.factory';
-import { ImageResizeFactory } from '../../common/factory/image-resize.factory';
 import { ObjNextIdCommand } from '../../common/command/obj/id/obj-next-id.command';
 import { ObjPagePinDto } from '../../common/model/obj-pin.model';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
-import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
-import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnUid } from '../../common/fn/uid.fn';
 
 export class PinFactory {
@@ -70,44 +66,8 @@ export class PinFactory {
         style: ref.style.border
       }
     };
-    return new Promise((resolve, reject) => {
-      // Crop screenshot function
-      TinyEventDispatcher.addListener<string>(
-        BusMessageType.CONTENT_TAKE_SCREENSHOT,
-        async (event: string, key: string, value: string) => {
-          TinyEventDispatcher.removeListener(event, key);
-          await PinFactory.addNewPinWithScreenshot(dto, value, resolve);
-        }
-      );
-      PinFactory.sendGetPinTakeScreenshot(reject);
-    });
-  };
-
-  static sendGetPinTakeScreenshot = (reject: (value: string) => void) => {
-    BrowserApi.sendRuntimeMessage<undefined>({
-      type: BusMessageType.CONTENT_TAKE_SCREENSHOT
-    })
-      .then(() => {
-        // We handle it above, inside dispatcher
-      })
-      .catch((e) => {
-        fnConsoleLog('PROBLEM sendGetPinTakeScreenshot !!!', e);
-        reject('PROBLEM !!!');
-      });
-  };
-
-  private static addNewPinWithScreenshot = async (
-    dto: PinObject,
-    screenshot: string,
-    resolve: (value: PinObject) => void
-  ): Promise<void> => {
-    // Let's resize screenshot and resolve promise
-    try {
-      screenshot = await ImageResizeFactory.resize(dto.rect, screenshot);
-    } finally {
-      dto.screenshot = screenshot;
-    }
+    dto.screenshot = await ScreenshotFactory.takeScreenshot(dto.rect);
     await new PinAddCommand(dto).execute();
-    resolve(dto);
+    return dto;
   };
 }

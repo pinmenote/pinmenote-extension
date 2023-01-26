@@ -17,9 +17,8 @@
 import { BusDownloadMessage, BusMessageType } from '../../../../common/model/bus.model';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { ContentSettingsStore } from '../../../store/content-settings.store';
-import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
 import { PinComponent } from '../../pin.component';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
+import { ScreenshotFactory } from '../../../../common/factory/screenshot.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnB64toBlob } from '../../../../common/fn/b64.to.blob.fn';
 import { fnUid } from '../../../../common/fn/uid.fn';
@@ -50,27 +49,28 @@ export class DownloadImageButton {
   }
 
   private handleClick = async () => {
-    const border = this.parent.ref.style.border;
-    const radius = this.parent.ref.style.borderRadius;
-    TinyEventDispatcher.addListener<string>(BusMessageType.CONTENT_TAKE_SCREENSHOT, async (event, key, value) => {
-      TinyEventDispatcher.removeListener(BusMessageType.CONTENT_TAKE_SCREENSHOT, key);
-      const screenshot = await ImageResizeFactory.resize(this.parent.ref.getBoundingClientRect(), value);
-      let url = '';
-      let filename = '';
-      if (ContentSettingsStore.screenshotFormat == 'jpeg') {
-        url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/jpeg'));
-        filename = `${fnUid()}.jpg`;
-      } else {
-        url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/png'));
-        filename = `${fnUid()}.png`;
-      }
-      const data = { url, filename };
-      await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({ type: BusMessageType.CONTENT_DOWNLOAD_DATA, data });
-      this.parent.ref.style.border = border;
-      this.parent.ref.style.borderRadius = radius;
-    });
+    // Switch to original border
     this.parent.ref.style.border = this.parent.object.border.style;
     this.parent.ref.style.borderRadius = this.parent.object.border.radius;
-    await BrowserApi.sendRuntimeMessage<void>({ type: BusMessageType.CONTENT_TAKE_SCREENSHOT });
+
+    const screenshot = await ScreenshotFactory.takeScreenshot(this.parent.ref.getBoundingClientRect());
+    await this.downloadScreenshot(screenshot);
+
+    this.parent.ref.style.border = ContentSettingsStore.borderStyle;
+    this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
+  };
+
+  private downloadScreenshot = async (screenshot: string): Promise<void> => {
+    let url = '';
+    let filename = '';
+    if (ContentSettingsStore.screenshotFormat == 'jpeg') {
+      url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/jpeg'));
+      filename = `${fnUid()}.jpg`;
+    } else {
+      url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/png'));
+      filename = `${fnUid()}.png`;
+    }
+    const data = { url, filename };
+    await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({ type: BusMessageType.CONTENT_DOWNLOAD_DATA, data });
   };
 }
