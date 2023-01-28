@@ -15,21 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
+import { ObjDto } from '../../model/obj.model';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 import ICommand = Pinmenote.Common.ICommand;
 
 export class BookmarkRemoveCommand implements ICommand<Promise<void>> {
-  constructor(private bookmark: BookmarkDto) {}
+  constructor(private obj: ObjDto<ObjBookmarkDto>) {}
 
   async execute(): Promise<void> {
-    const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.bookmark.url.href}`;
+    const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.obj.data.url.href}`;
     await BrowserStorageWrapper.remove(key);
 
-    await this.removeBookmarkFromList(this.bookmark.id);
+    await this.removeBookmarkFromList(this.obj.id);
 
-    await new ObjRemoveIdCommand(this.bookmark.id).execute();
+    await new ObjRemoveIdCommand(this.obj.id).execute();
   }
 
   private async removeBookmarkFromList(id: number): Promise<void> {

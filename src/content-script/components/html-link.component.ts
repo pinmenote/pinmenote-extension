@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlObject, PageComponent } from '../../common/model/html.model';
+import { HtmlComponent, PageComponent } from '../../common/model/html.model';
+import { ObjDto, ObjLinkDto } from '../../common/model/obj.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { ObjPointDto } from '../../common/model/obj-utils.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnUid } from '../../common/fn/uid.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
@@ -50,14 +52,14 @@ export class HtmlLinkComponent implements HtmlComponent<HTMLElement>, PageCompon
   private contentCheck: ContentCheck;
   ref: HTMLElement;
 
-  readonly object: HtmlObject;
+  readonly object: ObjDto<ObjLinkDto>;
   private readonly size = {
     width: 163,
     height: 34
   };
 
-  constructor(ref: HTMLElement, object: HtmlObject) {
-    this.el.id = object.uid;
+  constructor(ref: HTMLElement, object: ObjDto<ObjLinkDto>) {
+    this.el.id = fnUid();
     this.ref = ref;
     this.object = object;
     this.contentCheck = new ContentCheck(this.ref);
@@ -67,7 +69,7 @@ export class HtmlLinkComponent implements HtmlComponent<HTMLElement>, PageCompon
     this.ref.style.border = ContentSettingsStore.borderStyle;
     this.ref.style.borderRadius = ContentSettingsStore.borderRadius;
     const s = document.createElement('div');
-    s.innerText = this.object.value;
+    s.innerText = this.object.data.value;
     this.el.appendChild(s);
     return this.el;
   }

@@ -25,17 +25,17 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { BookmarkRemoveCommand } from '../../../common/command/bookmark/bookmark-remove.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ExtensionPopupInitData } from '../../../common/model/obj-request.model';
 import { LogManager } from '../../../common/popup/log.manager';
-import { PinPopupInitData } from '../../../common/model/pin.model';
+import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 
 export const ObjectCreateComponent: FunctionComponent = () => {
   const [isAdding, setIsAdding] = useState<boolean>(ActiveTabStore.isAddingNote);
-  const [bookmarkData, setBookmarkData] = useState<BookmarkDto | undefined>(undefined);
+  const [bookmarkData, setBookmarkData] = useState<ObjBookmarkDto | undefined>(undefined);
 
   useEffect(() => {
-    const addingKey = TinyEventDispatcher.addListener<PinPopupInitData>(
+    const addingKey = TinyEventDispatcher.addListener<ExtensionPopupInitData>(
       BusMessageType.POPUP_INIT,
       async (event, key, value) => {
         setIsAdding(value.isAddingNote);

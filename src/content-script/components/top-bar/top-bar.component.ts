@@ -21,9 +21,10 @@ import { ActionDrawButton } from './action-buttons/action-draw.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
 import { ActionTextButton } from './action-buttons/action-text.button';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinComponent } from '../pin.component';
-import { PinObject } from '../../../common/model/pin.model';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const topBarStyles = {
@@ -81,9 +82,9 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   private topMargin = '-24px';
 
-  constructor(private parent: PinComponent, private object: PinObject, private rect: ObjRectangleDto) {
-    this.editIcon = new ActionPinEditButton(parent, this.object);
-    this.removeIcon = new ActionRemoveButton(this.object);
+  constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
+    this.editIcon = new ActionPinEditButton(parent, object);
+    this.removeIcon = new ActionRemoveButton(object);
     this.copyIcon = new ActionCopyButton(parent);
     this.downloadIcon = new ActionDownloadButton(parent);
 

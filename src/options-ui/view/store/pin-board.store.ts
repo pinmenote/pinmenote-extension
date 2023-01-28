@@ -14,16 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinRangeRequest, PinRangeResponse } from '../../../common/model/pin.model';
+import { PinRangeRequest, PinRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PinBoardStore {
-  static pinData: PinObject[] = [];
+  static pinData: ObjDto<ObjPagePinDto>[] = [];
 
   private static loading = false;
   private static isLastValue = false;
@@ -33,7 +35,7 @@ export class PinBoardStore {
     listId: -1
   };
 
-  static get pins(): PinObject[] {
+  static get pins(): ObjDto<ObjPagePinDto>[] {
     return this.pinData;
   }
 
@@ -52,7 +54,7 @@ export class PinBoardStore {
     }
   }
 
-  static removePin = async (value: PinObject): Promise<boolean> => {
+  static removePin = async (value: ObjDto<ObjPagePinDto>): Promise<boolean> => {
     for (let i = 0; i < this.pinData.length; i++) {
       if (this.pinData[i].id == value.id) {
         this.pinData.splice(i, 1);

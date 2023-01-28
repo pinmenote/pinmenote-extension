@@ -17,9 +17,9 @@
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { DocumentMediator } from './mediator/document.mediator';
+import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { PinAddFactory } from './factory/pin-add.factory';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
-import { PinPopupInitData } from '../common/model/pin.model';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
@@ -69,11 +69,11 @@ export class ContentMessageHandler {
 
   private static handlePopupOpen = async (): Promise<void> => {
     const url = contentPinNewUrl();
-    const data: PinPopupInitData = {
+    const data: ExtensionPopupInitData = {
       url,
       pageTitle: document.title,
       isAddingNote: PinAddFactory.hasElement
     };
-    await BrowserApi.sendRuntimeMessage<PinPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
+    await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };
 }

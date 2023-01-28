@@ -15,12 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useRef } from 'react';
-import { PinObject } from '../../../common/model/pin.model';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { marked } from 'marked';
 
 interface PinExpandProps {
   visible: boolean;
-  pin: PinObject;
+  pin: ObjDto<ObjPagePinDto>;
 }
 
 export const PinExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, visible }) => {
@@ -30,9 +31,9 @@ export const PinExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, vis
 
   useEffect(() => {
     img.width = 280;
-    if (pin.screenshot) img.src = pin.screenshot;
+    if (pin.data.html[0].screenshot) img.src = pin.data?.html[0].screenshot;
     ref.current?.appendChild(img);
-    if (valueRef.current) valueRef.current.innerHTML = marked(pin.value);
+    if (valueRef.current) valueRef.current.innerHTML = marked(pin.data.value);
     return () => {
       ref.current?.removeChild(img);
     };

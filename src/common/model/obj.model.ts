@@ -18,7 +18,7 @@ import { ObjBookmarkDto } from './obj-bookmark.model';
 import { ObjNoteDto } from './obj-note.model';
 import { ObjPagePinDto } from './obj-pin.model';
 
-export enum ObjViewTypeDto {
+export enum ObjBoardViewDto {
   Screenshot = 'SCREENSHOT',
   Html = 'HTML'
 }
@@ -27,7 +27,12 @@ export const OBJ_DTO_VERSION = 1;
 
 export interface ObjLocalDto {
   drawVisible?: boolean;
-  currentView?: string;
+  boardView?: string;
+  visible: boolean;
+}
+
+export interface ObjShareDto {
+  url: string;
 }
 
 export interface ObjUrlDto {
@@ -40,6 +45,7 @@ export interface ObjUrlDto {
 export interface ObjLinkDto {
   url: ObjUrlDto;
   xpath: string;
+  value: string;
 }
 
 export interface ObjIdentityDto {
@@ -60,18 +66,18 @@ export enum ObjTypeDto {
   Drawing = 'DRAWING'
 }
 
-export type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto;
+export type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto | ObjLinkDto;
 
-export interface ObjDto {
+export interface ObjDto<T = ObjDataDto> {
   id: number;
-  uid: string;
   version: number;
   type: ObjTypeDto;
   updatedAt: string;
   createdAt: string;
-  local?: ObjLocalDto;
+  local: ObjLocalDto;
+  share?: ObjShareDto;
   identity?: ObjIdentityDto;
   encryption: ObjEncryptionDto;
   hashtags: string[];
-  data?: ObjDataDto;
+  data: T;
 }

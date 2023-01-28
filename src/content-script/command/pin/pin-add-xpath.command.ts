@@ -14,27 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinComponentAddCommand } from './pin-component-add.command';
-import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinAddXpathCommand implements ICommand<boolean> {
-  constructor(private pin: PinObject) {}
+  constructor(private data: ObjDto<ObjPagePinDto>) {}
   execute(): boolean {
-    const value = XpathFactory.newXPathResult(this.pin.xpath);
+    const pin = this.data.data;
+    const value = XpathFactory.newXPathResult(pin.xpath);
     const node = value.singleNodeValue as HTMLElement;
-    if (!this.pin.visible || !node || isElementHiddenFn(node)) {
+    if (!this.data.local.visible || !node || isElementHiddenFn(node)) {
       // will be created on invalidate
-      PinPendingStore.add(this.pin);
+      PinPendingStore.add(this.data);
       return false;
     }
-    const pinData = new PinComponentAddCommand(node, this.pin).execute();
+    const pinData = new PinComponentAddCommand(node, this.data).execute();
     // CHECK IF CREATED
     if (pinData) return true;
-    PinPendingStore.add(this.pin);
+    PinPendingStore.add(this.data);
     return false;
   }
 }

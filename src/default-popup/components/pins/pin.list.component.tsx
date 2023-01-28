@@ -16,12 +16,13 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinListElement } from './pin.list.element.component';
-import { PinObject } from '../../../common/model/pin.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 interface PinListProps {
-  pinList: PinObject[];
+  pinList: ObjDto<ObjPagePinDto>[];
   visibility: boolean;
 }
 
@@ -29,19 +30,22 @@ export const PinListComponent: FunctionComponent<PinListProps> = ({ pinList, vis
   const [reRender, setReRender] = useState(false);
 
   useEffect(() => {
-    const removeKey = TinyEventDispatcher.addListener<PinObject>(BusMessageType.POP_PIN_REMOVE, (event, key, value) => {
-      if (value.url.href === pinList[0].url.href) {
-        for (let i = 0; i < pinList.length; i++) {
-          const pin = pinList[i];
-          if (pin.uid === value.uid) {
-            pinList.splice(i, 1);
-            break;
+    const removeKey = TinyEventDispatcher.addListener<ObjDto<ObjPagePinDto>>(
+      BusMessageType.POP_PIN_REMOVE,
+      (event, key, value) => {
+        if (value.data.url.href === pinList[0].data.url.href) {
+          for (let i = 0; i < pinList.length; i++) {
+            const pin = pinList[i];
+            if (pin.id === value.id) {
+              pinList.splice(i, 1);
+              break;
+            }
           }
+          // Refresh state so component re-renders
+          setReRender(!reRender);
         }
-        // Refresh state so component re-renders
-        setReRender(!reRender);
       }
-    });
+    );
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POP_PIN_REMOVE, removeKey);
     };
@@ -50,7 +54,7 @@ export const PinListComponent: FunctionComponent<PinListProps> = ({ pinList, vis
   // Render pins
   const pins: React.ReactNode[] = [];
   for (const pin of pinList) {
-    pins.push(<PinListElement visibility={visibility} key={pin.uid} pin={pin} />);
+    pins.push(<PinListElement visibility={visibility} key={pin.id} pin={pin} />);
   }
   return (
     <div style={{ width: '100%' }}>

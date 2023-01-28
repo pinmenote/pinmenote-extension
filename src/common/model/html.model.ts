@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRectangleDto } from './obj-utils.model';
-import { ObjUrlDto } from './obj.model';
+import { ObjDto, ObjLinkDto } from './obj.model';
+import { ObjPagePinDto } from './obj-pin.model';
 
 export enum ObjectTypeDto {
   Pin = 1,
@@ -61,7 +61,7 @@ export interface HtmlComponentFocusable {
 }
 
 export interface PageComponent {
-  object: HtmlObject;
+  object: ObjDto<ObjPagePinDto | ObjLinkDto>;
   focus(goto: boolean): void;
   cleanup(): void;
   resize(): void;
@@ -72,15 +72,4 @@ export interface PageComponent {
 export interface HtmlComponent<T> {
   render(): T;
   cleanup?: () => void;
-}
-
-export interface HtmlObject {
-  updatedAt: string;
-  createdAt: string;
-  value: string;
-  xpath: string;
-  rect: ObjRectangleDto;
-  url: ObjUrlDto;
-  uid: string;
-  type: ObjectTypeDto;
 }

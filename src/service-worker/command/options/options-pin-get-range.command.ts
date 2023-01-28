@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinRangeRequest, PinRangeResponse } from '../../../common/model/pin.model';
+import { PinRangeRequest, PinRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -43,8 +45,8 @@ export class OptionsPinGetRangeCommand implements ICommand<void> {
     const out = [];
     for (let i = 0; i < data.ids.length; i++) {
       const key = `${idKey}:${data.ids[i]}`;
-      const pin = await BrowserStorageWrapper.get<PinObject>(key);
-      out.push(pin);
+      const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
+      out.push(obj);
     }
     return {
       listId: data.listId,

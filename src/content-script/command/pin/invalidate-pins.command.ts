@@ -15,9 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CreateLinkCommand } from '../link/create-link.command';
-import { ObjectTypeDto } from '../../../common/model/html.model';
+import { ObjTypeDto } from '../../../common/model/obj.model';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
-import { PinObject } from '../../../common/model/pin.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
 import { RuntimePinGetHrefCommand } from '../runtime/runtime-pin-get-href.command';
@@ -42,14 +41,14 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     const pinList = PinPendingStore.values;
     for (const pin of pinList) {
       switch (pin.type) {
-        case ObjectTypeDto.Pin:
-          if (new PinAddXpathCommand(pin as PinObject).execute()) {
-            PinPendingStore.remove(pin.uid);
+        case ObjTypeDto.PageElementPin:
+          if (new PinAddXpathCommand(pin).execute()) {
+            PinPendingStore.remove(pin.id);
           }
           break;
-        case ObjectTypeDto.Link:
+        case ObjTypeDto.PageLink:
           if (new CreateLinkCommand(pin).execute()) {
-            PinPendingStore.remove(pin.uid);
+            PinPendingStore.remove(pin.id);
           }
           break;
       }
@@ -57,7 +56,7 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     // Ok so check if we displayed on some elements that are not visible
     PinStore.each((pinData) => {
       if (pinData.isHidden()) {
-        const data = PinStore.delByUid(pinData.object.uid);
+        const data = PinStore.delByUid(pinData.object.id);
         if (data) PinPendingStore.add(data.object);
       }
       pinData.resize();

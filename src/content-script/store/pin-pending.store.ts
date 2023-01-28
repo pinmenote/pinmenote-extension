@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlObject } from '../../common/model/html.model';
+import { ObjDto } from '../../common/model/obj.model';
 
 export class PinPendingStore {
   // Map of pending pins
-  private static pendingPins: { [key: string]: HtmlObject } = {};
+  private static pendingPins: { [id: number]: ObjDto } = {};
 
-  static get values(): HtmlObject[] {
+  static get values(): ObjDto[] {
     return Object.values(PinPendingStore.pendingPins);
   }
 
-  static add(pin: HtmlObject): void {
-    this.pendingPins[pin.uid] = pin;
+  static add(pin: ObjDto): void {
+    this.pendingPins[pin.id] = pin;
   }
 
-  static remove(key: string): void {
-    delete this.pendingPins[key];
+  static remove(id: number): void {
+    delete this.pendingPins[id];
   }
 }

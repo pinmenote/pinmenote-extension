@@ -14,27 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import { ApiStore } from '../../store/api.store';
 import { FetchService } from '../../service/fetch.service';
-import { ObjectTypeDto } from '../../../common/model/html.model';
-import { PinObject } from '../../../common/model/pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
-import NewShareDto = Pinmenote.Share.NewShareDto;
-import ShareUrlDto = Pinmenote.Share.ShareUrlDto;
 
-export class ApiSharePinCommand implements ICommand<Promise<ShareUrlDto>> {
-  constructor(private data: PinObject) {}
-  async execute(): Promise<ShareUrlDto> {
+export class ApiSharePinCommand implements ICommand<Promise<ObjShareDto>> {
+  constructor(private obj: ObjDto<ObjPagePinDto>) {}
+  async execute(): Promise<ObjShareDto> {
     const authHeaders = await ApiStore.getAuthHeaders();
-    const { locator, url, value, updatedAt, createdAt } = this.data;
-    const data: NewShareDto = {
-      type: ObjectTypeDto.Pin,
-      data: { locator, url, value, updatedAt, createdAt }
-    };
-    fnConsoleLog('Send share', data);
-    const resp = await FetchService.post<ShareUrlDto>(`${environmentConfig.apiUrl}/api/v1/share`, data, authHeaders);
+    fnConsoleLog('Send share', this.obj);
+    const resp = await FetchService.post<ObjShareDto>(
+      `${environmentConfig.apiUrl}/api/v1/share`,
+      this.obj,
+      authHeaders
+    );
     fnConsoleLog('ApiSharePinCommand', resp);
     return resp;
   }

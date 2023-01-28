@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject } from '../../../common/model/pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { VideoTimeComponent } from './video-time/video-time.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 
@@ -35,9 +35,9 @@ export class BottomBarComponent {
   private videoTime: VideoTimeComponent;
   private shouldDisplay = false;
 
-  constructor(private pin: PinObject) {
-    this.videoTime = new VideoTimeComponent(pin.content.videoTime);
-    this.shouldDisplay = pin.content.videoTime.length > 0;
+  constructor(private pin: ObjPagePinDto) {
+    this.videoTime = new VideoTimeComponent(pin.video);
+    this.shouldDisplay = pin.video.length > 0;
   }
 
   render(): HTMLDivElement {

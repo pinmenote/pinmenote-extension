@@ -15,17 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ObjDto } from '../../model/obj.model';
+import { ObjPagePinDto } from '../../model/obj-pin.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinUpdateCommand implements ICommand<void> {
-  constructor(private data: PinObject) {}
+  constructor(private obj: ObjDto<ObjPagePinDto>) {}
   async execute(): Promise<void> {
-    fnConsoleLog('WorkerPinManager->pinUpdate', this.data, this.data.id);
-    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`;
+    fnConsoleLog('WorkerPinManager->pinUpdate', this.obj);
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
 
-    await BrowserStorageWrapper.set(key, this.data);
+    await BrowserStorageWrapper.set(key, this.obj);
   }
 }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinViewType } from '../../../common/model/pin.model';
+import { ObjBoardViewDto, ObjDto } from '../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
@@ -23,6 +23,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Link from '@mui/material/Link';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinValueElement } from './pin.value.element';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
@@ -31,22 +32,19 @@ import { fnDateFormat } from '../../../common/fn/date.format.fn';
 import { pinIframeFn } from '../../../common/fn/pin/pin.iframe.fn';
 
 interface PinElementParams {
-  pin: PinObject;
+  pin: ObjDto<ObjPagePinDto>;
 }
 
 export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
   const divRef = useRef<HTMLDivElement>(null);
 
   const renderDiv = (ref: HTMLDivElement) => {
-    if (pin.viewType === PinViewType.SCREENSHOT) {
+    if (pin.local.boardView === ObjBoardViewDto.Screenshot) {
       const img = new Image();
-      img.src = pin.screenshot || '';
+      img.src = pin.data.html[0].screenshot || '';
       ref.appendChild(img);
     } else {
-      // const el: Node = fnPinToHtmlElement(pin.url.origin, false, pin.content.elementValue);
-      // const el = document.createElement('div');
-      //ref.appendChild(el);
-      pinIframeFn(pin.content, ref);
+      pinIframeFn(pin.data.html[0], ref);
     }
   };
 
@@ -54,10 +52,10 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
     if (divRef.current && !divRef.current?.firstChild) {
       renderDiv(divRef.current);
     }
-    const skipKey = TinyEventDispatcher.addListener<PinObject>(
+    const skipKey = TinyEventDispatcher.addListener<ObjDto<ObjPagePinDto>>(
       BusMessageType.OPT_PIN_SHOW_IMAGE,
       (event, key, value) => {
-        if (value.uid === pin.uid) {
+        if (value.id === pin.id) {
           if (divRef.current?.firstChild) {
             divRef.current.removeChild(divRef.current.firstChild);
             renderDiv(divRef.current);
@@ -88,9 +86,9 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
       </CardContent>
       <CardActions>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography sx={{ fontSize: '1.1em' }}>{pin.content.title}</Typography>
-          <Link target="_blank" href={pin.url.href} onClick={() => handleUrlClick()}>
-            <Typography sx={{ fontSize: '0.9em' }}>{pin.url.origin}</Typography>
+          <Typography sx={{ fontSize: '1.1em' }}>{pin.data.title}</Typography>
+          <Link target="_blank" href={pin.data.url.href} onClick={() => handleUrlClick()}>
+            <Typography sx={{ fontSize: '0.9em' }}>{pin.data.url.origin}</Typography>
           </Link>
         </div>
       </CardActions>

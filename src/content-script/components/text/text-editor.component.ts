@@ -17,9 +17,10 @@
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { ContentSettingsStore } from '../../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { ObjUpdateHashtagsCommand } from '../../../common/command/obj/hashtag/obj-update-hashtags.command';
-import { PinObject } from '../../../common/model/pin.model';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { TextContainerComponent } from './text-container.component';
 import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
@@ -32,7 +33,11 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
   private editorView?: EditorView;
 
-  constructor(private pin: PinObject, private rect: ObjRectangleDto, private parent: TextContainerComponent) {}
+  constructor(
+    private obj: ObjDto<ObjPagePinDto>,
+    private rect: ObjRectangleDto,
+    private parent: TextContainerComponent
+  ) {}
 
   get editor(): EditorView | undefined {
     return this.editorView;
@@ -69,7 +74,8 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
   }
 
   private createEditor(): EditorView {
-    let state = createTextEditorState(this.pin.value);
+    const pin = this.obj.data;
+    let state = createTextEditorState(pin.value);
     return new EditorView(this.el, {
       state,
       handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
@@ -79,10 +85,10 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
         state = state.apply(tx);
         this.editorView?.updateState(state);
         const value = defaultMarkdownSerializer.serialize(state.doc);
-        await new ObjUpdateHashtagsCommand(this.pin.id, this.pin.value, value).execute();
-        this.pin.value = value;
+        await new ObjUpdateHashtagsCommand(this.obj.id, pin.value, value).execute();
+        pin.value = value;
         try {
-          await new PinUpdateCommand(this.pin).execute();
+          await new PinUpdateCommand(this.obj).execute();
         } catch (e) {
           fnConsoleLog('ERROR UPDATE PIN', e);
         }

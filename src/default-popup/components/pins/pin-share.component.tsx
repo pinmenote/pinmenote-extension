@@ -14,25 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { IconButton } from '@mui/material';
-import { PinObject } from '../../../common/model/pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import ShareUrlDto = Pinmenote.Share.ShareUrlDto;
 
 export interface PinShareProps {
-  pin: PinObject;
+  pin: ObjDto<ObjPagePinDto>;
   visible: boolean;
 }
 
 export const PinShareComponent: FunctionComponent<PinShareProps> = ({ pin, visible }) => {
-  const [share, setShare] = useState<ShareUrlDto | undefined>();
+  const [share, setShare] = useState<ObjShareDto | undefined>();
 
   useEffect(() => {
-    const shareKey = TinyEventDispatcher.addListener<ShareUrlDto>(
+    const shareKey = TinyEventDispatcher.addListener<ObjShareDto>(
       BusMessageType.POPUP_PIN_SHARE,
       (event, key, value) => {
         setShare(value);
@@ -49,7 +49,7 @@ export const PinShareComponent: FunctionComponent<PinShareProps> = ({ pin, visib
 
   return (
     <div style={{ display: visible ? 'inline-block' : 'none', margin: 10 }}>
-      <div style={{ fontSize: '1.5em' }}>Share: {pin.value}</div>
+      <div style={{ fontSize: '1.5em' }}>Share: {pin.data?.value}</div>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <StyledInput style={{ width: 250 }} value={share?.url} placeholder="generating url..." />
         <IconButton title="copy url" size="small" onClick={handleCopyUrl}>

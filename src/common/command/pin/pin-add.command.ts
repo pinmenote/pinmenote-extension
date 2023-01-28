@@ -14,28 +14,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj.model';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { HashtagFindCommand } from '../obj/hashtag/hashtag-find.command';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
+import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
+import { ObjPagePinDto } from '../../model/obj-pin.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class PinAddCommand implements ICommand<void> {
-  constructor(private data: PinObject) {}
-  async execute(): Promise<void> {
-    fnConsoleLog('PinAddCommand->execute', this.data, this.data.id);
+export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
+  constructor(private pin: ObjPagePinDto) {}
 
-    await new ObjAddIdCommand(this.data.id).execute();
+  async execute(): Promise<ObjDto<ObjPagePinDto>> {
+    fnConsoleLog('PinAddCommand->execute', this.pin);
 
-    await new ObjAddHashtagsCommand(this.data.id, this.data.value).execute();
+    const id = await new ObjNextIdCommand().execute();
+    const dt = new Date().toISOString();
+    const hashtags = new HashtagFindCommand(this.pin.value).execute();
 
-    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`;
+    await new ObjAddIdCommand(id).execute();
+    const dto: ObjDto<ObjPagePinDto> = {
+      id,
+      type: ObjTypeDto.PageElementPin,
+      createdAt: dt,
+      updatedAt: dt,
+      data: this.pin,
+      version: OBJ_DTO_VERSION,
+      local: {
+        visible: true
+      },
+      encryption: {
+        encrypted: false
+      },
+      hashtags
+    };
 
-    await BrowserStorageWrapper.set(key, this.data);
+    await new ObjAddHashtagsCommand(id, hashtags).execute();
 
-    await LinkHrefOriginStore.addHrefOriginId(this.data.url, this.data.id);
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
+
+    await BrowserStorageWrapper.set(key, dto);
+
+    await LinkHrefOriginStore.addHrefOriginId(this.pin.url, id);
+    return dto;
   }
 }

@@ -14,40 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjLinkDto } from '../../../common/model/obj.model';
 import { HtmlLinkComponent } from '../../components/html-link.component';
-import { ObjLinkDto } from '../../../common/model/obj.model';
-import { ObjectTypeDto } from '../../../common/model/html.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
 import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class CreateLinkCommand implements ICommand<boolean> {
-  constructor(private link: ObjLinkDto) {}
+  constructor(private data: ObjDto<ObjLinkDto>) {}
   execute(): boolean {
-    if (this.link.url.href !== window.location.href) return false;
-    const value = XpathFactory.newXPathResult(this.link.xpath);
+    const link = this.data.data;
+    if (link.url.href !== window.location.href) return false;
+    const value = XpathFactory.newXPathResult(link.xpath);
     const ref = value.singleNodeValue as HTMLElement;
-    const rect = XpathFactory.computeRect(ref);
-    const uid = fnUid();
-    const dt = new Date().toISOString();
-    const object = {
-      ...this.link,
-      uid,
-      type: ObjectTypeDto.Link,
-      rect,
-      updatedAt: dt,
-      createdAt: dt,
-      value: ''
-    };
-    fnConsoleLog('CreateLinkCommand->ref', ref, this.link);
+    fnConsoleLog('CreateLinkCommand->ref', ref, this.data);
     if (!ref || isElementHiddenFn(ref)) {
-      PinPendingStore.add(object);
+      PinPendingStore.add(this.data);
       return false;
     }
-    const pinComponent = new HtmlLinkComponent(ref, object);
+    const pinComponent = new HtmlLinkComponent(ref, this.data);
     document.body.appendChild(pinComponent.render());
     pinComponent.focus(true);
     return true;

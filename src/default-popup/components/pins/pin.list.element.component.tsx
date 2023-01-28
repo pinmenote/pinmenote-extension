@@ -23,9 +23,10 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinExpandComponent } from './pin.expand.component';
-import { PinObject } from '../../../common/model/pin.model';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { PinShareComponent } from './pin-share.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
@@ -36,16 +37,16 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface PinListElementProps {
-  pin: PinObject;
+  pin: ObjDto<ObjPagePinDto>;
   visibility: boolean;
 }
 
 export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, visibility }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isShareOpen, setShareOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(pin.visible);
-  const handlePinGo = async (data: PinObject): Promise<void> => {
-    data.visible = true;
+  const [isVisible, setIsVisible] = useState(pin.local?.visible);
+  const handlePinGo = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
+    data.local.visible = true;
     await new PinUpdateCommand(data).execute();
     await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, data);
 
@@ -54,23 +55,23 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
     window.close();
   };
 
-  const handlePinVisible = async (data: PinObject): Promise<void> => {
-    data.visible = !data.visible;
+  const handlePinVisible = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
+    data.local.visible = !data.local.visible;
     await new PinUpdateCommand(data).execute();
-    setIsVisible(data.visible);
+    setIsVisible(data.local.visible);
   };
 
-  const handlePinRemove = async (data: PinObject): Promise<void> => {
+  const handlePinRemove = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
     await new PinRemoveCommand(data).execute();
-    await BrowserApi.sendTabMessage<string>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: data.uid });
+    await BrowserApi.sendTabMessage<number>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: data.id });
     TinyEventDispatcher.dispatch(BusMessageType.POP_PIN_REMOVE, data);
   };
 
-  const handleShare = async (data: PinObject): Promise<void> => {
+  const handleShare = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
     setShareOpen(!isShareOpen);
     setIsPopoverOpen(false);
     if (!data.share && !isShareOpen) {
-      await BrowserApi.sendRuntimeMessage<PinObject>({ type: BusMessageType.POPUP_PIN_SHARE, data });
+      await BrowserApi.sendRuntimeMessage<ObjDto<ObjPagePinDto>>({ type: BusMessageType.POPUP_PIN_SHARE, data });
     }
   };
 
@@ -92,11 +93,11 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
   ) : (
     ''
   );
-  const value = RemoveMarkdown(pin.value);
+  const value = RemoveMarkdown(pin.data.value);
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (
-    <div key={pin.uid} style={{ width: '100%', marginBottom: 15 }}>
+    <div key={pin.id} style={{ width: '100%', marginBottom: 15 }}>
       <div
         style={{
           display: 'flex',

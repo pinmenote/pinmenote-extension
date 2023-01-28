@@ -16,22 +16,23 @@
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { ObjDto } from '../../model/obj.model';
+import { ObjPagePinDto } from '../../model/obj-pin.model';
 import { ObjRemoveHashtagsCommand } from '../obj/hashtag/obj-remove-hashtags.command';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinObject } from '../../model/pin.model';
 import { fnConsoleLog } from '../../fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinRemoveCommand implements ICommand<void> {
-  constructor(private data: PinObject) {}
+  constructor(private obj: ObjDto<ObjPagePinDto>) {}
   async execute(): Promise<void> {
-    fnConsoleLog('WorkerPinManager->pinRemove', this.data);
-    await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.data.id}`);
-    await LinkHrefOriginStore.delHrefOriginId(this.data.url, this.data.id);
+    fnConsoleLog('WorkerPinManager->pinRemove', this.obj);
+    await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
+    await LinkHrefOriginStore.delHrefOriginId(this.obj.data.url, this.obj.id);
 
-    await new ObjRemoveIdCommand(this.data.id).execute();
+    await new ObjRemoveIdCommand(this.obj.id).execute();
 
-    await new ObjRemoveHashtagsCommand(this.data.id, this.data.value).execute();
+    await new ObjRemoveHashtagsCommand(this.obj.id, this.obj.hashtags).execute();
   }
 }

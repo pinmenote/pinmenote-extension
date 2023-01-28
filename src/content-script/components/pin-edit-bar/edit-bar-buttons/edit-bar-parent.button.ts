@@ -22,7 +22,6 @@ import { HtmlComponent } from '../../../../common/model/html.model';
 import { HtmlFactory } from '../../../factory/html.factory';
 import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
 import { PinComponent } from '../../pin.component';
-import { PinObject } from '../../../../common/model/pin.model';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../../../common/factory/xpath.factory';
@@ -33,7 +32,8 @@ import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class EditBarParentButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
-  constructor(private pin: PinObject, private parent: PinComponent) {}
+
+  constructor(private parent: PinComponent) {}
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#ff0000" height="24" viewBox="0 0 24 24" width="24">
@@ -55,22 +55,22 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
 
   private handleClick = async (): Promise<void> => {
     if (this.parent.ref.parentElement?.tagName === 'BODY') {
-      fnConsoleLog(`No parent for note ${this.pin.uid}`);
+      fnConsoleLog(`No parent for note ${this.parent.object.id}`);
       return;
     }
     if (this.parent.ref.parentElement) {
       this.parent.setNewRef(this.parent.ref.parentElement);
       await fnSleep(100);
-      this.parent.object.content.elementText = this.parent.ref.parentElement.innerText;
+      this.parent.object.data.html[0].text = this.parent.ref.parentElement.innerText;
 
       const htmlContent = HtmlFactory.computeHtmlIntermediateData(this.parent.ref.parentElement);
       const css = CssFactory.computeCssContent(htmlContent.cssStyles);
 
-      this.parent.object.content.html = htmlContent.html;
-      this.parent.object.content.videoTime = htmlContent.videoTime;
-      this.parent.object.content.css = css;
-      this.parent.object.xpath = XpathFactory.newXPathString(this.parent.ref.parentElement);
-      this.parent.object.rect = XpathFactory.computeRect(this.parent.ref.parentElement);
+      this.parent.object.data.html[0].html = htmlContent.html;
+      this.parent.object.data.video = htmlContent.videoTime;
+      this.parent.object.data.html[0].css = css;
+      this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref.parentElement);
+      this.parent.object.data.html[0].rect = XpathFactory.computeRect(this.parent.ref.parentElement);
 
       return new Promise((resolve, reject) => {
         BrowserApi.sendRuntimeMessage<undefined>({
@@ -94,7 +94,10 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
             this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
           }
 
-          this.parent.object.screenshot = await ImageResizeFactory.resize(this.parent.object.rect, value);
+          this.parent.object.data.html[0].screenshot = await ImageResizeFactory.resize(
+            this.parent.object.data.html[0].rect,
+            value
+          );
 
           await new PinUpdateCommand(this.parent.object).execute();
           this.parent.resize();

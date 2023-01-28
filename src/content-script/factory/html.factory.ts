@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime, HtmlContent, HtmlIntermediateData, HtmlParentStyles } from '../../common/model/html.model';
+import { ContentVideoTime, HtmlIntermediateData, HtmlParentStyles } from '../../common/model/html.model';
 import { CssFactory } from './css.factory';
 import { PinHtmlDataDto } from '../../common/model/obj-pin.model';
+import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class HtmlFactory {
-  static computePinHTMLData(ref: HTMLElement): PinHtmlDataDto {
+  static async computePinHTMLData(ref: HTMLElement): Promise<PinHtmlDataDto> {
     const parentStyle = document.body.getAttribute('style') || '';
     const htmlContent = this.computeHtmlIntermediateData(ref);
     // fnConsoleLog('HTML :', htmlContent);
@@ -44,11 +45,14 @@ export class HtmlFactory {
     fnConsoleLog('START COMPUTE CSS !!!');
     const css = CssFactory.computeCssContent(htmlContent.cssStyles);
     fnConsoleLog('STOP COMPUTE CSS !!!');
+    const rect = XpathFactory.computeRect(ref);
+    const screenshot = await ScreenshotFactory.takeScreenshot(rect);
     return {
       parentStyle,
       html: htmlContent.html,
       text: ref.innerText,
-      rect: XpathFactory.computeRect(ref),
+      rect,
+      screenshot,
       border: {
         style: ref.style.border,
         radius: ref.style.borderRadius
@@ -57,41 +61,6 @@ export class HtmlFactory {
     };
   }
 
-  static computeHtmlContent(ref: HTMLElement): HtmlContent {
-    const bodyStyle = document.body.getAttribute('style') || undefined;
-    const title = document.title;
-    const htmlContent = this.computeHtmlIntermediateData(ref);
-    // fnConsoleLog('HTML :', htmlContent);
-    let parent = ref.parentElement;
-    // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
-    // const htmlParentData = HtmlFactory.computeHtmlParentStyles(parent);
-    // fnConsoleLog('1: ', htmlContent.cssStyles, parent);
-    while (parent && parent.tagName.toLowerCase() !== 'html') {
-      const attr = parent.getAttributeNode('class');
-      if (attr) {
-        const a = attr.value.split(' ').filter((e) => !!e);
-        htmlContent.cssStyles.push(...a.map((e) => `.${e}`));
-      }
-      // fnConsoleLog('ADD : ', parent.tagName);
-      htmlContent.cssStyles.push(parent.tagName);
-      parent = parent.parentElement;
-    }
-    // fnConsoleLog('2:', htmlContent.cssStyles, parent);
-    fnConsoleLog('START COMPUTE CSS !!!');
-    const css = CssFactory.computeCssContent(htmlContent.cssStyles);
-    fnConsoleLog('STOP COMPUTE CSS !!!');
-    const elementText = ref.innerText;
-    const isLightTheme = window.matchMedia('(prefers-color-scheme: light)').matches;
-    return {
-      theme: isLightTheme ? 'light' : 'dark',
-      bodyStyle,
-      title,
-      html: htmlContent.html,
-      videoTime: htmlContent.videoTime,
-      css,
-      elementText
-    };
-  }
   static computeHtmlIntermediateData = (ref: Element): HtmlIntermediateData => {
     const tagName = ref.tagName.toLowerCase();
     const cssStyles: string[] = [tagName];

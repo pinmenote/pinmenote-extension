@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HashtagFindCommand } from './hashtag-find.command';
 import { ObjHashtagStore } from '../../../store/obj-hashtag.store';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ObjAddHashtagsCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private value: string) {}
+  constructor(private id: number, private hashtags: string[]) {}
 
   async execute(): Promise<void> {
-    const hashtags = new HashtagFindCommand(this.value).execute();
-    for (const tag of hashtags) {
+    for (const tag of this.hashtags) {
       await ObjHashtagStore.addHashtag(tag, this.id);
     }
   }

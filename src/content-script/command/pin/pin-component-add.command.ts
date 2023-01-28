@@ -15,13 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../common/model/html.model';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinComponent } from '../../components/pin.component';
-import { PinObject } from '../../../common/model/pin.model';
 import { PinStore } from '../../store/pin.store';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinComponentAddCommand implements ICommand<HtmlComponent<HTMLElement> | undefined> {
-  constructor(private ref: HTMLElement, private dto: PinObject, private focus = false) {}
+  constructor(private ref: HTMLElement, private dto: ObjDto<ObjPagePinDto>, private focus = false) {}
   execute(): HtmlComponent<HTMLElement> | undefined {
     const pinComponent = new PinComponent(this.ref, this.dto);
     pinComponent.render();

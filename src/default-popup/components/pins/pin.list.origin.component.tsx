@@ -16,13 +16,14 @@
  */
 import React, { FunctionComponent } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinListComponent } from './pin.list.component';
-import { PinObject } from '../../../common/model/pin.model';
 import { Typography } from '@mui/material';
 
 interface PinListOriginProps {
-  pinHref: PinObject[];
-  pinOrigin: PinObject[];
+  pinHref: ObjDto<ObjPagePinDto>[];
+  pinOrigin: ObjDto<ObjPagePinDto>[];
 }
 
 export const PinListOriginComponent: FunctionComponent<PinListOriginProps> = ({ pinHref, pinOrigin }) => {

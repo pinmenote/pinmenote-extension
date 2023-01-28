@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlContent } from '../../model/html.model';
+import { PinHtmlDataDto } from '../../model/obj-pin.model';
 
-export const pinIframeFn = (content: HtmlContent, container?: HTMLElement): string | undefined => {
+export const pinIframeFn = (content: PinHtmlDataDto, container?: HTMLElement): string | undefined => {
   const iframe = document.createElement('iframe');
   iframe.style.border = 'none';
   const { css, href } = content.css;
@@ -27,7 +27,7 @@ export const pinIframeFn = (content: HtmlContent, container?: HTMLElement): stri
         <head>
             ${href.map((h) => `<link rel="stylesheet" href="${h}" />`).join('')}
             <style>${css}</style>
-            <body style="${content.bodyStyle || ''}${containerBodyStyle}">${content.html}</body>
+            <body style="${content.parentStyle || ''}${containerBodyStyle}">${content.html}</body>
         </head>
     </html>`;
   if (!container) return html;

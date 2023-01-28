@@ -14,21 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinRangeResponse } from '../../../common/model/pin.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardSearchInput } from '../menu/board-search.input';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { IconButton } from '@mui/material';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinBoardStore } from '../store/pin-board.store';
 import { PinElement } from './pin.element';
+import { PinRangeResponse } from '../../../common/model/pin.model';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const PinBoard: FunctionComponent = () => {
-  const [pinData, setPinData] = useState<PinObject[]>(PinBoardStore.pins);
+  const [pinData, setPinData] = useState<ObjDto<ObjPagePinDto>[]>(PinBoardStore.pins);
 
   const stackRef = useRef<HTMLDivElement>();
 

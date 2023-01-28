@@ -16,8 +16,8 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
+import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { LogManager } from '../common/popup/log.manager';
-import { PinPopupInitData } from '../common/model/pin.model';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
 import { fnConsoleLog } from '../common/fn/console.fn';
@@ -42,7 +42,7 @@ export class OptionsMessageHandler {
 
   private static handlePopupOpen = async (): Promise<void> => {
     const url = contentPinNewUrl();
-    const data: PinPopupInitData = { url, isAddingNote: false, pageTitle: document.title };
+    const data: ExtensionPopupInitData = { url, isAddingNote: false, pageTitle: document.title };
     LogManager.log(`handlePopupOpen->${JSON.stringify(data)}`);
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });
   };

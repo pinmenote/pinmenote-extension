@@ -16,6 +16,7 @@
  */
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { DocumentMediator } from '../mediator/document.mediator';
+import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from './pin.factory';
 
@@ -56,8 +57,9 @@ export class PinAddFactory {
     const element = this.currentElement;
     DocumentMediator.stopListeners();
     if (element) {
-      const dto = await PinFactory.contentPinNew(element);
-      new PinComponentAddCommand(element, dto, true).execute();
+      const pagePin = await PinFactory.objPagePinNew(element);
+      const obj = await new PinAddCommand(pagePin).execute();
+      new PinComponentAddCommand(element, obj, true).execute();
     }
   };
 }

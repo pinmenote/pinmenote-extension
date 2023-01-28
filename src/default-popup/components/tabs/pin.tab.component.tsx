@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinPopupInitData } from '../../../common/model/pin.model';
+import { ObjDto, ObjUrlDto } from '../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjUrlDto } from '../../../common/model/obj.model';
+import { ExtensionPopupInitData } from '../../../common/model/obj-request.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
@@ -29,11 +30,11 @@ import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatch
 
 export const PinTabComponent: FunctionComponent = () => {
   const [isError, setIsError] = useState<boolean>(ActiveTabStore.showErrorText);
-  const [originPins, setOriginPins] = useState<PinObject[]>(ActiveTabStore.originPins);
-  const [hrefPins, setHrefPins] = useState<PinObject[]>(ActiveTabStore.hrefPins);
+  const [originPins, setOriginPins] = useState<ObjDto<ObjPagePinDto>[]>(ActiveTabStore.originPins);
+  const [hrefPins, setHrefPins] = useState<ObjDto<ObjPagePinDto>[]>(ActiveTabStore.hrefPins);
 
   useEffect(() => {
-    const urlKey = TinyEventDispatcher.addListener<PinPopupInitData>(
+    const urlKey = TinyEventDispatcher.addListener<ExtensionPopupInitData>(
       BusMessageType.POPUP_INIT,
       async (event, key, value) => {
         setIsError(ActiveTabStore.showErrorText);

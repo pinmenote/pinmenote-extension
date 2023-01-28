@@ -15,8 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
-import { PinObject } from '../../../common/model/pin.model';
 import { TextBarComponent } from '../text-bar/text-bar.component';
 import { TextEditorComponent } from './text-editor.component';
 
@@ -26,7 +27,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
   readonly textBar: TextBarComponent;
   private textEditor: TextEditorComponent;
 
-  constructor(private object: PinObject, rect: ObjRectangleDto) {
+  constructor(private object: ObjDto<ObjPagePinDto>, rect: ObjRectangleDto) {
     this.textBar = new TextBarComponent();
     this.textEditor = new TextEditorComponent(object, rect, this);
   }

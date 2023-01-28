@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import { ApiSharePinCommand } from '../api/api-share-pin.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { PinObject } from '../../../common/model/pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
-import ShareUrlDto = Pinmenote.Share.ShareUrlDto;
 
 export class PopupPinShareCommand implements ICommand<void> {
-  constructor(private data: PinObject) {}
+  constructor(private data: ObjDto<ObjPagePinDto>) {}
   async execute(): Promise<void> {
     try {
       const data = await new ApiSharePinCommand(this.data).execute();
 
-      await BrowserApi.sendRuntimeMessage<ShareUrlDto>({
+      await BrowserApi.sendRuntimeMessage<ObjShareDto>({
         type: BusMessageType.POPUP_PIN_SHARE,
         data
       });

@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto } from '../../common/model/obj.model';
+import { ObjPagePinDto } from '../../common/model/obj-pin.model';
 import { PageComponent } from '../../common/model/html.model';
-import { PinObject } from '../../common/model/pin.model';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class PinStore {
   private static pinData: PageComponent[] = [];
 
-  public static getByUid(uid: string): PageComponent | undefined {
-    const index = this.pinData.findIndex((p) => p.object.uid === uid);
+  public static getByUid(id: number): PageComponent | undefined {
+    const index = this.pinData.findIndex((p) => p.object.id === id);
     if (index > -1) {
       return this.pinData[index];
     }
@@ -30,15 +31,15 @@ export class PinStore {
   }
 
   public static add(data: PageComponent): PageComponent {
-    if (this.pinData.findIndex((c) => c.object.uid === data.object.uid) === -1) {
+    if (this.pinData.findIndex((c) => c.object.id === data.object.id) === -1) {
       this.pinData.push(data);
     }
     return data;
   }
 
-  public static delByUid(uid: string): PageComponent | undefined {
-    fnConsoleLog('PinStore->delByUid', uid);
-    const index = this.pinData.findIndex((c) => c.object.uid === uid);
+  public static delByUid(id: number): PageComponent | undefined {
+    fnConsoleLog('PinStore->delByUid', id);
+    const index = this.pinData.findIndex((c) => c.object.id === id);
     if (index > -1) {
       const data = this.pinData.splice(index, 1)[0];
       // Cleanup component
@@ -59,9 +60,9 @@ export class PinStore {
     this.pinData.forEach(fn);
   }
 
-  public static focusPin(pin: PinObject): void {
-    const obj = this.getByUid(pin.uid);
-    if (!obj) return;
-    obj.focus(true);
+  public static focusPin(obj: ObjDto<ObjPagePinDto>): void {
+    const comp = this.getByUid(obj.id);
+    if (!comp) return;
+    comp.focus(true);
   }
 }

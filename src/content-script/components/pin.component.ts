@@ -20,10 +20,11 @@ import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj-draw.model';
+import { ObjDto } from '../../common/model/obj.model';
+import { ObjPagePinDto } from '../../common/model/obj-pin.model';
 import { ObjRectangleDto } from '../../common/model/obj-utils.model';
 import { PinEditBarComponent } from './pin-edit-bar/pin-edit-bar.component';
 import { PinMouseManager } from './pin-mouse.manager';
-import { PinObject } from '../../common/model/pin.model';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
@@ -60,16 +61,16 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   private refValue: HTMLElement;
 
-  readonly object: PinObject;
+  readonly object: ObjDto<ObjPagePinDto>;
 
   private takingScreenshot = false;
 
-  constructor(ref: HTMLElement, pin: PinObject) {
+  constructor(ref: HTMLElement, object: ObjDto<ObjPagePinDto>) {
     this.refValue = ref;
-    this.object = pin;
+    this.object = object;
     this.rect = PinPointFactory.calculateRect(this.refValue);
-    this.topBar = new TopBarComponent(this, this.object, this.rect);
-    this.text = new TextContainerComponent(this.object, this.rect);
+    this.topBar = new TopBarComponent(this, object, this.rect);
+    this.text = new TextContainerComponent(object, this.rect);
 
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
 
@@ -83,8 +84,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   setNewRef(ref: HTMLElement): void {
     this.mouseManager.stop();
-    this.refValue.style.border = this.object.border.style;
-    this.refValue.style.borderRadius = this.object.border.radius;
+    this.refValue.style.border = this.object.data.html[0].border.style;
+    this.refValue.style.borderRadius = this.object.data.html[0].border.radius;
     this.refValue.removeEventListener('mouseover', this.handleMouseOver);
     this.refValue.removeEventListener('mouseout', this.handleMouseOut);
     this.refValue = ref;
@@ -159,8 +160,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   }
 
   cleanup(): void {
-    this.refValue.style.border = this.object.border.style;
-    this.refValue.style.borderRadius = this.object.border.radius;
+    this.refValue.style.border = this.object.data.html[0].border.style;
+    this.refValue.style.borderRadius = this.object.data.html[0].border.radius;
 
     this.text.cleanup();
     this.topBar.cleanup();

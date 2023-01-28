@@ -14,7 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjUrlDto } from './obj.model';
+import { ObjPagePinDto } from './obj-pin.model';
+
 export interface ObjIdRangeResponse {
   ids: number[];
   listId: number;
+}
+
+export interface PinRangeRequest {
+  from: number;
+  listId: number;
+  limit: number;
+  search?: string;
+}
+
+export interface PinRangeResponse {
+  listId: number;
+  data: ObjDto<ObjPagePinDto>[];
+}
+
+export interface ExtensionPopupInitData {
+  url?: ObjUrlDto;
+  isAddingNote: boolean;
+  pageTitle: string;
 }

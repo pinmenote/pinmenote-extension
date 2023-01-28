@@ -17,8 +17,8 @@
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { ActiveTabStore } from './store/active-tab.store';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
+import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { LogManager } from '../common/popup/log.manager';
-import { PinPopupInitData } from '../common/model/pin.model';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
@@ -40,7 +40,7 @@ export class PopupMessageHandler {
   }
 
   private static popupInitListener(): void {
-    TinyEventDispatcher.addListener<PinPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
+    TinyEventDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
       LogManager.log(`${event} ${JSON.stringify(value || {})}`);
       if (value.url) LogManager.log(`${event} ${value.url.href}`);
       if (value.url?.href.startsWith(BrowserApi.startUrl)) {

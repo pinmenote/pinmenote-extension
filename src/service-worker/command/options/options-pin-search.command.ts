@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinObject, PinRangeRequest } from '../../../common/model/pin.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { PinRangeRequest } from 'src/common/model/obj-request.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
@@ -28,22 +30,22 @@ export class OptionsPinSearchCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       const data = await this.getSearch(ObjectStoreKeys.OBJECT_ID, this.data);
-      await BrowserApi.sendRuntimeMessage<PinObject[]>({ type: BusMessageType.OPTIONS_PIN_SEARCH, data });
+      await BrowserApi.sendRuntimeMessage<ObjDto<ObjPagePinDto>[]>({ type: BusMessageType.OPTIONS_PIN_SEARCH, data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }
   }
 
-  private async getSearch(idKey: string, range: PinRangeRequest): Promise<PinObject[]> {
+  private async getSearch(idKey: string, range: PinRangeRequest): Promise<ObjDto<ObjPagePinDto>[]> {
     if (!range.search || range.search?.length < 2) return [];
-    const out: PinObject[] = [];
+    const out: ObjDto<ObjPagePinDto>[] = [];
     const ids = (await this.getIds()).reverse();
 
     for (let i = 0; i < ids.length; i++) {
       // Skip those that were sent
       if (range.from && ids[i] >= range.from) continue;
       const key = `${idKey}:${ids[i]}`;
-      const pin = await BrowserStorageWrapper.get<PinObject>(key);
+      const pin = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
       if (pin && this.search(range.search, pin)) {
         out.push(pin);
       }
@@ -54,17 +56,17 @@ export class OptionsPinSearchCommand implements ICommand<void> {
     return out;
   }
 
-  private search(searchValue: string, pin: PinObject): boolean {
-    if (pin.value.toLowerCase().indexOf(searchValue) > -1) return true;
-    if (pin.url.href.indexOf(searchValue) > -1) return true;
+  private search(searchValue: string, pin: ObjDto<ObjPagePinDto>): boolean {
+    if (pin.data.value.toLowerCase().indexOf(searchValue) > -1) return true;
+    if (pin.data.url.href.indexOf(searchValue) > -1) return true;
     if (pin.createdAt.indexOf(searchValue) > -1) return true;
-    if (pin.content.title.toLowerCase().indexOf(searchValue) > -1) return true;
-    if (pin.content.elementText && pin.content.elementText.toLowerCase().indexOf(searchValue) > -1) return true;
+    if (pin.data.title.toLowerCase().indexOf(searchValue) > -1) return true;
+    if (pin.data.html[0].text && pin.data.html[0].text.toLowerCase().indexOf(searchValue) > -1) return true;
     return false;
   }
 
   private async getIds(): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_ID_LIST);
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
     return value || [];
   }
 }

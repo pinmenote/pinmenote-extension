@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
+import { ObjDto } from '../../../../common/model/obj.model';
 import { PinComponent } from '../../pin.component';
-import { PinObject } from '../../../../common/model/pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -26,7 +26,7 @@ export class ActionPinEditButton implements HtmlComponent<HTMLElement> {
   private visible = false;
   private fillColor = '#000000';
 
-  constructor(private parent: PinComponent, private object: PinObject) {}
+  constructor(private parent: PinComponent, private object: ObjDto) {}
 
   render() {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" height="24" viewBox="0 0 24 24" width="24">
