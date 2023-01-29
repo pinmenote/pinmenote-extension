@@ -43,6 +43,9 @@ export class ActionCopyButton implements HtmlComponent<HTMLElement> {
     if (clipboardCopy.length > 0) {
       text = clipboardCopy[0].getAttribute('value') || '';
     }
+    if (!text && this.parent.ref.tagName === 'IMG') {
+      text = this.parent.ref.getAttribute('alt') || '';
+    }
     if (!text) {
       text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
     }
