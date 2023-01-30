@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjLinkDto } from '../../../common/model/obj.model';
 import { CreateLinkCommand } from '../link/create-link.command';
+import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjTypeDto } from '../../../common/model/obj.model';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
@@ -42,12 +44,12 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     for (const pin of pinList) {
       switch (pin.type) {
         case ObjTypeDto.PageElementPin:
-          if (new PinAddXpathCommand(pin).execute()) {
+          if (new PinAddXpathCommand(pin as ObjDto<ObjPagePinDto>).execute()) {
             PinPendingStore.remove(pin.id);
           }
           break;
         case ObjTypeDto.PageLink:
-          if (new CreateLinkCommand(pin).execute()) {
+          if (new CreateLinkCommand(pin as ObjDto<ObjLinkDto>).execute()) {
             PinPendingStore.remove(pin.id);
           }
           break;
