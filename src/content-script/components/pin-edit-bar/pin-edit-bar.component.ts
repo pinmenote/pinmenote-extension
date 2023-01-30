@@ -15,6 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { EditBarHtmlButton } from './edit-bar-buttons/edit-bar-html.button';
+import { EditBarParentButton } from './edit-bar-buttons/edit-bar-parent.button';
 import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
@@ -25,7 +27,9 @@ const editBarStyles = {
   height: '24px',
   position: 'absolute',
   'background-color': '#ffffff',
-  display: 'none'
+  display: 'none',
+  'flex-direction': 'row',
+  'justify-content': 'flex-end'
 };
 
 export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
@@ -33,13 +37,21 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
   private visible = false;
 
-  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {}
+  private parentButton: EditBarParentButton;
+  private htmlButton: EditBarHtmlButton;
+
+  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
+    this.parentButton = new EditBarParentButton(parent);
+    this.htmlButton = new EditBarHtmlButton(parent);
+  }
 
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.rect.width}px` }, editBarStyles);
     applyStylesToElement(this.el, style);
 
     this.adjustTop();
+
+    this.el.appendChild(this.parentButton.render());
 
     return this.el;
   }
@@ -49,7 +61,7 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
   }
 
   focusin(): void {
-    if (this.visible) this.el.style.display = 'inline-block';
+    if (this.visible) this.el.style.display = 'flex';
   }
 
   focusout(): void {

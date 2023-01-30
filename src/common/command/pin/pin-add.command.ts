@@ -15,7 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj.model';
+import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BusMessageType } from '../../model/bus.model';
 import { HashtagFindCommand } from '../obj/hashtag/hashtag-find.command';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
@@ -60,6 +62,9 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
     await BrowserStorageWrapper.set(key, dto);
 
     await LinkHrefOriginStore.addHrefOriginId(this.pin.url, id);
+
+    // Send stop - iframe loads own content scripts
+    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_PIN_STOP });
     return dto;
   }
 }

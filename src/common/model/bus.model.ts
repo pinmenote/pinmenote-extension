@@ -63,6 +63,7 @@ export enum BusMessageType {
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
+  CONTENT_PIN_STOP = 'content.pin.stop',
   CONTENT_REFRESH_TOKEN = 'content.refresh.token',
   CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
   CONTENT_THEME = 'content.theme',

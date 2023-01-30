@@ -48,6 +48,7 @@ class PinMeScript {
   constructor(private readonly id: string, private ms: number) {
     this.href = fnNormalizeHref(window.location.href);
     ContentMessageHandler.start();
+    fnConsoleLog('CONTENT-SCRIPT', this.href);
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
     TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});

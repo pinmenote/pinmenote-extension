@@ -17,6 +17,7 @@
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ActionCopyButton implements HtmlComponent<HTMLElement> {
@@ -37,7 +38,7 @@ export class ActionCopyButton implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  private handleClick = async () => {
+  private handleClick = () => {
     let text = '';
     const clipboardCopy = this.parent.ref.getElementsByTagName('clipboard-copy');
     if (clipboardCopy.length > 0) {
@@ -49,6 +50,16 @@ export class ActionCopyButton implements HtmlComponent<HTMLElement> {
     if (!text) {
       text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
     }
-    await navigator.clipboard.writeText(text);
+    // window.navigator.clipboard not working in iframe :/
+    // TODO
+    const copyFn = (event: ClipboardEvent) => {
+      fnConsoleLog('COPY FN', event.clipboardData, 'text :', text, 'ref', this.parent.ref);
+      event.preventDefault();
+      event.clipboardData?.setData('text/plain', text);
+    };
+    document.addEventListener('copy', copyFn);
+    document.execCommand('copy');
+    document.removeEventListener('copy', copyFn);
+    // await window.navigator.clipboard.writeText(text);
   };
 }

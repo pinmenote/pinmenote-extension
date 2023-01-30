@@ -28,11 +28,12 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { ExtensionPopupInitData } from '../../../common/model/obj-request.model';
 import { LogManager } from '../../../common/popup/log.manager';
 import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
+import { ObjDto } from '../../../common/model/obj.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 export const ObjectCreateComponent: FunctionComponent = () => {
   const [isAdding, setIsAdding] = useState<boolean>(ActiveTabStore.isAddingNote);
-  const [bookmarkData, setBookmarkData] = useState<ObjBookmarkDto | undefined>(undefined);
+  const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(undefined);
 
   useEffect(() => {
     const addingKey = TinyEventDispatcher.addListener<ExtensionPopupInitData>(

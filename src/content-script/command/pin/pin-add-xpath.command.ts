@@ -19,6 +19,7 @@ import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinComponentAddCommand } from './pin-component-add.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
@@ -26,6 +27,7 @@ export class PinAddXpathCommand implements ICommand<boolean> {
   constructor(private data: ObjDto<ObjPagePinDto>) {}
   execute(): boolean {
     const pin = this.data.data;
+    fnConsoleLog('PinAddXpathCommand->xpath', pin.xpath);
     const value = XpathFactory.newXPathResult(pin.xpath);
     const node = value.singleNodeValue as HTMLElement;
     if (!this.data.local.visible || !node || isElementHiddenFn(node)) {

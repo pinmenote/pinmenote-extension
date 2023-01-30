@@ -14,25 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto, ObjUrlDto } from '../../model/obj.model';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
+import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
-import { ObjUrlDto } from '../../model/obj.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import ICommand = Pinmenote.Common.ICommand;
-import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 
-export class BookmarkAddCommand implements ICommand<Promise<BookmarkDto>> {
+export class BookmarkAddCommand implements ICommand<Promise<ObjDto<ObjBookmarkDto>>> {
   constructor(private value: string, private url: ObjUrlDto) {}
 
-  async execute(): Promise<BookmarkDto> {
+  async execute(): Promise<ObjDto<ObjBookmarkDto>> {
     const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.url.href}`;
     const id = await new ObjNextIdCommand().execute();
+    const dt = new Date().toISOString();
 
-    const data: BookmarkDto = {
+    const data: ObjDto<ObjBookmarkDto> = {
       id,
-      value: this.value,
-      url: this.url
+      type: ObjTypeDto.PageBookmark,
+      createdAt: dt,
+      updatedAt: dt,
+      data: {
+        value: this.value,
+        url: this.url
+      },
+      version: OBJ_DTO_VERSION,
+      local: {
+        visible: true
+      },
+      encryption: {
+        encrypted: false
+      },
+      hashtags: []
     };
     await BrowserStorageWrapper.set(key, data);
 

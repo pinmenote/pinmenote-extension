@@ -41,7 +41,7 @@ export class ContentMessageHandler {
     runtime: BrowserGlobalSender,
     sendResponse: (response: BusMessage<undefined>) => void
   ): Promise<void> => {
-    fnConsoleLog('content-script->msg', Date.now(), msg);
+    fnConsoleLog('content-script->msg', window.location.href, msg);
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });
@@ -49,6 +49,7 @@ export class ContentMessageHandler {
       case BusMessageType.POPUP_PIN_START:
         DocumentMediator.startListeners();
         break;
+      case BusMessageType.CONTENT_PIN_STOP:
       case BusMessageType.POPUP_PIN_STOP:
         DocumentMediator.stopListeners();
         break;

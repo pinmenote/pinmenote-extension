@@ -18,6 +18,7 @@ import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
+import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
@@ -64,6 +65,9 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_INVALIDATE:
       await new ContentInvalidateCommand().execute();
+      break;
+    case BusMessageType.CONTENT_PIN_STOP:
+      await new ContentPinStopCommand().execute();
       break;
     case BusMessageType.POPUP_PIN_SHARE:
       await new PopupPinShareCommand(msg.data).execute();
