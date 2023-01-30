@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
+import MathMLToLaTeX from 'mathml-to-latex';
 import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
@@ -38,6 +39,13 @@ export class ActionCopyButton implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
+  private findMathJaxParent = (ref: HTMLElement): HTMLElement => {
+    if (ref.parentElement && ref.parentElement.tagName.startsWith('MJX-')) {
+      return this.findMathJaxParent(ref.parentElement);
+    }
+    return ref;
+  };
+
   private handleClick = () => {
     let text = '';
     const clipboardCopy = this.parent.ref.getElementsByTagName('clipboard-copy');
@@ -47,11 +55,20 @@ export class ActionCopyButton implements HtmlComponent<HTMLElement> {
     if (!text && this.parent.ref.tagName === 'IMG') {
       text = this.parent.ref.getAttribute('alt') || '';
     }
+    // Support for math-jax copy as tex inside iframe
+    // Sample url https://github.com/mholtrop/QMPython/blob/master/Solving_the_Schrodinger_Equation_Numerically.ipynb
+    if (this.parent.ref.tagName.startsWith('MJX-')) {
+      // find mathjax and then find math tag inside it
+      const mathJaxContainer = this.findMathJaxParent(this.parent.ref);
+      const mathTag = mathJaxContainer.getElementsByTagName('math')[0];
+      if (mathTag?.parentElement) {
+        text = MathMLToLaTeX.convert(mathTag.parentElement.innerHTML);
+      }
+    }
     if (!text) {
       text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
     }
     // window.navigator.clipboard not working in iframe :/
-    // TODO
     const copyFn = (event: ClipboardEvent) => {
       fnConsoleLog('COPY FN', event.clipboardData, 'text :', text, 'ref', this.parent.ref);
       event.preventDefault();
