@@ -23,7 +23,7 @@ import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinBoardStore } from '../store/pin-board.store';
 import { PinElement } from './pin.element';
-import { PinRangeResponse } from '../../../common/model/pin.model';
+import { PinRangeResponse } from 'src/common/model/obj-request.model';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';

@@ -41,8 +41,10 @@ export class OptionsPinGetRangeCommand implements ICommand<void> {
     if (range.from === undefined || !range.limit) return { listId: range.listId || -1, data: [] };
     // Get ids - can optimise reverse by looking in reverse later
     if (!range.listId) range.listId = await this.getListId();
+
     const data = await new ObjRangeIdCommand(range.listId, range.from, range.limit, true).execute();
     const out = [];
+
     for (let i = 0; i < data.ids.length; i++) {
       const key = `${idKey}:${data.ids[i]}`;
       const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
