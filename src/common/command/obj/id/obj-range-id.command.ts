@@ -23,14 +23,12 @@ import { fnConsoleLog } from '../../../fn/console.fn';
 export class ObjRangeIdCommand implements ICommand<Promise<ObjIdRangeResponse>> {
   constructor(private listId: number, private from: number, private limit: number, private reverse = false) {}
   async execute(): Promise<ObjIdRangeResponse> {
-    const lastId = await this.getLastId();
-    if (this.from >= lastId) {
-      this.from = lastId - 1;
-    }
     const data = await this.findFromList(this.listId);
     if (this.reverse) {
       let ids = data.ids.reverse();
-      ids = ids.slice(data.ids.indexOf(this.from), this.limit);
+      let index = data.ids.indexOf(this.from);
+      if (index === -1) index = 0;
+      ids = ids.slice(index, this.limit);
       fnConsoleLog('ObjRangeIdCommand->execute', this.listId, this.from, this.limit, ids);
       return {
         ids,

@@ -50,7 +50,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
 
   const handleImageDownload = async (): Promise<void> => {
     let url: string, filename: string;
-    if (pin.local.boardView === ObjBoardViewDto.Screenshot) {
+    if (!pin.local.boardView || pin.local.boardView === ObjBoardViewDto.Screenshot) {
       if (!pin.data.html[0].screenshot) return;
       url = window.URL.createObjectURL(fnB64toBlob(pin.data.html[0].screenshot, 'image/jpeg'));
       filename = `${pin.id}.jpg`;
