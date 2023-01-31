@@ -177,20 +177,25 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private timeoutId = -1;
 
   private handleMouseOver = () => {
+    fnConsoleLog('PinComponent->mouseOver');
     window.clearTimeout(this.timeoutId);
     this.text.focusin();
     if (!this.takingScreenshot) this.topBar.focusin();
     this.drawBar.focusin();
     this.downloadBar.focusin();
+    this.editBar.focusin();
   };
 
   private handleMouseOut = () => {
     // TODO fix by creating borders top bottom left right around component
+    fnConsoleLog('PinComponent->mouseOut');
     this.timeoutId = window.setTimeout(() => {
+      fnConsoleLog('PinComponent->hideBars');
       this.text.focusout();
       this.topBar.focusout();
       this.drawBar.focusout();
       this.downloadBar.focusout();
+      this.editBar.focusout();
     }, 1000);
   };
 

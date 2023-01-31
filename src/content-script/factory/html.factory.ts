@@ -43,7 +43,7 @@ export class HtmlFactory {
     }
     // fnConsoleLog('2:', htmlContent.cssStyles, parent);
     fnConsoleLog('START COMPUTE CSS !!!');
-    const css = CssFactory.computeCssContent(htmlContent.cssStyles);
+    const css = await CssFactory.computeCssContent(htmlContent.cssStyles);
     fnConsoleLog('STOP COMPUTE CSS !!!');
     const rect = XpathFactory.computeRect(ref);
     const screenshot = await ScreenshotFactory.takeScreenshot(rect);

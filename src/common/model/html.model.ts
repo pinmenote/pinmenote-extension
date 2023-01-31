@@ -17,12 +17,6 @@
 import { ObjDto, ObjLinkDto } from './obj.model';
 import { ObjPagePinDto } from './obj-pin.model';
 
-export enum ObjectTypeDto {
-  Pin = 1,
-  Link = 2,
-  Note
-}
-
 export interface HtmlIntermediateData {
   cssStyles: string[];
   html: string;
@@ -34,25 +28,10 @@ export interface HtmlParentStyles {
   html: string;
 }
 
-export interface CssData {
-  css: string;
-  href: string[];
-}
-
 export interface ContentVideoTime {
   currentTime: number;
   displayTime: number;
   xpath: string;
-}
-
-export interface HtmlContent {
-  theme?: string;
-  bodyStyle?: string;
-  title: string;
-  html: string;
-  videoTime: ContentVideoTime[];
-  css: CssData;
-  elementText: string;
 }
 
 export interface HtmlComponentFocusable {

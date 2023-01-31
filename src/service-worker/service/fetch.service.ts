@@ -57,7 +57,7 @@ export class FetchService {
     return await response.json();
   }
 
-  static async get<T>(url: string, headers: { [key: string]: string }): Promise<T> {
+  static async get<T>(url: string, headers: { [key: string]: string }, json = true): Promise<T> {
     const response = await fetch(url, {
       method: 'GET',
       headers
@@ -68,7 +68,7 @@ export class FetchService {
     if (!response.ok) {
       throw new ResponseError(`Error GET ${url}`, await response.json());
     }
-    return await response.json();
+    return json ? await response.json() : await response.text();
   }
 
   static async refreshToken(): Promise<void> {

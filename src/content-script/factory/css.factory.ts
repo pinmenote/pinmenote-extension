@@ -14,24 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssData } from '../../common/model/html.model';
+import { FetchCssRequest, FetchCssResponse } from '../../common/model/obj-request.model';
+import { PinCssDataDto, PinCssHref } from '../../common/model/obj-pin.model';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../common/model/bus.model';
+import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnGetKey } from '../../common/fn/kv.utils';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
 export class CssFactory {
-  static computeCssContent = (styles: string[]): CssData => {
+  static computeCssContent = async (styles: string[]): Promise<PinCssDataDto> => {
     let css = '';
-    const href: string[] = [];
+    const href: PinCssHref[] = [];
     const unique = new Set(styles);
     const styleSheets = Array.from(document.styleSheets);
-    styleSheets.forEach((s) => {
+    for (let i = 0; i < styleSheets.length; i++) {
+      const s = styleSheets[i];
       if (s.href) {
-        href.push(s.href);
+        const cssFetchData = await this.fetchCss(s.href);
+        href.push({
+          href: s.href,
+          data: cssFetchData
+        });
       } else {
         css += this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], unique);
       }
-    });
+    }
     return {
       href,
       css
@@ -76,4 +86,29 @@ export class CssFactory {
     });
     return output;
   };
+
+  private static fetchCss(url: string): Promise<string> {
+    fnConsoleLog('CssFactory->fetchCss', url);
+    return new Promise<string>((resolve, reject) => {
+      TinyEventDispatcher.addListener<FetchCssResponse>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
+        if (value.url === url) {
+          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
+          fnConsoleLog(`GOT IT ${value.url} ${value.data}`);
+          resolve(value.data);
+        }
+      });
+      BrowserApi.sendRuntimeMessage<FetchCssRequest>({
+        type: BusMessageType.CONTENT_FETCH_CSS,
+        data: {
+          url
+        }
+      })
+        .then(() => {
+          /* SKIP */
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  }
 }

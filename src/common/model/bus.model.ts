@@ -68,6 +68,7 @@ export enum BusMessageType {
   CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
   CONTENT_THEME = 'content.theme',
   CONTENT_INVALIDATE = 'content.invalidate',
+  CONTENT_FETCH_CSS = 'content.fetch.css',
   // Options
   OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',

@@ -34,6 +34,15 @@ export interface PinRangeResponse {
   data: ObjDto<ObjPagePinDto>[];
 }
 
+export interface FetchCssRequest {
+  url: string;
+}
+
+export interface FetchCssResponse {
+  url: string;
+  data: string;
+}
+
 export interface ExtensionPopupInitData {
   url?: ObjUrlDto;
   isAddingNote: boolean;

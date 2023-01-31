@@ -25,7 +25,9 @@ export const pinIframeFn = (content: PinHtmlDataDto, container?: HTMLElement): s
 
   const html = `<html>
         <head>
-            ${href.map((h) => `<link rel="stylesheet" href="${h}" />`).join('')}
+            ${href
+              .map((h) => (h.data ? `<style>${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`))
+              .join('')}
             <style>${css}</style>
             <body style="${content.parentStyle || ''}${containerBodyStyle}">${content.html}</body>
         </head>

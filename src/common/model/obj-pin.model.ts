@@ -46,7 +46,12 @@ export interface PinHtmlDataDto {
 
 export interface PinCssDataDto {
   css: string;
-  href: string[];
+  href: PinCssHref[];
+}
+
+export interface PinCssHref {
+  href: string;
+  data?: string;
 }
 
 interface PinBorderDataDto {

@@ -64,7 +64,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       this.parent.object.data.html[0].text = this.parent.ref.parentElement.innerText;
 
       const htmlContent = HtmlFactory.computeHtmlIntermediateData(this.parent.ref.parentElement);
-      const css = CssFactory.computeCssContent(htmlContent.cssStyles);
+      const css = await CssFactory.computeCssContent(htmlContent.cssStyles);
 
       this.parent.object.data.html[0].html = htmlContent.html;
       this.parent.object.data.video = htmlContent.videoTime;
