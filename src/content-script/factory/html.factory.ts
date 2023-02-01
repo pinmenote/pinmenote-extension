@@ -85,7 +85,9 @@ export class HtmlFactory {
         html += `${attr.name}="${attr.value}" `;
       } else if (attr.name === 'href') {
         // HREF
-        if (attr.value.startsWith('/')) {
+        if (attr.value.startsWith('//')) {
+          html += `href="${window.location.protocol}${attr.value}" `;
+        } else if (attr.value.startsWith('/')) {
           html += `href="${window.location.origin}${attr.value}" `;
         } else if (!attr.value.startsWith('http')) {
           html += `src="${window.location.origin}/${attr.value}" `;
@@ -96,13 +98,18 @@ export class HtmlFactory {
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
       } else if (attr.name === 'src') {
-        if (attr.value.startsWith('/')) {
+        if (attr.value.startsWith('//')) {
+          html += `src="${window.location.protocol}${attr.value}" `;
+        } else if (attr.value.startsWith('/')) {
           html += `src="${window.location.origin}${attr.value}" `;
         } else if (!attr.value.startsWith('http')) {
           html += `src="${window.location.origin}/${attr.value}" `;
         } else {
           html += `src="${attr.value}" `;
         }
+      } else if (attr.name === 'srcset') {
+        // skip for now
+        // TODO fix urls like with src
       } else {
         html += `${attr.name}="${attr.value}" `;
       }
