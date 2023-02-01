@@ -17,7 +17,7 @@
 import { ApiStore } from '../store/api.store';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
+import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 
 export class ResponseError extends Error {
   constructor(message: string, readonly error: Pinmenote.Common.ServerErrorDto) {

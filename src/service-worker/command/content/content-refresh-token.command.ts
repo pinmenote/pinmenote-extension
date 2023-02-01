@@ -18,7 +18,7 @@ import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchService } from '../../service/fetch.service';
-import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
+import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentRefreshTokenCommand implements ICommand<void> {

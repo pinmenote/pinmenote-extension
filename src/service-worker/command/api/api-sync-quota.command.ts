@@ -18,7 +18,7 @@ import { ApiStore } from '../../store/api.store';
 import { FetchService } from '../../service/fetch.service';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
+import DiskQuotaDto = Pinmenote.Account.DiskQuotaDto;
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ApiSyncQuotaCommand implements ICommand<Promise<DiskQuotaDto>> {

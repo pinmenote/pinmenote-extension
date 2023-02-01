@@ -20,7 +20,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { RegisterFormData } from '../../../common/model/auth.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
-import TokenUserDto = Pinmenote.Auth.TokenUserDto;
+import TokenUserDto = Pinmenote.Account.TokenUserDto;
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 
 export class PopupRegisterCommand implements ICommand<void> {

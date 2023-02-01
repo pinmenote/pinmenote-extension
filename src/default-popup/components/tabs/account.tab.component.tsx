@@ -21,7 +21,7 @@ import { LogManager } from '../../../common/popup/log.manager';
 import { LoginComponent } from '../account/login.component';
 import { RegisterComponent } from '../account/register.component';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
+import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 
 enum LoginEnum {
   LOGIN = 1,

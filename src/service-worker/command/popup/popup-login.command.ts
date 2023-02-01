@@ -20,8 +20,8 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
-import LoginDto = Pinmenote.Auth.LoginDto;
-import TokenUserDto = Pinmenote.Auth.TokenUserDto;
+import LoginDto = Pinmenote.Account.LoginDto;
+import TokenUserDto = Pinmenote.Account.TokenUserDto;
 
 export class PopupLoginCommand implements ICommand<void> {
   constructor(private data: LoginDto) {}

@@ -25,8 +25,8 @@ import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
-import TokenUserDto = Pinmenote.Auth.TokenUserDto;
-import LoginDto = Pinmenote.Auth.LoginDto;
+import TokenUserDto = Pinmenote.Account.TokenUserDto;
+import LoginDto = Pinmenote.Account.LoginDto;
 
 export const LoginComponent: FunctionComponent = () => {
   const [email, setEmail] = useState<string>('');

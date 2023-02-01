@@ -18,7 +18,7 @@ import { ApiSyncQuotaCommand } from '../api/api-sync-quota.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
+import DiskQuotaDto = Pinmenote.Account.DiskQuotaDto;
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PopupSyncQuotaCommand implements ICommand<void> {

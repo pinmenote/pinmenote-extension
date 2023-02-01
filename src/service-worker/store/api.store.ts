@@ -18,8 +18,8 @@ import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrap
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import jwtDecode from 'jwt-decode';
-import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
-import TokenDataDto = Pinmenote.Auth.TokenDataDto;
+import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
+import TokenDataDto = Pinmenote.Account.TokenDataDto;
 
 export class ApiStore {
   static readonly KEY_NOTE_UPDATE = 'noteSyncUpdate';

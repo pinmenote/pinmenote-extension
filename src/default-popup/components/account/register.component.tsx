@@ -27,7 +27,7 @@ import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
-import TokenUserDto = Pinmenote.Auth.TokenUserDto;
+import TokenUserDto = Pinmenote.Account.TokenUserDto;
 import { environmentConfig } from '../../../common/environment';
 
 const inputBorder = {

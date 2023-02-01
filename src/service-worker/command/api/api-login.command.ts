@@ -19,10 +19,10 @@ import { CryptoSignCommand } from '../crypto/crypto-sign.command';
 import { FetchService } from '../../service/fetch.service';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
+import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
-import LoginDto = Pinmenote.Auth.LoginDto;
-import TokenUserDto = Pinmenote.Auth.TokenUserDto;
+import LoginDto = Pinmenote.Account.LoginDto;
+import TokenUserDto = Pinmenote.Account.TokenUserDto;
 
 export class ApiLoginCommand implements ICommand<Promise<TokenUserDto>> {
   constructor(private data: LoginDto) {}

@@ -20,10 +20,10 @@ import { FetchService } from '../../service/fetch.service';
 import { RegisterFormData } from '../../../common/model/auth.model';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import AccessTokenDto = Pinmenote.Auth.AccessTokenDto;
+import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 import ICommand = Pinmenote.Common.ICommand;
-import RegisterDto = Pinmenote.Auth.RegisterDto;
-import TokenUserDto = Pinmenote.Auth.TokenUserDto;
+import RegisterDto = Pinmenote.Account.RegisterDto;
+import TokenUserDto = Pinmenote.Account.TokenUserDto;
 
 export class ApiRegisterCommand implements ICommand<Promise<TokenUserDto>> {
   constructor(private formData: RegisterFormData) {}

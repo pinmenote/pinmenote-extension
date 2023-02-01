@@ -23,7 +23,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnByteToMb } from '../../../common/fn/diskspace.fn';
-import DiskQuotaDto = Pinmenote.Sync.DiskQuotaDto;
+import DiskQuotaDto = Pinmenote.Account.DiskQuotaDto;
 
 class QuotaStore {
   private static sent = false;
