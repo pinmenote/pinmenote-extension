@@ -33,7 +33,7 @@ export class ApiRegisterCommand implements ICommand<Promise<TokenUserDto>> {
     const data: RegisterDto = {
       email: this.formData.email,
       username: this.formData.username,
-      acceptedVersion: this.formData.acceptedVersion,
+      acceptedVersion: this.formData.termsVersion,
       publicKey: keyData.publicKey
     };
 

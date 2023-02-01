@@ -17,5 +17,5 @@
 export interface RegisterFormData {
   email: string;
   username: string;
-  acceptedVersion: string;
+  termsVersion: string;
 }

@@ -38,8 +38,6 @@ const inputBorder = {
   margin: 10
 };
 
-const TOS_VERSION = 'v1';
-
 function getWebsiteUrl(uri: string): string {
   return `${environmentConfig.websiteUrl}${uri}`;
 }
@@ -47,7 +45,7 @@ function getWebsiteUrl(uri: string): string {
 export const RegisterComponent: FunctionComponent = () => {
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [acceptedVersion, setAcceptedVersion] = useState<string | undefined>(undefined);
+  const [termsVersion, setTermsVersion] = useState<string | undefined>(undefined);
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
   const [registerSuccess, setRegisterSuccess] = useState<boolean>(false);
 
@@ -73,7 +71,7 @@ export const RegisterComponent: FunctionComponent = () => {
   };
 
   const handleRegisterClick = async () => {
-    if (!acceptedVersion) {
+    if (!termsVersion) {
       setResponseError({
         code: -1000,
         message: 'Accept Terms of use and Privacy Policy before creating account'
@@ -81,7 +79,7 @@ export const RegisterComponent: FunctionComponent = () => {
     } else {
       await BrowserApi.sendRuntimeMessage<RegisterFormData>({
         type: BusMessageType.POPUP_REGISTER,
-        data: { username, email, acceptedVersion }
+        data: { username, email, termsVersion }
       });
     }
   };
@@ -132,8 +130,8 @@ export const RegisterComponent: FunctionComponent = () => {
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Checkbox
-            checked={!!acceptedVersion}
-            onClick={() => setAcceptedVersion(acceptedVersion ? undefined : TOS_VERSION)}
+            checked={!!termsVersion}
+            onClick={() => setTermsVersion(termsVersion ? undefined : environmentConfig.tosVersion)}
             sx={{ color: acceptedColor }}
           ></Checkbox>
           <Typography style={{ fontSize: '9pt' }}>

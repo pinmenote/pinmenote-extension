@@ -35,6 +35,7 @@ interface EnvironmentConfig {
   isProduction: boolean;
   settings: SettingsConfig;
   objListLimit: number;
+  tosVersion: string;
 }
 
 export const environmentConfig: EnvironmentConfig = {
@@ -52,5 +53,6 @@ export const environmentConfig: EnvironmentConfig = {
     themeColor: '#ff0000',
     videoDisplayTime: 5
   },
+  tosVersion: process.env.TOS_VERSION || 'v1',
   objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
 };
