@@ -56,6 +56,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
 
   show(): void {
     this.el.style.display = 'inline-block';
+    this.textEditor.focus(true);
   }
 
   hide(): void {

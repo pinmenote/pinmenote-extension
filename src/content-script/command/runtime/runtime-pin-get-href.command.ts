@@ -18,12 +18,12 @@ import { PinAddXpathCommand } from '../pin/pin-add-xpath.command';
 import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
 import { PinNavigateCommand } from '../pin/pin-navigate.command';
 import { PinStore } from '../../store/pin.store';
-import { contentPinNewUrl } from '../../../common/fn/pin/content-pin-new-url';
+import { UrlFactory } from '../../../common/factory/url.factory';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const data = await new PinGetHrefCommand(contentPinNewUrl(), true).execute();
+    const data = await new PinGetHrefCommand(UrlFactory.newUrl(), true).execute();
     PinStore.clear();
     for (const pin of data) {
       new PinAddXpathCommand(pin).execute();

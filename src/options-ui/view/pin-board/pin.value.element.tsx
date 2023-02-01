@@ -23,6 +23,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { EditorView } from 'prosemirror-view';
 import HtmlIcon from '@mui/icons-material/Html';
 import { IconButton } from '@mui/material';
+import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
 import ImageIcon from '@mui/icons-material/Image';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinBoardStore } from '../store/pin-board.store';
@@ -32,7 +33,6 @@ import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatch
 import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnB64toBlob } from '../../../common/fn/b64.to.blob.fn';
-import { pinIframeFn } from '../../../common/fn/pin/pin.iframe.fn';
 
 interface PinValueProps {
   pin: ObjDto<ObjPagePinDto>;
@@ -55,7 +55,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
       url = window.URL.createObjectURL(fnB64toBlob(pin.data.html[0].screenshot, 'image/jpeg'));
       filename = `${pin.id}.jpg`;
     } else {
-      const html = pinIframeFn(pin.data.html[0]) || '';
+      const html = IframeHtmlFactory.computeHtml(pin.data.html[0]) || '';
       url = window.URL.createObjectURL(new Blob([html], { type: 'text/html' }));
       filename = `${pin.id}.html`;
     }

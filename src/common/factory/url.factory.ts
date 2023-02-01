@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,31 +14,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjUrlDto } from '../model/obj.model';
+
 interface QueryParam {
   key: string;
   value: string;
 }
 
-export const fnNormalizeHref = (value: string): string => {
-  const url = new URL(value);
-  if (url.search) {
-    const query = url.search.slice(1);
-    const result: QueryParam[] = [];
-    query.split('&').forEach(function (part) {
-      const item = part.split('=');
-      result.push({
-        key: item[0],
-        value: decodeURIComponent(item[1])
+export class UrlFactory {
+  static newUrl(): ObjUrlDto {
+    return {
+      href: this.normalizeHref(window.location.href),
+      origin: this.normalizeOrigin(window.location.origin),
+      pathname: window.location.pathname,
+      search: window.location.search
+    };
+  }
+
+  static normalizeOrigin = (value: string): string => {
+    if (value.startsWith('https')) {
+      value = value.substring(8);
+    } else if (value.startsWith('http')) {
+      value = value.substring(7);
+    }
+    if (value.startsWith('www')) {
+      value = value.substring(4);
+    }
+    return value;
+  };
+
+  static normalizeHref = (value: string): string => {
+    const url = new URL(value);
+    if (url.search) {
+      const query = url.search.slice(1);
+      const result: QueryParam[] = [];
+      query.split('&').forEach(function (part) {
+        const item = part.split('=');
+        result.push({
+          key: item[0],
+          value: decodeURIComponent(item[1])
+        });
       });
-    });
-    const search = trimParams(url.host, result);
-    if (search) {
-      return `${url.origin}${url.pathname}?${search}`;
+      const search = trimParams(url.host, result);
+      if (search) {
+        return `${url.origin}${url.pathname}?${search}`;
+      }
+      return `${url.origin}${url.pathname}`;
     }
     return `${url.origin}${url.pathname}`;
-  }
-  return `${url.origin}${url.pathname}`;
-};
+  };
+}
 
 const trimParams = (host: string, queryParams: QueryParam[]): string => {
   let out = '';
@@ -62,16 +87,4 @@ const trimParams = (host: string, queryParams: QueryParam[]): string => {
     }
   }
   return out.slice(1);
-};
-
-export const fnNormalizeOrigin = (value: string): string => {
-  if (value.startsWith('https')) {
-    value = value.substring(8);
-  } else if (value.startsWith('http')) {
-    value = value.substring(7);
-  }
-  if (value.startsWith('www')) {
-    value = value.substring(4);
-  }
-  return value;
 };

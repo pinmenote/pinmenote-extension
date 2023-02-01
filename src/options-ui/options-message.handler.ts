@@ -19,7 +19,7 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { LogManager } from '../common/popup/log.manager';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
+import { UrlFactory } from '../common/factory/url.factory';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class OptionsMessageHandler {
@@ -41,7 +41,7 @@ export class OptionsMessageHandler {
   };
 
   private static handlePopupOpen = async (): Promise<void> => {
-    const url = contentPinNewUrl();
+    const url = UrlFactory.newUrl();
     const data: ExtensionPopupInitData = { url, isAddingNote: false, pageTitle: document.title };
     LogManager.log(`handlePopupOpen->${JSON.stringify(data)}`);
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });

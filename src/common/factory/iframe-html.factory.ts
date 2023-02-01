@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinHtmlDataDto } from '../../model/obj-pin.model';
+import { PinHtmlDataDto } from '../model/obj-pin.model';
 
-export const pinIframeFn = (content: PinHtmlDataDto, container?: HTMLElement): string | undefined => {
-  const iframe = document.createElement('iframe');
-  iframe.style.border = 'none';
-  const { css, href } = content.css;
-  let containerBodyStyle = '';
-  if (container) containerBodyStyle = `;width: ${window.innerWidth}px`;
+export class IframeHtmlFactory {
+  static computeHtml(content: PinHtmlDataDto, container?: HTMLElement): string {
+    const iframe = document.createElement('iframe');
+    iframe.style.border = 'none';
+    const { css, href } = content.css;
+    let containerBodyStyle = '';
+    if (container) containerBodyStyle = `;width: ${window.innerWidth}px`;
 
-  const html = `<html>
+    const html = `<html>
         <head>
             ${href
               .map((h) => (h.data ? `<style>${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`))
@@ -32,18 +33,19 @@ export const pinIframeFn = (content: PinHtmlDataDto, container?: HTMLElement): s
             <body style="${content.parentStyle || ''}${containerBodyStyle}">${content.html}</body>
         </head>
     </html>`;
-  if (!container) return html;
+    if (!container) return html;
 
-  container.appendChild(iframe);
+    container.appendChild(iframe);
 
-  if (!iframe.contentWindow) return;
+    if (!iframe.contentWindow) return '';
 
-  const doc = iframe.contentWindow.document;
-  doc.write(html);
-  doc.close();
+    const doc = iframe.contentWindow.document;
+    doc.write(html);
+    doc.close();
 
-  iframe.width = `${window.innerWidth - 350}px`;
-  iframe.height = `${window.innerHeight - 350}px`;
+    iframe.width = `${window.innerWidth - 350}px`;
+    iframe.height = `${window.innerHeight - 350}px`;
 
-  return html;
-};
+    return html;
+  }
+}

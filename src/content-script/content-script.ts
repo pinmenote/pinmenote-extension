@@ -36,8 +36,8 @@ import { ObjectStoreKeys } from '../common/keys/object.store.keys';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { UrlFactory } from '../common/factory/url.factory';
 import { environmentConfig } from '../common/environment';
-import { fnNormalizeHref } from '../common/fn/normalize.url.fn';
 import { fnUid } from '../common/fn/uid.fn';
 
 class PinMeScript {
@@ -46,7 +46,7 @@ class PinMeScript {
   private timeoutId = 0;
 
   constructor(private readonly id: string, private ms: number) {
-    this.href = fnNormalizeHref(window.location.href);
+    this.href = UrlFactory.normalizeHref(window.location.href);
     ContentMessageHandler.start();
     fnConsoleLog('CONTENT-SCRIPT', this.href);
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
@@ -110,7 +110,7 @@ class PinMeScript {
 
   private invalidatePins = async (): Promise<void> => {
     await new InvalidatePinsCommand(this.href).execute();
-    this.href = fnNormalizeHref(window.location.href);
+    this.href = UrlFactory.normalizeHref(window.location.href);
     this.adaptIntervalMs();
     this.initTimeout();
   };

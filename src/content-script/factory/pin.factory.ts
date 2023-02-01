@@ -16,8 +16,8 @@
  */
 import { HtmlFactory } from './html.factory';
 import { ObjPagePinDto } from '../../common/model/obj-pin.model';
+import { UrlFactory } from '../../common/factory/url.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
-import { contentPinNewUrl } from '../../common/fn/pin/content-pin-new-url';
 
 export class PinFactory {
   static objPagePinNew = async (ref: HTMLElement): Promise<ObjPagePinDto> => {
@@ -28,7 +28,7 @@ export class PinFactory {
       title: document.title,
       xpath: XpathFactory.newXPathString(ref),
       value: '',
-      url: contentPinNewUrl(),
+      url: UrlFactory.newUrl(),
       html: [htmlData],
       video: [],
       draw: []

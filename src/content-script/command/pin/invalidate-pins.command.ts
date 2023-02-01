@@ -22,8 +22,8 @@ import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
 import { RuntimePinGetHrefCommand } from '../runtime/runtime-pin-get-href.command';
+import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnNormalizeHref } from '../../../common/fn/normalize.url.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class InvalidatePinsCommand implements ICommand<Promise<void>> {
@@ -31,7 +31,7 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     // TODO invalidate if pin element exists and show hide pins based on it
     // Sometimes location is changed  without popstate event ex. click on youtube video
-    const href = fnNormalizeHref(window.location.href);
+    const href = UrlFactory.normalizeHref(window.location.href);
     if (this.href !== href) {
       fnConsoleLog('PinManager->invalidatePins->CLEAR href changed');
       PinStore.clear();

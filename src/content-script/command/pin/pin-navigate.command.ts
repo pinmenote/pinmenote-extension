@@ -19,14 +19,14 @@ import { BrowserStorageWrapper } from '../../../common/service/browser.storage.w
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinStore } from '../../store/pin.store';
+import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnNormalizeHref } from '../../../common/fn/normalize.url.fn';
 import { resolveVideoTimeFn } from '../../fn/resolve-video-time.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class PinNavigateCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const url = fnNormalizeHref(window.location.href);
+    const url = UrlFactory.normalizeHref(window.location.href);
 
     const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto> | undefined>(ObjectStoreKeys.PIN_NAVIGATE);
     if (!obj) return;

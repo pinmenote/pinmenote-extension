@@ -61,16 +61,16 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
     if (this.parent.ref.parentElement) {
       this.parent.setNewRef(this.parent.ref.parentElement);
       await fnSleep(100);
-      this.parent.object.data.html[0].text = this.parent.ref.parentElement.innerText;
+      this.parent.object.data.html[0].text = this.parent.ref.innerText;
 
-      const htmlContent = HtmlFactory.computeHtmlIntermediateData(this.parent.ref.parentElement);
+      const htmlContent = HtmlFactory.computeHtmlIntermediateData(this.parent.ref);
       const css = await CssFactory.computeCssContent(htmlContent.cssStyles);
 
       this.parent.object.data.html[0].html = htmlContent.html;
       this.parent.object.data.video = htmlContent.videoTime;
       this.parent.object.data.html[0].css = css;
-      this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref.parentElement);
-      this.parent.object.data.html[0].rect = XpathFactory.computeRect(this.parent.ref.parentElement);
+      this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref);
+      this.parent.object.data.html[0].rect = XpathFactory.computeRect(this.parent.ref);
 
       return new Promise((resolve, reject) => {
         BrowserApi.sendRuntimeMessage<undefined>({
@@ -89,7 +89,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
 
           // After taking screenshot let's go back to note styles
           // pinData.container.style.display = 'inline-block';
-          if (this.parent.ref.parentElement) {
+          if (this.parent.ref) {
             this.parent.ref.style.border = ContentSettingsStore.borderStyle;
             this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
           }

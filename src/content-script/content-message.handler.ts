@@ -23,7 +23,7 @@ import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { contentPinNewUrl } from '../common/fn/pin/content-pin-new-url';
+import { UrlFactory } from '../common/factory/url.factory';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class ContentMessageHandler {
@@ -69,7 +69,7 @@ export class ContentMessageHandler {
   };
 
   private static handlePopupOpen = async (): Promise<void> => {
-    const url = contentPinNewUrl();
+    const url = UrlFactory.newUrl();
     const data: ExtensionPopupInitData = {
       url,
       pageTitle: document.title,
