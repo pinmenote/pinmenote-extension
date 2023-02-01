@@ -6,5 +6,5 @@ Browser extension
 
 ### Run
 ```bash
-npm run watch
+npm run dev
 ```
