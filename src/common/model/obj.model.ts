@@ -49,6 +49,7 @@ export interface ObjLinkDto {
 }
 
 export interface ObjIdentityDto {
+  id: number;
   user: string;
 }
 

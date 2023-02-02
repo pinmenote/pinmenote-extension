@@ -85,28 +85,12 @@ export class HtmlFactory {
         html += `${attr.name}="${attr.value}" `;
       } else if (attr.name === 'href') {
         // HREF
-        if (attr.value.startsWith('//')) {
-          html += `href="${window.location.protocol}${attr.value}" `;
-        } else if (attr.value.startsWith('/')) {
-          html += `href="${window.location.origin}${attr.value}" `;
-        } else if (!attr.value.startsWith('http')) {
-          html += `src="${window.location.origin}/${attr.value}" `;
-        } else {
-          html += `href="${attr.value}" `;
-        }
+        html += this.computeUrl('href', attr.value);
         html += `target="_blank" `;
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
       } else if (attr.name === 'src') {
-        if (attr.value.startsWith('//')) {
-          html += `src="${window.location.protocol}${attr.value}" `;
-        } else if (attr.value.startsWith('/')) {
-          html += `src="${window.location.origin}${attr.value}" `;
-        } else if (!attr.value.startsWith('http')) {
-          html += `src="${window.location.origin}/${attr.value}" `;
-        } else {
-          html += `src="${attr.value}" `;
-        }
+        html += this.computeUrl('src', attr.value);
       } else if (attr.name === 'srcset') {
         // skip for now
         // TODO fix urls like with src
@@ -141,6 +125,22 @@ export class HtmlFactory {
       videoTime
     };
   };
+
+  private static computeUrl(prefix: string, value: string): string {
+    if (value.startsWith('//')) {
+      return `${prefix}="${window.location.protocol}${value}" `;
+    } else if (value.startsWith('/')) {
+      return `${prefix}="${window.location.origin}${value}" `;
+    } else if (value.startsWith('./')) {
+      const a = window.location.pathname.split('/');
+      const subpath = a.slice(0, a.length - 1).join('/');
+      const subvalue = value.substring(1);
+      return `${prefix}="${window.location.origin}${subpath}${subvalue}" `;
+    } else if (!value.startsWith('http')) {
+      return `${prefix}="${window.location.origin}/${value}" `;
+    }
+    return `${prefix}="${value}" `;
+  }
 
   static computeHtmlParentStyles = (parent: Element | null): HtmlParentStyles => {
     const cssStyles: string[] = [];

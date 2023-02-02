@@ -18,6 +18,12 @@
     white-space: pre-wrap;
 }
 
+
+.ProseMirror p {
+    font-family: Roboto, serif;
+    font-size: 1em;
+}
+
 .ProseMirror:focus {
     outline: none;
 }
@@ -53,48 +59,60 @@
 
 .ProseMirror h1 {
     display: block;
-    font-size: 2em;
     margin: 0.67em 0;
+    font-size: 2em;
+    font-family: Roboto, serif;
     font-weight: bold;
     border: none;
+    color: #000000;
 }
 
 .ProseMirror h2 {
     display: block;
-    font-size: 1.5em;
     margin: 0.83em 0;
+    font-size: 1.5em;
+    font-family: Roboto, serif;
     font-weight: bold;
     border: none;
+    color: #000000;
 }
 
 .ProseMirror h3 {
     display: block;
-    font-size: 1.17em;
     margin: 1em 0;
+    font-size: 1.17em;
+    font-family: Roboto, serif;
     font-weight: bold;
     border: none;
+    color: #000000;
 }
 
 .ProseMirror h4 {
     display: block;
-    font-size: 1em;
     margin: 1.33em 0;
+    font-size: 1em;
+    font-family: Roboto, serif;
     font-weight: bold;
     border: none;
+    color: #000000;
 }
 
 .ProseMirror h5 {
     display: block;
-    font-size: .83em;
     margin: 1.67em 0;
+    font-size: .83em;
+    font-family: Roboto, serif;
     font-weight: bold;
     border: none;
+    color: #000000;
 }
 
 .ProseMirror h6 {
     display: block;
-    font-size: .67em;
     margin: 2.33em 0;
+    font-size: .67em;
+    font-family: Roboto, serif;
     font-weight: bold;
     border: none;
+    color: #000000;
 }
