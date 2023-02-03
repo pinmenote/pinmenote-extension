@@ -23,36 +23,20 @@ import { fnConsoleLog } from '../../../fn/console.fn';
 export class ObjRangeIdCommand implements ICommand<Promise<ObjIdRangeResponse>> {
   constructor(private listId: number, private from: number, private limit: number, private reverse = false) {}
   async execute(): Promise<ObjIdRangeResponse> {
-    const data = await this.findFromList(this.listId);
+    let listId = this.listId;
+    let ids = await this.getList(this.listId);
     if (this.reverse) {
-      let ids = data.ids.reverse();
-      let index = data.ids.indexOf(this.from);
-      if (index === -1) index = 0;
-      ids = ids.slice(index, this.limit);
-      fnConsoleLog('ObjRangeIdCommand->execute', this.listId, this.from, this.limit, ids);
-      return {
-        ids,
-        listId: data.listId
-      };
+      ids = ids.reverse();
     }
-    const ids = data.ids.slice(data.ids.indexOf(this.from), this.limit);
-    fnConsoleLog('ObjRangeIdCommand->execute', this.listId, this.from, this.limit, ids);
+    let index = ids.indexOf(this.from);
+    if (index === -1) index = 0;
+    ids = ids.slice(index, this.limit);
+    if (ids.length < this.limit && listId > 1) listId -= 1;
+    fnConsoleLog('ObjRangeIdCommand->execute', listId, this.from, this.limit, ids);
     return {
       ids,
-      listId: data.listId
+      listId
     };
-  }
-
-  private async findFromList(listId: number): Promise<ObjIdRangeResponse> {
-    const ids = await this.getList(listId);
-    if (!ids.includes(this.from) && listId > 1) {
-      return this.findFromList(listId - 1);
-    }
-    return { listId, ids };
-  }
-
-  private async getLastId(): Promise<number> {
-    return (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
   }
 
   private async getList(listId: number): Promise<number[]> {
