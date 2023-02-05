@@ -18,7 +18,6 @@ import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/htm
 import { PinComponent } from '../pin.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 const elStyle = {
   'flex-direction': 'column',
@@ -63,7 +62,6 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
 
   render(): HTMLElement {
     this.text.value = this.parent.object.data.htmlEdit || this.parent.ref.innerHTML;
-    this.text.addEventListener('input', this.handleTextInput);
     this.el.appendChild(this.text);
 
     this.saveButton.addEventListener('click', this.handleSaveClick);
@@ -82,14 +80,9 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
   }
 
   cleanup(): void {
-    this.text.removeEventListener('input', this.handleTextInput);
     this.saveButton.removeEventListener('click', this.handleSaveClick);
     this.cancelButton.removeEventListener('click', this.handleRollbackClick);
   }
-
-  private handleTextInput = () => {
-    fnConsoleLog('input !!!');
-  };
 
   private handleSaveClick = async () => {
     this.parent.object.data.htmlEdit = this.text.value;
