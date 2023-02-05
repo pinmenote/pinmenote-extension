@@ -36,7 +36,7 @@ const textStyle = {
 
 const btnStyle = {
   'background-color': '#000000',
-  border: 'none',
+  border: '1px solid #ffffff',
   color: '#ffffff',
   padding: '4px',
   'text-align': 'center',
