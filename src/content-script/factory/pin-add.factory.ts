@@ -46,7 +46,7 @@ export class PinAddFactory {
       this.currentElement.addEventListener('click', this.handleElementClick);
       this.borderStyle = this.currentElement.style.border;
       this.borderRadius = this.currentElement.style.borderRadius;
-      this.currentElement.style.border = ContentSettingsStore.borderStyle;
+      this.currentElement.style.border = ContentSettingsStore.newPinBorderStyle;
       this.currentElement.style.borderRadius = ContentSettingsStore.borderRadius;
     }
   }

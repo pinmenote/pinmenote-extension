@@ -15,8 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
-import { ObjDto } from '../../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../../common/model/obj-pin.model';
+import { PinComponent } from '../../pin.component';
 import { PinRemoveCommand } from '../../../../common/command/pin/pin-remove.command';
 import { PinStore } from '../../../store/pin.store';
 import { SettingsStore } from '../../../../options-ui/view/store/settings.store';
@@ -25,7 +24,7 @@ import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ActionRemoveButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
-  constructor(private obj: ObjDto<ObjPagePinDto>) {}
+  constructor(private parent: PinComponent) {}
 
   render(): HTMLElement {
     const fillColor = SettingsStore.settings?.themeColor || '#ff0000';
@@ -42,8 +41,9 @@ export class ActionRemoveButton implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = async () => {
+    this.parent.htmlEditComponent.rollback();
     this.el.removeEventListener('click', this.handleClick);
-    await new PinRemoveCommand(this.obj).execute();
-    PinStore.delByUid(this.obj.id);
+    await new PinRemoveCommand(this.parent.object).execute();
+    PinStore.delByUid(this.parent.object.id);
   };
 }

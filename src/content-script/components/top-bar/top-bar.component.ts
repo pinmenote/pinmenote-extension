@@ -84,7 +84,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
     this.editIcon = new ActionPinEditButton(parent, object);
-    this.removeIcon = new ActionRemoveButton(object);
+    this.removeIcon = new ActionRemoveButton(parent);
     this.copyIcon = new ActionCopyButton(parent);
     this.downloadIcon = new ActionDownloadButton(parent);
 

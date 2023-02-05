@@ -20,6 +20,7 @@ import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const elStyle = {
+  'margin-top': '48px',
   'flex-direction': 'column',
   display: 'none'
 };
@@ -29,13 +30,24 @@ const actionStyle = {
   display: 'flex'
 };
 
+const btnStyle = {
+  'background-color': '#000000',
+  border: 'none',
+  color: '#ffffff',
+  padding: '4px',
+  'text-align': 'center',
+  'text-decoration': 'none',
+  display: 'inline-block',
+  'font-size': '16px'
+};
+
 export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
   private text = document.createElement('textarea');
   private action = document.createElement('div');
   private saveButton = document.createElement('button');
-  private cancelButton = document.createElement('button');
+  private rollbackButton = document.createElement('button');
 
   public originalHtml: string;
 
@@ -66,11 +78,13 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
 
     this.saveButton.addEventListener('click', this.handleSaveClick);
     this.saveButton.innerText = 'Save';
+    applyStylesToElement(this.saveButton, btnStyle);
     this.action.appendChild(this.saveButton);
 
-    this.cancelButton.addEventListener('click', this.handleRollbackClick);
-    this.cancelButton.innerText = 'Rollback';
-    this.action.appendChild(this.cancelButton);
+    this.rollbackButton.addEventListener('click', this.handleRollbackClick);
+    this.rollbackButton.innerText = 'Rollback';
+    applyStylesToElement(this.rollbackButton, btnStyle);
+    this.action.appendChild(this.rollbackButton);
 
     this.el.appendChild(this.action);
     applyStylesToElement(this.action, actionStyle);
@@ -81,8 +95,12 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
 
   cleanup(): void {
     this.saveButton.removeEventListener('click', this.handleSaveClick);
-    this.cancelButton.removeEventListener('click', this.handleRollbackClick);
+    this.rollbackButton.removeEventListener('click', this.handleRollbackClick);
   }
+
+  rollback = (): void => {
+    this.parent.ref.innerHTML = this.originalHtml;
+  };
 
   private handleSaveClick = async () => {
     this.parent.object.data.htmlEdit = this.text.value;

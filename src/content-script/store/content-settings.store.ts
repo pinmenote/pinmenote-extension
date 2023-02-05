@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { SettingsConfig, environmentConfig } from '../../common/environment';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
-import { SettingsConfig } from '../../common/environment';
 import { SettingsKeys } from '../../common/keys/settings.keys';
 
 export class ContentSettingsStore {
@@ -23,6 +23,10 @@ export class ContentSettingsStore {
 
   static get borderStyle(): string {
     return this.settings.borderStyle;
+  }
+
+  static get newPinBorderStyle(): string {
+    return environmentConfig.settings.borderStyle;
   }
 
   static get borderRadius(): string {
