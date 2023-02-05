@@ -18,20 +18,33 @@ import { FetchCssRequest, FetchCssResponse } from '../../../common/model/obj-req
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchService } from '../../service/fetch.service';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}
   async execute(): Promise<void> {
-    const css = await FetchService.get<string>(this.req.url, {}, false);
-    fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
-    await BrowserApi.sendTabMessage<FetchCssResponse>({
-      type: BusMessageType.CONTENT_FETCH_CSS,
-      data: {
-        url: this.req.url,
-        data: css
-      }
-    });
+    try {
+      const css = await FetchService.get<string>(this.req.url, {}, false);
+      // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
+      await BrowserApi.sendTabMessage<FetchCssResponse>({
+        type: BusMessageType.CONTENT_FETCH_CSS,
+        data: {
+          url: this.req.url,
+          data: css,
+          error: true
+        }
+      });
+    } catch (e: unknown) {
+      fnConsoleLog('ERROR !!!', e);
+      await BrowserApi.sendTabMessage<FetchCssResponse>({
+        type: BusMessageType.CONTENT_FETCH_CSS,
+        data: {
+          url: this.req.url,
+          data: '',
+          error: true
+        }
+      });
+    }
   }
 }

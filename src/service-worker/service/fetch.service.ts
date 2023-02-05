@@ -20,12 +20,8 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 
 export class ResponseError extends Error {
-  constructor(message: string, readonly error: Pinmenote.Common.ServerErrorDto) {
+  constructor(message: string, readonly error: any) {
     super(message);
-  }
-
-  get code(): number | undefined {
-    return this.error.code;
   }
 }
 
@@ -58,15 +54,19 @@ export class FetchService {
   }
 
   static async get<T>(url: string, headers: { [key: string]: string }, json = true): Promise<T> {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 5000);
     const response = await fetch(url, {
       method: 'GET',
-      headers
+      headers,
+      signal: ctrl.signal
     });
     if (response.headers.get('x-refresh-token') === 'yes') {
       await this.refreshToken();
     }
     if (!response.ok) {
-      throw new ResponseError(`Error GET ${url}`, await response.json());
+      const errorData = json ? await response.json() : await response.text();
+      throw new ResponseError(`Error GET ${url}`, errorData);
     }
     return json ? await response.json() : await response.text();
   }

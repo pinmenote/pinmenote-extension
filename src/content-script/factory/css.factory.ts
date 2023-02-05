@@ -36,7 +36,7 @@ export class CssFactory {
         const cssFetchData = await this.fetchCss(s.href);
         href.push({
           href: s.href,
-          data: cssFetchData
+          data: cssFetchData.error ? undefined : cssFetchData.data
         });
       } else {
         css += this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], unique);
@@ -87,14 +87,14 @@ export class CssFactory {
     return output;
   };
 
-  private static fetchCss(url: string): Promise<string> {
+  private static fetchCss(url: string): Promise<FetchCssResponse> {
     fnConsoleLog('CssFactory->fetchCss', url);
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<FetchCssResponse>((resolve, reject) => {
       TinyEventDispatcher.addListener<FetchCssResponse>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
         if (value.url === url) {
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
           fnConsoleLog(`GOT IT ${value.url} ${value.data}`);
-          resolve(value.data);
+          resolve(value);
         }
       });
       BrowserApi.sendRuntimeMessage<FetchCssRequest>({

@@ -41,6 +41,7 @@ export interface FetchCssRequest {
 export interface FetchCssResponse {
   url: string;
   data: string;
+  error: boolean;
 }
 
 export interface ExtensionPopupInitData {

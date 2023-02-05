@@ -44,8 +44,8 @@ export class DrawAreaComponent {
   private drawRedoData: ObjDrawDataDto[] = [];
 
   constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
-    this.drawCanvas.width = rect.width;
-    this.drawCanvas.height = rect.height;
+    this.drawCanvas.width = Math.min(rect.width, window.innerWidth);
+    this.drawCanvas.height = Math.min(rect.height, window.innerHeight);
     this.drawCanvas.style.width = `${rect.width}px`;
     this.drawCanvas.style.height = `${rect.height}px`;
     applyStylesToElement(this.drawCanvas, canvasStyles);
@@ -54,8 +54,8 @@ no javascript enabled - drawing not working</h1>`;
     this.drawCtx = this.drawCanvas.getContext('2d');
     if (this.drawCtx) this.drawCtx.imageSmoothingEnabled = false;
 
-    this.rasterCanvas.width = rect.width;
-    this.rasterCanvas.height = rect.height;
+    this.rasterCanvas.width = Math.min(rect.width, window.innerWidth);
+    this.rasterCanvas.height = Math.min(rect.height, window.innerHeight);
     this.rasterCanvas.style.width = `${rect.width}px`;
     this.rasterCanvas.style.height = `${rect.height}px`;
     applyStylesToElement(this.rasterCanvas, canvasStyles);
