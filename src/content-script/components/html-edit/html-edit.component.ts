@@ -30,6 +30,10 @@ const actionStyle = {
   display: 'flex'
 };
 
+const textStyle = {
+  resize: 'auto'
+};
+
 const btnStyle = {
   'background-color': '#000000',
   border: 'none',
@@ -65,6 +69,7 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
   }
 
   focusin(): void {
+    this.text.value = this.parent.object.data.htmlEdit || this.parent.ref.innerHTML;
     this.el.style.display = 'flex';
   }
 
@@ -73,7 +78,7 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
   }
 
   render(): HTMLElement {
-    this.text.value = this.parent.object.data.htmlEdit || this.parent.ref.innerHTML;
+    applyStylesToElement(this.text, textStyle);
     this.el.appendChild(this.text);
 
     this.saveButton.addEventListener('click', this.handleSaveClick);

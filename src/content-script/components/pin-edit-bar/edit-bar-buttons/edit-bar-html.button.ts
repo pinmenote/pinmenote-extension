@@ -19,6 +19,7 @@ import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 
 const elStyles = {
+  'font-size': '16px',
   'margin-right': '10px',
   'user-select': 'none',
   cursor: 'pointer'
