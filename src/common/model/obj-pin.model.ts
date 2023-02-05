@@ -26,6 +26,7 @@ export interface ObjPagePinDto {
   draw: number[];
   value: string;
   title: string;
+  htmlEdit?: string;
 }
 
 export interface PinVideoDataDto {

@@ -41,19 +41,19 @@ export class ActionPinEditButton implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  turnoff(): void {
+  turnoff = (): void => {
     this.visible = false;
     this.fillColor = '#000000';
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
-  }
+  };
 
   private handleClick = () => {
     this.visible = !this.visible;
     if (this.visible) {
-      this.parent.startEdit();
+      this.parent.edit.startPinEdit();
       this.fillColor = '#ff0000';
     } else {
-      this.parent.stopEdit();
+      this.parent.edit.stopEdit();
       this.fillColor = '#000000';
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);

@@ -20,10 +20,12 @@ import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj-draw.model';
+import { HtmlEditComponent } from './html-edit/html-edit.component';
 import { ObjDto } from '../../common/model/obj.model';
 import { ObjPagePinDto } from '../../common/model/obj-pin.model';
 import { ObjRectangleDto } from '../../common/model/obj-utils.model';
 import { PinEditBarComponent } from './pin-edit-bar/pin-edit-bar.component';
+import { PinEditManager } from './pin-edit.manager';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextContainerComponent } from './text/text-container.component';
@@ -33,13 +35,6 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 
-enum VisibleBar {
-  None = 1,
-  DrawBar,
-  EditBar,
-  DownloadBar
-}
-
 export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly content = document.createElement('div');
   readonly top = document.createElement('div');
@@ -47,8 +42,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   private readonly mouseManager: PinMouseManager;
 
-  private readonly topBar: TopBarComponent;
-  private readonly text: TextContainerComponent;
+  readonly topBar: TopBarComponent;
+  readonly text: TextContainerComponent;
 
   readonly drawComponent: DrawContainerComponent;
   readonly drawBar: DrawBarComponent;
@@ -57,13 +52,15 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly editBar: PinEditBarComponent;
 
+  readonly htmlEditComponent: HtmlEditComponent;
+
+  readonly edit: PinEditManager;
+
   private rect: ObjRectangleDto;
 
   private refValue: HTMLElement;
 
   readonly object: ObjDto<ObjPagePinDto>;
-
-  private takingScreenshot = false;
 
   constructor(ref: HTMLElement, object: ObjDto<ObjPagePinDto>) {
     this.refValue = ref;
@@ -80,6 +77,10 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.downloadBar = new DownloadBarComponent(this, this.rect);
 
     this.editBar = new PinEditBarComponent(this, this.rect);
+
+    this.htmlEditComponent = new HtmlEditComponent(this);
+
+    this.edit = new PinEditManager(this);
   }
 
   setNewRef(ref: HTMLElement): void {
@@ -88,7 +89,9 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.refValue.style.borderRadius = this.object.data.html[0].border.radius;
     this.refValue.removeEventListener('mouseover', this.handleMouseOver);
     this.refValue.removeEventListener('mouseout', this.handleMouseOut);
+    this.refValue.innerHTML = this.htmlEditComponent.originalHtml;
     this.refValue = ref;
+    this.htmlEditComponent.setOriginalHtml(ref.innerHTML);
     this.mouseManager.start();
   }
 
@@ -130,8 +133,12 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     // Download
     this.top.appendChild(this.downloadBar.render());
 
-    // Edit
+    // Pin Edit
     this.top.appendChild(this.editBar.render());
+
+    // Html Edit
+    this.top.appendChild(this.htmlEditComponent.render());
+    this.edit.updateHtml();
 
     this.top.appendChild(this.topBar.render());
 
@@ -172,6 +179,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawComponent.cleanup();
     this.drawBar.cleanup();
     this.editBar.cleanup();
+
+    this.htmlEditComponent.cleanup();
   }
 
   private timeoutId = -1;
@@ -180,7 +189,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     fnConsoleLog('PinComponent->mouseOver');
     window.clearTimeout(this.timeoutId);
     this.text.focusin();
-    if (!this.takingScreenshot) this.topBar.focusin();
+    if (!this.edit.isScreenshot) this.topBar.focusin();
     this.drawBar.focusin();
     this.downloadBar.focusin();
     this.editBar.focusin();
@@ -199,108 +208,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     }, 1000);
   };
 
-  startDraw = () => {
-    this.changeVisibleBar(VisibleBar.DrawBar);
-  };
-
-  stopDraw = () => {
-    this.changeVisibleBar(VisibleBar.None);
-  };
-
-  startDownload = () => {
-    this.changeVisibleBar(VisibleBar.DownloadBar);
-  };
-
-  stopDownload = () => {
-    this.changeVisibleBar(VisibleBar.None);
-  };
-
-  startEdit = () => {
-    this.changeVisibleBar(VisibleBar.EditBar);
-  };
-
-  stopEdit = () => {
-    this.changeVisibleBar(VisibleBar.None);
-  };
-
-  showText = () => {
-    this.text.show();
-  };
-
-  hideText = () => {
-    this.text.hide();
-  };
-
   isHidden(): boolean {
     return isElementHiddenFn(this.refValue);
   }
-
-  private changeVisibleBar(bar: VisibleBar) {
-    fnConsoleLog('PinComponent->changeVisibleBar', bar);
-    switch (bar) {
-      case VisibleBar.None:
-        this.topBar.movedown();
-
-        this.downloadBar.hide();
-
-        this.editBar.hide();
-
-        this.drawBar.hide();
-        this.drawComponent.focusout();
-        break;
-      case VisibleBar.EditBar:
-        this.topBar.moveup();
-
-        // Draw cleanup
-        this.drawBar.hide();
-        this.topBar.drawTurnoff();
-
-        // Download cleanup
-        this.downloadBar.hide();
-        this.topBar.downloadTurnoff();
-
-        this.editBar.show();
-        break;
-      case VisibleBar.DrawBar:
-        this.topBar.moveup();
-
-        // Download cleanup
-        this.downloadBar.hide();
-        this.topBar.downloadTurnoff();
-
-        // Edit cleanup
-        this.editBar.hide();
-        this.topBar.editTurnOff();
-
-        this.drawComponent.focusin();
-
-        this.drawBar.show();
-        break;
-      case VisibleBar.DownloadBar:
-        this.topBar.moveup();
-
-        // Draw cleanup
-        this.drawBar.hide();
-        this.topBar.drawTurnoff();
-
-        // Edit cleanup
-        this.editBar.hide();
-        this.topBar.editTurnOff();
-
-        this.downloadBar.show();
-        break;
-    }
-  }
-
-  hideScreenshot = (): void => {
-    this.takingScreenshot = true;
-    this.topBar.focusout();
-    this.downloadBar.hide();
-  };
-
-  showScreenshot = (): void => {
-    this.takingScreenshot = false;
-    this.topBar.focusin();
-    this.downloadBar.show();
-  };
 }

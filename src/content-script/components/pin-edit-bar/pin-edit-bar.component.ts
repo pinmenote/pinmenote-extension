@@ -20,7 +20,6 @@ import { EditBarParentButton } from './edit-bar-buttons/edit-bar-parent.button';
 import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 const editBarStyles = {
   top: '-24px',
@@ -51,13 +50,16 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
     this.adjustTop();
 
+    this.el.appendChild(this.htmlButton.render());
+
     this.el.appendChild(this.parentButton.render());
 
     return this.el;
   }
 
   cleanup(): void {
-    fnConsoleLog('cleanup');
+    this.htmlButton.cleanup();
+    this.parentButton.cleanup();
   }
 
   focusin(): void {
@@ -76,6 +78,10 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
   hide(): void {
     this.visible = false;
     this.focusout();
+  }
+
+  htmlEditTurnOff(): void {
+    this.htmlButton.turnoff();
   }
 
   resize(rect: ObjRectangleDto): void {

@@ -53,13 +53,13 @@ export class DownloadImageButton {
     this.parent.ref.style.border = this.parent.object.data.html[0].border.style;
     this.parent.ref.style.borderRadius = this.parent.object.data.html[0].border.radius;
 
-    this.parent.hideScreenshot();
+    this.parent.edit.hideScreenshot();
 
     setTimeout(async () => {
       const screenshot = await ScreenshotFactory.takeScreenshot(this.parent.ref.getBoundingClientRect());
       await this.downloadScreenshot(screenshot);
 
-      this.parent.showScreenshot();
+      this.parent.edit.showScreenshot();
 
       this.parent.ref.style.border = ContentSettingsStore.borderStyle;
       this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;

@@ -16,17 +16,34 @@
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { PinComponent } from '../../pin.component';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { applyStylesToElement } from '../../../../common/style.utils';
+
+const elStyles = {
+  'margin-right': '10px',
+  'user-select': 'none',
+  cursor: 'pointer'
+};
 
 export class EditBarHtmlButton implements HtmlComponent<HTMLElement> {
   private readonly el = document.createElement('div');
+
+  private visible = false;
+  private fillColor = '#000000';
 
   constructor(private parent: PinComponent) {}
 
   render(): HTMLElement {
     this.el.addEventListener('click', this.handleClick);
     this.el.innerText = 'html';
+    this.el.style.color = this.fillColor;
+    applyStylesToElement(this.el, elStyles);
     return this.el;
+  }
+
+  turnoff(): void {
+    this.visible = false;
+    this.fillColor = '#000000';
+    this.el.style.color = this.fillColor;
   }
 
   cleanup(): void {
@@ -34,6 +51,14 @@ export class EditBarHtmlButton implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = () => {
-    fnConsoleLog('open inline html editor');
+    this.visible = !this.visible;
+    if (this.visible) {
+      this.parent.htmlEditComponent.focusin();
+      this.fillColor = '#ff0000';
+    } else {
+      this.parent.htmlEditComponent.focusout();
+      this.fillColor = '#000000';
+    }
+    this.el.style.color = this.fillColor;
   };
 }
