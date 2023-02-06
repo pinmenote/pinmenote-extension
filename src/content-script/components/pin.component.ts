@@ -130,6 +130,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.top.appendChild(this.drawBar.render());
     this.drawBar.setSize(4);
     this.drawBar.setTool(DrawToolDto.Pencil);
+    if (this.object.data.draw.length > 0) this.drawComponent.focusin();
 
     // Download
     this.top.appendChild(this.downloadBar.render());

@@ -51,7 +51,7 @@ export class DrawUndoButton implements HtmlComponent<HTMLElement> {
     (this.el.firstChild as SVGElement).setAttribute('fill', '#000000');
   }
 
-  private handleClick = () => {
-    this.drawBar.undo();
+  private handleClick = async () => {
+    await this.drawBar.undo();
   };
 }

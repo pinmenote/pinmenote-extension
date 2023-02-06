@@ -102,8 +102,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.toolValue = tool;
   }
 
-  undo(): void {
-    this.parent.drawComponent.drawArea.undo();
+  async undo(): Promise<void> {
+    await this.parent.drawComponent.drawArea.undo();
     if (this.parent.drawComponent.drawArea.canUndo()) {
       this.undoButton.select();
     } else {
@@ -114,8 +114,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     }
   }
 
-  redo(): void {
-    this.parent.drawComponent.drawArea.redo();
+  async redo(): Promise<void> {
+    await this.parent.drawComponent.drawArea.redo();
     if (this.parent.drawComponent.drawArea.canRedo()) {
       this.redoButton.select();
     } else {

@@ -21,6 +21,7 @@ import { FillDraw } from './tool/fill.draw';
 import { LineDraw } from './tool/line.draw';
 import { PencilDraw } from './tool/pencil.draw';
 import { PinComponent } from '../pin.component';
+import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const canvasStyles = {
@@ -44,23 +45,43 @@ export class DrawAreaComponent {
   private drawRedoData: ObjDrawDataDto[] = [];
 
   constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
-    this.drawCanvas.width = Math.min(rect.width, window.innerWidth);
-    this.drawCanvas.height = Math.min(rect.height, window.innerHeight);
-    this.drawCanvas.style.width = `${rect.width}px`;
-    this.drawCanvas.style.height = `${rect.height}px`;
+    this.drawCtx = this.drawCanvas.getContext('2d');
+    this.rasterCtx = this.rasterCanvas.getContext('2d');
+    if (parent.object.data.draw.length > 0) {
+      const draw = parent.object.data.draw[0];
+      this.drawData = draw.data;
+      this.initDrawCanvas(draw.size.width, draw.size.height);
+      this.initRasterCanvas(draw.size.width, draw.size.height);
+      for (let i = 0; i < this.drawData.length; i++) {
+        this.drawOne(this.drawData[i]);
+      }
+    } else {
+      const width = Math.min(rect.width, window.innerWidth);
+      const height = Math.min(rect.height, window.innerHeight);
+      this.initDrawCanvas(width, height);
+      this.initRasterCanvas(width, height);
+    }
+  }
+
+  private initRasterCanvas(width: number, height: number): void {
+    this.rasterCanvas.width = width;
+    this.rasterCanvas.height = height;
+    this.rasterCanvas.style.width = `${width}px`;
+    this.rasterCanvas.style.height = `${height}px`;
+    applyStylesToElement(this.rasterCanvas, canvasStyles);
+
+    if (this.rasterCtx) this.rasterCtx.imageSmoothingEnabled = false;
+  }
+
+  private initDrawCanvas(width: number, height: number): void {
+    this.drawCanvas.width = width;
+    this.drawCanvas.height = height;
+    this.drawCanvas.style.width = `${width}px`;
+    this.drawCanvas.style.height = `${height}px`;
     applyStylesToElement(this.drawCanvas, canvasStyles);
     this.drawCanvas.innerHTML = `<h1 style="background-color: #ffffff;color: #000000;font-size:4em;">
 no javascript enabled - drawing not working</h1>`;
-    this.drawCtx = this.drawCanvas.getContext('2d');
     if (this.drawCtx) this.drawCtx.imageSmoothingEnabled = false;
-
-    this.rasterCanvas.width = Math.min(rect.width, window.innerWidth);
-    this.rasterCanvas.height = Math.min(rect.height, window.innerHeight);
-    this.rasterCanvas.style.width = `${rect.width}px`;
-    this.rasterCanvas.style.height = `${rect.height}px`;
-    applyStylesToElement(this.rasterCanvas, canvasStyles);
-    this.rasterCtx = this.rasterCanvas.getContext('2d');
-    if (this.rasterCtx) this.rasterCtx.imageSmoothingEnabled = false;
   }
 
   canUndo(): boolean {
@@ -71,7 +92,7 @@ no javascript enabled - drawing not working</h1>`;
     return this.drawRedoData.length > 0;
   }
 
-  undo(): boolean {
+  async undo(): Promise<boolean> {
     if (!this.rasterCtx) return false;
     const data = this.drawData.pop();
     if (data) {
@@ -80,16 +101,18 @@ no javascript enabled - drawing not working</h1>`;
       for (let i = 0; i < this.drawData.length; i++) {
         this.drawOne(this.drawData[i]);
       }
+      await this.saveOrUpdateDraw();
       return true;
     }
     return false;
   }
 
-  redo(): boolean {
+  async redo(): Promise<boolean> {
     const data = this.drawRedoData.pop();
     if (data) {
       this.drawData.push(data);
       this.drawOne(data);
+      await this.saveOrUpdateDraw();
       return true;
     }
     return false;
@@ -123,16 +146,8 @@ no javascript enabled - drawing not working</h1>`;
   }
 
   resize(rect: ObjRectangleDto): void {
+    // TODO scale image based on size ?
     this.rect = rect;
-    this.drawCanvas.width = rect.width;
-    this.drawCanvas.height = rect.height;
-    this.drawCanvas.style.width = `${rect.width}px`;
-    this.drawCanvas.style.height = `${rect.height}px`;
-    this.drawCtx?.drawImage(this.rasterCanvas, 0, 0);
-    this.rasterCanvas.width = rect.width;
-    this.rasterCanvas.height = rect.height;
-    this.rasterCanvas.style.width = `${rect.width}px`;
-    this.rasterCanvas.style.height = `${rect.height}px`;
   }
 
   cleanup(): void {
@@ -142,7 +157,7 @@ no javascript enabled - drawing not working</h1>`;
     this.drawCanvas.removeEventListener('mousemove', this.handleMouseMove);
   }
 
-  private handleMouseUp = (e: MouseEvent) => {
+  private handleMouseUp = async (e: MouseEvent): Promise<void> => {
     if (!this.drawing) return;
     if (!this.drawCtx || !this.rasterCtx) return;
     this.drawing = false;
@@ -179,6 +194,7 @@ no javascript enabled - drawing not working</h1>`;
       color: this.color,
       points
     });
+    await this.saveOrUpdateDraw();
   };
 
   private handleMouseMove = (e: MouseEvent) => {
@@ -224,6 +240,22 @@ no javascript enabled - drawing not working</h1>`;
       case DrawToolDto.Erase:
         EraserDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.size, this.drawCtx);
         break;
+    }
+  };
+
+  private saveOrUpdateDraw = async () => {
+    if (this.parent.object.data.draw.length === 0) {
+      this.parent.object.data.draw.push({
+        data: this.drawData,
+        size: {
+          width: this.rasterCanvas.width,
+          height: this.rasterCanvas.height
+        }
+      });
+      await new PinUpdateCommand(this.parent.object).execute();
+    } else {
+      this.parent.object.data.draw[0].data = this.drawData;
+      await new PinUpdateCommand(this.parent.object).execute();
     }
   };
 }

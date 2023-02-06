@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDrawDto } from './obj-draw.model';
 import { ObjRectangleDto } from './obj-utils.model';
 import { ObjUrlDto } from './obj.model';
 
@@ -23,7 +24,7 @@ export interface ObjPagePinDto {
   url: ObjUrlDto;
   html: PinHtmlDataDto[];
   video: PinVideoDataDto[];
-  draw: number[];
+  draw: ObjDrawDto[];
   value: string;
   title: string;
   htmlEdit?: string;
