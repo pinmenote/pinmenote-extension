@@ -198,13 +198,13 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     if (ContentSettingsStore.borderStyle === 'none') {
       this.refValue.style.border = environmentConfig.settings.borderStyle;
     }
+    this.timeoutId = window.setTimeout(this.handleMouseOut, 3000);
   };
 
   private handleMouseOut = () => {
-    // TODO fix by creating borders top bottom left right around component
     fnConsoleLog('PinComponent->mouseOut');
+    window.clearTimeout(this.timeoutId);
     this.timeoutId = window.setTimeout(() => {
-      fnConsoleLog('PinComponent->hideBars');
       this.text.focusout();
       this.topBar.focusout();
       this.drawBar.focusout();
