@@ -14,8 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPointDto } from '../../common/model/obj-utils.model';
+import { ObjPointDto, ObjRectangleDto } from '../../common/model/obj-utils.model';
+import { CanvasPinAddCommand } from '../../common/command/canvas/canvas-pin-add.command';
+import { CanvasPinComponentAddCommand } from '../command/canvas/canvas-pin-component-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
+import { PinFactory } from '../factory/pin.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { pinStyles } from '../components/styles/pin.styles';
 
@@ -86,11 +89,11 @@ export class DocumentMediator {
     }
   };
 
-  private static handleOverlayClick = (e: MouseEvent): void => {
+  private static handleOverlayClick = async (e: MouseEvent): Promise<void> => {
     if (!this.pinStart) {
       this.pinStart = { x: e.offsetX, y: e.offsetY };
     } else {
-      this.resizePinDiv(e);
+      await this.addCanvasPin(e.offsetX, e.offsetY);
       this.stopListeners();
     }
   };
@@ -111,5 +114,23 @@ export class DocumentMediator {
     ctx.strokeStyle = '#ff0000';
     ctx.rect(this.pinStart.x, this.pinStart.y, width, height);
     ctx.stroke();
+  };
+
+  private static addCanvasPin = async (offsetX: number, offsetY: number): Promise<void> => {
+    if (!this.pinStart) return;
+
+    const width = offsetX - this.pinStart.x;
+    const height = offsetY - this.pinStart.y;
+    const rect: ObjRectangleDto = {
+      x: this.pinStart.x,
+      y: this.pinStart.y,
+      width,
+      height
+    };
+    const canvasPin = await PinFactory.objCanvasPinNew(rect);
+
+    const obj = await new CanvasPinAddCommand(canvasPin).execute();
+
+    new CanvasPinComponentAddCommand(obj, false).execute();
   };
 }

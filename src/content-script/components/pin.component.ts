@@ -37,7 +37,6 @@ import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 
 export class PinComponent implements HtmlComponent<void>, PageComponent {
-  readonly content = document.createElement('div');
   readonly top = document.createElement('div');
   readonly bottom = document.createElement('div');
 
@@ -61,11 +60,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   private refValue: HTMLElement;
 
-  readonly object: ObjDto<ObjPagePinDto>;
-
-  constructor(ref: HTMLElement, object: ObjDto<ObjPagePinDto>) {
+  constructor(ref: HTMLElement, readonly object: ObjDto<ObjPagePinDto>) {
     this.refValue = ref;
-    this.object = object;
     this.rect = PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this, object, this.rect);
     this.text = new TextContainerComponent(object, this.rect);

@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjCanvasPinDto, ObjPagePinDto } from '../../common/model/obj-pin.model';
 import { HtmlFactory } from './html.factory';
-import { ObjPagePinDto } from '../../common/model/obj-pin.model';
+import { ObjRectangleDto } from '../../common/model/obj-utils.model';
+import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { UrlFactory } from '../../common/factory/url.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 
@@ -31,6 +33,22 @@ export class PinFactory {
       url: UrlFactory.newUrl(),
       html: [htmlData],
       video: [],
+      draw: []
+    };
+  };
+
+  static objCanvasPinNew = async (rect: ObjRectangleDto): Promise<ObjCanvasPinDto> => {
+    const screenshot = await ScreenshotFactory.takeScreenshot(rect);
+    return {
+      windowSize: {
+        width: window.innerWidth,
+        height: window.innerHeight
+      },
+      rect,
+      screenshot,
+      title: document.title,
+      value: '',
+      url: UrlFactory.newUrl(),
       draw: []
     };
   };
