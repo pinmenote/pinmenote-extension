@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { HtmlPrettifyFactory } from '../../factory/html-prettify.factory';
 import { PinComponent } from '../pin.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
@@ -69,7 +70,7 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
   }
 
   focusin(): void {
-    this.text.value = this.parent.object.data.htmlEdit || this.parent.ref.innerHTML;
+    this.text.value = HtmlPrettifyFactory.prettify(this.parent.object.data.htmlEdit || this.parent.ref.innerHTML);
     this.el.style.display = 'flex';
   }
 

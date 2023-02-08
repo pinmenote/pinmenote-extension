@@ -57,6 +57,7 @@
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.3",
     "css": "^3.0.0",
+    "html-prettify": "^1.0.7",
     "jwt-decode": "^3.1.2",
     "marked": "^4.2.5",
     "mathml-to-latex": "^1.2.0",
