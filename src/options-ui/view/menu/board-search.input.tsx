@@ -15,42 +15,42 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { ChangeEvent, FunctionComponent, useState } from 'react';
+import { BoardStore } from '../store/board.store';
 import ClearIcon from '@mui/icons-material/Clear';
 import { IconButton } from '@mui/material';
 import Input from '@mui/material/Input';
-import { PinBoardStore } from '../store/pin-board.store';
 import SearchIcon from '@mui/icons-material/Search';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const BoardSearchInput: FunctionComponent = () => {
-  const [searchValue, setSearchValue] = useState<string>(PinBoardStore.getSearch() || '');
+  const [searchValue, setSearchValue] = useState<string>(BoardStore.getSearch() || '');
 
   const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     fnConsoleLog('handleSearchChange');
-    clearTimeout(PinBoardStore.timeout);
+    clearTimeout(BoardStore.timeout);
     setSearchValue(e.target.value);
 
-    await PinBoardStore.clearSearch();
+    await BoardStore.clearSearch();
 
     // setPinData([]);
     if (e.target.value.length <= 2) {
-      PinBoardStore.timeout = window.setTimeout(async () => {
-        await PinBoardStore.sendRange();
+      BoardStore.timeout = window.setTimeout(async () => {
+        await BoardStore.sendRange();
       }, 1000);
       return;
     } else {
-      PinBoardStore.setSearch(e.target.value);
+      BoardStore.setSearch(e.target.value);
     }
-    PinBoardStore.timeout = window.setTimeout(async () => {
-      await PinBoardStore.sendSearch();
+    BoardStore.timeout = window.setTimeout(async () => {
+      await BoardStore.sendSearch();
     }, 1000);
   };
 
   const handleClearSearch = async () => {
     fnConsoleLog('handleClearSearch');
     setSearchValue('');
-    await PinBoardStore.clearSearch();
-    await PinBoardStore.sendRange();
+    await BoardStore.clearSearch();
+    await BoardStore.sendRange();
   };
   return (
     <div style={{ width: '50%' }}>
@@ -62,7 +62,7 @@ export const BoardSearchInput: FunctionComponent = () => {
         value={searchValue}
         onChange={handleSearchChange}
         endAdornment={
-          PinBoardStore.getSearch() ? (
+          BoardStore.getSearch() ? (
             <IconButton onClick={handleClearSearch}>
               <ClearIcon />
             </IconButton>

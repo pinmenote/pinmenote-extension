@@ -19,13 +19,13 @@ import { BrowserStorageWrapper } from '../../../common/service/browser.storage.w
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { PinRangeRequest } from 'src/common/model/obj-request.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsPinSearchCommand implements ICommand<void> {
-  constructor(private data: PinRangeRequest) {}
+  constructor(private data: ObjRangeRequest) {}
 
   async execute(): Promise<void> {
     try {
@@ -36,7 +36,7 @@ export class OptionsPinSearchCommand implements ICommand<void> {
     }
   }
 
-  private async getSearch(idKey: string, range: PinRangeRequest): Promise<ObjDto<ObjPagePinDto>[]> {
+  private async getSearch(idKey: string, range: ObjRangeRequest): Promise<ObjDto<ObjPagePinDto>[]> {
     if (!range.search || range.search?.length < 2) return [];
     const out: ObjDto<ObjPagePinDto>[] = [];
     const ids = (await this.getIds()).reverse();

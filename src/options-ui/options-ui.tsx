@@ -18,17 +18,17 @@ import '../css/prosemirror.css';
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
+import { BoardComponent } from './view/board/board-component';
+import { BoardStore } from './view/store/board.store';
 import { LeftSideMenu } from './view/menu/left-side.menu';
 import { OptionsMessageHandler } from './options-message.handler';
-import { PinBoard } from './view/pin-board/pin.board';
-import { PinBoardStore } from './view/store/pin-board.store';
 import { SettingsComponent } from './view/settings/settings.component';
 import { createRoot } from 'react-dom/client';
 
 const initPinBoardStore = async () => {
   fnConsoleLog('initPinBoardStore');
-  await PinBoardStore.clearSearch();
-  await PinBoardStore.sendRange();
+  await BoardStore.clearSearch();
+  await BoardStore.sendRange();
 };
 
 const App: FunctionComponent = () => {
@@ -51,7 +51,7 @@ const App: FunctionComponent = () => {
     }
   };
 
-  const mainComponent = showSettings ? <SettingsComponent /> : <PinBoard />;
+  const mainComponent = showSettings ? <SettingsComponent /> : <BoardComponent />;
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <LeftSideMenu />

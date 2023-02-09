@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBoardViewDto, ObjDto } from '../../../common/model/obj.model';
+import { ObjBoardViewDto, ObjDto } from '../../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { BusMessageType } from '../../../../common/model/bus.model';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
+import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import Link from '@mui/material/Link';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { ObjPagePinDto } from '../../../../common/model/obj-pin.model';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { PinValueElement } from './pin.value.element';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnDateFormat } from '../../../common/fn/date.format.fn';
+import { fnDateFormat } from '../../../../common/fn/date.format.fn';
 
 interface PinElementParams {
   pin: ObjDto<ObjPagePinDto>;

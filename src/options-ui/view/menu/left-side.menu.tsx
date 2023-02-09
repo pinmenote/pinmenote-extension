@@ -16,11 +16,11 @@
  */
 import { Button, Divider } from '@mui/material';
 import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
+import { BoardStore } from '../store/board.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
 import { ObjHashtagStore } from '../../../common/store/obj-hashtag.store';
-import { PinBoardStore } from '../store/pin-board.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
@@ -55,12 +55,12 @@ interface MenuLinkItemProps {
 
 export const MenuLinkItem: FunctionComponent<MenuLinkItemProps> = ({ url }) => {
   const handleClick = async () => {
-    await PinBoardStore.clearSearch();
+    await BoardStore.clearSearch();
     if (url === MenuStore.ALL_URLS) {
-      await PinBoardStore.sendRange();
+      await BoardStore.sendRange();
     } else {
-      PinBoardStore.setSearch(url);
-      await PinBoardStore.sendSearch();
+      BoardStore.setSearch(url);
+      await BoardStore.sendSearch();
     }
   };
 

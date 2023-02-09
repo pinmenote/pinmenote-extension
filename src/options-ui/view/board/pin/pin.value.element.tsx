@@ -14,25 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBoardViewDto, ObjDto } from '../../../common/model/obj.model';
+import { ObjBoardViewDto, ObjDto } from '../../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { BoardStore } from '../../store/board.store';
+import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import { EditorView } from 'prosemirror-view';
 import HtmlIcon from '@mui/icons-material/Html';
 import { IconButton } from '@mui/material';
-import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
+import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import ImageIcon from '@mui/icons-material/Image';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
-import { PinBoardStore } from '../store/pin-board.store';
-import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
+import { ObjPagePinDto } from '../../../../common/model/obj-pin.model';
+import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import ShareIcon from '@mui/icons-material/Share';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
+import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
+import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
-import { fnB64toBlob } from '../../../common/fn/b64.to.blob.fn';
+import { fnB64toBlob } from '../../../../common/fn/b64.to.blob.fn';
 
 interface PinValueProps {
   pin: ObjDto<ObjPagePinDto>;
@@ -43,7 +43,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
     !pin.local.boardView || pin.local.boardView === ObjBoardViewDto.Screenshot
   );
   const handleRemove = async (): Promise<void> => {
-    if (await PinBoardStore.removePin(pin)) {
+    if (await BoardStore.removeObj(pin)) {
       TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_REFRESH_BOARD, undefined);
     }
   };

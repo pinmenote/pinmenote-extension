@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinRangeRequest, PinRangeResponse } from 'src/common/model/obj-request.model';
+import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
@@ -26,18 +26,18 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsPinGetRangeCommand implements ICommand<void> {
-  constructor(private data: PinRangeRequest) {}
+  constructor(private data: ObjRangeRequest) {}
 
   async execute(): Promise<void> {
     try {
       const data = await this.getRange(ObjectStoreKeys.OBJECT_ID, this.data);
-      await BrowserApi.sendRuntimeMessage<PinRangeResponse>({ type: BusMessageType.OPTIONS_PIN_GET_RANGE, data });
+      await BrowserApi.sendRuntimeMessage<ObjRangeResponse>({ type: BusMessageType.OPTIONS_PIN_GET_RANGE, data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }
   }
 
-  private async getRange(idKey: string, range: PinRangeRequest): Promise<PinRangeResponse> {
+  private async getRange(idKey: string, range: ObjRangeRequest): Promise<ObjRangeResponse> {
     if (range.from === undefined || !range.limit) return { listId: range.listId || -1, data: [] };
     // Get ids - can optimise reverse by looking in reverse later
     if (!range.listId) range.listId = await this.getListId();

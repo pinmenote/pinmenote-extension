@@ -14,24 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjUrlDto } from './obj.model';
-import { ObjPagePinDto } from './obj-pin.model';
+import { ObjDataDto, ObjDto, ObjUrlDto } from './obj.model';
 
 export interface ObjIdRangeResponse {
   ids: number[];
   listId: number;
 }
 
-export interface PinRangeRequest {
+export interface ObjRangeRequest {
   from: number;
   listId: number;
   limit: number;
   search?: string;
 }
 
-export interface PinRangeResponse {
+export interface ObjRangeResponse {
   listId: number;
-  data: ObjDto<ObjPagePinDto>[];
+  data: ObjDto<ObjDataDto>[];
 }
 
 export interface FetchCssRequest {

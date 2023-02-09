@@ -14,51 +14,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinRangeRequest, PinRangeResponse } from 'src/common/model/obj-request.model';
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
+import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class PinBoardStore {
-  static pinData: ObjDto<ObjPagePinDto>[] = [];
+export class BoardStore {
+  static objData: ObjDto<ObjDataDto>[] = [];
 
   private static loading = false;
   private static isLastValue = false;
-  private static readonly search: PinRangeRequest = {
+  private static readonly search: ObjRangeRequest = {
     from: -1,
     limit: 10,
     listId: -1
   };
 
-  static get pins(): ObjDto<ObjPagePinDto>[] {
-    return this.pinData;
+  static get objList(): ObjDto<ObjDataDto>[] {
+    return this.objData;
   }
 
-  static setData(value: PinRangeResponse): void {
+  static setData(value: ObjRangeResponse): void {
     const lastId = value.data[value.data.length - 1].id;
     if (this.search.from === lastId) {
       this.isLastValue = true;
       // Only one element so add it :/
-      if (this.pinData.length === 0) {
-        this.pinData.push(...value.data);
+      if (this.objData.length === 0) {
+        this.objData.push(...value.data);
       }
     } else {
       this.search.listId = value.listId;
       this.search.from = lastId;
-      this.pinData.push(...value.data);
+      this.objData.push(...value.data);
     }
   }
 
-  static removePin = async (value: ObjDto<ObjPagePinDto>): Promise<boolean> => {
-    for (let i = 0; i < this.pinData.length; i++) {
-      if (this.pinData[i].id == value.id) {
-        this.pinData.splice(i, 1);
-        await new PinRemoveCommand(value).execute();
+  static removeObj = async (value: ObjDto<ObjDataDto>): Promise<boolean> => {
+    for (let i = 0; i < this.objData.length; i++) {
+      if (this.objData[i].id == value.id) {
+        this.objData.splice(i, 1);
+        if (value.type === ObjTypeDto.PageElementPin) {
+          await new PinRemoveCommand(value as ObjDto<ObjPagePinDto>).execute();
+        }
         return true;
       }
     }
@@ -96,7 +98,7 @@ export class PinBoardStore {
 
   static async sendRange(): Promise<void> {
     fnConsoleLog('PinBoardStore->getRange', this.search);
-    await BrowserApi.sendRuntimeMessage<PinRangeRequest>({
+    await BrowserApi.sendRuntimeMessage<ObjRangeRequest>({
       type: BusMessageType.OPTIONS_PIN_GET_RANGE,
       data: this.search
     });
@@ -104,9 +106,9 @@ export class PinBoardStore {
 
   static async sendSearch(): Promise<void> {
     fnConsoleLog('PinBoardStore->getSearch', this.search);
-    await BrowserApi.sendRuntimeMessage<PinRangeRequest>({
+    await BrowserApi.sendRuntimeMessage<ObjRangeRequest>({
       type: BusMessageType.OPTIONS_PIN_SEARCH,
-      data: PinBoardStore.search
+      data: BoardStore.search
     });
   }
 }
