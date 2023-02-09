@@ -18,9 +18,11 @@ import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model'
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardSearchInput } from '../menu/board-search.input';
 import { BoardStore } from '../store/board.store';
+import { BookmarkElement } from './bookmark/bookmark.element';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { IconButton } from '@mui/material';
+import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { PinElement } from './pin/pin.element';
@@ -94,6 +96,8 @@ export const BoardComponent: FunctionComponent = () => {
     const obj = objData[i];
     if (obj.type === ObjTypeDto.PageElementPin) {
       boardElements.push(<PinElement pin={obj as ObjDto<ObjPagePinDto>} key={obj.id} />);
+    } else if (obj.type === ObjTypeDto.PageBookmark) {
+      boardElements.push(<BookmarkElement dto={obj as ObjDto<ObjBookmarkDto>} key={obj.id} />);
     } else {
       fnConsoleLog('NOT SUPPORTED !!!', obj);
       boardElements.push(

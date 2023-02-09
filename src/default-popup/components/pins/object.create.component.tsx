@@ -74,9 +74,12 @@ export const ObjectCreateComponent: FunctionComponent = () => {
   };
 
   const handleBookmarkAdd = async () => {
-    if (!ActiveTabStore.url) return;
-    const bookmark = await new BookmarkAddCommand(ActiveTabStore.pageTitle, ActiveTabStore.url).execute();
-    setBookmarkData(bookmark);
+    TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_TAKE_SCREENSHOT, async (event, key, value) => {
+      if (!ActiveTabStore.url) return;
+      const bookmark = await new BookmarkAddCommand(ActiveTabStore.pageTitle, ActiveTabStore.url, value).execute();
+      setBookmarkData(bookmark);
+    });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_TAKE_SCREENSHOT });
   };
 
   const handleBookmarkRemove = async () => {

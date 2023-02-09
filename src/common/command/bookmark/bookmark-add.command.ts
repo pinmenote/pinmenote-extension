@@ -23,7 +23,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class BookmarkAddCommand implements ICommand<Promise<ObjDto<ObjBookmarkDto>>> {
-  constructor(private value: string, private url: ObjUrlDto) {}
+  constructor(private value: string, private url: ObjUrlDto, private screenshot: string) {}
 
   async execute(): Promise<ObjDto<ObjBookmarkDto>> {
     const id = await new ObjNextIdCommand().execute();
@@ -36,7 +36,8 @@ export class BookmarkAddCommand implements ICommand<Promise<ObjDto<ObjBookmarkDt
       updatedAt: dt,
       data: {
         value: this.value,
-        url: this.url
+        url: this.url,
+        screenshot: this.screenshot
       },
       version: OBJ_DTO_VERSION,
       local: {

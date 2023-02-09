@@ -36,6 +36,7 @@ import { PopupPrivateKeyImportCommand } from './command/popup/popup-private-key-
 import { PopupRegisterCommand } from './command/popup/popup-register.command';
 import { PopupSyncPinsCommand } from './command/popup/popup-sync-pins.command';
 import { PopupSyncQuotaCommand } from './command/popup/popup-sync-quota.command';
+import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
@@ -99,6 +100,9 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_PRIVATE_KEY_IMPORT:
       await new PopupPrivateKeyImportCommand(msg.data).execute();
+      break;
+    case BusMessageType.POPUP_TAKE_SCREENSHOT:
+      await new PopupTakeScreenshotCommand().execute();
       break;
     case BusMessageType.OPTIONS_OBJ_GET_RANGE:
       await new OptionsObjGetRangeCommand(msg.data).execute();

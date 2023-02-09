@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,15 @@ import { BrowserStorageWrapper } from '../../../common/service/browser.storage.w
 import { BusMessageType } from '../../../common/model/bus.model';
 import { SettingsConfig } from '../../../common/environment';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class ContentTakeScreenshotCommand implements ICommand<void> {
+export class PopupTakeScreenshotCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    try {
-      const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
-      const data = await BrowserApi.tabs.captureVisibleTab({
-        format: settings.screenshotFormat,
-        quality: settings.screenshotQuality
-      });
-      await BrowserApi.sendTabMessage<string>({ type: BusMessageType.CONTENT_TAKE_SCREENSHOT, data });
-    } catch (e) {
-      fnConsoleLog('Error', e);
-    }
+    const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
+    const data = await BrowserApi.tabs.captureVisibleTab({
+      format: settings.screenshotFormat,
+      quality: settings.screenshotQuality
+    });
+    await BrowserApi.sendRuntimeMessage<string>({ type: BusMessageType.POPUP_TAKE_SCREENSHOT, data });
   }
 }

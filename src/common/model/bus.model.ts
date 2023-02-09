@@ -58,6 +58,7 @@ export enum BusMessageType {
   POPUP_SYNC_QUOTA = 'popup.sync.quota',
   POPUP_PRIVATE_KEY_GET = 'popup.private.key.get',
   POPUP_PRIVATE_KEY_IMPORT = 'popup.private.key.import',
+  POPUP_TAKE_SCREENSHOT = 'popup.take.screenshot',
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
