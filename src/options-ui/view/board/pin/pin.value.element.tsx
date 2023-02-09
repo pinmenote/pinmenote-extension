@@ -79,7 +79,7 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
 
   const handleShare = async (): Promise<void> => {
     await BrowserApi.sendRuntimeMessage<ObjDto<ObjPagePinDto>>({
-      type: BusMessageType.OPTIONS_PIN_SHARE,
+      type: BusMessageType.OPTIONS_OBJ_SHARE,
       data: pin
     });
   };

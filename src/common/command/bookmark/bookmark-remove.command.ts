@@ -25,8 +25,11 @@ export class BookmarkRemoveCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto<ObjBookmarkDto>) {}
 
   async execute(): Promise<void> {
-    const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.obj.data.url.href}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
     await BrowserStorageWrapper.remove(key);
+
+    const bookmarkKey = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.obj.data.url.href}`;
+    await BrowserStorageWrapper.remove(bookmarkKey);
 
     await this.removeBookmarkFromList(this.obj.id);
 

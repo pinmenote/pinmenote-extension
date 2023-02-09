@@ -26,11 +26,10 @@ export class BookmarkAddCommand implements ICommand<Promise<ObjDto<ObjBookmarkDt
   constructor(private value: string, private url: ObjUrlDto) {}
 
   async execute(): Promise<ObjDto<ObjBookmarkDto>> {
-    const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.url.href}`;
     const id = await new ObjNextIdCommand().execute();
     const dt = new Date().toISOString();
 
-    const data: ObjDto<ObjBookmarkDto> = {
+    const dto: ObjDto<ObjBookmarkDto> = {
       id,
       type: ObjTypeDto.PageBookmark,
       createdAt: dt,
@@ -48,12 +47,17 @@ export class BookmarkAddCommand implements ICommand<Promise<ObjDto<ObjBookmarkDt
       },
       hashtags: []
     };
-    await BrowserStorageWrapper.set(key, data);
+
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
+    await BrowserStorageWrapper.set(key, dto);
+
+    const bookmarkKey = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.url.href}`;
+    await BrowserStorageWrapper.set(bookmarkKey, id);
 
     await this.addBookmarkToList(id);
 
     await new ObjAddIdCommand(id).execute();
-    return data;
+    return dto;
   }
 
   private async addBookmarkToList(id: number): Promise<void> {

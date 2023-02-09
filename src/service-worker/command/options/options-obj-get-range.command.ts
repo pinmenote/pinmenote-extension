@@ -14,24 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDataDto, ObjDto } from '../../../common/model/obj.model';
 import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class OptionsPinGetRangeCommand implements ICommand<void> {
+export class OptionsObjGetRangeCommand implements ICommand<void> {
   constructor(private data: ObjRangeRequest) {}
 
   async execute(): Promise<void> {
     try {
       const data = await this.getRange(ObjectStoreKeys.OBJECT_ID, this.data);
-      await BrowserApi.sendRuntimeMessage<ObjRangeResponse>({ type: BusMessageType.OPTIONS_PIN_GET_RANGE, data });
+      await BrowserApi.sendRuntimeMessage<ObjRangeResponse>({ type: BusMessageType.OPTIONS_OBJ_GET_RANGE, data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }
@@ -47,7 +46,7 @@ export class OptionsPinGetRangeCommand implements ICommand<void> {
 
     for (let i = 0; i < data.ids.length; i++) {
       const key = `${idKey}:${data.ids[i]}`;
-      const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
+      const obj = await BrowserStorageWrapper.get<ObjDto<ObjDataDto>>(key);
       out.push(obj);
     }
     return {

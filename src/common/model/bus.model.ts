@@ -72,7 +72,7 @@ export enum BusMessageType {
   // Options
   OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',
-  OPTIONS_PIN_GET_RANGE = 'options.pin.get.range',
-  OPTIONS_PIN_SHARE = 'options.pin.share',
-  OPTIONS_PIN_SEARCH = 'options.pin.search'
+  OPTIONS_OBJ_GET_RANGE = 'options.obj.get.range',
+  OPTIONS_OBJ_SHARE = 'options.obj.share',
+  OPTIONS_OBJ_SEARCH = 'options.obj.search'
 }

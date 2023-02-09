@@ -14,40 +14,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class OptionsPinSearchCommand implements ICommand<void> {
+export class OptionsObjSearchCommand implements ICommand<void> {
   constructor(private data: ObjRangeRequest) {}
 
   async execute(): Promise<void> {
     try {
       const data = await this.getSearch(ObjectStoreKeys.OBJECT_ID, this.data);
-      await BrowserApi.sendRuntimeMessage<ObjDto<ObjPagePinDto>[]>({ type: BusMessageType.OPTIONS_PIN_SEARCH, data });
+      await BrowserApi.sendRuntimeMessage<ObjDto<ObjDataDto>[]>({ type: BusMessageType.OPTIONS_OBJ_SEARCH, data });
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }
   }
 
-  private async getSearch(idKey: string, range: ObjRangeRequest): Promise<ObjDto<ObjPagePinDto>[]> {
+  private async getSearch(idKey: string, range: ObjRangeRequest): Promise<ObjDto<ObjDataDto>[]> {
     if (!range.search || range.search?.length < 2) return [];
-    const out: ObjDto<ObjPagePinDto>[] = [];
+    const out: ObjDto<ObjDataDto>[] = [];
     const ids = (await this.getIds()).reverse();
 
     for (let i = 0; i < ids.length; i++) {
       // Skip those that were sent
       if (range.from && ids[i] >= range.from) continue;
       const key = `${idKey}:${ids[i]}`;
-      const pin = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
-      if (pin && this.search(range.search, pin)) {
-        out.push(pin);
+      const obj = await BrowserStorageWrapper.get<ObjDto<ObjDataDto>>(key);
+      if (obj && obj.type === ObjTypeDto.PageElementPin && this.search(range.search, obj as ObjDto<ObjPagePinDto>)) {
+        out.push(obj);
       }
       if (out.length > 5) {
         return out;

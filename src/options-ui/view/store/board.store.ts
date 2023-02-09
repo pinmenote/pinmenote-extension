@@ -99,7 +99,7 @@ export class BoardStore {
   static async sendRange(): Promise<void> {
     fnConsoleLog('PinBoardStore->getRange', this.search);
     await BrowserApi.sendRuntimeMessage<ObjRangeRequest>({
-      type: BusMessageType.OPTIONS_PIN_GET_RANGE,
+      type: BusMessageType.OPTIONS_OBJ_GET_RANGE,
       data: this.search
     });
   }
@@ -107,7 +107,7 @@ export class BoardStore {
   static async sendSearch(): Promise<void> {
     fnConsoleLog('PinBoardStore->getSearch', this.search);
     await BrowserApi.sendRuntimeMessage<ObjRangeRequest>({
-      type: BusMessageType.OPTIONS_PIN_SEARCH,
+      type: BusMessageType.OPTIONS_OBJ_SEARCH,
       data: BoardStore.search
     });
   }

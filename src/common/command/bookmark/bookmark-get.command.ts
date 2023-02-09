@@ -14,17 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjUrlDto } from '../../model/obj.model';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ObjUrlDto } from '../../model/obj.model';
+import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import BookmarkDto = Pinmenote.Bookmark.BookmarkDto;
 import ICommand = Pinmenote.Common.ICommand;
 
-export class BookmarkGetCommand implements ICommand<Promise<BookmarkDto | undefined>> {
+export class BookmarkGetCommand implements ICommand<Promise<ObjDto<ObjBookmarkDto> | undefined>> {
   constructor(private url: ObjUrlDto) {}
-  async execute(): Promise<BookmarkDto | undefined> {
-    const key = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.url.href}`;
-    const bookmark = await BrowserStorageWrapper.get<BookmarkDto | undefined>(key);
-    return bookmark;
+  async execute(): Promise<ObjDto<ObjBookmarkDto> | undefined> {
+    const bookmarkKey = `${ObjectStoreKeys.OBJECT_BOOKMARK}:${this.url.href}`;
+
+    const id = await BrowserStorageWrapper.get<number | undefined>(bookmarkKey);
+    if (!id) return undefined;
+
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
+
+    return await BrowserStorageWrapper.get<ObjDto<ObjBookmarkDto> | undefined>(key);
   }
 }

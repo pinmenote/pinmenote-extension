@@ -30,7 +30,7 @@ export class OptionsPinShareCommand implements ICommand<void> {
       const data = await new ApiSharePinCommand(this.data).execute();
 
       await BrowserApi.sendRuntimeMessage<ObjShareDto>({
-        type: BusMessageType.OPTIONS_PIN_SHARE,
+        type: BusMessageType.OPTIONS_OBJ_SHARE,
         data
       });
     } catch (e: unknown) {

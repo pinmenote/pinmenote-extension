@@ -43,7 +43,7 @@ export const BoardComponent: FunctionComponent = () => {
     });
 
     const pinSearch = TinyEventDispatcher.addListener<ObjRangeResponse>(
-      BusMessageType.OPTIONS_PIN_SEARCH,
+      BusMessageType.OPTIONS_OBJ_SEARCH,
       (event, key, value) => {
         BoardStore.setData(value);
         setObjData(BoardStore.objList.concat());
@@ -51,7 +51,7 @@ export const BoardComponent: FunctionComponent = () => {
       }
     );
     const pinRange = TinyEventDispatcher.addListener<ObjRangeResponse>(
-      BusMessageType.OPTIONS_PIN_GET_RANGE,
+      BusMessageType.OPTIONS_OBJ_GET_RANGE,
       (event, key, value) => {
         BoardStore.setData(value);
         setObjData(BoardStore.objList.concat());
@@ -61,8 +61,8 @@ export const BoardComponent: FunctionComponent = () => {
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.OPT_REFRESH_BOARD, refreshKey);
       stackRef.current?.removeEventListener('scroll', handleScroll);
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_PIN_SEARCH, pinSearch);
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_PIN_GET_RANGE, pinRange);
+      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_OBJ_SEARCH, pinSearch);
+      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_OBJ_GET_RANGE, pinRange);
     };
   });
 
@@ -95,6 +95,7 @@ export const BoardComponent: FunctionComponent = () => {
     if (obj.type === ObjTypeDto.PageElementPin) {
       boardElements.push(<PinElement pin={obj as ObjDto<ObjPagePinDto>} key={obj.id} />);
     } else {
+      fnConsoleLog('NOT SUPPORTED !!!', obj);
       boardElements.push(
         <div key={obj.id}>
           <h1>Not Supported, TODO: {obj.type}</h1>
