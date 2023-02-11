@@ -93,11 +93,11 @@ export class ActiveTabStore {
       ActiveTabStore.hrefPins = await new PinGetHrefCommand(this.urlValue).execute();
       ActiveTabStore.originPins = await new PinGetOriginCommand(this.urlValue).execute();
       this.bookmarkValue = await new BookmarkGetCommand(this.urlValue).execute();
+      if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
+        this.extensionUrl = true;
+        this.isError = true;
+      }
       TinyEventDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_URL);
-    }
-    if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
-      this.extensionUrl = true;
-      this.isError = true;
     }
   };
 
