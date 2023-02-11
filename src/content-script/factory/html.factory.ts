@@ -29,26 +29,23 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class HtmlFactory {
   static async computeHtmlData(ref: HTMLElement, url?: ObjUrlDto): Promise<PinHtmlDataDto> {
-    const parentStyle = document.body.getAttribute('style') || '';
+    let parentStyle = document.body.getAttribute('style') || '';
     const htmlContent = await this.computeHtmlIntermediateData(ref);
     // fnConsoleLog('HTML :', htmlContent);
     let parent = ref.parentElement;
-    // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
-    // const htmlParentData = HtmlFactory.computeHtmlParentStyles(ref.parentElement);
-    // fnConsoleLog('1: ', htmlContent.cssStyles, parent);
+    // TODO css variables ex youtube channel banner
     while (parent && parent.tagName.toLowerCase() !== 'html') {
-      const attr = parent.getAttributeNode('class');
+      const attr = parent.getAttributeNode('style');
       if (attr) {
-        const a = attr.value.split(' ').filter((e) => !!e);
-        htmlContent.cssStyles.push(...a.map((e) => `.${e}`));
+        parentStyle += `;${attr.value}`;
       }
       // fnConsoleLog('ADD : ', parent.tagName);
-      htmlContent.cssStyles.push(parent.tagName);
       parent = parent.parentElement;
     }
-    // fnConsoleLog('2:', htmlContent.cssStyles, parent);
+    // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
+    // const htmlParentData = HtmlFactory.computeHtmlParentStyles(ref.parentElement);
     fnConsoleLog('START COMPUTE CSS !!!');
-    const css = await CssFactory.computeCssContent(htmlContent.cssStyles);
+    const css = await CssFactory.computeCssContent();
     fnConsoleLog('STOP COMPUTE CSS !!!');
     const rect = XpathFactory.computeRect(ref);
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, url);
@@ -68,7 +65,6 @@ export class HtmlFactory {
 
   static computeHtmlIntermediateData = async (ref: Element): Promise<HtmlIntermediateData> => {
     const tagName = ref.tagName.toLowerCase();
-    const cssStyles: string[] = [tagName];
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
 
@@ -83,12 +79,7 @@ export class HtmlFactory {
 
     const attributes: Attr[] = Array.from(ref.attributes);
     for (const attr of attributes) {
-      if (attr.name === 'class') {
-        // CLASS CSS SELECTORS
-        const a = attr.value.split(' ').filter((e) => !!e);
-        cssStyles.push(...a.map((e) => `.${e}`));
-        html += `${attr.name}="${attr.value}" `;
-      } else if (attr.name === 'href') {
+      if (attr.name === 'href') {
         // HREF
         const url = this.computeUrl(attr.value);
         html += `href="${url}" `;
@@ -125,7 +116,6 @@ export class HtmlFactory {
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         const computed = await this.computeHtmlIntermediateData(node as Element);
         html += computed.html;
-        cssStyles.push(...computed.cssStyles);
         videoTime.push(...computed.videoTime);
       } else if (node.nodeType === Node.COMMENT_NODE) {
         fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
@@ -136,7 +126,6 @@ export class HtmlFactory {
     html += `</${tagName}>`;
 
     return {
-      cssStyles,
       html,
       videoTime
     };

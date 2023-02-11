@@ -34,7 +34,7 @@ export class ContentBookmarkAddCommand implements ICommand<Promise<void>> {
       return;
     }
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body);
-    const css = await CssFactory.computeCssContent(htmlContent.cssStyles);
+    const css = await CssFactory.computeCssContent();
     const screenshot = await ScreenshotFactory.takeScreenshot(undefined, this.url);
     const dto: ObjBookmarkDto = {
       title: document.title,

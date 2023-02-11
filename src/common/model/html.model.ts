@@ -18,7 +18,6 @@ import { ObjCanvasPinDto, ObjPagePinDto } from './obj-pin.model';
 import { ObjDto, ObjLinkDto } from './obj.model';
 
 export interface HtmlIntermediateData {
-  cssStyles: string[];
   html: string;
   videoTime: ContentVideoTime[];
 }

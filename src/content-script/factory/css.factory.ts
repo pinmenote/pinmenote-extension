@@ -20,15 +20,13 @@ import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import { fnGetKey } from '../../common/fn/kv.utils';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
 export class CssFactory {
-  static computeCssContent = async (styles: string[]): Promise<PinCssDataDto> => {
+  static computeCssContent = async (): Promise<PinCssDataDto> => {
     let css = '';
     const href: PinCssHref[] = [];
-    const unique = new Set(styles);
     const styleSheets = Array.from(document.styleSheets);
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
@@ -39,7 +37,7 @@ export class CssFactory {
           data: cssFetchData.error ? undefined : cssFetchData.data
         });
       } else {
-        css += this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], unique);
+        css += this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[]);
       }
     }
     return {
@@ -48,38 +46,18 @@ export class CssFactory {
     };
   };
 
-  private static computeSelectorRules = (cssRules: ComputeCssRule[], unique: Set<string>): string => {
+  private static computeSelectorRules = (cssRules: ComputeCssRule[]): string => {
     let output = '';
     cssRules.forEach((r: ComputeCssRule) => {
-      if (fnGetKey(r, 'selectorText')) {
-        unique.forEach((u) => {
-          if (u.startsWith('.')) {
-            if (
-              r.selectorText.startsWith(`${u}:`) ||
-              r.selectorText.startsWith(`${u} `) ||
-              r.selectorText.startsWith(`${u}[`) ||
-              r.selectorText.startsWith(`${u}.`) ||
-              r.selectorText === u
-            ) {
-              output += `${r.cssText}
-`;
-            }
-          } else {
-            const selectors: string[] = r.selectorText.split(',');
-            selectors.forEach((s) => {
-              if (u === s || `* ${u}` === s || s.startsWith(`${u}[`) || s.startsWith(`${u}.`)) {
-                output += `${r.cssText}
-`;
-              }
-            });
-          }
-        });
-      } else if (r.media) {
+      if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
         output += `@media ${r.conditionText} {
         ${r.cssText}
       }
       `;
+      } else if (r.selectorText) {
+        output += `${r.cssText}
+`;
       } else {
         // TODO parse other rules ex CSSKeyFrameRules
       }

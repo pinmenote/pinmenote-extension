@@ -63,8 +63,8 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       await fnSleep(100);
       this.parent.object.data.html[0].text = this.parent.ref.innerText;
 
-      const htmlContent = HtmlFactory.computeHtmlIntermediateData(this.parent.ref);
-      const css = await CssFactory.computeCssContent(htmlContent.cssStyles);
+      const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.parent.ref);
+      const css = await CssFactory.computeCssContent();
 
       this.parent.object.data.htmlEdit = undefined;
       this.parent.object.data.html[0].html = htmlContent.html;
