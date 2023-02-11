@@ -26,7 +26,7 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentBookmarkAddCommand implements ICommand<Promise<void>> {
-  constructor(private href: string, private url: ObjUrlDto) {}
+  constructor(private url: ObjUrlDto, private href?: string) {}
 
   async execute(): Promise<void> {
     if (this.href !== this.url.href) {

@@ -58,6 +58,6 @@ export interface FetchImageResponse {
 }
 
 export interface ExtensionPopupInitData {
-  url?: ObjUrlDto;
+  href?: string;
   isAddingNote: boolean;
 }

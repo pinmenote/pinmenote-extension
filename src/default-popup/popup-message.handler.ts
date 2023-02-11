@@ -32,13 +32,7 @@ export class PopupMessageHandler {
   private static popupInitListener(): void {
     TinyEventDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
       LogManager.log(`!!! INIT - ${event} ${JSON.stringify(value || {})}`);
-      if (value.url?.href.startsWith(BrowserApi.startUrl)) {
-        ActiveTabStore.updateState(true, true, value);
-      } else if (value.url) {
-        ActiveTabStore.updateState(false, false, value);
-      } else {
-        ActiveTabStore.updateState(true, false, value);
-      }
+      ActiveTabStore.updateState(value);
     });
   }
 

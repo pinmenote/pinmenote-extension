@@ -95,11 +95,17 @@ export class ActiveTabStore {
       this.bookmarkValue = await new BookmarkGetCommand(this.urlValue).execute();
       TinyEventDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_URL);
     }
+    if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
+      this.extensionUrl = true;
+      this.isError = true;
+    }
   };
 
-  static updateState = (isError: boolean, extensionUrl: boolean, initData?: ExtensionPopupInitData) => {
-    this.isError = isError;
-    this.extensionUrl = extensionUrl;
+  static updateState = (initData?: ExtensionPopupInitData) => {
+    if (initData?.href !== this.urlValue?.href) {
+      LogManager.log(`SKIPPING ${initData?.href || ''}`);
+      return;
+    }
     this.isAddingNoteValue = initData?.isAddingNote || false;
   };
 }

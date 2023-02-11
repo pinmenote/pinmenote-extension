@@ -24,7 +24,6 @@ import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { UrlFactory } from '../common/factory/url.factory';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class ContentMessageHandler {
@@ -51,7 +50,7 @@ export class ContentMessageHandler {
     });
     switch (msg.type) {
       case BusMessageType.POPUP_BOOKMARK_ADD:
-        await new ContentBookmarkAddCommand(this.href, msg.data).execute();
+        await new ContentBookmarkAddCommand(msg.data, this.href).execute();
         break;
       case BusMessageType.POPUP_PIN_START:
         DocumentMediator.startListeners(msg.data, this.href);
@@ -76,9 +75,8 @@ export class ContentMessageHandler {
   };
 
   private static handlePopupOpen = async (): Promise<void> => {
-    const url = UrlFactory.newUrl();
     const data: ExtensionPopupInitData = {
-      url,
+      href: this.href,
       isAddingNote: PinAddFactory.hasElement
     };
     await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
