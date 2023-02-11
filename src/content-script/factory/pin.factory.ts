@@ -24,13 +24,14 @@ import { XpathFactory } from '../../common/factory/xpath.factory';
 export class PinFactory {
   static objPagePinNew = async (ref: HTMLElement): Promise<ObjPagePinDto> => {
     const theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'drak';
-    const htmlData = await HtmlFactory.computePinHTMLData(ref);
+    const url = UrlFactory.newUrl();
+    const htmlData = await HtmlFactory.computeHtmlData(ref, url);
     return {
       theme,
       title: document.title,
       xpath: XpathFactory.newXPathString(ref),
       value: '',
-      url: UrlFactory.newUrl(),
+      url,
       html: [htmlData],
       video: [],
       draw: []
@@ -38,7 +39,8 @@ export class PinFactory {
   };
 
   static objCanvasPinNew = async (rect: ObjRectangleDto): Promise<ObjCanvasPinDto> => {
-    const screenshot = await ScreenshotFactory.takeScreenshot(rect);
+    const url = UrlFactory.newUrl();
+    const screenshot = await ScreenshotFactory.takeScreenshot(rect, url);
     return {
       windowSize: {
         width: window.innerWidth,
@@ -48,7 +50,7 @@ export class PinFactory {
       screenshot,
       title: document.title,
       value: '',
-      url: UrlFactory.newUrl(),
+      url,
       draw: []
     };
   };

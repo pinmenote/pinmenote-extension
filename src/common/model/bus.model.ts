@@ -39,11 +39,13 @@ export enum BusMessageType {
   POP_ACCOUNT_CLICK = 'pop.account.click',
   POP_REGISTER_CLICK = 'pop.register.click',
   POP_PIN_REMOVE = 'pop.pin.remove',
+  POP_UPDATE_URL = 'pop.update.url',
   // Ack
   CONTENT_ACK = 'content.ack',
   WORKER_ACK = 'worker.ack',
   POPUP_ACK = 'popup.ack',
   // Popup
+  POPUP_BOOKMARK_ADD = 'popup.bookmark.add',
   POPUP_OPEN = 'popup.open',
   POPUP_INIT = 'popup.init',
   POPUP_PIN_START = 'popup.pin.start',
@@ -70,6 +72,7 @@ export enum BusMessageType {
   CONTENT_THEME = 'content.theme',
   CONTENT_INVALIDATE = 'content.invalidate',
   CONTENT_FETCH_CSS = 'content.fetch.css',
+  CONTENT_FETCH_IMAGE = 'content.fetch.image',
   // Options
   OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',

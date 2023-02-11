@@ -33,6 +33,10 @@ export interface ObjRangeResponse {
   data: ObjDto<ObjDataDto>[];
 }
 
+export interface PopupPinStartRequest {
+  url: ObjUrlDto;
+}
+
 export interface FetchCssRequest {
   url: string;
 }
@@ -43,8 +47,17 @@ export interface FetchCssResponse {
   error: boolean;
 }
 
+export interface FetchImageRequest {
+  url: string;
+}
+
+export interface FetchImageResponse {
+  url: string;
+  data: string;
+  error: boolean;
+}
+
 export interface ExtensionPopupInitData {
   url?: ObjUrlDto;
   isAddingNote: boolean;
-  pageTitle: string;
 }

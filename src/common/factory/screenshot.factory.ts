@@ -18,11 +18,12 @@ import { BrowserApi } from '../service/browser.api.wrapper';
 import { BusMessageType } from '../model/bus.model';
 import { ImageResizeFactory } from './image-resize.factory';
 import { ObjRectangleDto } from '../model/obj-utils.model';
+import { ObjUrlDto } from '../model/obj.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../fn/console.fn';
 
 export class ScreenshotFactory {
-  static takeScreenshot = async (rect?: ObjRectangleDto): Promise<string> => {
+  static takeScreenshot = async (rect?: ObjRectangleDto, url?: ObjUrlDto): Promise<string> => {
     return new Promise((resolve, reject) => {
       // Crop screenshot function
       TinyEventDispatcher.addListener<string>(
@@ -33,13 +34,14 @@ export class ScreenshotFactory {
           resolve(screenshot);
         }
       );
-      this.sendGetPinTakeScreenshot(reject);
+      this.sendGetPinTakeScreenshot(reject, url);
     });
   };
 
-  private static sendGetPinTakeScreenshot = (reject: (value: string) => void) => {
-    BrowserApi.sendRuntimeMessage<undefined>({
-      type: BusMessageType.CONTENT_TAKE_SCREENSHOT
+  private static sendGetPinTakeScreenshot = (reject: (value: string) => void, url?: ObjUrlDto) => {
+    BrowserApi.sendRuntimeMessage<ObjUrlDto | undefined>({
+      type: BusMessageType.CONTENT_TAKE_SCREENSHOT,
+      data: url
     })
       .then(() => {
         // We handle it above, inside dispatcher

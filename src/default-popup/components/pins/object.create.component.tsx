@@ -18,43 +18,39 @@ import { Button, IconButton } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import AddIcon from '@mui/icons-material/Add';
-import { BookmarkAddCommand } from '../../../common/command/bookmark/bookmark-add.command';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import { BookmarkGetCommand } from '../../../common/command/bookmark/bookmark-get.command';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { BookmarkRemoveCommand } from '../../../common/command/bookmark/bookmark-remove.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ExtensionPopupInitData } from '../../../common/model/obj-request.model';
 import { LogManager } from '../../../common/popup/log.manager';
 import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjDto } from '../../../common/model/obj.model';
+import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 export const ObjectCreateComponent: FunctionComponent = () => {
   const [isAdding, setIsAdding] = useState<boolean>(ActiveTabStore.isAddingNote);
-  const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(undefined);
+  const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(ActiveTabStore.bookmark);
 
   useEffect(() => {
-    const addingKey = TinyEventDispatcher.addListener<ExtensionPopupInitData>(
-      BusMessageType.POPUP_INIT,
-      async (event, key, value) => {
-        setIsAdding(value.isAddingNote);
-        if (ActiveTabStore.url) {
-          const bookmark = await new BookmarkGetCommand(ActiveTabStore.url).execute();
-          setBookmarkData(bookmark);
-        }
-      }
-    );
+    const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
+      setIsAdding(ActiveTabStore.isAddingNote);
+      setBookmarkData(ActiveTabStore.bookmark);
+    });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_INIT, addingKey);
+      TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
   });
 
   const handleNewPin = async () => {
     try {
-      await BrowserApi.sendTabMessage<undefined>({
-        type: BusMessageType.POPUP_PIN_START
+      if (!ActiveTabStore.url) return;
+      await BrowserApi.sendTabMessage<PopupPinStartRequest>({
+        type: BusMessageType.POPUP_PIN_START,
+        data: {
+          url: ActiveTabStore.url
+        }
       });
     } catch (e) {
       LogManager.log(JSON.stringify(e));
@@ -74,12 +70,12 @@ export const ObjectCreateComponent: FunctionComponent = () => {
   };
 
   const handleBookmarkAdd = async () => {
-    TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_TAKE_SCREENSHOT, async (event, key, value) => {
-      if (!ActiveTabStore.url) return;
-      const bookmark = await new BookmarkAddCommand(ActiveTabStore.pageTitle, ActiveTabStore.url, value).execute();
-      setBookmarkData(bookmark);
+    TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_BOOKMARK_ADD, async (event, key) => {
+      TinyEventDispatcher.removeListener(event, key);
+      await ActiveTabStore.refreshBookmark();
+      setBookmarkData(ActiveTabStore.bookmark);
     });
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_TAKE_SCREENSHOT });
+    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_BOOKMARK_ADD, data: ActiveTabStore.url });
   };
 
   const handleBookmarkRemove = async () => {

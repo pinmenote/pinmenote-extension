@@ -19,6 +19,12 @@ import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 
+export enum ResponseType {
+  JSON = 1,
+  TEXT,
+  BLOB
+}
+
 export class ResponseError extends Error {
   constructor(message: string, readonly error: any) {
     super(message);
@@ -53,7 +59,7 @@ export class FetchService {
     return await response.json();
   }
 
-  static async get<T>(url: string, headers: { [key: string]: string }, json = true): Promise<T> {
+  static async get(url: string, headers: { [key: string]: string }, type = ResponseType.JSON): Promise<any> {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 5000);
     const response = await fetch(url, {
@@ -65,10 +71,12 @@ export class FetchService {
       await this.refreshToken();
     }
     if (!response.ok) {
-      const errorData = json ? await response.json() : await response.text();
+      const errorData = type === ResponseType.JSON ? await response.json() : await response.text();
       throw new ResponseError(`Error GET ${url}`, errorData);
     }
-    return json ? await response.json() : await response.text();
+    if (type === ResponseType.BLOB) return await response.blob();
+    if (type === ResponseType.JSON) return await response.json();
+    return await response.text();
   }
 
   static async refreshToken(): Promise<void> {

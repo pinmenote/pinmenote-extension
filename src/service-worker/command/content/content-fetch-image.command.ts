@@ -14,31 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchCssRequest, FetchCssResponse } from '../../../common/model/obj-request.model';
+import { FetchImageRequest, FetchImageResponse } from '../../../common/model/obj-request.model';
 import { FetchService, ResponseType } from '../../service/fetch.service';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class ContentFetchCssCommand implements ICommand<Promise<void>> {
-  constructor(private req: FetchCssRequest) {}
+export class ContentFetchImageCommand implements ICommand<Promise<void>> {
+  constructor(private req: FetchImageRequest) {}
   async execute(): Promise<void> {
     try {
-      const css = await FetchService.get(this.req.url, {}, ResponseType.TEXT);
+      const blob = await FetchService.get(this.req.url, {}, ResponseType.BLOB);
+      const data = await UrlFactory.toDataUri(blob);
       // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
-      await BrowserApi.sendTabMessage<FetchCssResponse>({
-        type: BusMessageType.CONTENT_FETCH_CSS,
+      await BrowserApi.sendTabMessage<FetchImageResponse>({
+        type: BusMessageType.CONTENT_FETCH_IMAGE,
         data: {
           url: this.req.url,
-          data: css,
+          data,
           error: false
         }
       });
     } catch (e: unknown) {
       fnConsoleLog('ERROR !!!', e);
-      await BrowserApi.sendTabMessage<FetchCssResponse>({
-        type: BusMessageType.CONTENT_FETCH_CSS,
+      await BrowserApi.sendTabMessage<FetchImageResponse>({
+        type: BusMessageType.CONTENT_FETCH_IMAGE,
         data: {
           url: this.req.url,
           data: '',

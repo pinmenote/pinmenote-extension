@@ -19,7 +19,9 @@ import { CanvasPinAddCommand } from '../../common/command/canvas/canvas-pin-add.
 import { CanvasPinComponentAddCommand } from '../command/canvas/canvas-pin-component-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
 import { PinFactory } from '../factory/pin.factory';
+import { PopupPinStartRequest } from '../../common/model/obj-request.model';
 import { applyStylesToElement } from '../../common/style.utils';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import { pinStyles } from '../components/styles/pin.styles';
 
 export class DocumentMediator {
@@ -27,7 +29,11 @@ export class DocumentMediator {
   private static overlay?: HTMLDivElement;
   private static overlayCanvas?: HTMLCanvasElement;
 
-  static startListeners(): void {
+  static startListeners(data: PopupPinStartRequest, href?: string): void {
+    if (href !== data.url.href) {
+      fnConsoleLog('SKIP', href);
+      return;
+    }
     const canvasList = Array.from(document.getElementsByTagName('canvas'));
     let canvasFound = false;
     for (let i = 0; i < canvasList.length; i++) {

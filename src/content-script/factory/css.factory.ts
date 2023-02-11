@@ -93,7 +93,6 @@ export class CssFactory {
       TinyEventDispatcher.addListener<FetchCssResponse>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
         if (value.url === url) {
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
-          fnConsoleLog(`GOT IT ${value.url} ${value.data}`);
           resolve(value);
         }
       });

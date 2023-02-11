@@ -15,17 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentVideoTime, HtmlIntermediateData, HtmlParentStyles } from '../../common/model/html.model';
+import { FetchImageRequest, FetchImageResponse } from '../../common/model/obj-request.model';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../common/model/bus.model';
 import { CssFactory } from './css.factory';
+import { ObjUrlDto } from '../../common/model/obj.model';
 import { PinHtmlDataDto } from '../../common/model/obj-pin.model';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
+import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class HtmlFactory {
-  static async computePinHTMLData(ref: HTMLElement): Promise<PinHtmlDataDto> {
+  static async computeHtmlData(ref: HTMLElement, url?: ObjUrlDto): Promise<PinHtmlDataDto> {
     const parentStyle = document.body.getAttribute('style') || '';
-    const htmlContent = this.computeHtmlIntermediateData(ref);
+    const htmlContent = await this.computeHtmlIntermediateData(ref);
     // fnConsoleLog('HTML :', htmlContent);
     let parent = ref.parentElement;
     // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
@@ -46,7 +51,7 @@ export class HtmlFactory {
     const css = await CssFactory.computeCssContent(htmlContent.cssStyles);
     fnConsoleLog('STOP COMPUTE CSS !!!');
     const rect = XpathFactory.computeRect(ref);
-    const screenshot = await ScreenshotFactory.takeScreenshot(rect);
+    const screenshot = await ScreenshotFactory.takeScreenshot(rect, url);
     return {
       parentStyle,
       html: htmlContent.html,
@@ -61,7 +66,7 @@ export class HtmlFactory {
     };
   }
 
-  static computeHtmlIntermediateData = (ref: Element): HtmlIntermediateData => {
+  static computeHtmlIntermediateData = async (ref: Element): Promise<HtmlIntermediateData> => {
     const tagName = ref.tagName.toLowerCase();
     const cssStyles: string[] = [tagName];
     let html = `<${tagName} `;
@@ -85,12 +90,23 @@ export class HtmlFactory {
         html += `${attr.name}="${attr.value}" `;
       } else if (attr.name === 'href') {
         // HREF
-        html += this.computeUrl('href', attr.value);
+        const url = this.computeUrl(attr.value);
+        html += `href="${url}" `;
         html += `target="_blank" `;
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
       } else if (attr.name === 'src') {
-        html += this.computeUrl('src', attr.value);
+        const url = this.computeUrl(attr.value);
+        if (tagName === 'img') {
+          const imageData = await this.fetchImage(url);
+          if (imageData.error) {
+            html += `src="${url}" `;
+          } else {
+            html += `src="${imageData.data}" `;
+          }
+        } else {
+          html += `src="${url}" `;
+        }
       } else if (attr.name === 'srcset') {
         // skip for now
         // TODO fix urls like with src
@@ -107,7 +123,7 @@ export class HtmlFactory {
         const nre = new RegExp(String.fromCharCode(160), 'g');
         html += node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const computed = this.computeHtmlIntermediateData(node as Element);
+        const computed = await this.computeHtmlIntermediateData(node as Element);
         html += computed.html;
         cssStyles.push(...computed.cssStyles);
         videoTime.push(...computed.videoTime);
@@ -126,20 +142,20 @@ export class HtmlFactory {
     };
   };
 
-  private static computeUrl(prefix: string, value: string): string {
+  private static computeUrl(value: string): string {
     if (value.startsWith('//')) {
-      return `${prefix}="${window.location.protocol}${value}" `;
+      return `${window.location.protocol}${value}`;
     } else if (value.startsWith('/')) {
-      return `${prefix}="${window.location.origin}${value}" `;
+      return `${window.location.origin}${value}`;
     } else if (value.startsWith('./')) {
       const a = window.location.pathname.split('/');
       const subpath = a.slice(0, a.length - 1).join('/');
       const subvalue = value.substring(1);
-      return `${prefix}="${window.location.origin}${subpath}${subvalue}" `;
+      return `${window.location.origin}${subpath}${subvalue}`;
     } else if (!value.startsWith('http')) {
-      return `${prefix}="${window.location.origin}/${value}" `;
+      return `${window.location.origin}/${value}`;
     }
-    return `${prefix}="${value}" `;
+    return value;
   }
 
   static computeHtmlParentStyles = (parent: Element | null): HtmlParentStyles => {
@@ -156,5 +172,26 @@ export class HtmlFactory {
       html: '',
       cssStyles
     };
+  };
+
+  private static fetchImage = (url: string): Promise<FetchImageResponse> => {
+    return new Promise<FetchImageResponse>((resolve, reject) => {
+      TinyEventDispatcher.addListener<FetchImageResponse>(BusMessageType.CONTENT_FETCH_IMAGE, (event, key, value) => {
+        if (value.url === url) {
+          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
+          resolve(value);
+        }
+      });
+      BrowserApi.sendRuntimeMessage<FetchImageRequest>({
+        type: BusMessageType.CONTENT_FETCH_IMAGE,
+        data: { url }
+      })
+        .then(() => {
+          /* SKIP */
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
   };
 }

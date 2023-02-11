@@ -29,7 +29,7 @@ export class TinyEventDispatcher {
     return key;
   }
 
-  static dispatch<T>(event: string, value: T): void {
+  static dispatch<T>(event: string, value?: T): void {
     if (this.listeners[event]) {
       for (const key in this.listeners[event]) {
         this.listeners[event][key](event, key, value); // eslint-disable-line @typescript-eslint/no-unsafe-call

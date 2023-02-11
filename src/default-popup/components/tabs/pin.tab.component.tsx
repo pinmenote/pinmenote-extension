@@ -14,17 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjUrlDto } from '../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ExtensionPopupInitData } from '../../../common/model/obj-request.model';
+import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
-import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
-import { PinGetOriginCommand } from '../../../common/command/pin/pin-get-origin.command';
 import { PinListOriginComponent } from '../pins/pin.list.origin.component';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
@@ -34,26 +31,15 @@ export const PinTabComponent: FunctionComponent = () => {
   const [hrefPins, setHrefPins] = useState<ObjDto<ObjPagePinDto>[]>(ActiveTabStore.hrefPins);
 
   useEffect(() => {
-    const urlKey = TinyEventDispatcher.addListener<ExtensionPopupInitData>(
-      BusMessageType.POPUP_INIT,
-      async (event, key, value) => {
-        setIsError(ActiveTabStore.showErrorText);
-        if (value.url) {
-          await fillPinData(value.url);
-        }
-      }
-    );
+    const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
+      setHrefPins(ActiveTabStore.hrefPins);
+      setOriginPins(ActiveTabStore.originPins);
+      setIsError(ActiveTabStore.showErrorText);
+    });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_INIT, urlKey);
+      TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
   });
-
-  const fillPinData = async (url: ObjUrlDto) => {
-    ActiveTabStore.hrefPins = await new PinGetHrefCommand(url).execute();
-    ActiveTabStore.originPins = await new PinGetOriginCommand(url).execute();
-    setHrefPins(ActiveTabStore.hrefPins);
-    setOriginPins(ActiveTabStore.originPins);
-  };
 
   return (
     <div style={{ marginTop: 10, height: '100%' }}>

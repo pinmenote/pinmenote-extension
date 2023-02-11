@@ -63,6 +63,19 @@ export class UrlFactory {
     }
     return `${url.origin}${url.pathname}`;
   };
+
+  static toDataUri = async (value: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function () {
+        resolve(this.result as string);
+      };
+      reader.onerror = function () {
+        reject(this.error);
+      };
+      reader.readAsDataURL(value);
+    });
+  };
 }
 
 const trimParams = (host: string, queryParams: QueryParam[]): string => {

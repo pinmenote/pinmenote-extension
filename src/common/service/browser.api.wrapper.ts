@@ -22,6 +22,7 @@ import { fnGetKey } from '../fn/kv.utils';
 export type BrowserGlobal = typeof chrome | typeof browser;
 export type BrowserRuntime = typeof chrome.runtime | typeof browser.runtime;
 export type BrowserTabs = typeof chrome.tabs | typeof browser.tabs;
+export type BrowserTab = chrome.tabs.Tab | browser.tabs.Tab;
 export type BrowserTabObject = chrome.tabs.Tab | browser.tabs.Tab;
 export type BrowserLocalStore = typeof chrome.storage.local | typeof browser.storage.local;
 export type BrowserDownloads = typeof chrome.downloads | typeof browser.downloads;
@@ -56,6 +57,11 @@ export class BrowserApi {
   static get tabs(): BrowserTabs {
     return this.browserApi.tabs;
   }
+
+  static activeTab = async (): Promise<BrowserTab> => {
+    const tabs = await this.browserApi.tabs.query({ active: true });
+    return tabs[0];
+  };
 
   static get localStore(): BrowserLocalStore {
     return this.browserApi.storage.local;

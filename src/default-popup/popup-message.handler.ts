@@ -20,29 +20,18 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { LogManager } from '../common/popup/log.manager';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class PopupMessageHandler {
-  static init(): void {
+  static async init(): Promise<void> {
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
-    BrowserApi.sendTabMessage<undefined>({
-      type: BusMessageType.POPUP_OPEN
-    })
-      .then((ack: any) => {
-        LogManager.log(`FIREFOX SENDS EMPTY ACK :/!!! ${JSON.stringify(ack)}`);
-        // if (!ack) TinyEventDispatcher.dispatch(BusMessageType.POPUP_INIT, {});
-        fnConsoleLog(ack);
-      })
-      .catch((e) => {
-        fnConsoleLog(e);
-      });
+    await ActiveTabStore.initUrlValue();
+    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_OPEN });
     this.popupInitListener();
   }
 
   private static popupInitListener(): void {
     TinyEventDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
-      LogManager.log(`${event} ${JSON.stringify(value || {})}`);
-      if (value.url) LogManager.log(`${event} ${value.url.href}`);
+      LogManager.log(`!!! INIT - ${event} ${JSON.stringify(value || {})}`);
       if (value.url?.href.startsWith(BrowserApi.startUrl)) {
         ActiveTabStore.updateState(true, true, value);
       } else if (value.url) {

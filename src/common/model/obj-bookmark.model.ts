@@ -15,9 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjUrlDto } from './obj.model';
+import { PinCssDataDto } from './obj-pin.model';
 
 export interface ObjBookmarkDto {
   url: ObjUrlDto;
-  value: string;
+  title: string;
   screenshot?: string;
+  html: string;
+  css: PinCssDataDto;
 }

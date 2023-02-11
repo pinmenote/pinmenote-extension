@@ -18,6 +18,7 @@ import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
+import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
@@ -73,6 +74,9 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_FETCH_CSS:
       await new ContentFetchCssCommand(msg.data).execute();
+      break;
+    case BusMessageType.CONTENT_FETCH_IMAGE:
+      await new ContentFetchImageCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_PIN_SHARE:
       await new PopupPinShareCommand(msg.data).execute();

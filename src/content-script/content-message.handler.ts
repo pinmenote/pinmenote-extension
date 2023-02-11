@@ -16,6 +16,7 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
+import { ContentBookmarkAddCommand } from './command/bookmark/content-bookmark-add.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { PinAddFactory } from './factory/pin-add.factory';
@@ -27,7 +28,10 @@ import { UrlFactory } from '../common/factory/url.factory';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class ContentMessageHandler {
-  static start(): void {
+  private static href?: string;
+
+  static start(href: string): void {
+    this.href = href;
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
     TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
@@ -46,8 +50,11 @@ export class ContentMessageHandler {
       type: BusMessageType.CONTENT_ACK
     });
     switch (msg.type) {
+      case BusMessageType.POPUP_BOOKMARK_ADD:
+        await new ContentBookmarkAddCommand(this.href, msg.data).execute();
+        break;
       case BusMessageType.POPUP_PIN_START:
-        DocumentMediator.startListeners();
+        DocumentMediator.startListeners(msg.data, this.href);
         break;
       case BusMessageType.CONTENT_PIN_STOP:
       case BusMessageType.POPUP_PIN_STOP:
@@ -72,7 +79,6 @@ export class ContentMessageHandler {
     const url = UrlFactory.newUrl();
     const data: ExtensionPopupInitData = {
       url,
-      pageTitle: document.title,
       isAddingNote: PinAddFactory.hasElement
     };
     await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({ type: BusMessageType.POPUP_INIT, data });

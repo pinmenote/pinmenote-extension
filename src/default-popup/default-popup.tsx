@@ -53,7 +53,7 @@ const getCurrentPanel = (selectedPanel: PanelEnum): ReactElement | undefined => 
   return undefined;
 };
 
-const App: React.FC = () => {
+const ExtensionPopupApp: React.FC = () => {
   const [selectedPanel, setSelectedPanel] = useState<PanelEnum>(PanelEnum.PIN);
 
   const handleChange = (event: React.SyntheticEvent, newValue: PanelEnum) => {
@@ -100,10 +100,16 @@ const App: React.FC = () => {
 const el = document.getElementById('root');
 if (el) {
   const root = createRoot(el);
-  root.render(<App />);
+  root.render(<ExtensionPopupApp />);
 }
 try {
-  PopupMessageHandler.init();
+  PopupMessageHandler.init()
+    .then((ack: any) => {
+      LogManager.log(`FIREFOX SENDS EMPTY ACK :/!!! ${JSON.stringify(ack)}`);
+    })
+    .catch((e) => {
+      LogManager.log(`Error ${JSON.stringify(e)}`);
+    });
 } catch (e) {
   LogManager.log(`Error ${JSON.stringify(e)}`);
 }

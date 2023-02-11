@@ -26,7 +26,7 @@ export class ApiSyncQuotaCommand implements ICommand<Promise<DiskQuotaDto>> {
     const username = await ApiStore.getUsername();
     const url = `${environmentConfig.apiUrl}/api/v1/sync/${username}/quota`;
     const authHeaders = await ApiStore.getAuthHeaders();
-    const quota = await FetchService.get<DiskQuotaDto>(url, authHeaders);
+    const quota = await FetchService.get(url, authHeaders);
     fnConsoleLog('WorkerApiManager->syncQuota', quota);
     return quota;
   }
