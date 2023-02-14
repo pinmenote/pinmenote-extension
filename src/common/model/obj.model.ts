@@ -61,10 +61,11 @@ export enum ObjTypeDto {
   PageBookmark = 'PAGE_BOOKMARK',
   PageNote = 'PAGE_NOTE',
   PageElementPin = 'ELEMENT_PIN',
-  CanvasPin = 'CANVAS_PIN',
+  PageCanvasPin = 'PAGE_CANVAS_PIN',
   PageLink = 'PAGE_LINK',
   Note = 'NOTE',
-  Drawing = 'DRAWING'
+  Drawing = 'DRAWING',
+  Todo = 'TODO'
 }
 
 export type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto | ObjLinkDto;

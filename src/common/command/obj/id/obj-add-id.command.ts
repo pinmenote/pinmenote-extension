@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ObjAddDtIndexCommand } from '../dt-index/obj-add-dt-index.command';
 import { ObjUpdateLastIdCommand } from './obj-update-last-id.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
@@ -23,7 +24,7 @@ import ICommand = Pinmenote.Common.ICommand;
 export class ObjAddIdCommand implements ICommand<Promise<void>> {
   private readonly listLimit = environmentConfig.objListLimit;
 
-  constructor(private id: number) {}
+  constructor(private id: number, private dt: Date) {}
   async execute(): Promise<void> {
     let listId = await this.getListId();
     let ids = await this.getList(listId);
@@ -41,6 +42,8 @@ export class ObjAddIdCommand implements ICommand<Promise<void>> {
 
     await BrowserStorageWrapper.set(key, ids);
     await new ObjUpdateLastIdCommand(this.id).execute();
+
+    await new ObjAddDtIndexCommand(this.id, this.dt).execute();
   }
 
   private async getListId(): Promise<number> {

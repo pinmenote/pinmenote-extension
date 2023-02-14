@@ -35,15 +35,14 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
     fnConsoleLog('PinAddCommand->execute', this.pin);
 
     const id = await new ObjNextIdCommand().execute();
-    const dt = new Date().toISOString();
+    const dt = new Date();
     const hashtags = new HashtagFindCommand(this.pin.value).execute();
 
-    await new ObjAddIdCommand(id).execute();
     const dto: ObjDto<ObjPagePinDto> = {
       id,
       type: ObjTypeDto.PageElementPin,
-      createdAt: dt,
-      updatedAt: dt,
+      createdAt: dt.toISOString(),
+      updatedAt: dt.toISOString(),
       data: this.pin,
       version: OBJ_DTO_VERSION,
       local: {
@@ -62,6 +61,8 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
     await BrowserStorageWrapper.set(key, dto);
 
     await LinkHrefOriginStore.addHrefOriginId(this.pin.url, id);
+
+    await new ObjAddIdCommand(id, dt).execute();
 
     // Send stop - iframe loads own content scripts
     await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_PIN_STOP });

@@ -23,3 +23,7 @@ export const fnDateFormat = (dt: Date): string => {
     dt.getMinutes()
   )}:${pad(dt.getSeconds())}`;
 };
+
+export const fnYearMonthFormat = (dt: Date): string => {
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}`;
+};

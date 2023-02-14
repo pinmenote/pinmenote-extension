@@ -23,6 +23,9 @@ export class ObjectStoreKeys {
   static readonly OBJECT_LIST_ID = 'o:list:id';
   static readonly OBJECT_LIST = 'o:list';
 
+  // DATE INDEX
+  static readonly OBJECT_DT = 'o:dt';
+
   // LINK
   static readonly OBJECT_LINK = 'o:link';
   // BOOKMARK

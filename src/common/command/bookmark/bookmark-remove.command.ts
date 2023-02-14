@@ -33,7 +33,7 @@ export class BookmarkRemoveCommand implements ICommand<Promise<void>> {
 
     await this.removeBookmarkFromList(this.obj.id);
 
-    await new ObjRemoveIdCommand(this.obj.id).execute();
+    await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
   }
 
   private async removeBookmarkFromList(id: number): Promise<void> {

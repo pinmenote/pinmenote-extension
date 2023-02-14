@@ -27,13 +27,13 @@ export class BookmarkAddCommand implements ICommand<Promise<void>> {
 
   async execute(): Promise<void> {
     const id = await new ObjNextIdCommand().execute();
-    const dt = new Date().toISOString();
+    const dt = new Date();
 
     const dto: ObjDto<ObjBookmarkDto> = {
       id,
       type: ObjTypeDto.PageBookmark,
-      createdAt: dt,
-      updatedAt: dt,
+      createdAt: dt.toISOString(),
+      updatedAt: dt.toISOString(),
       data: this.dto,
       version: OBJ_DTO_VERSION,
       local: {
@@ -53,7 +53,7 @@ export class BookmarkAddCommand implements ICommand<Promise<void>> {
 
     await this.addBookmarkToList(id);
 
-    await new ObjAddIdCommand(id).execute();
+    await new ObjAddIdCommand(id, dt).execute();
   }
 
   private async addBookmarkToList(id: number): Promise<void> {

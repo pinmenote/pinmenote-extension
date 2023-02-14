@@ -31,7 +31,7 @@ export class PinRemoveCommand implements ICommand<void> {
     await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
     await LinkHrefOriginStore.delHrefOriginId(this.obj.data.url, this.obj.id);
 
-    await new ObjRemoveIdCommand(this.obj.id).execute();
+    await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
 
     await new ObjRemoveHashtagsCommand(this.obj.id, this.obj.hashtags).execute();
   }
