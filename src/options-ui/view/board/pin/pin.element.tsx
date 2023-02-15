@@ -44,7 +44,7 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
       img.src = pin.data.html[0].screenshot || '';
       ref.appendChild(img);
     } else {
-      IframeHtmlFactory.computeHtml(pin.data.html[0], ref);
+      IframeHtmlFactory.computePinHtml(pin.data.html[0], ref);
     }
   };
 

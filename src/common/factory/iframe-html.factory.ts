@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjBookmarkDto } from '../model/obj-bookmark.model';
 import { PinHtmlDataDto } from '../model/obj-pin.model';
 
 export class IframeHtmlFactory {
-  static computeHtml(content: PinHtmlDataDto, container?: HTMLElement): string {
+  static computePinHtml = (content: PinHtmlDataDto, container?: HTMLElement): string => {
     const iframe = document.createElement('iframe');
     iframe.style.border = 'none';
     const { css, href } = content.css;
@@ -29,9 +30,9 @@ export class IframeHtmlFactory {
             ${href
               .map((h) => (h.data ? `<style>${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`))
               .join('')}
-            <style>${css}</style>
-            <body style="${content.parentStyle || ''}${containerBodyStyle}">${content.html}</body>
+            <style>${css}</style>            
         </head>
+        <body style="${content.parentStyle || ''}${containerBodyStyle}">${content.html}</body>
     </html>`;
     if (!container) return html;
 
@@ -47,5 +48,18 @@ export class IframeHtmlFactory {
     iframe.height = `${window.innerHeight - 350}px`;
 
     return html;
-  }
+  };
+
+  static computeBookmarkHtml = (value: ObjBookmarkDto): string => {
+    const html = `<html>
+        <head>            
+            ${value.css.href
+              .map((h) => (h.data ? `<style>${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`))
+              .join('')}
+            <style>${value.css.css}</style>            
+        </head>
+        ${value.html}
+    </html>`;
+    return html;
+  };
 }

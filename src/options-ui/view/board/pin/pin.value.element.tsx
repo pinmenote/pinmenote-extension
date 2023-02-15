@@ -33,6 +33,7 @@ import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispa
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnB64toBlob } from '../../../../common/fn/b64.to.blob.fn';
+import { fnUid } from '../../../../common/fn/uid.fn';
 
 interface PinValueProps {
   pin: ObjDto<ObjPagePinDto>;
@@ -53,11 +54,11 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
     if (!pin.local.boardView || pin.local.boardView === ObjBoardViewDto.Screenshot) {
       if (!pin.data.html[0].screenshot) return;
       url = window.URL.createObjectURL(fnB64toBlob(pin.data.html[0].screenshot, 'image/jpeg'));
-      filename = `${pin.id}.jpg`;
+      filename = `${fnUid()}.jpg`;
     } else {
-      const html = IframeHtmlFactory.computeHtml(pin.data.html[0]) || '';
-      url = window.URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-      filename = `${pin.id}.html`;
+      const html = IframeHtmlFactory.computePinHtml(pin.data.html[0]) || '';
+      url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
+      filename = `${fnUid()}.html`;
     }
     await BrowserApi.downloads.download({
       url,
