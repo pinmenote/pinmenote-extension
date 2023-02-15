@@ -35,7 +35,7 @@ export const BoardSearchInput: FunctionComponent = () => {
     // setPinData([]);
     if (e.target.value.length <= 2) {
       BoardStore.timeout = window.setTimeout(async () => {
-        await BoardStore.sendRange();
+        await BoardStore.getObjRange();
       }, 1000);
       return;
     } else {
@@ -50,7 +50,7 @@ export const BoardSearchInput: FunctionComponent = () => {
     fnConsoleLog('handleClearSearch');
     setSearchValue('');
     await BoardStore.clearSearch();
-    await BoardStore.sendRange();
+    await BoardStore.getObjRange();
   };
   return (
     <div style={{ width: '50%' }}>

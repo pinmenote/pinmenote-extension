@@ -24,8 +24,6 @@ import { ContentPinStopCommand } from './command/content/content-pin-stop.comman
 import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
-import { OptionsObjGetRangeCommand } from './command/options/options-obj-get-range.command';
-import { OptionsObjSearchCommand } from './command/options/options-obj-search.command';
 import { OptionsPinShareCommand } from './command/options/options-pin-share.command';
 import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
 import { PopupAccessTokenCommand } from './command/popup/popup-access-token.command';
@@ -107,12 +105,6 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_TAKE_SCREENSHOT:
       await new PopupTakeScreenshotCommand().execute();
-      break;
-    case BusMessageType.OPTIONS_OBJ_GET_RANGE:
-      await new OptionsObjGetRangeCommand(msg.data).execute();
-      break;
-    case BusMessageType.OPTIONS_OBJ_SEARCH:
-      await new OptionsObjSearchCommand(msg.data).execute();
       break;
     case BusMessageType.OPTIONS_OBJ_SHARE:
       await new OptionsPinShareCommand(msg.data).execute();

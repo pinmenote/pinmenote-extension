@@ -24,7 +24,6 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { IconButton } from '@mui/material';
 import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
-import { ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { PinElement } from './pin/pin.element';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
@@ -43,28 +42,9 @@ export const BoardComponent: FunctionComponent = () => {
     const refreshKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.OPT_REFRESH_BOARD, () => {
       setObjData(BoardStore.objList.concat());
     });
-
-    const pinSearch = TinyEventDispatcher.addListener<ObjRangeResponse>(
-      BusMessageType.OPTIONS_OBJ_SEARCH,
-      (event, key, value) => {
-        BoardStore.setData(value);
-        setObjData(BoardStore.objList.concat());
-        BoardStore.setLoading(false);
-      }
-    );
-    const pinRange = TinyEventDispatcher.addListener<ObjRangeResponse>(
-      BusMessageType.OPTIONS_OBJ_GET_RANGE,
-      (event, key, value) => {
-        BoardStore.setData(value);
-        setObjData(BoardStore.objList.concat());
-        BoardStore.setLoading(false);
-      }
-    );
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.OPT_REFRESH_BOARD, refreshKey);
       stackRef.current?.removeEventListener('scroll', handleScroll);
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_OBJ_SEARCH, pinSearch);
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_OBJ_GET_RANGE, pinRange);
     };
   });
 
@@ -87,7 +67,7 @@ export const BoardComponent: FunctionComponent = () => {
       return;
     }
     window.setTimeout(async () => {
-      await BoardStore.sendRange();
+      await BoardStore.getObjRange();
     }, 250);
   };
 

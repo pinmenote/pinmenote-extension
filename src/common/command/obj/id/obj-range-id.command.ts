@@ -24,20 +24,35 @@ export class ObjRangeIdCommand implements ICommand<Promise<ObjIdRangeResponse>> 
   constructor(private listId: number, private from: number, private limit: number, private reverse = false) {}
   async execute(): Promise<ObjIdRangeResponse> {
     let listId = this.listId;
-    let ids = await this.getList(this.listId);
-    if (this.reverse) {
-      ids = ids.reverse();
+    const ids = await this.getIds(listId, this.from, this.limit);
+
+    // Add more
+    if (ids.length < this.limit && listId > 1) {
+      listId -= 1;
+      const add = await this.getIds(listId, ids[ids.length - 1], this.limit - ids.length);
+      ids.push(...add);
     }
-    let index = ids.indexOf(this.from);
-    if (index === -1) index = 0;
-    ids = ids.slice(index, this.limit);
-    if (ids.length < this.limit && listId > 1) listId -= 1;
+
     fnConsoleLog('ObjRangeIdCommand->execute', listId, this.from, this.limit, ids);
+
     return {
       ids,
       listId
     };
   }
+
+  private getIds = async (listId: number, from: number, limit: number): Promise<number[]> => {
+    let ids = await this.getList(listId);
+
+    if (this.reverse) ids = ids.reverse();
+
+    let index = ids.indexOf(from);
+    fnConsoleLog('ObjRangeIdCommand->getIds', 'index', index, 'from', from, 'ids', ids);
+
+    if (index === -1) index = 0;
+
+    return ids.slice(index, index + limit);
+  };
 
   private async getList(listId: number): Promise<number[]> {
     const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;

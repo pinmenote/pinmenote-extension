@@ -15,12 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useRef } from 'react';
+import { BoardStore } from '../../store/board.store';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../../common/model/bus.model';
 import { Button } from '@mui/material';
 import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import Link from '@mui/material/Link';
 import { ObjBookmarkDto } from '../../../../common/model/obj-bookmark.model';
 import { ObjDto } from '../../../../common/model/obj.model';
+import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import { fnUid } from '../../../../common/fn/uid.fn';
 
@@ -52,11 +55,18 @@ export const BookmarkElement: FunctionComponent<BookmarkElementParams> = (params
     });
   };
 
+  const handleRemove = async () => {
+    if (await BoardStore.removeObj(params.dto)) {
+      TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_REFRESH_BOARD, undefined);
+    }
+  };
+
   return (
     <div>
       <h1>{params.dto.data.title}</h1>
       <div>
         <Button onClick={handleDownload}>Download</Button>
+        <Button onClick={handleRemove}>Remove</Button>
       </div>
       <Link target="_blank" href={params.dto.data.url.href}>
         <Typography sx={{ fontSize: '0.9em' }}>{decodeURI(params.dto.data.url.href)}</Typography>

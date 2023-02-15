@@ -16,33 +16,28 @@
  */
 import { ObjDataDto, ObjDto } from '../../../common/model/obj.model';
 import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class OptionsObjGetRangeCommand implements ICommand<void> {
+export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeResponse | undefined>> {
   constructor(private data: ObjRangeRequest) {}
 
-  async execute(): Promise<void> {
+  async execute(): Promise<ObjRangeResponse | undefined> {
     try {
-      const data = await this.getRange(ObjectStoreKeys.OBJECT_ID, this.data);
-      await BrowserApi.sendRuntimeMessage<ObjRangeResponse>({ type: BusMessageType.OPTIONS_OBJ_GET_RANGE, data });
+      const { from, listId, limit } = this.data;
+      const response = await this.getRange(ObjectStoreKeys.OBJECT_ID, from, listId, limit);
+      return response;
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }
   }
 
-  private async getRange(idKey: string, range: ObjRangeRequest): Promise<ObjRangeResponse> {
-    if (range.from === undefined || !range.limit) return { listId: range.listId || -1, data: [] };
-    // Get ids - can optimise reverse by looking in reverse later
-    if (!range.listId) range.listId = await this.getListId();
-
-    const data = await new ObjRangeIdCommand(range.listId, range.from, range.limit, true).execute();
+  private async getRange(idKey: string, from: number, listId: number, limit: number): Promise<ObjRangeResponse> {
     const out = [];
+    const data = await new ObjRangeIdCommand(listId, from, limit, true).execute();
 
     for (let i = 0; i < data.ids.length; i++) {
       const key = `${idKey}:${data.ids[i]}`;

@@ -15,22 +15,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import ICommand = Pinmenote.Common.ICommand;
 
-export class OptionsObjSearchCommand implements ICommand<void> {
+export class OptionsObjSearchCommand implements ICommand<Promise<ObjDto<ObjDataDto>[] | undefined>> {
   constructor(private data: ObjRangeRequest) {}
 
-  async execute(): Promise<void> {
+  async execute(): Promise<ObjDto<ObjDataDto>[] | undefined> {
     try {
       const data = await this.getSearch(ObjectStoreKeys.OBJECT_ID, this.data);
-      await BrowserApi.sendRuntimeMessage<ObjDto<ObjDataDto>[]>({ type: BusMessageType.OPTIONS_OBJ_SEARCH, data });
+      return data;
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }

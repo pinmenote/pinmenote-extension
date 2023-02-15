@@ -57,7 +57,7 @@ export const MenuLinkItem: FunctionComponent<MenuLinkItemProps> = ({ url }) => {
   const handleClick = async () => {
     await BoardStore.clearSearch();
     if (url === MenuStore.ALL_URLS) {
-      await BoardStore.sendRange();
+      await BoardStore.getObjRange();
     } else {
       BoardStore.setSearch(url);
       await BoardStore.sendSearch();

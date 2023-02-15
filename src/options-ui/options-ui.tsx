@@ -28,7 +28,7 @@ import { createRoot } from 'react-dom/client';
 const initPinBoardStore = async () => {
   fnConsoleLog('initPinBoardStore');
   await BoardStore.clearSearch();
-  await BoardStore.sendRange();
+  await BoardStore.getObjRange();
 };
 
 const App: FunctionComponent = () => {

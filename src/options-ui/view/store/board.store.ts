@@ -15,13 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
-import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BookmarkRemoveCommand } from '../../../common/command/bookmark/bookmark-remove.command';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { OptionsObjGetRangeCommand } from '../../../service-worker/command/options/options-obj-get-range.command';
+import { OptionsObjSearchCommand } from '../../../service-worker/command/options/options-obj-search.command';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class BoardStore {
@@ -39,27 +43,14 @@ export class BoardStore {
     return this.objData;
   }
 
-  static setData(value: ObjRangeResponse): void {
-    const lastId = value.data[value.data.length - 1].id;
-    if (this.search.from === lastId) {
-      this.isLastValue = true;
-      // Only one element so add it :/
-      if (this.objData.length === 0) {
-        this.objData.push(...value.data);
-      }
-    } else {
-      this.search.listId = value.listId;
-      this.search.from = lastId;
-      this.objData.push(...value.data);
-    }
-  }
-
   static removeObj = async (value: ObjDto<ObjDataDto>): Promise<boolean> => {
     for (let i = 0; i < this.objData.length; i++) {
       if (this.objData[i].id == value.id) {
         this.objData.splice(i, 1);
         if (value.type === ObjTypeDto.PageElementPin) {
           await new PinRemoveCommand(value as ObjDto<ObjPagePinDto>).execute();
+        } else if (value.type === ObjTypeDto.PageBookmark) {
+          await new BookmarkRemoveCommand(value as ObjDto<ObjBookmarkDto>).execute();
         }
         return true;
       }
@@ -96,19 +87,43 @@ export class BoardStore {
     return this.search.search;
   }
 
-  static async sendRange(): Promise<void> {
+  static async getObjRange(): Promise<void> {
     fnConsoleLog('PinBoardStore->getRange', this.search);
-    await BrowserApi.sendRuntimeMessage<ObjRangeRequest>({
-      type: BusMessageType.OPTIONS_OBJ_GET_RANGE,
-      data: this.search
-    });
+    this.loading = true;
+    const result = await new OptionsObjGetRangeCommand(this.search).execute();
+    if (result) {
+      const lastResultObj = result.data[result.data.length - 1];
+      const firstResultObj = result.data[0];
+      const lastObj = this.objData[this.objData.length - 1];
+      if (lastObj?.id === firstResultObj.id) {
+        result.data.shift();
+        fnConsoleLog('PinBoardStore->getRange->UNSHIFT', result.data);
+      }
+
+      if (result.data.length === 0) {
+        this.isLastValue = true;
+        fnConsoleLog('PinBoardStore->getRange->STOP', lastResultObj.id);
+        return;
+      }
+
+      this.search.listId = result.listId;
+      this.search.from = lastResultObj.id;
+
+      this.objData.push(...result.data);
+
+      TinyEventDispatcher.dispatch(BusMessageType.OPT_REFRESH_BOARD);
+    } else {
+      this.isLastValue = true;
+    }
+    this.loading = false;
   }
 
   static async sendSearch(): Promise<void> {
     fnConsoleLog('PinBoardStore->getSearch', this.search);
-    await BrowserApi.sendRuntimeMessage<ObjRangeRequest>({
-      type: BusMessageType.OPTIONS_OBJ_SEARCH,
-      data: BoardStore.search
-    });
+    const result = await new OptionsObjSearchCommand(this.search).execute();
+    if (result) {
+      this.objData.push(...result);
+      TinyEventDispatcher.dispatch(BusMessageType.OPT_REFRESH_BOARD);
+    }
   }
 }
