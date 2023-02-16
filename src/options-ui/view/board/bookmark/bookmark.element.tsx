@@ -35,7 +35,7 @@ export const BookmarkElement: FunctionComponent<BookmarkElementParams> = (params
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (divRef.current && params.dto.data.screenshot) {
+    if (divRef.current && params.dto.data.screenshot && divRef.current.children.length === 0) {
       const img = new Image();
       img.width = window.innerWidth / 3;
       img.src = params.dto.data.screenshot;
@@ -55,6 +55,11 @@ export const BookmarkElement: FunctionComponent<BookmarkElementParams> = (params
     });
   };
 
+  const handleHtml = () => {
+    const html = IframeHtmlFactory.computeBookmarkHtml(params.dto.data) || '';
+    TinyEventDispatcher.dispatch<string>(BusMessageType.OPT_SHOW_HTML, html);
+  };
+
   const handleRemove = async () => {
     if (await BoardStore.removeObj(params.dto)) {
       TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_REFRESH_BOARD, undefined);
@@ -65,6 +70,7 @@ export const BookmarkElement: FunctionComponent<BookmarkElementParams> = (params
     <div>
       <h1>{params.dto.data.title}</h1>
       <div>
+        <Button onClick={handleHtml}>HTML</Button>
         <Button onClick={handleDownload}>Download</Button>
         <Button onClick={handleRemove}>Remove</Button>
       </div>
