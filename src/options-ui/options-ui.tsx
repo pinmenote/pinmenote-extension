@@ -20,6 +20,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BoardComponent } from './view/board/board-component';
 import { BoardStore } from './view/store/board.store';
+import { HtmlPreviewComponent } from './view/html-preview/html-preview.component';
 import { LeftSideMenu } from './view/menu/left-side.menu';
 import { OptionsMessageHandler } from './options-message.handler';
 import { SettingsComponent } from './view/settings/settings.component';
@@ -53,9 +54,12 @@ const App: FunctionComponent = () => {
 
   const mainComponent = showSettings ? <SettingsComponent /> : <BoardComponent />;
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <LeftSideMenu />
-      <div style={{ width: '100%' }}>{mainComponent}</div>
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LeftSideMenu />
+        <div style={{ width: '100%' }}>{mainComponent}</div>
+      </div>
+      <HtmlPreviewComponent />
     </div>
   );
 };

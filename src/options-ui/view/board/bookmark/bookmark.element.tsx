@@ -56,8 +56,7 @@ export const BookmarkElement: FunctionComponent<BookmarkElementParams> = (params
   };
 
   const handleHtml = () => {
-    const html = IframeHtmlFactory.computeBookmarkHtml(params.dto.data) || '';
-    TinyEventDispatcher.dispatch<string>(BusMessageType.OPT_SHOW_HTML, html);
+    TinyEventDispatcher.dispatch<ObjBookmarkDto>(BusMessageType.OPT_SHOW_HTML, params.dto.data);
   };
 
   const handleRemove = async () => {

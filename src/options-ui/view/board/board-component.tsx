@@ -16,6 +16,7 @@
  */
 import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import { BoardSearchInput } from '../menu/board-search.input';
 import { BoardStore } from '../store/board.store';
 import { BookmarkElement } from './bookmark/bookmark.element';
@@ -27,7 +28,6 @@ import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinElement } from './pin/pin.element';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import Typography from '@mui/material/Typography';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const BoardComponent: FunctionComponent = () => {
@@ -88,12 +88,16 @@ export const BoardComponent: FunctionComponent = () => {
     }
   }
 
+  const handleAddClick = () => {
+    fnConsoleLog('BoardComponent->AddClick');
+  };
+
   return (
     <div style={{ width: '100%', marginLeft: 20, marginTop: 10 }}>
       <Box style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
         <BoardSearchInput></BoardSearchInput>
-        <IconButton>
-          <Typography>aaaa</Typography>
+        <IconButton onClick={handleAddClick}>
+          <AddIcon />
         </IconButton>
       </Box>
       <Stack direction="row" flexWrap="wrap" ref={stackRef} style={{ overflow: 'auto', height: 'calc(100vh - 65px)' }}>
