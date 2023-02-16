@@ -60,7 +60,9 @@ export interface ObjEncryptionDto {
 export enum ObjTypeDto {
   PageBookmark = 'PAGE_BOOKMARK',
   PageNote = 'PAGE_NOTE',
+  PageSnapshot = 'PAGE_SNAPSHOT',
   PageElementPin = 'ELEMENT_PIN',
+  PageElementSnapshot = 'ELEMENT_SNAPSHOT',
   PageCanvasPin = 'PAGE_CANVAS_PIN',
   PageLink = 'PAGE_LINK',
   Note = 'NOTE',
