@@ -36,6 +36,7 @@ import { PopupRegisterCommand } from './command/popup/popup-register.command';
 import { PopupSyncPinsCommand } from './command/popup/popup-sync-pins.command';
 import { PopupSyncQuotaCommand } from './command/popup/popup-sync-quota.command';
 import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
+import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
@@ -119,6 +120,7 @@ const handleInstalled = async (event: unknown): Promise<void> => {
   fnConsoleLog('INSTALLED', event, BrowserApi.runtime.id);
   // Initial Content Settings
   await new SwInitSettingsCommand().execute();
+  await ScriptService.reloadScripts();
 };
 
 const handleSuspend = () => {
