@@ -29,7 +29,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 
 export const KeyListComponent: FunctionComponent = () => {
   const [usernameList, setUsernameList] = useState<string[]>([]);
-  const [username, setUsername] = useState<string>([]);
+  const [username, setUsername] = useState<string>('');
 
   const [addVisible, setAddVisible] = useState<boolean>(false);
   const [detailsVisible, setDetailsVisible] = useState<boolean>(false);
