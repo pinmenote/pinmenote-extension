@@ -17,7 +17,7 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';

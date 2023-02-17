@@ -16,7 +16,7 @@
  */
 import React, { CSSProperties, FunctionComponent } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Typography from '@mui/material/Typography';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';

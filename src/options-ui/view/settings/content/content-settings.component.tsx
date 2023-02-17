@@ -16,7 +16,7 @@
  */
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { Input } from '@mui/material';
+import Input from '@mui/material/Input';
 import { SettingsConfig } from '../../../../common/environment';
 import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../store/settings.store';

@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Button, Typography } from '@mui/material';
 import React, { FunctionComponent } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import Button from '@mui/material/Button';
 import { PinBoardButton } from './pin.board.button';
+import Typography from '@mui/material/Typography';
 
 export const PinConnectionErrorComponent: FunctionComponent = () => {
   const isExtension = ActiveTabStore.isExtension;

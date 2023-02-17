@@ -22,7 +22,7 @@ import { BoardStore } from '../store/board.store';
 import { BookmarkElement } from './bookmark/bookmark.element';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinElement } from './pin/pin.element';

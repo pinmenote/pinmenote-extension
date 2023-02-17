@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CryptoStore } from '../../../../../common/store/crypto.store';
 import IconButton from '@mui/material/IconButton';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export interface KeyDetailsComponent {
@@ -28,7 +29,7 @@ export const KeyDetailsComponent: FunctionComponent<KeyDetailsComponent> = (prop
         </IconButton>
       </div>
       <div>
-        <textarea rows="10" cols="65" value={publicKey}></textarea>
+        <TextareaAutosize minRows={10} maxRows={10} cols={65} value={publicKey}></TextareaAutosize>
       </div>
     </div>
   );

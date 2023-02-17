@@ -18,7 +18,7 @@ import React, { CSSProperties, FunctionComponent } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ContentSettingsComponent } from './content/content-settings.component';
 import { CryptoSettingsComponent } from './crypto/crypto-settings.component';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import { ServerSettingsComponent } from './server/server-settings.component';
 import { SyncSettingsComponent } from './sync/sync-settings.component';

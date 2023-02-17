@@ -17,7 +17,7 @@
 import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import { BoardStore } from '../store/board.store';
 import ClearIcon from '@mui/icons-material/Clear';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import SearchIcon from '@mui/icons-material/Search';
 import { fnConsoleLog } from '../../../common/fn/console.fn';

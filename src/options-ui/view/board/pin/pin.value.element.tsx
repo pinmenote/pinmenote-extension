@@ -23,7 +23,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import { EditorView } from 'prosemirror-view';
 import HtmlIcon from '@mui/icons-material/Html';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import ImageIcon from '@mui/icons-material/Image';
 import { ObjPagePinDto } from '../../../../common/model/obj-pin.model';

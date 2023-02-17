@@ -19,7 +19,7 @@ import { ActiveTabStore } from '../../store/active-tab.store';
 import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinListComponent } from './pin.list.component';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 interface PinListOriginProps {
   pinHref: ObjDto<ObjPagePinDto>[];

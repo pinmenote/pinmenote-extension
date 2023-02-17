@@ -18,7 +18,7 @@ import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { BoardStore } from '../../store/board.store';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import Link from '@mui/material/Link';
 import { ObjBookmarkDto } from '../../../../common/model/obj-bookmark.model';

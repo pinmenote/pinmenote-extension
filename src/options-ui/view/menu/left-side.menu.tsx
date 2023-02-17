@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Button, Divider } from '@mui/material';
 import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
 import { BoardStore } from '../store/board.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
 import { ObjHashtagStore } from '../../../common/store/obj-hashtag.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';

@@ -18,7 +18,7 @@ import React, { FunctionComponent, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckIcon from '@mui/icons-material/Check';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { UserSettingsComponent } from '../user/user-settings.component';
 

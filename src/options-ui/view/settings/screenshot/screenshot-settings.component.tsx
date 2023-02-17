@@ -14,10 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Input, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { ScreenshotFormat, SettingsConfig } from '../../../../common/environment';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import Input from '@mui/material/Input';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../store/settings.store';
 import Typography from '@mui/material/Typography';

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Button, IconButton } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import AddIcon from '@mui/icons-material/Add';
@@ -23,6 +22,8 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { BookmarkRemoveCommand } from '../../../common/command/bookmark/bookmark-remove.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import { LogManager } from '../../../common/popup/log.manager';
 import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjDto } from '../../../common/model/obj.model';

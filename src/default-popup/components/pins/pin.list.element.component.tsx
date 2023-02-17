@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { IconButton, Typography } from '@mui/material';
 import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
@@ -22,6 +21,7 @@ import { BrowserStorageWrapper } from '../../../common/service/browser.storage.w
 import { BusMessageType } from '../../../common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
@@ -33,6 +33,7 @@ import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command
 import RemoveMarkdown from 'remove-markdown';
 import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 

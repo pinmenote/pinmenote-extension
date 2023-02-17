@@ -14,20 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Button, Typography } from '@mui/material';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import Button from '@mui/material/Button';
 import { LogManager } from '../../../common/popup/log.manager';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import Typography from '@mui/material/Typography';
 
 export const LogsTabComponent: FunctionComponent = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   const handleRemoveAllPins = async (): Promise<void> => {
-    await BrowserApi.sendRuntimeMessage<undefined>({
-      type: BusMessageType.POPUP_PIN_CLEANUP
-    });
+    await BrowserApi.localStore.clear();
   };
 
   const handleClearLogs = () => {

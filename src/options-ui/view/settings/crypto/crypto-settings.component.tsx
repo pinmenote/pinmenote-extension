@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { IconButton, Input } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CryptoStore } from '../../../../common/store/crypto.store';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
 import { KeyListComponent } from './user/key-list.component';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import Typography from '@mui/material/Typography';

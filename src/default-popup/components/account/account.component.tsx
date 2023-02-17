@@ -14,15 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Button, IconButton, TextareaAutosize, Typography } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import Button from '@mui/material/Button';
 import { COLOR_DEFAULT_GREY } from '../../../common/components/colors';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { DiskQuotaDto } from '../../../common/model/shared/token.model';
+import IconButton from '@mui/material/IconButton';
 import { StyledInput } from '../../../common/components/react/styled.input';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import Typography from '@mui/material/Typography';
 import { fnByteToMb } from '../../../common/fn/diskspace.fn';
 
 class QuotaStore {

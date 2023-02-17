@@ -18,7 +18,7 @@ import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
