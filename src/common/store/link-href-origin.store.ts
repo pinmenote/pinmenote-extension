@@ -20,7 +20,6 @@ import { ObjUrlDto } from '../model/obj.model';
 export class LinkHrefOriginStore {
   private static PIN_HREF = 'pin:href';
   private static PIN_ORIGIN = 'pin:origin';
-  private static PIN_URL_LIST = 'pin:url:list';
 
   static async addHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
@@ -31,7 +30,6 @@ export class LinkHrefOriginStore {
     const originIds = await this.originIds(url.origin);
     originIds.push(id);
     await BrowserStorageWrapper.set(`${this.PIN_ORIGIN}:${url.origin}`, originIds);
-    await this.addOriginUrl(url);
   }
 
   static async delHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
@@ -63,18 +61,5 @@ export class LinkHrefOriginStore {
     const key = `${this.PIN_ORIGIN}:${url}`;
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
-  }
-
-  static async getOriginUrls(): Promise<string[]> {
-    const value = await BrowserStorageWrapper.get<string[] | undefined>(this.PIN_URL_LIST);
-    return value || [];
-  }
-
-  private static async addOriginUrl(url: ObjUrlDto): Promise<void> {
-    const urls = await this.getOriginUrls();
-    if (urls.indexOf(url.origin) === -1) {
-      urls.push(url.origin);
-    }
-    await BrowserStorageWrapper.set(this.PIN_URL_LIST, urls);
   }
 }

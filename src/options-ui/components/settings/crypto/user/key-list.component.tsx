@@ -46,7 +46,7 @@ export const KeyListComponent: FunctionComponent = () => {
   });
 
   const handleAdd = () => {
-    setAddVisible(true);
+    setAddVisible(!addVisible);
     setDetailsVisible(false);
   };
 

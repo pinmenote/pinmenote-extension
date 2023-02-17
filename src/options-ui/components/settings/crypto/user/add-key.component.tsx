@@ -85,7 +85,7 @@ export const AddKeyComponent: FunctionComponent<CryptoAddUserKeyProps> = (props)
           Cancel
         </Button>
         <Button sx={{ width: '40%' }} variant="outlined" onClick={handleAdd}>
-          Add User Key
+          Add Key
         </Button>
       </div>
     </div>

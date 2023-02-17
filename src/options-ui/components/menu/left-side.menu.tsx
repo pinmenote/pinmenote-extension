@@ -15,21 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
-import { BoardStore } from '../../store/board.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
 import { ObjHashtagStore } from '../../../common/store/obj-hashtag.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
 class MenuStore {
-  static readonly ALL_URLS = '<all_urls>';
   private static sent = false;
-
-  static urlList: string[] = [];
   static hashList: string[] = [];
 
   static dispatchInit(): void {
@@ -39,49 +34,17 @@ class MenuStore {
   }
 
   static fetchData = async (): Promise<void> => {
-    // url list
-    const urlList = await LinkHrefOriginStore.getOriginUrls();
-    this.urlList = urlList.sort();
-    urlList.unshift(MenuStore.ALL_URLS);
-
     // hash list
     const hashList = await ObjHashtagStore.getHashtagList();
     MenuStore.hashList = hashList.sort();
   };
 }
-
-interface MenuLinkItemProps {
-  url: string;
-}
-
-export const MenuLinkItem: FunctionComponent<MenuLinkItemProps> = ({ url }) => {
-  const handleClick = async () => {
-    await BoardStore.clearSearch();
-    if (url === MenuStore.ALL_URLS) {
-      await BoardStore.getObjRange();
-    } else {
-      BoardStore.setSearch(url);
-      await BoardStore.sendSearch();
-    }
-  };
-
-  return (
-    <div style={{ marginLeft: 5, marginTop: 10 }}>
-      <Typography style={{ userSelect: 'none', cursor: 'pointer' }} onClick={handleClick}>
-        {url}
-      </Typography>
-    </div>
-  );
-};
-
 export const LeftSideMenu: FunctionComponent = () => {
-  const [urlList, setUrlList] = useState<ReactNode[]>(MenuStore.urlList);
   const [hashList, setHashList] = useState<ReactNode[]>(MenuStore.hashList);
 
   useEffect(() => {
     const dataKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.OPT_GET_LEFT_MENU_DATA, async () => {
       await MenuStore.fetchData();
-      setUrlList(MenuStore.urlList.map((v) => <MenuLinkItem key={`item-${v}`} url={v} />));
       setHashList(MenuStore.hashList.map((h) => <Typography key={`hash-${h}`}>{h}</Typography>));
     });
     MenuStore.dispatchInit();
@@ -105,14 +68,12 @@ export const LeftSideMenu: FunctionComponent = () => {
         </div>
         <Divider style={{ marginTop: 5 }} />
       </div>
-      <Typography align="center" fontSize="1.5em" fontWeight="bold" marginTop={2}>
-        urls
-      </Typography>
-      <div style={{ height: '50%', overflow: 'auto', marginLeft: 10 }}>{urlList}</div>
-      <Typography align="center" fontSize="1.5em" fontWeight="bold">
-        tags
-      </Typography>
-      <div style={{ height: '50%', overflow: 'auto', marginLeft: 10 }}>{hashList}</div>
+      <div style={{ height: '100%', marginLeft: 10, marginTop: 10 }}>
+        <Typography align="center" fontSize="1.5em" fontWeight="bold">
+          tags
+        </Typography>
+        <div style={{ overflow: 'auto' }}>{hashList}</div>
+      </div>
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
         <div style={{ width: '100%', margin: 5, marginBottom: 20 }}>
           <Button sx={{ width: '100%' }} variant="outlined" onClick={handleSettingsClick}>

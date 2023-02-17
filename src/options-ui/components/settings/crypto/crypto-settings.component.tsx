@@ -18,9 +18,9 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CryptoStore } from '../../../../common/store/crypto.store';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
 import { KeyListComponent } from './user/key-list.component';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 
 export const CryptoSettingsComponent: FunctionComponent = () => {
@@ -45,7 +45,7 @@ export const CryptoSettingsComponent: FunctionComponent = () => {
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
           private key
         </Typography>
-        <Input style={{ width: 300 }} value={privateKey} />
+        <TextareaAutosize maxRows={10} cols={60} value={privateKey} />
         <IconButton>
           <ContentCopyIcon />
         </IconButton>
@@ -53,11 +53,11 @@ export const CryptoSettingsComponent: FunctionComponent = () => {
           <RestartAltIcon />
         </IconButton>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
           public key
         </Typography>
-        <Input style={{ width: 300 }} value={publicKey} />
+        <TextareaAutosize maxRows={10} cols={60} value={publicKey} />
         <IconButton>
           <ContentCopyIcon />
         </IconButton>
