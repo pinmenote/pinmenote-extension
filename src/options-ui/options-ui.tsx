@@ -18,12 +18,12 @@ import '../css/prosemirror.css';
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
-import { BoardComponent } from './view/board/board-component';
-import { BoardStore } from './view/store/board.store';
-import { HtmlPreviewComponent } from './view/html-preview/html-preview.component';
-import { LeftSideMenu } from './view/menu/left-side.menu';
+import { BoardComponent } from './components/board/board.component';
+import { BoardStore } from './store/board.store';
+import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
+import { LeftSideMenu } from './components/menu/left-side.menu';
 import { OptionsMessageHandler } from './options-message.handler';
-import { SettingsComponent } from './view/settings/settings.component';
+import { SettingsComponent } from './components/settings/settings.component';
 import { createRoot } from 'react-dom/client';
 
 const initPinBoardStore = async () => {

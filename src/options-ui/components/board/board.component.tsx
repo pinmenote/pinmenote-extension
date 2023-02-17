@@ -18,7 +18,7 @@ import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model'
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { BoardSearchInput } from '../menu/board-search.input';
-import { BoardStore } from '../store/board.store';
+import { BoardStore } from '../../store/board.store';
 import { BookmarkElement } from './bookmark/bookmark.element';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';

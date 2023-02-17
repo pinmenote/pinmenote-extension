@@ -14,19 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
-import { BookmarkRemoveCommand } from '../../../common/command/bookmark/bookmark-remove.command';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../common/model/obj.model';
+import { BookmarkRemoveCommand } from '../../common/command/bookmark/bookmark-remove.command';
+import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { BusMessageType } from '../../common/model/bus.model';
+import { ObjBookmarkDto } from '../../common/model/obj-bookmark.model';
+import { ObjPagePinDto } from '../../common/model/obj-pin.model';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { OptionsObjGetRangeCommand } from '../../../service-worker/command/options/options-obj-get-range.command';
-import { OptionsObjSearchCommand } from '../../../service-worker/command/options/options-obj-search.command';
-import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
+import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
+import { OptionsObjSearchCommand } from '../../service-worker/command/options/options-obj-search.command';
+import { PinRemoveCommand } from '../../common/command/pin/pin-remove.command';
+import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class BoardStore {
   static objData: ObjDto<ObjDataDto>[] = [];

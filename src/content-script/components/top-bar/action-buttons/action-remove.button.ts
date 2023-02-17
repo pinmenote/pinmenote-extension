@@ -18,7 +18,7 @@ import { HtmlComponent } from '../../../../common/model/html.model';
 import { PinComponent } from '../../pin.component';
 import { PinRemoveCommand } from '../../../../common/command/pin/pin-remove.command';
 import { PinStore } from '../../../store/pin.store';
-import { SettingsStore } from '../../../../options-ui/view/store/settings.store';
+import { SettingsStore } from '../../../../options-ui/store/settings.store';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 

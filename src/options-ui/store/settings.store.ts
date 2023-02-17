@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { SettingsConfig } from '../../../common/environment';
-import { SettingsKeys } from '../../../common/keys/settings.keys';
+import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { SettingsConfig } from '../../common/environment';
+import { SettingsKeys } from '../../common/keys/settings.keys';
 
 export class SettingsStore {
   static settings?: SettingsConfig;

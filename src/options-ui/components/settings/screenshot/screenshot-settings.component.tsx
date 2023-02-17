@@ -15,11 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
+import { ScreenshotFormat, SettingsConfig } from '../../../../common/environment';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import Input from '@mui/material/Input';
-import { SettingsConfig } from '../../../../common/environment';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { SettingsKeys } from '../../../../common/keys/settings.keys';
-import { SettingsStore } from '../../store/settings.store';
+import { SettingsStore } from '../../../store/settings.store';
 import Typography from '@mui/material/Typography';
 
 const borderContainer: CSSProperties = {
@@ -28,48 +31,54 @@ const borderContainer: CSSProperties = {
   alignItems: 'center'
 };
 
-export const ContentSettingsComponent: FunctionComponent = () => {
-  const [borderRadius, setBorderRadius] = useState<string>('');
-  const [borderStyle, setBorderStyle] = useState<string>('');
+export const ScreenshotSettingsComponent: FunctionComponent = () => {
+  const [screenshotFormat, setScreenshotFormat] = useState<string>('');
+  const [screenshotQuality, setScreenshotQuality] = useState<number>(0);
 
   useEffect(() => {
     setTimeout(async () => {
       await SettingsStore.fetchData();
-      setBorderRadius(SettingsStore.settings?.borderRadius || '5px');
-      setBorderStyle(SettingsStore.settings?.borderStyle || '2px solid #ff0000');
+      setScreenshotQuality(SettingsStore.settings?.screenshotQuality || 0);
+      setScreenshotFormat(SettingsStore.settings?.screenshotFormat || 'jpeg');
     }, 0);
   });
 
-  const handleBorderRadiusChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
+  const handleScreenshotQuality = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
-    setBorderRadius(e.target.value);
-    SettingsStore.settings.borderRadius = e.target.value;
-    await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    const value = parseInt(e.target.value);
+    setScreenshotQuality(value);
+    if (value > 0 && value <= 100) {
+      SettingsStore.settings.screenshotQuality = value;
+      await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    }
   };
 
-  const handleBorderStyleChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
+  const handleScreenshotFormat = async (e: SelectChangeEvent): Promise<void> => {
     if (!SettingsStore.settings) return;
-    setBorderStyle(e.target.value);
-    SettingsStore.settings.borderStyle = e.target.value;
+    setScreenshotFormat(e.target.value);
+    SettingsStore.settings.screenshotFormat = e.target.value as ScreenshotFormat;
     await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
   return (
     <div>
       <Typography fontSize="2.5em" style={{ marginBottom: 10 }}>
-        content
+        screenshot
       </Typography>
       <div style={borderContainer}>
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
-          border radius
+          format
         </Typography>
-        <Input type="text" value={borderRadius} onChange={handleBorderRadiusChange} style={{ width: 300 }} />
+        <Select label="format" value={screenshotFormat} onChange={handleScreenshotFormat} style={{ width: 300 }}>
+          <MenuItem value="jpeg">JPEG</MenuItem>
+          <MenuItem value="png">PNG</MenuItem>
+        </Select>
       </div>
       <div style={borderContainer}>
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
-          border style
+          quality
         </Typography>
-        <Input type="text" value={borderStyle} onChange={handleBorderStyleChange} style={{ width: 300 }} />
+        <Input type="number" value={screenshotQuality} onChange={handleScreenshotQuality} style={{ width: 300 }} />
       </div>
     </div>
   );

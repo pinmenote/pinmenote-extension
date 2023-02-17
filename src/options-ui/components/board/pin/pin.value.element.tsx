@@ -16,7 +16,7 @@
  */
 import { ObjBoardViewDto, ObjDto } from '../../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { BoardStore } from '../../store/board.store';
+import { BoardStore } from '../../../store/board.store';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
