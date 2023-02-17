@@ -48,7 +48,7 @@ export const environmentConfig: EnvironmentConfig = {
     version: parseInt(process.env.VERSION || '1'),
     screenshotFormat: 'jpeg',
     screenshotQuality: 90,
-    borderStyle: '2px solid #ff0000',
+    borderStyle: 'none',
     borderRadius: '5px',
     themeColor: '#ff0000',
     videoDisplayTime: 5
