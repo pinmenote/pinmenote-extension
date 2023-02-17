@@ -16,11 +16,11 @@
  */
 import { ObjDto, ObjLinkDto } from '../../../common/model/obj.model';
 import { HtmlLinkComponent } from '../../components/html-link.component';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class CreateLinkCommand implements ICommand<boolean> {
   constructor(private data: ObjDto<ObjLinkDto>) {}

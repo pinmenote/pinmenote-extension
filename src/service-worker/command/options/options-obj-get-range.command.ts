@@ -17,10 +17,10 @@
 import { ObjDataDto, ObjDto } from '../../../common/model/obj.model';
 import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeResponse | undefined>> {
   constructor(private data: ObjRangeRequest) {}

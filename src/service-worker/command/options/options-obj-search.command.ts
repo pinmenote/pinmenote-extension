@@ -16,11 +16,11 @@
  */
 import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class OptionsObjSearchCommand implements ICommand<Promise<ObjDto<ObjDataDto>[] | undefined>> {
   constructor(private data: ObjRangeRequest) {}

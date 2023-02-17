@@ -16,6 +16,7 @@
  */
 import { ObjDto, ObjLinkDto } from '../../../common/model/obj.model';
 import { CreateLinkCommand } from '../link/create-link.command';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjTypeDto } from '../../../common/model/obj.model';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
@@ -24,7 +25,6 @@ import { PinStore } from '../../store/pin.store';
 import { RuntimePinGetHrefCommand } from '../runtime/runtime-pin-get-href.command';
 import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class InvalidatePinsCommand implements ICommand<Promise<void>> {
   constructor(private href: string) {}

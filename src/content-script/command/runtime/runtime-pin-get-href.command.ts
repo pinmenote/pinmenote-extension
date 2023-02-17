@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ICommand } from '../../../common/model/shared/common.model';
 import { PinAddXpathCommand } from '../pin/pin-add-xpath.command';
 import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
 import { PinNavigateCommand } from '../pin/pin-navigate.command';
 import { PinStore } from '../../store/pin.store';
 import { UrlFactory } from '../../../common/factory/url.factory';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

@@ -18,9 +18,9 @@ import { FetchImageRequest, FetchImageResponse } from '../../../common/model/obj
 import { FetchService, ResponseType } from '../../service/fetch.service';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}

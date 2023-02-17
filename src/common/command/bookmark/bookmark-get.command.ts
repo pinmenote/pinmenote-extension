@@ -16,9 +16,9 @@
  */
 import { ObjDto, ObjUrlDto } from '../../model/obj.model';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ICommand } from '../../model/shared/common.model';
 import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class BookmarkGetCommand implements ICommand<Promise<ObjDto<ObjBookmarkDto> | undefined>> {
   constructor(private url: ObjUrlDto) {}

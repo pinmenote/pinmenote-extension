@@ -16,11 +16,11 @@
  */
 import { ObjDto, ObjUrlDto } from '../../model/obj.model';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ICommand } from '../../model/shared/common.model';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjPagePinDto } from '../../model/obj-pin.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>[]>> {
   constructor(private data: ObjUrlDto, private filterVisible = false) {}

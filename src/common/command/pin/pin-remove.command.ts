@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ICommand } from '../../model/shared/common.model';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjDto } from '../../model/obj.model';
 import { ObjPagePinDto } from '../../model/obj-pin.model';
@@ -22,7 +23,6 @@ import { ObjRemoveHashtagsCommand } from '../obj/hashtag/obj-remove-hashtags.com
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PinRemoveCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPagePinDto>) {}

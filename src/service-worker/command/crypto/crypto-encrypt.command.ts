@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { Message, PublicKey, createMessage, encrypt, readKey } from 'openpgp';
-import ICommand = Pinmenote.Common.ICommand;
+import { ICommand } from '../../../common/model/shared/common.model';
 
 export class CryptoEncryptCommand implements ICommand<Promise<string | undefined>> {
   constructor(private value: object, private armoredKey: string) {}

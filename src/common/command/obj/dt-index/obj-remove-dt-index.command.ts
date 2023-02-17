@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnYearMonthFormat } from '../../../fn/date.format.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class ObjRemoveDtIndexCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private dt: Date) {}

@@ -1,3 +1,0 @@
-[submodule "@types"]
-	path = @types
-	url = git@github.com:pinmenote/types.git

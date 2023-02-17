@@ -20,10 +20,10 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { COLOR_DEFAULT_GREY } from '../../../common/components/colors';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { DiskQuotaDto } from '../../../common/model/shared/token.model';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnByteToMb } from '../../../common/fn/diskspace.fn';
-import DiskQuotaDto = Pinmenote.Account.DiskQuotaDto;
 
 class QuotaStore {
   private static sent = false;
@@ -119,7 +119,7 @@ export const AccountComponent: FunctionComponent = () => {
             Space Used{' '}
           </Typography>
           <Typography display="inline">
-            {fnByteToMb(quota?.used)} / {fnByteToMb(quota?.quota)} MB
+            {fnByteToMb(quota?.used)} / {fnByteToMb(quota?.available)} MB
           </Typography>
         </Typography>
         <Button sx={{ width: '100%' }} variant="outlined" onClick={handleSyncNotes}>

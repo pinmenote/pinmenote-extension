@@ -16,9 +16,9 @@
  */
 import { SettingsConfig, environmentConfig } from '../../../common/environment';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class SwInitSettingsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

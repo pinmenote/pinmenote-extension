@@ -18,9 +18,9 @@ import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { readPrivateKey } from 'openpgp';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PopupPrivateKeyImportCommand implements ICommand<void> {
   constructor(private data: string) {}

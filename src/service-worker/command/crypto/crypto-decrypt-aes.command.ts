@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { decrypt, readMessage } from 'openpgp';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class CryptoDecryptAesCommand implements ICommand<Promise<any>> {
   constructor(private message: string, private password: string) {}

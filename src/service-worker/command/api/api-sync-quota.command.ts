@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiStore } from '../../store/api.store';
+import { DiskQuotaDto } from '../../../common/model/shared/token.model';
 import { FetchService } from '../../service/fetch.service';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import DiskQuotaDto = Pinmenote.Account.DiskQuotaDto;
-import ICommand = Pinmenote.Common.ICommand;
 
 export class ApiSyncQuotaCommand implements ICommand<Promise<DiskQuotaDto>> {
   async execute(): Promise<DiskQuotaDto> {

@@ -18,8 +18,8 @@ import { FetchCssRequest, FetchCssResponse } from '../../../common/model/obj-req
 import { FetchService, ResponseType } from '../../service/fetch.service';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}

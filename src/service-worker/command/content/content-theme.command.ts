@@ -16,13 +16,13 @@
  */
 import { ContentExtensionData, ExtensionThemeDto } from '../../../common/model/settings.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import icon128 from '../../../assets/icon/light/128.png';
 import icon16 from '../../../assets/icon/light/16.png';
 import icon24 from '../../../assets/icon/light/24.png';
 import icon32 from '../../../assets/icon/light/32.png';
 import icon48 from '../../../assets/icon/light/48.png';
-import ICommand = Pinmenote.Common.ICommand;
 
 const lightIcons = () => {
   if (BrowserApi.isChrome) {

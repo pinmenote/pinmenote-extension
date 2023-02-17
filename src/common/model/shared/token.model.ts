@@ -14,19 +14,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CryptoStore } from '../../store/crypto.store';
-import { ICommand } from '../../../common/model/shared/common.model';
-import { encryptKey } from 'openpgp';
+export enum TokenTypeDto {
+  Bearer = 'Bearer'
+}
 
-export class CryptoEncryptPrivateKeyCommand implements ICommand<Promise<string | undefined>> {
-  constructor(private password: string) {}
-  async execute(): Promise<string | undefined> {
-    await CryptoStore.loadKeys();
-    if (!CryptoStore.cryptoKey?.privateKey) return undefined;
-    const keyOutput = await encryptKey({
-      privateKey: CryptoStore.cryptoKey.privateKey,
-      passphrase: this.password
-    });
-    return btoa(keyOutput.armor());
-  }
+export interface AccessTokenDto {
+  access_token: string;
+  expires_in: number;
+  token_type: TokenTypeDto;
+}
+
+export interface TokenDataDto {
+  sub: string;
+  exp: number;
+  data: TokenUserDto;
+}
+
+export interface TokenUserDto {
+  username: string;
+  email: string;
+  api: string;
+  short: string;
+}
+
+export interface LoginDto {
+  email: string;
+  signature: string;
+}
+
+export interface RegisterDto {
+  email: string;
+  username: string;
+  publicKey: string;
+  acceptedVersion: string;
+}
+
+export interface DiskQuotaDto {
+  used: number;
+  available: number;
 }

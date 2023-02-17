@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BoolDto, ICommand } from '../../../common/model/shared/common.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import BoolDto = Pinmenote.Common.BoolDto;
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PopupSyncPinsCommand implements ICommand<void> {
   async execute(): Promise<void> {

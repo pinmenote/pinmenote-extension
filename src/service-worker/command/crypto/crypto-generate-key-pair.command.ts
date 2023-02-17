@@ -16,8 +16,8 @@
  */
 import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { generateKey } from 'openpgp';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class CryptoGenerateKeyPairCommand implements ICommand<Promise<CryptoKeyData>> {
   constructor(private name: string, private email: string) {}

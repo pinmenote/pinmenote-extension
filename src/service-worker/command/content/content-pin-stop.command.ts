@@ -16,8 +16,8 @@
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentPinStopCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

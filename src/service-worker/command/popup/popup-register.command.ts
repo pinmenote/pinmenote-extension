@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.model';
 import { ApiRegisterCommand } from '../api/api-register.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { RegisterFormData } from '../../../common/model/auth.model';
+import { TokenUserDto } from '../../../common/model/shared/token.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
-import TokenUserDto = Pinmenote.Account.TokenUserDto;
-import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 
 export class PopupRegisterCommand implements ICommand<void> {
   constructor(private data: RegisterFormData) {}

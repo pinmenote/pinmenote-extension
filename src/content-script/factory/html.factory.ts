@@ -78,6 +78,7 @@ export class HtmlFactory {
     }
 
     const attributes: Attr[] = Array.from(ref.attributes);
+    let srcFilled = false;
     for (const attr of attributes) {
       if (attr.name === 'href') {
         // HREF
@@ -94,13 +95,39 @@ export class HtmlFactory {
             html += `src="${url}" `;
           } else {
             html += `src="${imageData.data}" `;
+            srcFilled = true;
           }
         } else {
           html += `src="${url}" `;
+          srcFilled = true;
+        }
+      } else if (attr.name == 'data-src') {
+        const url = this.computeUrl(attr.value);
+        if (tagName === 'img' && !srcFilled) {
+          const imageData = await this.fetchImage(url);
+          if (imageData.error) {
+            html += `src="${url}" `;
+          } else {
+            html += `src="${imageData.data}" `;
+            srcFilled = true;
+          }
         }
       } else if (attr.name === 'srcset') {
-        // skip for now
-        // TODO fix urls like with src
+        // TODO check if ok for all cases
+        const srcset = attr.value.split(',');
+        // last value so it's biggest image
+        const urlvalue = srcset[srcset.length - 1].trim().split(' ')[0];
+
+        const url = this.computeUrl(urlvalue);
+        if (url.startsWith('http') && tagName === 'img' && !srcFilled) {
+          const imageData = await this.fetchImage(url);
+          if (imageData.error) {
+            html += `src="${url}" `;
+          } else {
+            html += `src="${imageData.data}" `;
+            srcFilled = true;
+          }
+        }
       } else {
         html += `${attr.name}="${attr.value}" `;
       }

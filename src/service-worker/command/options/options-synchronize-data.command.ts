@@ -16,7 +16,7 @@
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import ICommand = Pinmenote.Common.ICommand;
+import { ICommand } from '../../../common/model/shared/common.model';
 
 export class OptionsSynchronizeDataCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

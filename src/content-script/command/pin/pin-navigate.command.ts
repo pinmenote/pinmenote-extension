@@ -16,13 +16,13 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinStore } from '../../store/pin.store';
 import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { resolveVideoTimeFn } from '../../fn/resolve-video-time.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PinNavigateCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

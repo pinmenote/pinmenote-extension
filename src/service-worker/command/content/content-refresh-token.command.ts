@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { AccessTokenDto } from '../../../common/model/shared/token.model';
 import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchService } from '../../service/fetch.service';
-import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
-import ICommand = Pinmenote.Common.ICommand;
+import { ICommand } from '../../../common/model/shared/common.model';
 
 export class ContentRefreshTokenCommand implements ICommand<void> {
   async execute(): Promise<void> {

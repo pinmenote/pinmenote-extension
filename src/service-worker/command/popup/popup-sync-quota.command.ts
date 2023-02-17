@@ -17,9 +17,9 @@
 import { ApiSyncQuotaCommand } from '../api/api-sync-quota.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { DiskQuotaDto } from '../../../common/model/shared/token.model';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import DiskQuotaDto = Pinmenote.Account.DiskQuotaDto;
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PopupSyncQuotaCommand implements ICommand<void> {
   async execute(): Promise<void> {

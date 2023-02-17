@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.model';
 import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import { ApiSharePinCommand } from '../api/api-share-pin.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
-import ServerErrorDto = Pinmenote.Common.ServerErrorDto;
 
 export class OptionsPinShareCommand implements ICommand<void> {
   constructor(private data: ObjDto<ObjPagePinDto>) {}

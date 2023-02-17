@@ -16,8 +16,8 @@
  */
 import { Message, createMessage, sign } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class CryptoSignCommand implements ICommand<Promise<string>> {
   constructor(private text: string) {}

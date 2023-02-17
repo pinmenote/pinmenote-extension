@@ -16,10 +16,10 @@
  */
 import { CanvasPinComponent } from '../../components/canvas-pin.component';
 import { HtmlComponent } from '../../../common/model/html.model';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjCanvasPinDto } from '../../../common/model/obj-pin.model';
 import { ObjDto } from '../../../common/model/obj.model';
 import { PinStore } from '../../store/pin.store';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class CanvasPinComponentAddCommand implements ICommand<HtmlComponent<HTMLElement> | undefined> {
   constructor(private dto: ObjDto<ObjCanvasPinDto>, private focus = false) {}

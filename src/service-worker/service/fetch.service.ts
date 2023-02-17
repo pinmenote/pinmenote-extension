@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { AccessTokenDto } from '../../common/model/shared/token.model';
 import { ApiStore } from '../store/api.store';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
 
 export enum ResponseType {
   JSON = 1,

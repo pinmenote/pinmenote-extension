@@ -16,8 +16,8 @@
  */
 import { Message, createMessage, readSignature, verify } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class CryptoVerifySignatureCommand implements ICommand<void> {
   constructor(private text: string, private armoredSignature: string) {}

@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ICommand } from '../../model/shared/common.model';
 import { ObjDto } from '../../model/obj.model';
 import { ObjPagePinDto } from '../../model/obj-pin.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PinUpdateCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPagePinDto>) {}

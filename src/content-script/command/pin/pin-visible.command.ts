@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PinVisibleCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPagePinDto>) {}

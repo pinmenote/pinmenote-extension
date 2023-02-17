@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { AccessTokenDto, LoginDto, TokenUserDto } from '../../../common/model/shared/token.model';
 import { ApiStore } from '../../store/api.store';
 import { CryptoSignCommand } from '../crypto/crypto-sign.command';
 import { FetchService } from '../../service/fetch.service';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
-import ICommand = Pinmenote.Common.ICommand;
-import LoginDto = Pinmenote.Account.LoginDto;
-import TokenUserDto = Pinmenote.Account.TokenUserDto;
 
 export class ApiLoginCommand implements ICommand<Promise<TokenUserDto>> {
   constructor(private data: LoginDto) {}

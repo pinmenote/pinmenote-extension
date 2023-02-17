@@ -19,11 +19,11 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html.factory';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjUrlDto } from '../../../common/model/obj.model';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class ContentBookmarkAddCommand implements ICommand<Promise<void>> {
   constructor(private url: ObjUrlDto, private href?: string) {}

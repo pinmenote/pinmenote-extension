@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { AccessTokenDto, TokenDataDto } from '../../common/model/shared/token.model';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import jwtDecode from 'jwt-decode';
-import AccessTokenDto = Pinmenote.Account.AccessTokenDto;
-import TokenDataDto = Pinmenote.Account.TokenDataDto;
 
 export class ApiStore {
   static readonly KEY_NOTE_UPDATE = 'noteSyncUpdate';

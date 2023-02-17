@@ -17,9 +17,9 @@
 import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.model';
+import { TokenDataDto } from '../../../common/model/shared/token.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
-import TokenDataDto = Pinmenote.Account.TokenDataDto;
 
 export class PopupAccessTokenCommand implements ICommand<void> {
   async execute(): Promise<void> {

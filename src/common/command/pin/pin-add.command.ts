@@ -19,6 +19,7 @@ import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { BusMessageType } from '../../model/bus.model';
 import { HashtagFindCommand } from '../obj/hashtag/hashtag-find.command';
+import { ICommand } from '../../model/shared/common.model';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
@@ -26,7 +27,6 @@ import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPagePinDto } from '../../model/obj-pin.model';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
   constructor(private pin: ObjPagePinDto) {}

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinComponentAddCommand } from './pin-component-add.command';
@@ -21,7 +22,6 @@ import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class PinAddXpathCommand implements ICommand<boolean> {
   constructor(private data: ObjDto<ObjPagePinDto>) {}

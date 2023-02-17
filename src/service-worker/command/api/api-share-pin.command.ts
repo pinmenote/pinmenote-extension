@@ -17,10 +17,10 @@
 import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import { ApiStore } from '../../store/api.store';
 import { FetchService } from '../../service/fetch.service';
+import { ICommand } from '../../../common/model/shared/common.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import ICommand = Pinmenote.Common.ICommand;
 
 export class ApiSharePinCommand implements ICommand<Promise<ObjShareDto>> {
   constructor(private obj: ObjDto<ObjPagePinDto>) {}

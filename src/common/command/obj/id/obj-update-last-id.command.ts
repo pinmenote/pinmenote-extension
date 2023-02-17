@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import ICommand = Pinmenote.Common.ICommand;
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
 export class ObjUpdateLastIdCommand implements ICommand<Promise<void>> {
