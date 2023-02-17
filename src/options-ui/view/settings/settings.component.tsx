@@ -17,7 +17,7 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ContentSettingsComponent } from './content/content-settings.component';
-import { CryptoSettingsCommand } from './crypto/crypto-settings.command';
+import { CryptoSettingsComponent } from './crypto/crypto-settings.component';
 import { IconButton } from '@mui/material';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import { ServerSettingsComponent } from './server/server-settings.component';
@@ -55,7 +55,7 @@ export const SettingsComponent: FunctionComponent = () => {
           <ContentSettingsComponent></ContentSettingsComponent>
         </div>
         <div style={containerStyle}>
-          <CryptoSettingsCommand></CryptoSettingsCommand>
+          <CryptoSettingsComponent></CryptoSettingsComponent>
         </div>
         <div style={containerStyle}>
           <SyncSettingsComponent></SyncSettingsComponent>

@@ -23,11 +23,6 @@ export interface CryptoKey {
   revocationCertificate: string;
 }
 
-export interface CryptoPublicKey {
-  username: string;
-  key: PublicKey;
-}
-
 export interface CryptoKeyData {
   privateKey: string;
   publicKey: string;
@@ -37,6 +32,7 @@ export interface CryptoKeyData {
 export class CryptoStore {
   static readonly PRIVATE_KEY = 'key:prv';
   static readonly PUBLIC_KEY = 'key:pub';
+  static readonly PUBLIC_KEY_LIST = 'key:list';
 
   private static keyData?: CryptoKey;
   private static armoredPublicKey: string;
@@ -75,17 +71,49 @@ export class CryptoStore {
     return true;
   }
 
-  static async readPublicKey(username: string): Promise<CryptoPublicKey | undefined> {
-    const key = `${this.PUBLIC_KEY}:${username}`;
-    return await BrowserStorageWrapper.get<CryptoPublicKey | undefined>(key);
-  }
-
   static async delPrivateKey(): Promise<void> {
     await BrowserStorageWrapper.remove(this.PRIVATE_KEY);
   }
 
-  static async delPublicKey(username: string): Promise<void> {
+  /* User public keys */
+
+  static async addUserPublicKey(username: string, publicKey: string): Promise<boolean> {
+    const usernameList = await this.getUsernameKeyList();
+
+    if (usernameList.indexOf(username) > -1) return false;
+
+    usernameList.push(username);
+    await this.saveUsernameKeyList(usernameList);
+
+    const key = `${this.PUBLIC_KEY}:${username}`;
+    await BrowserStorageWrapper.set(key, publicKey);
+    return true;
+  }
+
+  static async getUserPublicKey(username: string): Promise<string | undefined> {
+    const key = `${this.PUBLIC_KEY}:${username}`;
+    return await BrowserStorageWrapper.get<string | undefined>(key);
+  }
+
+  static async delUserPublicKey(username: string): Promise<void> {
+    const usernameList = await this.getUsernameKeyList();
+
+    const usernameIndex = usernameList.indexOf(username);
+    if (usernameIndex === -1) return;
+
+    usernameList.splice(usernameIndex, 1);
+    await this.saveUsernameKeyList(usernameList);
+
     const key = `${this.PUBLIC_KEY}:${username}`;
     await BrowserStorageWrapper.remove(key);
+  }
+
+  static async getUsernameKeyList(): Promise<string[]> {
+    const value = await BrowserStorageWrapper.get<string[] | undefined>(this.PUBLIC_KEY_LIST);
+    return value || [];
+  }
+
+  private static async saveUsernameKeyList(usernameList: string[]): Promise<void> {
+    await BrowserStorageWrapper.set(this.PUBLIC_KEY_LIST, usernameList);
   }
 }
