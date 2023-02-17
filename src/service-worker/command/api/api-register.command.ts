@@ -16,7 +16,7 @@
  */
 import { AccessTokenDto, RegisterDto, TokenUserDto } from '../../../common/model/shared/token.model';
 import { ApiStore } from '../../store/api.store';
-import { CryptoGenerateKeyPairCommand } from '../crypto/crypto-generate-key-pair.command';
+import { CryptoStore } from '../../../common/store/crypto.store';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.model';
 import { RegisterFormData } from '../../../common/model/auth.model';
@@ -27,12 +27,12 @@ export class ApiRegisterCommand implements ICommand<Promise<TokenUserDto>> {
   constructor(private formData: RegisterFormData) {}
   async execute(): Promise<TokenUserDto> {
     // Generate cryptographic keys and send public key to server
-    const keyData = await new CryptoGenerateKeyPairCommand(this.formData.username, this.formData.email).execute();
+    await CryptoStore.loadKeys();
     const data: RegisterDto = {
       email: this.formData.email,
       username: this.formData.username,
       acceptedVersion: this.formData.termsVersion,
-      publicKey: keyData.publicKey
+      publicKey: CryptoStore.publicKey
     };
 
     const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.apiUrl}/api/v1/register`, data);

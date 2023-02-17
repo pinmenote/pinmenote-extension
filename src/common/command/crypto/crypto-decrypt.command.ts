@@ -16,7 +16,7 @@
  */
 import { DecryptOptions, Message, decrypt, readMessage } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../model/shared/common.model';
 
 export class CryptoDecryptCommand<T> implements ICommand<Promise<T | undefined>> {
   constructor(private armoredMessage: string, private checkSignature = false) {}

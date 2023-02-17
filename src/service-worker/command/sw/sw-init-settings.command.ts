@@ -16,6 +16,7 @@
  */
 import { SettingsConfig, environmentConfig } from '../../../common/environment';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { CryptoGenerateKeyPairCommand } from '../../../common/command/crypto/crypto-generate-key-pair.command';
 import { ICommand } from '../../../common/model/shared/common.model';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -26,6 +27,7 @@ export class SwInitSettingsCommand implements ICommand<Promise<void>> {
     if (!settings) {
       fnConsoleLog('Settings Initialize');
       await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, environmentConfig.settings);
+      await new CryptoGenerateKeyPairCommand().execute();
     } else if (settings.version !== environmentConfig.settings.version) {
       fnConsoleLog('Settings Migrate placeholder');
     } else {

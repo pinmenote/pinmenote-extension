@@ -16,7 +16,7 @@
  */
 import { AccessTokenDto, LoginDto, TokenUserDto } from '../../../common/model/shared/token.model';
 import { ApiStore } from '../../store/api.store';
-import { CryptoSignCommand } from '../crypto/crypto-sign.command';
+import { CryptoSignCommand } from '../../../common/command/crypto/crypto-sign.command';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.model';
 import { environmentConfig } from '../../../common/environment';

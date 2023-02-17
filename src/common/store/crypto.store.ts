@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PrivateKey, PublicKey, readKey, readPrivateKey } from 'openpgp';
-import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
 
 export interface CryptoKey {
   privateKey?: PrivateKey;
@@ -39,6 +39,8 @@ export class CryptoStore {
   static readonly PUBLIC_KEY = 'key:pub';
 
   private static keyData?: CryptoKey;
+  private static armoredPublicKey: string;
+  private static armoredPrivateKey: string;
 
   static get cryptoKey(): CryptoKey | undefined {
     return this.keyData;
@@ -48,13 +50,28 @@ export class CryptoStore {
     return this.keyData?.privateKey?.getFingerprint();
   }
 
+  static get publicKey(): string {
+    return this.armoredPublicKey;
+  }
+
+  static get privateKey(): string {
+    return this.armoredPrivateKey;
+  }
+
   static async loadKeys(): Promise<boolean> {
     if (this.keyData) return true;
+
     const keyData = await BrowserStorageWrapper.get<CryptoKeyData | undefined>(this.PRIVATE_KEY);
     if (!keyData) return false;
+
+    this.armoredPublicKey = keyData.publicKey;
+    this.armoredPrivateKey = keyData.privateKey;
+
     const privateKey = await readPrivateKey({ armoredKey: keyData.privateKey });
     const publicKey = await readKey({ armoredKey: keyData.publicKey });
+
     this.keyData = { privateKey, publicKey, revocationCertificate: keyData.revocationCertificate };
+
     return true;
   }
 
@@ -65,5 +82,10 @@ export class CryptoStore {
 
   static async delPrivateKey(): Promise<void> {
     await BrowserStorageWrapper.remove(this.PRIVATE_KEY);
+  }
+
+  static async delPublicKey(username: string): Promise<void> {
+    const key = `${this.PUBLIC_KEY}:${username}`;
+    await BrowserStorageWrapper.remove(key);
   }
 }

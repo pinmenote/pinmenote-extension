@@ -15,18 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ICommand } from '../../model/shared/common.model';
 import { generateKey } from 'openpgp';
 
 export class CryptoGenerateKeyPairCommand implements ICommand<Promise<CryptoKeyData>> {
-  constructor(private name: string, private email: string) {}
-
   async execute(): Promise<CryptoKeyData> {
     const { privateKey, publicKey, revocationCertificate } = await generateKey({
       type: 'rsa',
       rsaBits: 2048,
-      userIDs: [{ name: this.name, email: this.email, comment: 'pinmenote.com' }],
+      userIDs: [{}],
       format: 'armored'
     });
     const keyData = { privateKey, publicKey, revocationCertificate };

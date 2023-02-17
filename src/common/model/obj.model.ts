@@ -58,15 +58,16 @@ export interface ObjEncryptionDto {
 }
 
 export enum ObjTypeDto {
+  CodeSnippet = 'CODE_SNIPPET',
+  Drawing = 'DRAWING',
+  Note = 'NOTE',
   PageBookmark = 'PAGE_BOOKMARK',
-  PageNote = 'PAGE_NOTE',
-  PageSnapshot = 'PAGE_SNAPSHOT',
   PageElementPin = 'ELEMENT_PIN',
   PageElementSnapshot = 'ELEMENT_SNAPSHOT',
   PageCanvasPin = 'PAGE_CANVAS_PIN',
+  PageSnapshot = 'PAGE_SNAPSHOT',
   PageLink = 'PAGE_LINK',
-  Note = 'NOTE',
-  Drawing = 'DRAWING',
+  PageNote = 'PAGE_NOTE',
   Todo = 'TODO'
 }
 

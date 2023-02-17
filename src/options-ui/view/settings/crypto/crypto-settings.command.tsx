@@ -15,12 +15,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { IconButton, Input } from '@mui/material';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { CryptoStore } from '../../../../common/store/crypto.store';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import Typography from '@mui/material/Typography';
 
 export const CryptoSettingsCommand: FunctionComponent = () => {
+  const [publicKey, setPublicKey] = useState<string | undefined>();
+  const [privateKey, setPrivateKey] = useState<string | undefined>();
+
+  useEffect(() => {
+    setTimeout(async () => {
+      if (!publicKey || !privateKey) {
+        await CryptoStore.loadKeys();
+        setPublicKey(CryptoStore.publicKey);
+        setPrivateKey(CryptoStore.privateKey);
+      }
+    }, 0);
+  });
   return (
     <div>
       <Typography fontSize="2.5em" style={{ marginBottom: 10 }}>
@@ -30,7 +43,7 @@ export const CryptoSettingsCommand: FunctionComponent = () => {
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
           private key
         </Typography>
-        <Input style={{ width: 300 }} />
+        <Input style={{ width: 300 }} value={privateKey} />
         <IconButton>
           <ContentCopyIcon />
         </IconButton>
@@ -42,7 +55,7 @@ export const CryptoSettingsCommand: FunctionComponent = () => {
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
           public key
         </Typography>
-        <Input style={{ width: 300 }} />
+        <Input style={{ width: 300 }} value={publicKey} />
         <IconButton>
           <ContentCopyIcon />
         </IconButton>

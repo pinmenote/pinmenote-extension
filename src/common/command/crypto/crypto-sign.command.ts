@@ -14,29 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Message, createMessage, readSignature, verify } from 'openpgp';
+import { Message, createMessage, sign } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
-import { ICommand } from '../../../common/model/shared/common.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { ICommand } from '../../model/shared/common.model';
+import { fnConsoleLog } from '../../fn/console.fn';
 
-export class CryptoVerifySignatureCommand implements ICommand<void> {
-  constructor(private text: string, private armoredSignature: string) {}
-  async execute(): Promise<void> {
+export class CryptoSignCommand implements ICommand<Promise<string>> {
+  constructor(private text: string) {}
+
+  async execute(): Promise<string> {
     await CryptoStore.loadKeys();
-    if (!CryptoStore.cryptoKey?.publicKey) throw new Error('Private key not found');
-
+    if (!CryptoStore.cryptoKey?.privateKey) throw new Error('Private key not found');
     const message: Message<string> = await createMessage({ text: this.text });
-    const signature = await readSignature({
-      armoredSignature: this.armoredSignature.toString()
-    });
-
-    const verificationResult = await verify({
+    const armoredSignature = await sign({
       message,
-      signature,
-      verificationKeys: CryptoStore.cryptoKey.publicKey
+      signingKeys: CryptoStore.cryptoKey.privateKey,
+      detached: true
     });
-    const { verified, keyID } = verificationResult.signatures[0];
-    await verified; // throws on invalid signature
-    fnConsoleLog('Signed by key id ' + keyID.toHex());
+    fnConsoleLog('WorkerCryptoManager->sign->text', this.text);
+    fnConsoleLog('WorkerCryptoManager->sign->signature', armoredSignature.toString());
+    return armoredSignature.toString();
   }
 }

@@ -14,19 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { Message, createMessage, encrypt } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
-import { ICommand } from '../../../common/model/shared/common.model';
-import { encryptKey } from 'openpgp';
+import { ICommand } from '../../model/shared/common.model';
 
-export class CryptoEncryptPrivateKeyCommand implements ICommand<Promise<string | undefined>> {
-  constructor(private password: string) {}
-  async execute(): Promise<string | undefined> {
+export class CryptoEncryptSignCommand implements ICommand<Promise<string>> {
+  constructor(private value: object) {}
+  async execute(): Promise<string> {
     await CryptoStore.loadKeys();
-    if (!CryptoStore.cryptoKey?.privateKey) return undefined;
-    const keyOutput = await encryptKey({
-      privateKey: CryptoStore.cryptoKey.privateKey,
-      passphrase: this.password
+    const text = JSON.stringify(this.value);
+    const message: Message<string> = await createMessage({ text });
+
+    const encrypted = await encrypt({
+      message,
+      encryptionKeys: CryptoStore.cryptoKey?.publicKey,
+      signingKeys: CryptoStore.cryptoKey?.privateKey
     });
-    return btoa(keyOutput.armor());
+    return encrypted.toString();
   }
 }

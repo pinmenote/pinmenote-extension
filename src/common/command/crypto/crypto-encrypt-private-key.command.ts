@@ -14,25 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Message, createMessage, sign } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
-import { ICommand } from '../../../common/model/shared/common.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { ICommand } from '../../model/shared/common.model';
+import { encryptKey } from 'openpgp';
 
-export class CryptoSignCommand implements ICommand<Promise<string>> {
-  constructor(private text: string) {}
-
-  async execute(): Promise<string> {
+export class CryptoEncryptPrivateKeyCommand implements ICommand<Promise<string | undefined>> {
+  constructor(private password: string) {}
+  async execute(): Promise<string | undefined> {
     await CryptoStore.loadKeys();
-    if (!CryptoStore.cryptoKey?.privateKey) throw new Error('Private key not found');
-    const message: Message<string> = await createMessage({ text: this.text });
-    const armoredSignature = await sign({
-      message,
-      signingKeys: CryptoStore.cryptoKey.privateKey,
-      detached: true
+    if (!CryptoStore.cryptoKey?.privateKey) return undefined;
+    const keyOutput = await encryptKey({
+      privateKey: CryptoStore.cryptoKey.privateKey,
+      passphrase: this.password
     });
-    fnConsoleLog('WorkerCryptoManager->sign->text', this.text);
-    fnConsoleLog('WorkerCryptoManager->sign->signature', armoredSignature.toString());
-    return armoredSignature.toString();
+    return btoa(keyOutput.armor());
   }
 }
