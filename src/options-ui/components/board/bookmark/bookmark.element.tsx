@@ -66,7 +66,7 @@ export const BookmarkElement: FunctionComponent<BookmarkElementParams> = (params
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 3, margin: 10 }}>
       <h1>{params.dto.data.title}</h1>
       <div>
         <Button onClick={handleHtml}>HTML</Button>

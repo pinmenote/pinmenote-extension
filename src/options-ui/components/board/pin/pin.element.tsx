@@ -41,6 +41,7 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
   const renderDiv = (ref: HTMLDivElement) => {
     if (!pin.local.boardView || pin.local.boardView === ObjBoardViewDto.Screenshot) {
       const img = new Image();
+      img.width = window.innerWidth / 3;
       img.src = pin.data.html[0].screenshot || '';
       ref.appendChild(img);
     } else {
