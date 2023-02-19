@@ -78,7 +78,7 @@ class PinMeScript {
   };
 
   private resolveLinkWebsite(): boolean {
-    if (!window.location.href.startsWith(environmentConfig.shortUrl)) return false;
+    if (!window.location.href.startsWith(environmentConfig.url.short)) return false;
     this.redirectInterval = window.setInterval(this.linkRedirect, 100);
     return true;
   }

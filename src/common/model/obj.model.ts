@@ -82,6 +82,7 @@ export interface ObjDto<T = ObjDataDto> {
   local: ObjLocalDto;
   share?: ObjShareDto;
   identity?: ObjIdentityDto;
+  server?: string[];
   encryption: ObjEncryptionDto;
   hashtags: string[];
   data: T;

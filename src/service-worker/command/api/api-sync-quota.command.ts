@@ -24,7 +24,7 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export class ApiSyncQuotaCommand implements ICommand<Promise<DiskQuotaDto>> {
   async execute(): Promise<DiskQuotaDto> {
     const username = await ApiStore.getUsername();
-    const url = `${environmentConfig.apiUrl}/api/v1/sync/${username}/quota`;
+    const url = `${environmentConfig.url.api}/api/v1/sync/${username}/quota`;
     const authHeaders = await ApiStore.getAuthHeaders();
     const quota = await FetchService.get(url, authHeaders);
     fnConsoleLog('WorkerApiManager->syncQuota', quota);

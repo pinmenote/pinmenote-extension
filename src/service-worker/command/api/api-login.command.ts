@@ -27,7 +27,7 @@ export class ApiLoginCommand implements ICommand<Promise<TokenUserDto>> {
   async execute(): Promise<TokenUserDto> {
     this.data.signature = await new CryptoSignCommand(this.data.email).execute();
 
-    const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.apiUrl}/api/v1/login`, this.data);
+    const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.url.api}/api/v1/login`, this.data);
     fnConsoleLog('WorkerApiManager->login', resp);
 
     await ApiStore.setAccessToken(resp);

@@ -65,7 +65,7 @@ export class ApiStore {
   }
 
   private static getAccessTokenKey(): string {
-    return `${this.ACCESS_TOKEN}:${environmentConfig.apiUrl}`;
+    return `${this.ACCESS_TOKEN}:${environmentConfig.url.api}`;
   }
 
   static async getAuthHeaders(): Promise<{ [key: string]: string }> {

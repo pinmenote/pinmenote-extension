@@ -22,16 +22,21 @@ export interface SettingsConfig {
   screenshotFormat: ScreenshotFormat;
   screenshotQuality: number;
   borderStyle: string;
+  newElementStyle: string;
   borderRadius: string;
   themeColor: string;
   videoDisplayTime: number;
 }
 
+export interface UrlConfig {
+  short: string;
+  web: string;
+  api: string;
+}
+
 interface EnvironmentConfig {
   showAckMessage: boolean;
-  apiUrl: string;
-  websiteUrl: string;
-  shortUrl: string;
+  url: UrlConfig;
   isProduction: boolean;
   settings: SettingsConfig;
   objListLimit: number;
@@ -40,15 +45,18 @@ interface EnvironmentConfig {
 
 export const environmentConfig: EnvironmentConfig = {
   showAckMessage: false,
-  apiUrl: process.env.API_URL || 'https://pinmenote.com',
-  websiteUrl: process.env.SHORT_URL || 'https://pmn.cl',
-  shortUrl: process.env.WEBSITE_URL || 'https://pinmenote.com',
+  url: {
+    api: process.env.API_URL || 'https://pinmenote.com',
+    web: process.env.WEB_URL || 'https://pinmenote.com',
+    short: process.env.SHORT_URL || 'https://pmn.cl'
+  },
   isProduction: process.env.IS_PRODUCTION === 'true',
   settings: {
     version: parseInt(process.env.VERSION || '1'),
     screenshotFormat: 'jpeg',
     screenshotQuality: 90,
     borderStyle: 'none',
+    newElementStyle: '2px solid #ff0000',
     borderRadius: '5px',
     themeColor: '#ff0000',
     videoDisplayTime: 5

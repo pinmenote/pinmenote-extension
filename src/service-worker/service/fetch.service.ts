@@ -86,7 +86,7 @@ export class FetchService {
       Authorization: `Bearer ${tokenValue.access_token}`
     };
     const resp = await this.patch<AccessTokenDto>(
-      `${environmentConfig.apiUrl}/api/v1/refresh-token`,
+      `${environmentConfig.url.api}/api/v1/refresh-token`,
       null,
       authHeaders
     );

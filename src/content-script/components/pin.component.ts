@@ -31,7 +31,6 @@ import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
-import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
@@ -191,9 +190,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawBar.focusin();
     this.downloadBar.focusin();
     this.editBar.focusin();
-    if (ContentSettingsStore.borderStyle === 'none') {
-      this.refValue.style.border = environmentConfig.settings.borderStyle;
-    }
     this.timeoutId = window.setTimeout(this.handleMouseOut, 3000);
   };
 

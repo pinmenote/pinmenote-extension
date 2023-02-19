@@ -26,7 +26,7 @@ export class ContentSettingsStore {
   }
 
   static get newPinBorderStyle(): string {
-    return environmentConfig.settings.borderStyle;
+    return environmentConfig.settings.newElementStyle;
   }
 
   static get borderRadius(): string {

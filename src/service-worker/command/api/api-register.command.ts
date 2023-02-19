@@ -35,7 +35,7 @@ export class ApiRegisterCommand implements ICommand<Promise<TokenUserDto>> {
       publicKey: CryptoStore.publicKey
     };
 
-    const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.apiUrl}/api/v1/register`, data);
+    const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.url.api}/api/v1/register`, data);
     fnConsoleLog('WorkerApiManager->register', resp);
     await ApiStore.setAccessToken(resp);
 

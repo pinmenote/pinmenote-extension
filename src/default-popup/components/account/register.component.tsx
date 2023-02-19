@@ -39,7 +39,7 @@ const inputBorder = {
 };
 
 function getWebsiteUrl(uri: string): string {
-  return `${environmentConfig.websiteUrl}${uri}`;
+  return `${environmentConfig.url.web}${uri}`;
 }
 
 export const RegisterComponent: FunctionComponent = () => {

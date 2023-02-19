@@ -28,7 +28,7 @@ export class ApiSharePinCommand implements ICommand<Promise<ObjShareDto>> {
     const authHeaders = await ApiStore.getAuthHeaders();
     fnConsoleLog('Send share', this.obj);
     const resp = await FetchService.post<ObjShareDto>(
-      `${environmentConfig.apiUrl}/api/v1/share`,
+      `${environmentConfig.url.api}/api/v1/share`,
       this.obj,
       authHeaders
     );
