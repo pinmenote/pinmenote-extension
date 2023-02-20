@@ -16,13 +16,12 @@
  */
 import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import AddIcon from '@mui/icons-material/Add';
-import { BoardSearchInput } from '../menu/board-search.input';
+import { BoardAddElementSearch } from './search/board-add-element.search';
+import { BoardInputSearch } from './search/board-input.search';
 import { BoardStore } from '../../store/board.store';
 import { BookmarkElement } from './bookmark/bookmark.element';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
-import IconButton from '@mui/material/IconButton';
 import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinElement } from './pin/pin.element';
@@ -88,17 +87,11 @@ export const BoardComponent: FunctionComponent = () => {
     }
   }
 
-  const handleAddClick = () => {
-    fnConsoleLog('BoardComponent->AddClick');
-  };
-
   return (
     <div style={{ width: '100%', marginLeft: 20, marginTop: 10 }}>
       <Box style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
-        <BoardSearchInput></BoardSearchInput>
-        <IconButton onClick={handleAddClick}>
-          <AddIcon />
-        </IconButton>
+        <BoardInputSearch></BoardInputSearch>
+        <BoardAddElementSearch></BoardAddElementSearch>
       </Box>
       <Stack direction="row" flexWrap="wrap" ref={stackRef} style={{ overflow: 'auto', height: 'calc(100vh - 65px)' }}>
         {boardElements}

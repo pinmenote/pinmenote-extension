@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { ChangeEvent, FunctionComponent, useState } from 'react';
-import { BoardStore } from '../../store/board.store';
+import { BoardStore } from '../../../store/board.store';
 import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import SearchIcon from '@mui/icons-material/Search';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export const BoardSearchInput: FunctionComponent = () => {
+export const BoardInputSearch: FunctionComponent = () => {
   const [searchValue, setSearchValue] = useState<string>(BoardStore.getSearch() || '');
 
   const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
