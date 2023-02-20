@@ -19,7 +19,6 @@ import { PinCssDataDto, PinCssHref } from '../../common/model/obj-pin.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../../common/fn/console.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
@@ -37,12 +36,12 @@ export class CssFactory {
           media: s.media.mediaText,
           data: cssFetchData.error ? undefined : cssFetchData.data
         });
-        fnConsoleLog('CssFactory->computeCssContent', s.href, s);
+        // fnConsoleLog('CssFactory->computeCssContent', s.href, s);
       } else {
         css += await this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], href);
       }
     }
-    fnConsoleLog('CssFactory->computeCssContent', href);
+    // fnConsoleLog('CssFactory->computeCssContent', href);
     return {
       href,
       css
@@ -61,7 +60,7 @@ export class CssFactory {
           media: r.parentStyleSheet ? r.parentStyleSheet.media.mediaText : r.styleSheet.media.mediaText,
           data: cssFetchData.error ? undefined : cssFetchData.data
         });
-        fnConsoleLog('CssFactory->computeSelectorRules->href', r);
+        // fnConsoleLog('CssFactory->computeSelectorRules->href', r);
       } else if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
         output += `@media ${r.conditionText} {
@@ -73,14 +72,14 @@ export class CssFactory {
 `;
       } else {
         // TODO parse other rules ex CSSKeyFrameRules
-        fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
+        // fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
     }
     return output;
   };
 
   private static fetchCss(url: string): Promise<FetchCssResponse> {
-    fnConsoleLog('CssFactory->fetchCss', url);
+    // fnConsoleLog('CssFactory->fetchCss', url);
     return new Promise<FetchCssResponse>((resolve, reject) => {
       TinyEventDispatcher.addListener<FetchCssResponse>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
         if (value.url === url) {

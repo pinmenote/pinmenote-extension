@@ -79,12 +79,15 @@ export class HtmlFactory {
 
     const attributes: Attr[] = Array.from(ref.attributes);
     let srcFilled = false;
+    let hrefFilled = false;
     for (const attr of attributes) {
-      if (attr.name === 'href') {
+      if (attr.name === 'href' && !hrefFilled) {
         // HREF
+        if (!attr.value) continue;
         const url = this.computeUrl(attr.value);
         html += `href="${url}" `;
         html += `target="_blank" `;
+        hrefFilled = true;
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
       } else if (attr.name === 'src') {
@@ -126,6 +129,21 @@ export class HtmlFactory {
           } else {
             html += `src="${imageData.data}" `;
             srcFilled = true;
+          }
+        }
+      } else if (attr.name === 'data-iframe') {
+        if (tagName === 'a' && !hrefFilled) {
+          try {
+            const dataJSON = window.atob(attr.value);
+            /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+            const url: string = JSON.parse(dataJSON).src;
+            if (url.startsWith('http')) {
+              html += `href="${url}" `;
+              html += `target="_blank" `;
+              hrefFilled = true;
+            }
+          } catch (e) {
+            fnConsoleLog('computeHtmlIntermediateData->Error', e);
           }
         }
       } else {
