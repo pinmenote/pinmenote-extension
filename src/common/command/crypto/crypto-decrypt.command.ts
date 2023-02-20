@@ -18,9 +18,9 @@ import { DecryptOptions, Message, decrypt, readMessage } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
 import { ICommand } from '../../model/shared/common.model';
 
-export class CryptoDecryptCommand<T> implements ICommand<Promise<T | undefined>> {
+export class CryptoDecryptCommand implements ICommand<Promise<string | undefined>> {
   constructor(private armoredMessage: string, private checkSignature = false) {}
-  async execute(): Promise<T | undefined> {
+  async execute(): Promise<string | undefined> {
     await CryptoStore.loadKeys();
     if (!CryptoStore.cryptoKey) return undefined;
     const message: Message<string> = await readMessage({ armoredMessage: this.armoredMessage });
@@ -36,6 +36,6 @@ export class CryptoDecryptCommand<T> implements ICommand<Promise<T | undefined>>
         throw new Error(`Invalid signature : ${(e as { message: string }).message}`);
       }
     }
-    return JSON.parse(data.toString());
+    return data.toString();
   }
 }

@@ -18,11 +18,10 @@ import { Message, PublicKey, createMessage, encrypt, readKey } from 'openpgp';
 import { ICommand } from '../../model/shared/common.model';
 
 export class CryptoEncryptCommand implements ICommand<Promise<string | undefined>> {
-  constructor(private value: object, private armoredKey: string) {}
+  constructor(private text: string, private armoredKey: string) {}
 
   async execute(): Promise<string | undefined> {
-    const text = JSON.stringify(this.value);
-    const message: Message<string> = await createMessage({ text });
+    const message: Message<string> = await createMessage({ text: this.text });
 
     // Public key
     const encryptionKeys: PublicKey = await readKey({ armoredKey: this.armoredKey });
