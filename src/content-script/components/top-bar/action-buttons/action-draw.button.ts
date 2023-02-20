@@ -16,6 +16,7 @@
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { PinComponent } from '../../pin.component';
+import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -47,15 +48,18 @@ export class ActionDrawButton implements HtmlComponent<HTMLElement> {
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
   }
 
-  handleClick = () => {
+  handleClick = async () => {
     this.visible = !this.visible;
     if (this.visible) {
       this.parent.edit.startDraw();
+      this.parent.object.local.drawVisible = true;
       this.fillColor = '#ff0000';
     } else {
       this.parent.edit.stopEdit();
       this.fillColor = '#000000';
+      this.parent.object.local.drawVisible = false;
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+    await new PinUpdateCommand(this.parent.object).execute();
   };
 }

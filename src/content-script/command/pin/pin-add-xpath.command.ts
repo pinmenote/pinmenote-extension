@@ -27,8 +27,8 @@ export class PinAddXpathCommand implements ICommand<boolean> {
   constructor(private data: ObjDto<ObjPagePinDto>) {}
   execute(): boolean {
     const pin = this.data.data;
-    fnConsoleLog('PinAddXpathCommand->xpath', pin.xpath);
     const value = XpathFactory.newXPathResult(pin.xpath);
+    fnConsoleLog('PinAddXpathCommand->xpath', pin.xpath, 'singleNodeValue', value.singleNodeValue);
     const node = value.singleNodeValue as HTMLElement;
     if (!this.data.local.visible || !node || isElementHiddenFn(node)) {
       // will be created on invalidate

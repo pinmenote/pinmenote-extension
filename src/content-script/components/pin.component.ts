@@ -31,7 +31,6 @@ import { PinPointFactory } from '../factory/pin-point.factory';
 import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
-import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 
@@ -125,7 +124,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.top.appendChild(this.drawBar.render());
     this.drawBar.setSize(4);
     this.drawBar.setTool(DrawToolDto.Pencil);
-    if (this.object.data.draw.length > 0) this.drawComponent.focusin();
+    if (this.object.local.drawVisible) this.drawComponent.focusin();
 
     // Download
     this.top.appendChild(this.downloadBar.render());
@@ -183,7 +182,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private timeoutId = -1;
 
   private handleMouseOver = () => {
-    fnConsoleLog('PinComponent->mouseOver');
     window.clearTimeout(this.timeoutId);
     this.text.focusin();
     if (!this.edit.isScreenshot) this.topBar.focusin();
@@ -194,7 +192,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   };
 
   private handleMouseOut = () => {
-    fnConsoleLog('PinComponent->mouseOut');
     window.clearTimeout(this.timeoutId);
     this.timeoutId = window.setTimeout(() => {
       this.text.focusout();

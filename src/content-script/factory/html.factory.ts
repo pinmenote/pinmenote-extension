@@ -67,6 +67,7 @@ export class HtmlFactory {
     const tagName = ref.tagName.toLowerCase();
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
+    fnConsoleLog(tagName, ref);
 
     if (tagName === 'video') {
       // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
@@ -157,7 +158,9 @@ export class HtmlFactory {
     for (const node of nodes) {
       if (node.nodeType === Node.TEXT_NODE) {
         const nre = new RegExp(String.fromCharCode(160), 'g');
-        html += node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
+        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
+        txt = txt.replace('<', '&lt').replace('>', '&gt;');
+        html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         const computed = await this.computeHtmlIntermediateData(node as Element);
         html += computed.html;
