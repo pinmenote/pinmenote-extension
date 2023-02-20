@@ -34,34 +34,48 @@ export class CssFactory {
         const cssFetchData = await this.fetchCss(s.href);
         href.push({
           href: s.href,
+          media: s.media.mediaText,
           data: cssFetchData.error ? undefined : cssFetchData.data
         });
+        fnConsoleLog('CssFactory->computeCssContent', s.href, s);
       } else {
-        css += this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[]);
+        css += await this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], href);
       }
     }
+    fnConsoleLog('CssFactory->computeCssContent', href);
     return {
       href,
       css
     };
   };
 
-  private static computeSelectorRules = (cssRules: ComputeCssRule[]): string => {
+  private static computeSelectorRules = async (cssRules: ComputeCssRule[], hrefList: PinCssHref[]): Promise<string> => {
     let output = '';
-    cssRules.forEach((r: ComputeCssRule) => {
-      if (r.media) {
+    for (const r of cssRules) {
+      if (r.href) {
+        let href = r.href;
+        if (!href.startsWith('http')) href = location.protocol + href;
+        const cssFetchData = await this.fetchCss(href);
+        hrefList.push({
+          href,
+          media: r.parentStyleSheet ? r.parentStyleSheet.media.mediaText : r.styleSheet.media.mediaText,
+          data: cssFetchData.error ? undefined : cssFetchData.data
+        });
+        fnConsoleLog('CssFactory->computeSelectorRules->href', r);
+      } else if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
         output += `@media ${r.conditionText} {
-        ${r.cssText}
-      }
-      `;
+  ${r.cssText}
+}
+`;
       } else if (r.selectorText) {
         output += `${r.cssText}
 `;
       } else {
         // TODO parse other rules ex CSSKeyFrameRules
+        fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
-    });
+    }
     return output;
   };
 

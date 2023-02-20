@@ -63,6 +63,7 @@ export interface PinCssDataDto {
 
 export interface PinCssHref {
   href: string;
+  media: string;
   data?: string;
 }
 

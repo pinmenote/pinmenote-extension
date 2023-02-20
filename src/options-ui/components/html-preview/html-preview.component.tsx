@@ -86,7 +86,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
           <ClearIcon />
         </IconButton>
       </div>
-      <div style={{ width: '100%', height: '100%' }} ref={htmlRef}></div>
+      <div style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }} ref={htmlRef}></div>
     </div>
   );
 };

@@ -54,7 +54,9 @@ export class IframeHtmlFactory {
     const html = `<html>
         <head>            
             ${value.css.href
-              .map((h) => (h.data ? `<style>${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`))
+              .map((h) =>
+                h.data ? `<style media="${h.media}">${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`
+              )
               .join('')}
             <style>${value.css.css}</style>            
         </head>
