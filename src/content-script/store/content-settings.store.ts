@@ -20,12 +20,13 @@ import { SettingsKeys } from '../../common/keys/settings.keys';
 
 export class ContentSettingsStore {
   private static settings: SettingsConfig;
+  static readonly borderNone = 'none';
 
   static get borderStyle(): string {
     return this.settings.borderStyle;
   }
 
-  static get newPinBorderStyle(): string {
+  static get newElementStyle(): string {
     return environmentConfig.settings.newElementStyle;
   }
 

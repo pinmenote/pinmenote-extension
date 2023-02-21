@@ -188,6 +188,9 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawBar.focusin();
     this.downloadBar.focusin();
     this.editBar.focusin();
+    if (ContentSettingsStore.borderStyle === ContentSettingsStore.borderNone) {
+      this.ref.style.border = ContentSettingsStore.newElementStyle;
+    }
     this.timeoutId = window.setTimeout(this.handleMouseOut, 3000);
   };
 
@@ -199,6 +202,9 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
       this.drawBar.focusout();
       this.downloadBar.focusout();
       this.editBar.focusout();
+      if (ContentSettingsStore.borderStyle === ContentSettingsStore.borderNone) {
+        this.ref.style.border = ContentSettingsStore.borderNone;
+      }
       this.refValue.style.border = ContentSettingsStore.borderStyle;
     }, 1000);
   };
