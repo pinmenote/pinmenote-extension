@@ -16,8 +16,8 @@
  */
 import { HtmlComponent } from '../../../common/model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinComponent } from '../../components/pin.component';
 import { PinStore } from '../../store/pin.store';
 

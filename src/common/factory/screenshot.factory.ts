@@ -17,8 +17,8 @@
 import { BrowserApi } from '../service/browser.api.wrapper';
 import { BusMessageType } from '../model/bus.model';
 import { ImageResizeFactory } from './image-resize.factory';
-import { ObjRectangleDto } from '../model/obj-utils.model';
-import { ObjUrlDto } from '../model/obj.model';
+import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
+import { ObjUrlDto } from '../model/obj/obj.dto';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../fn/console.fn';
 

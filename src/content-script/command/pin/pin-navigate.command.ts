@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
+import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinStore } from '../../store/pin.store';
 import { UrlFactory } from '../../../common/factory/url.factory';

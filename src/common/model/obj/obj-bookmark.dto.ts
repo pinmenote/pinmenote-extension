@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjUrlDto } from './obj.model';
-import { PinCssDataDto } from './obj-pin.model';
+import { CssDataDto } from './obj-pin.dto';
+import { ObjUrlDto } from './obj.dto';
 
 export interface ObjBookmarkDto {
   url: ObjUrlDto;
   title: string;
   screenshot?: string;
   html: string;
-  css: PinCssDataDto;
+  css: CssDataDto;
 }

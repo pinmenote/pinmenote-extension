@@ -21,9 +21,9 @@ import { ActionDrawButton } from './action-buttons/action-draw.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
 import { ActionTextButton } from './action-buttons/action-text.button';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
-import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 

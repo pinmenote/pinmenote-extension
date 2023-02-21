@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
-import { ObjUrlDto } from '../model/obj.model';
+import { ObjUrlDto } from '../model/obj/obj.dto';
 
 export class LinkHrefOriginStore {
   private static PIN_HREF = 'pin:href';

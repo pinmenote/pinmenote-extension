@@ -17,8 +17,8 @@
 import { CanvasPinComponent } from '../../components/canvas-pin.component';
 import { HtmlComponent } from '../../../common/model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjCanvasPinDto } from '../../../common/model/obj-pin.model';
-import { ObjDto } from '../../../common/model/obj.model';
+import { ObjCanvasPinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { PinStore } from '../../store/pin.store';
 
 export class CanvasPinComponentAddCommand implements ICommand<HtmlComponent<HTMLElement> | undefined> {

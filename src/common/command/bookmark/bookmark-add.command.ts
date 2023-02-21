@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj.model';
+import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
-import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
+import { ObjBookmarkDto } from '../../model/obj/obj-bookmark.dto';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBoardViewDto, ObjDto } from '../../../../common/model/obj.model';
+import { ObjBoardViewDto, ObjDto } from '../../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
@@ -24,7 +24,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import Link from '@mui/material/Link';
-import { ObjPagePinDto } from '../../../../common/model/obj-pin.model';
+import { ObjPagePinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { PinValueElement } from './pin.value.element';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';

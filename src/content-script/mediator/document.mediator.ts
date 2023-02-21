@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPointDto, ObjRectangleDto } from '../../common/model/obj-utils.model';
+import { ObjPointDto, ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { CanvasPinAddCommand } from '../../common/command/canvas/canvas-pin-add.command';
 import { CanvasPinComponentAddCommand } from '../command/canvas/canvas-pin-component-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';

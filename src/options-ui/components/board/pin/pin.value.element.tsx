@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBoardViewDto, ObjDto } from '../../../../common/model/obj.model';
+import { ObjBoardViewDto, ObjDto } from '../../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
@@ -26,7 +26,7 @@ import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import ImageIcon from '@mui/icons-material/Image';
-import { ObjPagePinDto } from '../../../../common/model/obj-pin.model';
+import { ObjPagePinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';

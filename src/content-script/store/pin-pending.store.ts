@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto } from '../../common/model/obj.model';
+import { ObjDto } from '../../common/model/obj/obj.dto';
 
 export class PinPendingStore {
   // Map of pending pins

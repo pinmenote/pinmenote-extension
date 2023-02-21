@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjLinkDto } from '../../../common/model/obj.model';
+import { ObjDto, ObjLinkDto } from '../../../common/model/obj/obj.dto';
 import { HtmlLinkComponent } from '../../components/html-link.component';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { PinPendingStore } from '../../store/pin-pending.store';

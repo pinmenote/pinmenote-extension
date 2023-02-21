@@ -20,8 +20,8 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
-import { ObjUrlDto } from '../../../common/model/obj.model';
+import { ObjBookmarkDto } from '../../../common/model/obj/obj-bookmark.dto';
+import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 

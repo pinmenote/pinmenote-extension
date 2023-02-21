@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useRef } from 'react';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { marked } from 'marked';
 
 interface PinExpandProps {

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
-import { ObjDto } from '../../../../common/model/obj.model';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';

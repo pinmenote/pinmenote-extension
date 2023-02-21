@@ -16,8 +16,8 @@
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
-import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
-import { ObjDto } from '../../model/obj.model';
+import { ObjBookmarkDto } from '../../model/obj/obj-bookmark.dto';
+import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 

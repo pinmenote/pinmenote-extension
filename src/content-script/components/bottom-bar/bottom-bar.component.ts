@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { VideoTimeComponent } from './video-time/video-time.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardAddElementSearch } from './search/board-add-element.search';
 import { BoardInputSearch } from './search/board-input.search';
@@ -22,8 +22,8 @@ import { BoardStore } from '../../store/board.store';
 import { BookmarkElement } from './bookmark/bookmark.element';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjBookmarkDto } from '../../../common/model/obj/obj-bookmark.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinElement } from './pin/pin.element';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';

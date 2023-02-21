@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasPinDto, ObjPagePinDto } from './obj-pin.model';
-import { ObjDto, ObjLinkDto } from './obj.model';
+import { ObjCanvasPinDto, ObjPagePinDto } from './obj/obj-pin.dto';
+import { ObjDto, ObjLinkDto } from './obj/obj.dto';
 
 export interface HtmlIntermediateData {
   html: string;

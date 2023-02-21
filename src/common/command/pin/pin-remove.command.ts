@@ -17,8 +17,8 @@
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
-import { ObjDto } from '../../model/obj.model';
-import { ObjPagePinDto } from '../../model/obj-pin.model';
+import { ObjDto } from '../../model/obj/obj.dto';
+import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
 import { ObjRemoveHashtagsCommand } from '../obj/hashtag/obj-remove-hashtags.command';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';

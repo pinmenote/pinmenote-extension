@@ -17,7 +17,7 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { HtmlComponent } from '../../../common/model/html.model';
-import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { TextBoldButton } from './text-bar-buttons/text-bold.button';
 import { TextBulletListButton } from './text-bar-buttons/text-bullet-list.button';
 import { TextItalicButton } from './text-bar-buttons/text-italic.button';

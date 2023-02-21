@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ColorUtils, RGBColor } from '../../draw-bar/draw-buttons/draw-color.utils';
-import { ObjPointDto } from '../../../../common/model/obj-utils.model';
+import { ObjPointDto } from '../../../../common/model/obj/obj-utils.dto';
 
 export class FillDraw {
   static fill(from: ObjPointDto, color: string, ctx: CanvasRenderingContext2D): ObjPointDto[] {

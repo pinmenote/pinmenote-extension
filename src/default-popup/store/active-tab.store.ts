@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjUrlDto } from '../../common/model/obj.model';
+import { ObjDto, ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { BookmarkGetCommand } from '../../common/command/bookmark/bookmark-get.command';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ExtensionPopupInitData } from '../../common/model/obj-request.model';
 import { LogManager } from '../../common/popup/log.manager';
-import { ObjBookmarkDto } from '../../common/model/obj-bookmark.model';
-import { ObjPagePinDto } from '../../common/model/obj-pin.model';
+import { ObjBookmarkDto } from '../../common/model/obj/obj-bookmark.dto';
+import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { PinGetHrefCommand } from '../../common/command/pin/pin-get-href.command';
 import { PinGetOriginCommand } from '../../common/command/pin/pin-get-origin.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';

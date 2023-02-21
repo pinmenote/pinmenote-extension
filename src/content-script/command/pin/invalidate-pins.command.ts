@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjLinkDto } from '../../../common/model/obj.model';
+import { ObjDto, ObjLinkDto } from '../../../common/model/obj/obj.dto';
 import { CreateLinkCommand } from '../link/create-link.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
-import { ObjTypeDto } from '../../../common/model/obj.model';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';

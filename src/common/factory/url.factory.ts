@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjUrlDto } from '../model/obj.model';
+import { ObjUrlDto } from '../model/obj/obj.dto';
 
 interface QueryParam {
   key: string;

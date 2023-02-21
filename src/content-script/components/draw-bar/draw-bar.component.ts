@@ -22,9 +22,9 @@ import { DrawFillButton } from './draw-buttons/draw-fill.button';
 import { DrawLineButton } from './draw-buttons/draw-line.button';
 import { DrawPencilButton } from './draw-buttons/draw-pencil.button';
 import { DrawRedoButton } from './draw-buttons/draw-redo.button';
-import { DrawToolDto } from '../../../common/model/obj-draw.model';
+import { DrawToolDto } from '../../../common/model/obj/obj-draw.dto';
 import { DrawUndoButton } from './draw-buttons/draw-undo.button';
-import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 

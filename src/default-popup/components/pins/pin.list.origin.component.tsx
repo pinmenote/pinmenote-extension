@@ -16,8 +16,8 @@
  */
 import React, { FunctionComponent } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinListComponent } from './pin.list.component';
 import Typography from '@mui/material/Typography';
 

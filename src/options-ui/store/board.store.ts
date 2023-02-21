@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto } from '../../common/model/obj.model';
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { BookmarkRemoveCommand } from '../../common/command/bookmark/bookmark-remove.command';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
-import { ObjBookmarkDto } from '../../common/model/obj-bookmark.model';
-import { ObjPagePinDto } from '../../common/model/obj-pin.model';
+import { ObjBookmarkDto } from '../../common/model/obj/obj-bookmark.dto';
+import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';

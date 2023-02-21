@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRectangleDto, ObjSizeDto } from './obj-utils.model';
-import { ObjDrawDto } from './obj-draw.model';
-import { ObjUrlDto } from './obj.model';
+import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
+import { ObjDrawDto } from './obj-draw.dto';
+import { ObjUrlDto } from './obj.dto';
 
 export interface ObjPagePinDto {
   theme: string;
@@ -53,15 +53,15 @@ export interface PinHtmlDataDto {
   text: string; // innerText value of html
   rect: ObjRectangleDto;
   border: PinBorderDataDto;
-  css: PinCssDataDto;
+  css: CssDataDto;
 }
 
-export interface PinCssDataDto {
+export interface CssDataDto {
   css: string;
-  href: PinCssHref[];
+  href: CssHrefDto[];
 }
 
-export interface PinCssHref {
+export interface CssHrefDto {
   href: string;
   media: string;
   data?: string;

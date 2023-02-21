@@ -19,8 +19,8 @@ import { FetchImageRequest, FetchImageResponse } from '../../common/model/obj-re
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CssFactory } from './css.factory';
-import { ObjUrlDto } from '../../common/model/obj.model';
-import { PinHtmlDataDto } from '../../common/model/obj-pin.model';
+import { ObjUrlDto } from '../../common/model/obj/obj.dto';
+import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';

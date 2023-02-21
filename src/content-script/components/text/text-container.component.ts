@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
-import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { TextBarComponent } from '../text-bar/text-bar.component';
 import { TextEditorComponent } from './text-editor.component';
 

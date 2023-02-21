@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
+import { ObjDto, ObjShareDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import IconButton from '@mui/material/IconButton';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 

@@ -17,7 +17,7 @@
 import { ColorUtils, RGBColor } from './draw-color.utils';
 import { DrawColorPickerButton } from './draw-color-picker.button';
 import { HtmlComponent } from '../../../../common/model/html.model';
-import { ObjRectangleDto } from '../../../../common/model/obj-utils.model';
+import { ObjRectangleDto } from '../../../../common/model/obj/obj-utils.dto';
 import { applyStylesToElement } from '../../../../common/style.utils';
 
 const saturationStyles = {

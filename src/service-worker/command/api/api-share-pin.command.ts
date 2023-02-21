@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
+import { ObjDto, ObjShareDto } from '../../../common/model/obj/obj.dto';
 import { ApiStore } from '../../store/api.store';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 

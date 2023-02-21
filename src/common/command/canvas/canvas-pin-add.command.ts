@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
+import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BusMessageType } from '../../model/bus.model';
 import { ICommand } from '../../model/shared/common.dto';
-import { ObjCanvasPinDto } from '../../model/obj-pin.model';
+import { ObjCanvasPinDto } from '../../model/obj/obj-pin.dto';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 
 export class CanvasPinAddCommand implements ICommand<Promise<ObjDto<ObjCanvasPinDto>>> {

@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { CssDataDto, CssHrefDto } from '../../common/model/obj/obj-pin.dto';
 import { FetchCssRequest, FetchCssResponse } from '../../common/model/obj-request.model';
-import { PinCssDataDto, PinCssHref } from '../../common/model/obj-pin.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
@@ -23,9 +23,9 @@ import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher'
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
 export class CssFactory {
-  static computeCssContent = async (): Promise<PinCssDataDto> => {
+  static computeCssContent = async (): Promise<CssDataDto> => {
     let css = '';
-    const href: PinCssHref[] = [];
+    const href: CssHrefDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
@@ -48,7 +48,7 @@ export class CssFactory {
     };
   };
 
-  private static computeSelectorRules = async (cssRules: ComputeCssRule[], hrefList: PinCssHref[]): Promise<string> => {
+  private static computeSelectorRules = async (cssRules: ComputeCssRule[], hrefList: CssHrefDto[]): Promise<string> => {
     let output = '';
     for (const r of cssRules) {
       if (r.href) {

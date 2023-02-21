@@ -19,7 +19,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
-import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
+import { ObjBookmarkDto } from '../../../common/model/obj/obj-bookmark.dto';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 

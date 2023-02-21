@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjUrlDto } from '../../model/obj.model';
+import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
-import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
+import { ObjBookmarkDto } from '../../model/obj/obj-bookmark.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 
 export class BookmarkGetCommand implements ICommand<Promise<ObjDto<ObjBookmarkDto> | undefined>> {

@@ -25,8 +25,8 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { LogManager } from '../../../common/popup/log.manager';
-import { ObjBookmarkDto } from '../../../common/model/obj-bookmark.model';
-import { ObjDto } from '../../../common/model/obj.model';
+import { ObjBookmarkDto } from '../../../common/model/obj/obj-bookmark.dto';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 

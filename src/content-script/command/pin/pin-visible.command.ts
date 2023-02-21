@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';

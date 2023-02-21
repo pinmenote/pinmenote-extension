@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBookmarkDto } from './obj-bookmark.model';
-import { ObjNoteDto } from './obj-note.model';
-import { ObjPagePinDto } from './obj-pin.model';
+import { ObjBookmarkDto } from './obj-bookmark.dto';
+import { ObjNoteDto } from './obj-note.dto';
+import { ObjPagePinDto } from './obj-pin.dto';
 
 export enum ObjBoardViewDto {
   Screenshot = 'SCREENSHOT',

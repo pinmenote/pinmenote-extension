@@ -17,8 +17,8 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';

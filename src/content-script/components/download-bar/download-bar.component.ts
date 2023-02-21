@@ -17,7 +17,7 @@
 import { DownloadCsvButton } from './download-buttons/download-csv.button';
 import { DownloadImageButton } from './download-buttons/download-image.button';
 import { HtmlComponent } from '../../../common/model/html.model';
-import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 

@@ -17,9 +17,9 @@
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { ContentSettingsStore } from '../../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
-import { ObjDto } from '../../../common/model/obj.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
-import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { ObjUpdateHashtagsCommand } from '../../../common/command/obj/hashtag/obj-update-hashtags.command';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { TextContainerComponent } from './text-container.component';

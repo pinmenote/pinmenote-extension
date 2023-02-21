@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { DrawBarComponent } from '../draw-bar.component';
-import { DrawToolDto } from '../../../../common/model/obj-draw.model';
+import { DrawToolDto } from '../../../../common/model/obj/obj-draw.dto';
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';

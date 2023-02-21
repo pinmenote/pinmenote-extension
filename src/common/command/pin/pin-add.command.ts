@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj.model';
+import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { BusMessageType } from '../../model/bus.model';
@@ -24,7 +24,7 @@ import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
-import { ObjPagePinDto } from '../../model/obj-pin.model';
+import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
 

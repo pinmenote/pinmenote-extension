@@ -19,7 +19,7 @@ import { EditBarDecryptButton } from './edit-bar-buttons/edit-bar-decrypt.button
 import { EditBarEncryptButton } from './edit-bar-buttons/edit-bar-encrypt.button';
 import { EditBarHtmlButton } from './edit-bar-buttons/edit-bar-html.button';
 import { EditBarParentButton } from './edit-bar-buttons/edit-bar-parent.button';
-import { ObjRectangleDto } from '../../../common/model/obj-utils.model';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 

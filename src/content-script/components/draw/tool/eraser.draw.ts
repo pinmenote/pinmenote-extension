@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPointDto } from '../../../../common/model/obj-utils.model';
+import { ObjPointDto } from '../../../../common/model/obj/obj-utils.dto';
 
 export class EraserDraw {
   private static points: ObjPointDto[];

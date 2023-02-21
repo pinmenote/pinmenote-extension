@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, PageComponent } from '../../common/model/html.model';
-import { ObjDto, ObjLinkDto } from '../../common/model/obj.model';
+import { ObjDto, ObjLinkDto } from '../../common/model/obj/obj.dto';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { ObjPointDto } from '../../common/model/obj-utils.model';
+import { ObjPointDto } from '../../common/model/obj/obj-utils.dto';
 import { PinPointFactory } from '../factory/pin-point.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinVideoDataDto } from '../../common/model/obj-pin.model';
+import { PinVideoDataDto } from '../../common/model/obj/obj-pin.dto';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 
 export const resolveVideoTimeFn = (videoTime?: PinVideoDataDto[]): void => {

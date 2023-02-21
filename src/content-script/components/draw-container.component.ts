@@ -16,7 +16,7 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
 import { DrawAreaComponent } from './draw/draw-area.component';
-import { ObjRectangleDto } from '../../common/model/obj-utils.model';
+import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { PinComponent } from './pin.component';
 import { applyStylesToElement } from '../../common/style.utils';
 

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentSettingsStore } from '../../content-script/store/content-settings.store';
-import { ObjRectangleDto } from '../model/obj-utils.model';
+import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
 
 export class ImageResizeFactory {
   static resize = (size: ObjRectangleDto, b64image: string): Promise<string> => {

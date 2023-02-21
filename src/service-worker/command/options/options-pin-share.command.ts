@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
-import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
+import { ObjDto, ObjShareDto } from '../../../common/model/obj/obj.dto';
 import { ApiSharePinCommand } from '../api/api-share-pin.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
+import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class OptionsPinShareCommand implements ICommand<void> {

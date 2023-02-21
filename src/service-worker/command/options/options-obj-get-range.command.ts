@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto } from '../../../common/model/obj.model';
+import { ObjDataDto, ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';

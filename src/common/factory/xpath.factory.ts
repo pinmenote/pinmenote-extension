@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRectangleDto } from '../model/obj-utils.model';
+import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
 
 interface XPathElement {
   position: number;
