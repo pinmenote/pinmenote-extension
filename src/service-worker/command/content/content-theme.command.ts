@@ -16,7 +16,7 @@
  */
 import { ContentExtensionData, ExtensionThemeDto } from '../../../common/model/settings.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import icon128 from '../../../assets/icon/light/128.png';
 import icon16 from '../../../assets/icon/light/16.png';

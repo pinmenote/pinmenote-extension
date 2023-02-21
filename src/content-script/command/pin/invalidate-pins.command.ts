@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjLinkDto } from '../../../common/model/obj.model';
 import { CreateLinkCommand } from '../link/create-link.command';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjTypeDto } from '../../../common/model/obj.model';
 import { PinAddXpathCommand } from './pin-add-xpath.command';

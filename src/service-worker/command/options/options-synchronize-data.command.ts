@@ -16,7 +16,7 @@
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 
 export class OptionsSynchronizeDataCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

@@ -17,7 +17,7 @@
 import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import { ApiStore } from '../../store/api.store';
 import { FetchService } from '../../service/fetch.service';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';

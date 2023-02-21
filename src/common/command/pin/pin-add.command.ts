@@ -19,7 +19,7 @@ import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { BusMessageType } from '../../model/bus.model';
 import { HashtagFindCommand } from '../obj/hashtag/hashtag-find.command';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';

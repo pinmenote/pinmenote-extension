@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { AccessTokenDto } from '../../../common/model/shared/token.model';
+import { AccessTokenDto } from '../../../common/model/shared/token.dto';
 import { AccountComponent } from '../account/account.component';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { LogManager } from '../../../common/popup/log.manager';

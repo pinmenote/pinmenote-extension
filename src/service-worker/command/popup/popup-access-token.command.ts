@@ -17,8 +17,8 @@
 import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.model';
-import { TokenDataDto } from '../../../common/model/shared/token.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { TokenDataDto } from '../../../common/model/shared/token.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PopupAccessTokenCommand implements ICommand<void> {

@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiStore } from '../../store/api.store';
-import { DiskQuotaDto } from '../../../common/model/shared/token.model';
+import { DiskQuotaDto } from '../../../common/model/shared/token.dto';
 import { FetchService } from '../../service/fetch.service';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 

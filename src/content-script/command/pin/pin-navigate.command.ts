@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinStore } from '../../store/pin.store';

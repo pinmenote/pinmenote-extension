@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ICommand } from '../../../model/shared/common.model';
+import { ICommand } from '../../../model/shared/common.dto';
 import { ObjHashtagStore } from '../../../store/obj-hashtag.store';
 
 export class ObjRemoveHashtagsCommand implements ICommand<Promise<void>> {

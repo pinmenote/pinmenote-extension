@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { PinAddXpathCommand } from '../pin/pin-add-xpath.command';
 import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
 import { PinNavigateCommand } from '../pin/pin-navigate.command';

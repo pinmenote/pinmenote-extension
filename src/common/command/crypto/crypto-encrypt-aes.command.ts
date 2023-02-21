@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { Message, createMessage, encrypt, enums } from 'openpgp';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 
 export class CryptoEncryptAesCommand implements ICommand<Promise<string>> {
   constructor(private text: string, private password: string) {}

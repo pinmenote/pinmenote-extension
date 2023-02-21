@@ -17,7 +17,7 @@
 import { SettingsConfig, environmentConfig } from '../../../common/environment';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CryptoGenerateKeyPairCommand } from '../../../common/command/crypto/crypto-generate-key-pair.command';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 

@@ -17,8 +17,8 @@
 import { ApiSyncQuotaCommand } from '../api/api-sync-quota.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { DiskQuotaDto } from '../../../common/model/shared/token.model';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { DiskQuotaDto } from '../../../common/model/shared/token.dto';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PopupSyncQuotaCommand implements ICommand<void> {

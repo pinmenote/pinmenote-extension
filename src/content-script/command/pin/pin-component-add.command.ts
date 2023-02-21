@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../common/model/html.model';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj.model';
 import { ObjPagePinDto } from '../../../common/model/obj-pin.model';
 import { PinComponent } from '../../components/pin.component';

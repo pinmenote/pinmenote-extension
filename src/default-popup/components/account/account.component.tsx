@@ -20,7 +20,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import { COLOR_DEFAULT_GREY } from '../../../common/components/colors';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { DiskQuotaDto } from '../../../common/model/shared/token.model';
+import { DiskQuotaDto } from '../../../common/model/shared/token.dto';
 import IconButton from '@mui/material/IconButton';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import TextareaAutosize from '@mui/material/TextareaAutosize';

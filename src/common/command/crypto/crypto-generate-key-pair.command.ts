@@ -16,7 +16,7 @@
  */
 import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 import { generateKey } from 'openpgp';
 
 export class CryptoGenerateKeyPairCommand implements ICommand<Promise<CryptoKeyData>> {

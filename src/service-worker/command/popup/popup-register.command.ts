@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.model';
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiRegisterCommand } from '../api/api-register.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { RegisterFormData } from '../../../common/model/auth.model';
-import { TokenUserDto } from '../../../common/model/shared/token.model';
+import { TokenUserDto } from '../../../common/model/shared/token.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PopupRegisterCommand implements ICommand<void> {

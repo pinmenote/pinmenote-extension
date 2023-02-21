@@ -16,7 +16,7 @@
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusDownloadMessage } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 
 export class ContentDownloadDataCommand implements ICommand<Promise<void>> {
   constructor(private data: BusDownloadMessage) {}

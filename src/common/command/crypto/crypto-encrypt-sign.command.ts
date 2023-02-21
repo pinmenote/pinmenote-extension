@@ -16,7 +16,7 @@
  */
 import { Message, createMessage, encrypt } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 
 export class CryptoEncryptSignCommand implements ICommand<Promise<string>> {
   constructor(private value: object) {}

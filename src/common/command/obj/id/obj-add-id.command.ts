@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
-import { ICommand } from '../../../model/shared/common.model';
+import { ICommand } from '../../../model/shared/common.dto';
 import { ObjAddDtIndexCommand } from '../dt-index/obj-add-dt-index.command';
 import { ObjUpdateLastIdCommand } from './obj-update-last-id.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';

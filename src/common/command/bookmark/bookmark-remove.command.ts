@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
 import { ObjDto } from '../../model/obj.model';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';

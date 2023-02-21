@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.model';
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ObjDto, ObjShareDto } from '../../../common/model/obj.model';
 import { ApiSharePinCommand } from '../api/api-share-pin.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';

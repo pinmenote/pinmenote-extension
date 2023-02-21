@@ -17,7 +17,7 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { SettingsConfig } from '../../../common/environment';
 import { SettingsKeys } from '../../../common/keys/settings.keys';
 

@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto, RegisterDto, TokenUserDto } from '../../../common/model/shared/token.model';
+import { AccessTokenDto, RegisterDto, TokenUserDto } from '../../../common/model/shared/token.dto';
 import { ApiStore } from '../../store/api.store';
 import { CryptoStore } from '../../../common/store/crypto.store';
 import { FetchService } from '../../service/fetch.service';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { RegisterFormData } from '../../../common/model/auth.model';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';

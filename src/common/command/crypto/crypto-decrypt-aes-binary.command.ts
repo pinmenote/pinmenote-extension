@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { decrypt, enums, readMessage } from 'openpgp';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 
 export class CryptoDecryptAesBinaryCommand implements ICommand<Promise<Uint8Array>> {
   constructor(private message: Uint8Array, private password: string) {}

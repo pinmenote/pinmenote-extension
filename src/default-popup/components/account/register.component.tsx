@@ -23,10 +23,10 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import { LogManager } from '../../../common/popup/log.manager';
 import { RegisterFormData } from '../../../common/model/auth.model';
-import { ServerErrorDto } from '../../../common/model/shared/common.model';
+import { ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import { TokenUserDto } from '../../../common/model/shared/token.model';
+import { TokenUserDto } from '../../../common/model/shared/token.dto';
 import Typography from '@mui/material/Typography';
 import { environmentConfig } from '../../../common/environment';
 

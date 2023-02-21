@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HashtagFindCommand } from './hashtag-find.command';
-import { ICommand } from '../../../model/shared/common.model';
+import { ICommand } from '../../../model/shared/common.dto';
 import { ObjHashtagStore } from '../../../store/obj-hashtag.store';
 
 export class ObjUpdateHashtagsCommand implements ICommand<Promise<void>> {

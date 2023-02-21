@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../common/components/colors';
-import { LoginDto, TokenUserDto } from '../../../common/model/shared/token.model';
+import { LoginDto, TokenUserDto } from '../../../common/model/shared/token.dto';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import { LogManager } from '../../../common/popup/log.manager';
-import { ServerErrorDto } from '../../../common/model/shared/common.model';
+import { ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';

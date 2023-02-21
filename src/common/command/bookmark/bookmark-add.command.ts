@@ -16,7 +16,7 @@
  */
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj.model';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjBookmarkDto } from '../../model/obj-bookmark.model';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';

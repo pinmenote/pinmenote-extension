@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { LoginDto, TokenUserDto } from '../../../common/model/shared/token.model';
+import { LoginDto, TokenUserDto } from '../../../common/model/shared/token.dto';
 import { ApiLoginCommand } from '../api/api-login.command';
 import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PopupLoginCommand implements ICommand<void> {

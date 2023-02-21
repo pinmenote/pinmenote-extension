@@ -17,7 +17,7 @@
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../../common/model/obj.model';
 import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BusMessageType } from '../../model/bus.model';
-import { ICommand } from '../../model/shared/common.model';
+import { ICommand } from '../../model/shared/common.dto';
 import { ObjCanvasPinDto } from '../../model/obj-pin.model';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 
