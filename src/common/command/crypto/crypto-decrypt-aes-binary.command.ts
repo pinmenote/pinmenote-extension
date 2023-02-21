@@ -17,17 +17,21 @@
 import { decrypt, enums, readMessage } from 'openpgp';
 import { ICommand } from '../../model/shared/common.model';
 
-export class CryptoDecryptAesCommand implements ICommand<Promise<string>> {
-  constructor(private message: string, private password: string) {}
-  async execute(): Promise<string> {
+export class CryptoDecryptAesBinaryCommand implements ICommand<Promise<Uint8Array>> {
+  constructor(private message: Uint8Array, private password: string) {}
+
+  async execute(): Promise<Uint8Array> {
+    // const a = atob(this.message).split(',').map(e => parseInt(e));
     const message = await readMessage({
-      armoredMessage: this.message
+      binaryMessage: this.message
     });
     const decryptedData = await decrypt({
       message,
       passwords: [this.password],
+      format: 'binary',
       config: { preferredSymmetricAlgorithm: enums.symmetric.aes256 }
     });
-    return decryptedData.data.toString();
+    // new TextDecoder().decode(decryptedData.data as Uint8Array)
+    return Uint8Array.from(decryptedData.data as Iterable<number>);
   }
 }

@@ -14,19 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CryptoStore } from '../../store/crypto.store';
+import { Message, createMessage, encrypt, enums } from 'openpgp';
 import { ICommand } from '../../model/shared/common.model';
-import { encryptKey } from 'openpgp';
 
-export class CryptoEncryptPrivateKeyCommand implements ICommand<Promise<string | undefined>> {
-  constructor(private password: string) {}
-  async execute(): Promise<string | undefined> {
-    await CryptoStore.loadKeys();
-    if (!CryptoStore.cryptoKey?.privateKey) return undefined;
-    const keyOutput = await encryptKey({
-      privateKey: CryptoStore.cryptoKey.privateKey,
-      passphrase: this.password
+export class CryptoEncryptAesBinaryCommand implements ICommand<Promise<Uint8Array>> {
+  constructor(private binary: Uint8Array, private password: string) {}
+  async execute(): Promise<Uint8Array> {
+    const message: Message<Uint8Array> = await createMessage({ binary: this.binary });
+    const encryptData = await encrypt({
+      message,
+      passwords: [this.password],
+      format: 'binary',
+      config: { preferredSymmetricAlgorithm: enums.symmetric.aes256 }
     });
-    return btoa(keyOutput.armor());
+    return Uint8Array.from(encryptData as Iterable<number>);
   }
 }

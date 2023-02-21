@@ -17,7 +17,6 @@
 import { Message, createMessage, sign } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
 import { ICommand } from '../../model/shared/common.model';
-import { fnConsoleLog } from '../../fn/console.fn';
 
 export class CryptoSignCommand implements ICommand<Promise<string>> {
   constructor(private text: string) {}
@@ -31,8 +30,6 @@ export class CryptoSignCommand implements ICommand<Promise<string>> {
       signingKeys: CryptoStore.cryptoKey.privateKey,
       detached: true
     });
-    fnConsoleLog('WorkerCryptoManager->sign->text', this.text);
-    fnConsoleLog('WorkerCryptoManager->sign->signature', armoredSignature.toString());
     return armoredSignature.toString();
   }
 }
