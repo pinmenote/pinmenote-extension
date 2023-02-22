@@ -27,8 +27,17 @@ import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
+const inputContainerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  padding: 5,
+  borderRadius: 5,
+  margin: '5px 10px 5px 10px'
+};
+
 export const LoginComponent: FunctionComponent = () => {
   const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
@@ -45,11 +54,15 @@ export const LoginComponent: FunctionComponent = () => {
     setEmail(e.target.value);
   };
 
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setPassword(e.target.value);
+  };
+
   const handleLoginClick = async (): Promise<void> => {
     setResponseError(undefined);
     await BrowserApi.sendRuntimeMessage<LoginDto>({
       type: BusMessageType.POPUP_LOGIN,
-      data: { email, signature: '' }
+      data: { email, password }
     });
   };
 
@@ -67,17 +80,11 @@ export const LoginComponent: FunctionComponent = () => {
       <Typography align="center" fontSize="2em" style={{ marginTop: 20 }}>
         Login
       </Typography>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          border: borderStyle,
-          padding: 5,
-          borderRadius: 5,
-          margin: 10
-        }}
-      >
+      <div style={{ border: borderStyle, ...inputContainerStyle }}>
         <StyledInput onChange={handleEmailChange} value={email} placeholder="email" />
+      </div>
+      <div style={{ border: borderStyle, ...inputContainerStyle }}>
+        <StyledInput onChange={handlePasswordChange} value={password} placeholder="password" />
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', margin: 10 }}>
         <Button sx={{ width: '100%' }} variant="outlined" onClick={handleLoginClick}>

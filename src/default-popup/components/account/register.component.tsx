@@ -23,7 +23,9 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import { LogManager } from '../../../common/popup/log.manager';
 import { RegisterFormData } from '../../../common/model/auth.model';
+import { RegisterSuccessComponent } from './register-success.component';
 import { ServerErrorDto } from '../../../common/model/shared/common.dto';
+import { SettingsButtonComponent } from './settings-button.component';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { TokenUserDto } from '../../../common/model/shared/token.dto';
@@ -45,6 +47,7 @@ function getWebsiteUrl(uri: string): string {
 export const RegisterComponent: FunctionComponent = () => {
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [termsVersion, setTermsVersion] = useState<string | undefined>(undefined);
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
   const [registerSuccess, setRegisterSuccess] = useState<boolean>(false);
@@ -70,6 +73,10 @@ export const RegisterComponent: FunctionComponent = () => {
     setEmail(e.target.value);
   };
 
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
   const handleRegisterClick = async () => {
     if (!termsVersion) {
       setResponseError({
@@ -88,10 +95,6 @@ export const RegisterComponent: FunctionComponent = () => {
     TinyEventDispatcher.dispatch(BusMessageType.POP_LOGIN_CLICK, undefined);
   };
 
-  const handleAccountClick = () => {
-    TinyEventDispatcher.dispatch(BusMessageType.POP_ACCOUNT_CLICK, undefined);
-  };
-
   const borderStyle =
     responseError && responseError?.code !== -1000
       ? `1px solid ${COLOR_DEFAULT_RED}`
@@ -100,26 +103,7 @@ export const RegisterComponent: FunctionComponent = () => {
 
   return (
     <div>
-      <div
-        style={{
-          display: registerSuccess ? 'flex' : 'none',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: 300
-        }}
-      >
-        <div>
-          <Typography style={{ fontSize: '24pt' }}>
-            Thank you for registering, check your inbox to verify email
-          </Typography>
-        </div>
-        <div>
-          <Button sx={{ width: '100%' }} variant="outlined" onClick={handleAccountClick}>
-            Go To Account
-          </Button>
-        </div>
-      </div>
+      <RegisterSuccessComponent registerSuccess={registerSuccess} />
       <div style={{ display: registerSuccess ? 'none' : 'flex', flexDirection: 'column', maxHeight: 300 }}>
         <label style={{ fontSize: '2em', marginTop: 20, textAlign: 'center' }}>Register</label>
         <div style={{ border: borderStyle, ...inputBorder }}>
@@ -127,6 +111,9 @@ export const RegisterComponent: FunctionComponent = () => {
         </div>
         <div style={{ ...inputBorder, marginTop: 0, border: borderStyle }}>
           <StyledInput onChange={handleEmailChange} value={email} placeholder="email" />
+        </div>
+        <div style={{ ...inputBorder, marginTop: 0, border: borderStyle }}>
+          <StyledInput onChange={handlePasswordChange} value={password} placeholder="password" />
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Checkbox
@@ -162,17 +149,7 @@ export const RegisterComponent: FunctionComponent = () => {
           Login
         </Link>
       </Typography>
-      {/* ADVANCED OPTIONS */}
-      <div style={{ position: 'absolute', bottom: 0, width: 300 }}>
-        <Button
-          sx={{ width: '100%' }}
-          style={{ marginBottom: 10 }}
-          variant="outlined"
-          onClick={() => BrowserApi.openOptionsPage('#settings')}
-        >
-          Advanced options
-        </Button>
-      </div>
+      <SettingsButtonComponent />
     </div>
   );
 };

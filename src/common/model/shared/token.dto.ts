@@ -39,7 +39,7 @@ export interface TokenUserDto {
 
 export interface LoginDto {
   email: string;
-  signature: string;
+  password: string;
 }
 
 export interface RegisterDto {
