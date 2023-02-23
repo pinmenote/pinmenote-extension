@@ -94,12 +94,18 @@ export class HtmlFactory {
       } else if (attr.name === 'src') {
         const url = this.computeUrl(attr.value);
         if (tagName === 'img') {
-          const imageData = await this.fetchImage(url);
-          if (imageData.error) {
-            html += `src="${url}" `;
-          } else {
-            html += `src="${imageData.data}" `;
+          // we have data already inside image so just add it
+          if (attr.value.startsWith('data')) {
+            html += `src="${attr.value}" `;
             srcFilled = true;
+          } else {
+            const imageData = await this.fetchImage(url);
+            if (imageData.error) {
+              html += `src="${url}" `;
+            } else {
+              html += `src="${imageData.data}" `;
+              srcFilled = true;
+            }
           }
         } else {
           html += `src="${url}" `;
