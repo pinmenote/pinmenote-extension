@@ -67,7 +67,7 @@ export class HtmlFactory {
     const tagName = ref.tagName.toLowerCase();
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
-    fnConsoleLog(tagName, ref);
+    // fnConsoleLog(tagName, ref);
 
     if (tagName === 'video') {
       // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
@@ -95,7 +95,7 @@ export class HtmlFactory {
         const url = this.computeUrl(attr.value);
         if (tagName === 'img') {
           // we have data already inside image so just add it
-          if (attr.value.startsWith('data')) {
+          if (attr.value.startsWith('data:')) {
             html += `src="${attr.value}" `;
             srcFilled = true;
           } else {
@@ -172,7 +172,7 @@ export class HtmlFactory {
         html += computed.html;
         videoTime.push(...computed.videoTime);
       } else if (node.nodeType === Node.COMMENT_NODE) {
-        fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
+        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
       } else {
         fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
       }
@@ -190,13 +190,24 @@ export class HtmlFactory {
       return `${window.location.protocol}${value}`;
     } else if (value.startsWith('/')) {
       return `${window.location.origin}${value}`;
+    } else if (value.startsWith('../')) {
+      const a = window.location.pathname.split('/');
+      const subpath = a.slice(0, a.length - 2).join('/');
+      const subvalue = value.substring(2);
+      return `${window.location.origin}${subpath}${subvalue}`;
     } else if (value.startsWith('./')) {
       const a = window.location.pathname.split('/');
       const subpath = a.slice(0, a.length - 1).join('/');
       const subvalue = value.substring(1);
       return `${window.location.origin}${subpath}${subvalue}`;
     } else if (!value.startsWith('http')) {
-      return `${window.location.origin}/${value}`;
+      if (window.location.pathname.endsWith('html') || window.location.pathname.endsWith('htm')) {
+        const a = window.location.pathname.split('/');
+        const subpath = a.slice(0, a.length - 1).join('/');
+        return `${window.location.origin}${subpath}/${value}`;
+      }
+      if (window.location.pathname.endsWith('/')) `${window.location.origin}${window.location.pathname}${value}`;
+      return `${window.location.origin}/${window.location.pathname}/${value}`;
     }
     return value;
   }
