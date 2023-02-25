@@ -82,21 +82,23 @@ export class HtmlFactory {
     let srcFilled = false;
     let hrefFilled = false;
     for (const attr of attributes) {
+      let attrValue = attr.value;
+      attrValue = attrValue.replaceAll('"', '&quot;');
       if (attr.name === 'href' && !hrefFilled) {
         // HREF
-        if (!attr.value) continue;
-        const url = this.computeUrl(attr.value);
+        if (attrValue) continue;
+        const url = this.computeUrl(attrValue);
         html += `href="${url}" `;
         html += `target="_blank" `;
         hrefFilled = true;
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
       } else if (attr.name === 'src') {
-        const url = this.computeUrl(attr.value);
+        const url = this.computeUrl(attrValue);
         if (tagName === 'img') {
           // we have data already inside image so just add it
-          if (attr.value.startsWith('data:')) {
-            html += `src="${attr.value}" `;
+          if (attrValue.startsWith('data:')) {
+            html += `src="${attrValue}" `;
             srcFilled = true;
           } else {
             const imageData = await this.fetchImage(url);
@@ -112,7 +114,7 @@ export class HtmlFactory {
           srcFilled = true;
         }
       } else if (attr.name == 'data-src') {
-        const url = this.computeUrl(attr.value);
+        const url = this.computeUrl(attrValue);
         if (tagName === 'img' && !srcFilled) {
           const imageData = await this.fetchImage(url);
           if (imageData.error) {
@@ -124,7 +126,7 @@ export class HtmlFactory {
         }
       } else if (attr.name === 'srcset') {
         // TODO check if ok for all cases
-        const srcset = attr.value.split(',');
+        const srcset = attrValue.split(',');
         // last value so it's biggest image
         const urlvalue = srcset[srcset.length - 1].trim().split(' ')[0];
 
@@ -141,7 +143,7 @@ export class HtmlFactory {
       } else if (attr.name === 'data-iframe') {
         if (tagName === 'a' && !hrefFilled) {
           try {
-            const dataJSON = window.atob(attr.value);
+            const dataJSON = window.atob(attrValue);
             /* eslint-disable @typescript-eslint/no-unsafe-member-access */
             const url: string = JSON.parse(dataJSON).src;
             if (url.startsWith('http')) {
@@ -154,7 +156,7 @@ export class HtmlFactory {
           }
         }
       } else {
-        html += `${attr.name}="${attr.value}" `;
+        html += `${attr.name}="${attrValue}" `;
       }
     }
     html = html.substring(0, html.length - 1) + '>';
