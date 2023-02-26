@@ -188,28 +188,26 @@ export class HtmlFactory {
   };
 
   private static computeUrl(value: string): string {
+    let baseurl = window.location.href;
+    // cleanup baseurl ending with html/htm
+    if (baseurl.endsWith('html') || baseurl.endsWith('htm')) {
+      const a = window.location.pathname.split('/');
+      const subpath = a.slice(0, a.length - 1).join('/');
+      baseurl = `${window.location.origin}${subpath}`;
+    }
+    // cleanup ending /
+    if (baseurl.endsWith('/')) baseurl += baseurl.substring(0, baseurl.length - 1);
+
     if (value.startsWith('//')) {
       return `${window.location.protocol}${value}`;
     } else if (value.startsWith('/')) {
       return `${window.location.origin}${value}`;
-    } else if (value.startsWith('../')) {
-      const a = window.location.pathname.split('/');
-      const subpath = a.slice(0, a.length - 2).join('/');
-      const subvalue = value.substring(2);
-      return `${window.location.origin}${subpath}${subvalue}`;
     } else if (value.startsWith('./')) {
-      const a = window.location.pathname.split('/');
-      const subpath = a.slice(0, a.length - 1).join('/');
-      const subvalue = value.substring(1);
-      return `${window.location.origin}${subpath}${subvalue}`;
+      // URL constructor is good with subpath resolution so ../../foo ../foo ./foo
+      const url = new URL(baseurl + '/' + value);
+      return url.href;
     } else if (!value.startsWith('http')) {
-      if (window.location.pathname.endsWith('html') || window.location.pathname.endsWith('htm')) {
-        const a = window.location.pathname.split('/');
-        const subpath = a.slice(0, a.length - 1).join('/');
-        return `${window.location.origin}${subpath}/${value}`;
-      }
-      if (window.location.pathname.endsWith('/')) `${window.location.origin}${window.location.pathname}${value}`;
-      return `${window.location.origin}/${window.location.pathname}/${value}`;
+      return `${baseurl}/${value}`;
     }
     return value;
   }
