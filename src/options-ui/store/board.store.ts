@@ -21,9 +21,11 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { ObjBookmarkDto } from '../../common/model/obj/obj-bookmark.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
+import { ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
 import { OptionsObjSearchCommand } from '../../service-worker/command/options/options-obj-search.command';
+import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { PinRemoveCommand } from '../../common/command/pin/pin-remove.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -51,6 +53,8 @@ export class BoardStore {
           await new PinRemoveCommand(value as ObjDto<ObjPagePinDto>).execute();
         } else if (value.type === ObjTypeDto.PageBookmark) {
           await new BookmarkRemoveCommand(value as ObjDto<ObjBookmarkDto>).execute();
+        } else if (value.type === ObjTypeDto.PageSnapshot) {
+          await new PageSnapshotRemoveCommand(value as ObjDto<ObjSnapshotDto>).execute();
         }
         return true;
       }

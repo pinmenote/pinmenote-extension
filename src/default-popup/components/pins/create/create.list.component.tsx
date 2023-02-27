@@ -36,7 +36,11 @@ const zeroPad = {
   padding: 0
 };
 
-export const CreateListComponent: FunctionComponent = () => {
+interface CreateListProps {
+  closeListCallback: () => void;
+}
+
+export const CreateListComponent: FunctionComponent<CreateListProps> = (props) => {
   const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(ActiveTabStore.bookmark);
 
   useEffect(() => {
@@ -55,6 +59,16 @@ export const CreateListComponent: FunctionComponent = () => {
       });
       await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_BOOKMARK_ADD, data: ActiveTabStore.url });
     }
+    props.closeListCallback();
+  };
+
+  const handleSavePageClick = async () => {
+    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: ActiveTabStore.url });
+    props.closeListCallback();
+  };
+
+  const handleSaveElementClick = () => {
+    props.closeListCallback();
   };
 
   const bookmarkIcon = bookmarkData !== undefined ? <BookmarkIcon /> : <BookmarkBorderIcon />;
@@ -70,7 +84,7 @@ export const CreateListComponent: FunctionComponent = () => {
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
-          <ListItemButton onClick={handleBookmarkClick}>
+          <ListItemButton onClick={handleSavePageClick}>
             <ListItemIcon>
               <WebOutlined />
             </ListItemIcon>
@@ -78,7 +92,7 @@ export const CreateListComponent: FunctionComponent = () => {
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
-          <ListItemButton onClick={handleBookmarkClick}>
+          <ListItemButton onClick={handleSaveElementClick}>
             <ListItemIcon>
               <svg xmlns="http://www.w3.org/2000/svg" fill="#777777" height="24" viewBox="0 0 24 24" width="24">
                 <g>

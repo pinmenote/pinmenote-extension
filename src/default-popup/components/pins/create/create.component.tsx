@@ -96,7 +96,7 @@ export const CreateComponent: FunctionComponent = () => {
           zIndex: 1000
         }}
       >
-        <CreateListComponent />
+        <CreateListComponent closeListCallback={() => setIsListVisible(false)} />
       </div>
     </div>
   );

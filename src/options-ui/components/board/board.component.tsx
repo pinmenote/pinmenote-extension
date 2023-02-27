@@ -24,6 +24,8 @@ import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjBookmarkDto } from '../../../common/model/obj/obj-bookmark.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
 import { PinElement } from './pin/pin.element';
 import Stack from '@mui/material/Stack';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
@@ -77,6 +79,8 @@ export const BoardComponent: FunctionComponent = () => {
       boardElements.push(<PinElement pin={obj as ObjDto<ObjPagePinDto>} key={obj.id} />);
     } else if (obj.type === ObjTypeDto.PageBookmark) {
       boardElements.push(<BookmarkElement dto={obj as ObjDto<ObjBookmarkDto>} key={obj.id} />);
+    } else if (obj.type === ObjTypeDto.PageSnapshot) {
+      boardElements.push(<PageSnapshotElement dto={obj as ObjDto<ObjSnapshotDto>} key={obj.id} />);
     } else {
       fnConsoleLog('NOT SUPPORTED !!!', obj);
       boardElements.push(
