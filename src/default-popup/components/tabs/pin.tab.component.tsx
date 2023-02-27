@@ -17,9 +17,9 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ActiveTabStore } from '../../store/active-tab.store';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { CreateComponent } from '../pins/create/create.component';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { ObjectCreateComponent } from '../pins/object.create.component';
 import { PinBoardButton } from '../pins/pin.board.button';
 import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
 import { PinListOriginComponent } from '../pins/pin.list.origin.component';
@@ -48,7 +48,7 @@ export const PinTabComponent: FunctionComponent = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-            <ObjectCreateComponent />
+            <CreateComponent />
             {/* marginBottom:155 if test code is uncommented */}
             <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110, marginTop: 10 }}>
               <PinListOriginComponent pinOrigin={originPins} pinHref={hrefPins} />
