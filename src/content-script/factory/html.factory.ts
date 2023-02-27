@@ -196,7 +196,7 @@ export class HtmlFactory {
       baseurl = `${window.location.origin}${subpath}`;
     }
     // cleanup ending /
-    if (baseurl.endsWith('/')) baseurl += baseurl.substring(0, baseurl.length - 1);
+    if (baseurl.endsWith('/')) baseurl = baseurl.substring(0, baseurl.length - 1);
 
     if (value.startsWith('//')) {
       return `${window.location.protocol}${value}`;
