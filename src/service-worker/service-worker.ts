@@ -127,8 +127,18 @@ const handleSuspend = () => {
   fnConsoleLog('handleSuspend->suspend');
 };
 
+const handleTabActivated = async (activeInfo: { tabId: number; windowId: number }) => {
+  fnConsoleLog('handleTabActivated->activeInfo', activeInfo);
+  try {
+    await BrowserApi.tabs.sendMessage(activeInfo.tabId, { type: BusMessageType.CONTENT_INVALIDATE });
+  } catch (e) {
+    fnConsoleLog('handleTabActivated->error', e);
+    await ScriptService.reloadScripts();
+  }
+};
 BrowserApi.runtime.onInstalled.addListener(handleInstalled);
 BrowserApi.runtime.onMessage.addListener(handleMessage);
+BrowserApi.tabs.onActivated.addListener(handleTabActivated);
 BrowserApi.runtime.onSuspend?.addListener(handleSuspend);
 
 fnConsoleLog(`Pinmenote service-worker start! ${BrowserApi.runtime.id}`);

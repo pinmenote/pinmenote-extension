@@ -72,6 +72,7 @@ export class FetchService {
     }
     if (!response.ok) {
       const errorData = type === ResponseType.JSON ? await response.json() : await response.text();
+      fnConsoleLog(`Error GET ${url}`, errorData);
       throw new ResponseError(`Error GET ${url}`, errorData);
     }
     if (type === ResponseType.BLOB) return await response.blob();

@@ -48,7 +48,7 @@ class PinMeScript {
   constructor(private readonly id: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
     ContentMessageHandler.start(this.href);
-    fnConsoleLog('CONTENT-SCRIPT', this.href);
+    fnConsoleLog('PinMeScript->constructor', this.href);
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
     TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
@@ -96,11 +96,12 @@ class PinMeScript {
     }
   };
 
-  private handleVisibilityChange = async (e: Event): Promise<void> => {
-    fnConsoleLog('visibilitychange', e);
-    await this.invalidatePins();
-    this.initTimeout();
-    await this.invalidateContentScript();
+  private handleVisibilityChange = async (): Promise<void> => {
+    fnConsoleLog('PinMeScript->handleVisibilityChange', this.id);
+    if (await this.invalidateContentScript()) {
+      await this.invalidatePins();
+      this.initTimeout();
+    }
   };
 
   private initTimeout = (): void => {
@@ -115,15 +116,15 @@ class PinMeScript {
     this.initTimeout();
   };
 
-  private invalidateContentScript = async (): Promise<void> => {
+  private invalidateContentScript = async (): Promise<boolean> => {
     try {
-      await BrowserApi.sendRuntimeMessage<undefined>({
-        type: BusMessageType.CONTENT_INVALIDATE
-      });
+      await BrowserStorageWrapper.get('foo');
+      return true;
     } catch (e) {
-      fnConsoleLog('invalidateContentScript->cleanup', e);
+      fnConsoleLog('PinMeScript->invalidateContentScript', this.id, e);
       this.cleanup();
     }
+    return false;
   };
 
   private cleanup(): void {
@@ -151,7 +152,7 @@ class PinMeScript {
 }
 try {
   new PinMeScript(fnUid(), 250);
-  fnConsoleLog('PinMeScript -> STARTED !!!');
+  fnConsoleLog('PinMeScript->STARTED !!!');
 } catch (e: unknown) {
-  fnConsoleError('PROBLEM PinMeScript.new !!!', e);
+  fnConsoleError('PinMeScript->PROBLEM !!!', e);
 }
