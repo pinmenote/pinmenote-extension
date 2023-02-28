@@ -56,6 +56,7 @@ export enum BusMessageType {
   POPUP_LOGOUT = 'popup.logout',
   POPUP_OPEN = 'popup.open',
   POPUP_PAGE_SNAPSHOT_ADD = 'popup.page.snapshot.add',
+  POPUP_PAGE_ELEMENT_SNAPSHOT_ADD = 'popup.page.element.snapshot.add',
   POPUP_PIN_START = 'popup.pin.start',
   POPUP_PIN_STOP = 'popup.pin.stop',
   POPUP_PIN_SHARE = 'popup.pin.share',

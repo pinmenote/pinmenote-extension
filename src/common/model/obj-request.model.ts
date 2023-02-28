@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjUrlDto } from './obj/obj.dto';
+import { ObjDataDto, ObjDto, ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
 
 export interface ObjIdRangeResponse {
   ids: number[];
@@ -35,6 +35,7 @@ export interface ObjRangeResponse {
 
 export interface PopupPinStartRequest {
   url: ObjUrlDto;
+  type: ObjTypeDto;
 }
 
 export interface FetchCssRequest {

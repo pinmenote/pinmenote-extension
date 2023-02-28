@@ -71,6 +71,16 @@ export enum ObjTypeDto {
   Todo = 'TODO'
 }
 
+export interface ObjGroupNameDto {
+  name: string;
+  owner: string;
+}
+
+export interface ObjGroupDto {
+  name: ObjGroupNameDto;
+  members: string[];
+}
+
 export type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto | ObjLinkDto;
 
 export interface ObjDto<T = ObjDataDto> {
@@ -82,6 +92,7 @@ export interface ObjDto<T = ObjDataDto> {
   local: ObjLocalDto;
   share?: ObjShareDto;
   identity?: ObjIdentityDto;
+  group?: ObjGroupNameDto[];
   server?: string[];
   encryption: ObjEncryptionDto;
   hashtags: string[];

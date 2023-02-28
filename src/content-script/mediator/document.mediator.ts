@@ -17,14 +17,17 @@
 import { ObjPointDto, ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { CanvasPinAddCommand } from '../../common/command/canvas/canvas-pin-add.command';
 import { CanvasPinComponentAddCommand } from '../command/canvas/canvas-pin-component-add.command';
+import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PinAddFactory } from '../factory/pin-add.factory';
 import { PinFactory } from '../factory/pin.factory';
+import { PinSnapshotFactory } from '../factory/pin-snapshot.factory';
 import { PopupPinStartRequest } from '../../common/model/obj-request.model';
 import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { pinStyles } from '../components/styles/pin.styles';
 
 export class DocumentMediator {
+  private static type?: ObjTypeDto;
   private static pinStart?: ObjPointDto;
   private static overlay?: HTMLDivElement;
   private static overlayCanvas?: HTMLCanvasElement;
@@ -34,6 +37,7 @@ export class DocumentMediator {
       fnConsoleLog('SKIP', href);
       return;
     }
+    this.type = data.type;
     const canvasList = Array.from(document.getElementsByTagName('canvas'));
     let canvasFound = false;
     for (let i = 0; i < canvasList.length; i++) {
@@ -76,6 +80,8 @@ export class DocumentMediator {
     }
     document.removeEventListener('keydown', this.handleKeyDown);
     PinAddFactory.clear();
+    PinSnapshotFactory.clear();
+    this.type = undefined;
   }
 
   private static handleKeyDown = (e: KeyboardEvent): void => {
@@ -87,20 +93,33 @@ export class DocumentMediator {
   };
 
   private static handleMouseOver = (event: MouseEvent): void => {
-    if (PinAddFactory.hasElement) {
-      PinAddFactory.clear();
-    }
-    if (event.target instanceof HTMLElement) {
-      PinAddFactory.updateElement(event.target);
+    if (this.type === ObjTypeDto.PageElementPin) {
+      if (PinAddFactory.hasElement) {
+        PinAddFactory.clear();
+      }
+      if (event.target instanceof HTMLElement) {
+        PinAddFactory.updateElement(event.target);
+      }
+    } else if (this.type === ObjTypeDto.PageElementSnapshot) {
+      if (PinSnapshotFactory.hasElement) {
+        PinSnapshotFactory.clear();
+      }
+      if (event.target instanceof HTMLElement) {
+        PinSnapshotFactory.updateElement(event.target);
+      }
     }
   };
 
   private static handleOverlayClick = async (e: MouseEvent): Promise<void> => {
-    if (!this.pinStart) {
-      this.pinStart = { x: e.offsetX, y: e.offsetY };
-    } else {
-      await this.addCanvasPin(e.offsetX, e.offsetY);
-      this.stopListeners();
+    if (this.type === ObjTypeDto.PageElementPin) {
+      if (!this.pinStart) {
+        this.pinStart = { x: e.offsetX, y: e.offsetY };
+      } else {
+        await this.addCanvasPin(e.offsetX, e.offsetY);
+        this.stopListeners();
+      }
+    } else if (this.type === ObjTypeDto.PageElementSnapshot) {
+      alert('NOT IMPLEMENTED');
     }
   };
 

@@ -23,6 +23,7 @@ import Button from '@mui/material/Button';
 import { CreateListComponent } from './create.list.component';
 import IconButton from '@mui/material/IconButton';
 import { LogManager } from '../../../../common/popup/log.manager';
+import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { PopupPinStartRequest } from '../../../../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 
@@ -45,7 +46,8 @@ export const CreateComponent: FunctionComponent = () => {
       await BrowserApi.sendTabMessage<PopupPinStartRequest>({
         type: BusMessageType.POPUP_PIN_START,
         data: {
-          url: ActiveTabStore.url
+          url: ActiveTabStore.url,
+          type: ObjTypeDto.PageElementPin
         }
       });
     } catch (e) {

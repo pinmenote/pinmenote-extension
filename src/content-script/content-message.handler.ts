@@ -60,9 +60,11 @@ export class ContentMessageHandler {
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
         await new ContentPageSnapshotAddCommand(msg.data, this.href).execute();
         break;
+      case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PIN_START:
         DocumentMediator.startListeners(msg.data, this.href);
         break;
+      case BusMessageType.POPUP_CAPTURE_ELEMENT_STOP:
       case BusMessageType.CONTENT_PIN_STOP:
       case BusMessageType.POPUP_PIN_STOP:
         DocumentMediator.stopListeners();
