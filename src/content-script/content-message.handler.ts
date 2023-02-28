@@ -36,6 +36,10 @@ export class ContentMessageHandler {
     TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
 
+  static updateHref(href: string): void {
+    this.href = href;
+  }
+
   static cleanup(): void {
     BrowserApi.runtime.onMessage.removeListener(this.handleMessage);
   }

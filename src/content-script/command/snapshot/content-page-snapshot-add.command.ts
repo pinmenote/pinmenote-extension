@@ -30,7 +30,7 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
 
   async execute(): Promise<void> {
     if (this.href !== this.url.href) {
-      fnConsoleLog('SKIP', this.href);
+      fnConsoleLog('SKIP', this.href, this.url.href);
       return;
     }
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body);

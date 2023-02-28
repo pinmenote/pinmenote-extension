@@ -47,9 +47,13 @@ class PinMeScript {
 
   constructor(private readonly id: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
+
     ContentMessageHandler.start(this.href);
-    fnConsoleLog('PinMeScript->constructor', this.href);
+
+    fnConsoleLog('PinMeScript->constructor', this.href, window.location.href);
+
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
+
     TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
     TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
   }
@@ -111,7 +115,10 @@ class PinMeScript {
 
   private invalidatePins = async (): Promise<void> => {
     await new InvalidatePinsCommand(this.href).execute();
+
     this.href = UrlFactory.normalizeHref(window.location.href);
+    ContentMessageHandler.updateHref(this.href);
+
     this.adaptIntervalMs();
     this.initTimeout();
   };
