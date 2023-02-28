@@ -80,6 +80,10 @@ export class BrowserApi {
     return this.isChromeValue ? 'chrome-extension' : 'moz-extension';
   }
 
+  static get disabledUrl(): string {
+    return this.isChromeValue ? 'chrome://' || 'chrome-extension://' : 'moz://' || 'moz-extension://';
+  }
+
   static get runtimeUrl(): string {
     if (BrowserApi.isChrome) {
       return `chrome-extension://${chrome.runtime.id}`;

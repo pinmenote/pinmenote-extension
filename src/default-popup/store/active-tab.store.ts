@@ -96,6 +96,8 @@ export class ActiveTabStore {
       if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
         this.extensionUrl = true;
         this.isError = true;
+      } else if (this.urlValue?.href.startsWith(BrowserApi.disabledUrl)) {
+        this.isError = true;
       }
       TinyEventDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_URL);
     }
