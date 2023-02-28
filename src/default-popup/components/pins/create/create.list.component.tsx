@@ -21,6 +21,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { BookmarkRemoveCommand } from '../../../../common/command/bookmark/bookmark-remove.command';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
+import CircularProgress from '@mui/material/CircularProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -40,7 +41,15 @@ interface CreateListProps {
   closeListCallback: () => void;
 }
 
+enum IsLoadingType {
+  None,
+  Bookmark,
+  PageSave,
+  ElementSave
+}
+
 export const CreateListComponent: FunctionComponent<CreateListProps> = (props) => {
+  const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
   const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(ActiveTabStore.bookmark);
 
   useEffect(() => {
@@ -56,22 +65,34 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
         TinyEventDispatcher.removeListener(event, key);
         await ActiveTabStore.refreshBookmark();
         setBookmarkData(ActiveTabStore.bookmark);
+        setIsLoading(IsLoadingType.None);
+        setTimeout(() => props.closeListCallback(), 500);
       });
+      setIsLoading(IsLoadingType.Bookmark);
       await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_BOOKMARK_ADD, data: ActiveTabStore.url });
     }
-    props.closeListCallback();
   };
 
   const handleSavePageClick = async () => {
+    TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
+      TinyEventDispatcher.removeListener(event, key);
+      setIsLoading(IsLoadingType.None);
+      setTimeout(() => props.closeListCallback(), 500);
+    });
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: ActiveTabStore.url });
-    props.closeListCallback();
+    setIsLoading(IsLoadingType.PageSave);
   };
 
   const handleSaveElementClick = () => {
     props.closeListCallback();
   };
 
-  const bookmarkIcon = bookmarkData !== undefined ? <BookmarkIcon /> : <BookmarkBorderIcon />;
+  let bookmarkIcon = undefined;
+  if (isLoading === IsLoadingType.Bookmark) {
+    bookmarkIcon = <CircularProgress />;
+  } else {
+    bookmarkIcon = bookmarkData !== undefined ? <BookmarkIcon /> : <BookmarkBorderIcon />;
+  }
   const bookmarkText = bookmarkData !== undefined ? 'Remove Bookmark' : 'Add Bookmark';
 
   return (
@@ -85,28 +106,32 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
         </ListItem>
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={handleSavePageClick}>
-            <ListItemIcon>
-              <WebOutlined />
-            </ListItemIcon>
+            <ListItemIcon>{isLoading === IsLoadingType.PageSave ? <CircularProgress /> : <WebOutlined />}</ListItemIcon>
             <ListItemText primary="Save Page" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={handleSaveElementClick}>
             <ListItemIcon>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="#777777" height="24" viewBox="0 0 24 24" width="24">
-                <g>
-                  <path
-                    d="M20,4H4C2.9,4,2.01,4.9,2.01,6L2,18c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6C22,4.9,21.1,4,20,4z
-                  M20,18l-3.5,0V9H20V18z"
-                  />
-                </g>
-              </svg>
+              {isLoading === IsLoadingType.ElementSave ? <CircularProgress /> : <SaveElementIcon />}
             </ListItemIcon>
             <ListItemText primary="Save Element" />
           </ListItemButton>
         </ListItem>
       </List>
     </div>
+  );
+};
+
+const SaveElementIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="#777777" height="24" viewBox="0 0 24 24" width="24">
+      <g>
+        <path
+          d="M20,4H4C2.9,4,2.01,4.9,2.01,6L2,18c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6C22,4.9,21.1,4,20,4z
+                  M20,18l-3.5,0V9H20V18z"
+        />
+      </g>
+    </svg>
   );
 };
