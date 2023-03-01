@@ -23,6 +23,7 @@ import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { PageElementSnapshotAddCommand } from '../../../common/command/snapshot/page-element-snapshot-add.command';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
+import { XpathFactory } from '../../../common/factory/xpath.factory';
 
 export class ContentPageElementSnapshotAddCommand implements ICommand<Promise<void>> {
   constructor(private url: ObjUrlDto, private element: HTMLElement) {}
@@ -30,12 +31,15 @@ export class ContentPageElementSnapshotAddCommand implements ICommand<Promise<vo
   async execute(): Promise<void> {
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
     const css = await CssFactory.computeCssContent();
-    const screenshot = await ScreenshotFactory.takeScreenshot(undefined, this.url);
+
+    const rect = XpathFactory.computeRect(this.element);
+    const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
+    const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
     const dto: ObjSnapshotDto = {
       title: document.title,
       url: this.url,
       screenshot,
-      html: htmlContent.html,
+      html,
       css
     };
     await new PageElementSnapshotAddCommand(dto).execute();

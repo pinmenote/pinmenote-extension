@@ -25,6 +25,7 @@ import { ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
 import { OptionsObjSearchCommand } from '../../service-worker/command/options/options-obj-search.command';
+import { PageElementSnapshotRemoveCommand } from '../../common/command/snapshot/page-element-snapshot-remove.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { PinRemoveCommand } from '../../common/command/pin/pin-remove.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
@@ -55,6 +56,8 @@ export class BoardStore {
           await new BookmarkRemoveCommand(value as ObjDto<ObjBookmarkDto>).execute();
         } else if (value.type === ObjTypeDto.PageSnapshot) {
           await new PageSnapshotRemoveCommand(value as ObjDto<ObjSnapshotDto>).execute();
+        } else if (value.type === ObjTypeDto.PageElementSnapshot) {
+          await new PageElementSnapshotRemoveCommand(value as ObjDto<ObjSnapshotDto>).execute();
         }
         return true;
       }

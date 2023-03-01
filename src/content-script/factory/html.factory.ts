@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime, HtmlIntermediateData, HtmlParentStyles } from '../../common/model/html.model';
+import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
 import { FetchImageRequest, FetchImageResponse } from '../../common/model/obj-request.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
@@ -84,7 +84,6 @@ export class HtmlFactory {
     for (const attr of attributes) {
       let attrValue = attr.value;
       attrValue = attrValue.replaceAll('"', '&quot;');
-      if (!attrValue) continue;
 
       if (attr.name === 'href' && !hrefFilled) {
         // HREF
@@ -156,8 +155,10 @@ export class HtmlFactory {
             fnConsoleLog('computeHtmlIntermediateData->Error', e);
           }
         }
-      } else {
+      } else if (attrValue) {
         html += `${attr.name}="${attrValue}" `;
+      } else {
+        html += `${attr.name} `;
       }
     }
     html = html.substring(0, html.length - 1) + '>';
@@ -213,20 +214,29 @@ export class HtmlFactory {
     return value;
   }
 
-  static computeHtmlParentStyles = (parent: Element | null): HtmlParentStyles => {
-    const cssStyles: string[] = [];
-    while (parent && parent.tagName.toLowerCase() !== 'body') {
-      const clazz = parent.getAttribute('class');
-      if (clazz) {
-        const a = clazz.split(' ').filter((e) => !!e);
-        cssStyles.push(...a.map((e) => `.${e}`));
+  static computeHtmlParent = (parent: Element | null, content: string): string => {
+    let data = content;
+    while (parent && parent.tagName.toLowerCase() !== 'html') {
+      const tagName = parent.tagName.toLowerCase();
+
+      let value = `<${tagName} `;
+
+      const attributes: Attr[] = Array.from(parent.attributes);
+      for (const attr of attributes) {
+        let attrValue = attr.value;
+        attrValue = attrValue.replaceAll('"', '&quot;');
+        if (attrValue) {
+          value += `${attr.name}="${attrValue}" `;
+        } else {
+          value += `${attr.name} `;
+        }
       }
+      value += `>${data}</${tagName}>`;
+
+      data = value;
       parent = parent.parentElement;
     }
-    return {
-      html: '',
-      cssStyles
-    };
+    return data;
   };
 
   private static fetchImage = (url: string): Promise<FetchImageResponse> => {

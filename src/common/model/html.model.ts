@@ -22,11 +22,6 @@ export interface HtmlIntermediateData {
   videoTime: ContentVideoTime[];
 }
 
-export interface HtmlParentStyles {
-  cssStyles: string[];
-  html: string;
-}
-
 export interface ContentVideoTime {
   currentTime: number;
   displayTime: number;
