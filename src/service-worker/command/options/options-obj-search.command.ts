@@ -59,7 +59,6 @@ export class OptionsObjSearchCommand implements ICommand<Promise<ObjDto<ObjDataD
     if (pin.data.url.href.indexOf(searchValue) > -1) return true;
     if (pin.createdAt.indexOf(searchValue) > -1) return true;
     if (pin.data.title.toLowerCase().indexOf(searchValue) > -1) return true;
-    if (pin.data.html[0].text && pin.data.html[0].text.toLowerCase().indexOf(searchValue) > -1) return true;
     return false;
   }
 

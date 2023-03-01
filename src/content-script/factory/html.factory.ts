@@ -29,37 +29,23 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class HtmlFactory {
   static async computeHtmlData(ref: HTMLElement, url?: ObjUrlDto): Promise<PinHtmlDataDto> {
-    let parentStyle = document.body.getAttribute('style') || '';
     const htmlContent = await this.computeHtmlIntermediateData(ref);
-    // fnConsoleLog('HTML :', htmlContent);
-    let parent = ref.parentElement;
-    // TODO css variables ex youtube channel banner
-    while (parent && parent.tagName.toLowerCase() !== 'html') {
-      const attr = parent.getAttributeNode('style');
-      if (attr) {
-        parentStyle += `;${attr.value}`;
-      }
-      // fnConsoleLog('ADD : ', parent.tagName);
-      parent = parent.parentElement;
-    }
-    // MAYBE WILL HELP - COMPUTE PARENT STYLES UP TO BODY
-    // const htmlParentData = HtmlFactory.computeHtmlParentStyles(ref.parentElement);
+    const html = HtmlFactory.computeHtmlParent(ref.parentElement, htmlContent.html);
+
     fnConsoleLog('START COMPUTE CSS !!!');
     const css = await CssFactory.computeCssContent();
     fnConsoleLog('STOP COMPUTE CSS !!!');
     const rect = XpathFactory.computeRect(ref);
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, url);
     return {
-      parentStyle,
-      html: htmlContent.html,
-      text: ref.innerText,
-      rect,
+      title: document.title,
       screenshot,
+      html,
+      css,
       border: {
         style: ref.style.border,
         radius: ref.style.borderRadius
-      },
-      css
+      }
     };
   }
 

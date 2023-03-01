@@ -22,8 +22,6 @@ export class IframeHtmlFactory {
     const iframe = document.createElement('iframe');
     iframe.style.border = 'none';
     const { css, href } = content.css;
-    let containerBodyStyle = '';
-    if (container) containerBodyStyle = `;width: ${window.innerWidth}px`;
 
     const html = `<html>
         <head>
@@ -32,7 +30,7 @@ export class IframeHtmlFactory {
               .join('')}
             <style>${css}</style>            
         </head>
-        <body style="${content.parentStyle || ''}${containerBodyStyle}">${content.html}</body>
+        ${content.html}
     </html>`;
     if (!container) return html;
 

@@ -19,7 +19,6 @@ import { ObjDrawDto } from './obj-draw.dto';
 import { ObjUrlDto } from './obj.dto';
 
 export interface ObjPagePinDto {
-  theme: string;
   xpath: string;
   url: ObjUrlDto;
   html: PinHtmlDataDto[];
@@ -47,13 +46,11 @@ export interface PinVideoDataDto {
 }
 
 export interface PinHtmlDataDto {
-  parentStyle: string;
+  title: string;
   screenshot?: string;
   html: string;
-  text: string; // innerText value of html
-  rect: ObjRectangleDto;
-  border: PinBorderDataDto;
   css: CssDataDto;
+  border: PinBorderDataDto;
 }
 
 export interface CssDataDto {
