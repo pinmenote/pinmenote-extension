@@ -65,8 +65,8 @@ export enum ObjTypeDto {
   PageElementPin = 'ELEMENT_PIN',
   PageElementSnapshot = 'ELEMENT_SNAPSHOT',
   PageCanvasPin = 'PAGE_CANVAS_PIN',
+  PageCanvasSnapshot = 'PAGE_CANVAS_SNAPSHOT',
   PageSnapshot = 'PAGE_SNAPSHOT',
-  PageLink = 'PAGE_LINK',
   PageNote = 'PAGE_NOTE',
   Todo = 'TODO'
 }

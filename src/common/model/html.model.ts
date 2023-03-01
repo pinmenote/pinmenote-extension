@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCanvasPinDto, ObjPagePinDto } from './obj/obj-pin.dto';
-import { ObjDto, ObjLinkDto } from './obj/obj.dto';
+import { ObjDto } from './obj/obj.dto';
 
 export interface HtmlIntermediateData {
   html: string;
@@ -39,7 +39,7 @@ export interface HtmlComponentFocusable {
 }
 
 export interface PageComponent {
-  object: ObjDto<ObjPagePinDto | ObjLinkDto | ObjCanvasPinDto>;
+  object: ObjDto<ObjPagePinDto | ObjCanvasPinDto>;
   focus(goto: boolean): void;
   cleanup(): void;
   resize(): void;
