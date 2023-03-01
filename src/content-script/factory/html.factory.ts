@@ -84,9 +84,10 @@ export class HtmlFactory {
     for (const attr of attributes) {
       let attrValue = attr.value;
       attrValue = attrValue.replaceAll('"', '&quot;');
+      if (!attrValue) continue;
+
       if (attr.name === 'href' && !hrefFilled) {
         // HREF
-        if (attrValue) continue;
         const url = this.computeUrl(attrValue);
         html += `href="${url}" `;
         html += `target="_blank" `;
