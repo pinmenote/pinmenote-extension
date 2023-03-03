@@ -43,7 +43,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
         htmlRef.current.appendChild(iframe);
         if (!iframe.contentWindow) return;
 
-        const html = IframeHtmlFactory.computeBookmarkHtml(value) || '';
+        const html = IframeHtmlFactory.computeHtml(value) || '';
 
         const doc = iframe.contentWindow.document;
         doc.write(html);

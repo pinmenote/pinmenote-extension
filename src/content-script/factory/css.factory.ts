@@ -24,6 +24,7 @@ type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRul
 
 export class CssFactory {
   static computeCssContent = async (): Promise<CssDataDto> => {
+    // TODO fetch missing data from css tags key: url(relative/path)
     let css = '';
     const href: CssHrefDto[] = [];
     const styleSheets = Array.from(document.styleSheets);

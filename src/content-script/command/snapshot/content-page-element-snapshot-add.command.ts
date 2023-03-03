@@ -34,7 +34,9 @@ export class ContentPageElementSnapshotAddCommand implements ICommand<Promise<vo
 
     const rect = XpathFactory.computeRect(this.element);
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
+
     const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
+
     const dto: ObjSnapshotDto = {
       title: document.title,
       url: this.url,

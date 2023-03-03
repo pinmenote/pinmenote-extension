@@ -42,13 +42,10 @@ export class IframeHtmlFactory {
     doc.write(html);
     doc.close();
 
-    iframe.width = `${window.innerWidth - 350}px`;
-    iframe.height = `${window.innerHeight - 350}px`;
-
     return html;
   };
 
-  static computeBookmarkHtml = (value: ObjBookmarkDto): string => {
+  static computeHtml = (value: ObjBookmarkDto): string => {
     const html = `<html>
         <head>            
             ${value.css.href
