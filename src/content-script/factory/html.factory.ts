@@ -167,6 +167,18 @@ export class HtmlFactory {
         fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
       }
     }
+
+    // Fix object element children
+    if (ref instanceof HTMLObjectElement && ref.contentDocument) {
+      const children = Array.from(ref.contentDocument.childNodes);
+      for (const node of children) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const computed = await this.computeHtmlIntermediateData(node as Element);
+          html += computed.html;
+        }
+      }
+    }
+
     html += `</${tagName}>`;
 
     return {
