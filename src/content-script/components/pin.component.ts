@@ -206,7 +206,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
         this.ref.style.border = ContentSettingsStore.borderNone;
       }
       this.refValue.style.border = ContentSettingsStore.borderStyle;
-    }, 1000);
+    }, 2000);
   };
 
   isHidden(): boolean {

@@ -94,6 +94,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   focusin(): void {
     this.el.style.display = 'inline-block';
+    this.adjustTop();
   }
 
   focusout(): void {

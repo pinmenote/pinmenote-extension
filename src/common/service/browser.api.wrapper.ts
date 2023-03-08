@@ -59,7 +59,7 @@ export class BrowserApi {
   }
 
   static activeTab = async (): Promise<BrowserTab> => {
-    const tabs = await this.browserApi.tabs.query({ active: true });
+    const tabs = await this.browserApi.tabs.query({ active: true, currentWindow: true });
     return tabs[0];
   };
 
