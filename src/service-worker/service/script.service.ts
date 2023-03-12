@@ -21,7 +21,7 @@ export class ScriptService {
   static reloadScripts = async (): Promise<void> => {
     try {
       const activeTab = await BrowserApi.activeTab();
-      if (!activeTab.url) return;
+      if (!activeTab?.url) return;
       if (activeTab.url.startsWith('chrome')) return;
 
       if (!activeTab.id) return;

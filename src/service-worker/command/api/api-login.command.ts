@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@ import jwtDecode from 'jwt-decode';
 export class ApiLoginCommand implements ICommand<Promise<TokenUserDto>> {
   constructor(private data: LoginDto) {}
   async execute(): Promise<TokenUserDto> {
-    const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.url.api}/api/v1/login`, this.data);
+    fnConsoleLog('ApiLoginCommand->execute', environmentConfig.url.api);
 
-    fnConsoleLog('WorkerApiManager->login', resp);
+    const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.url.api}/api/v1/auth/login`, this.data);
+
+    fnConsoleLog('ApiLoginCommand->execute', resp);
 
     await new TokenStorageSetCommand(resp).execute();
 
