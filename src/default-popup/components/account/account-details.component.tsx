@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-export const AccountComponent: FunctionComponent = () => {
+export const AccountDetailsComponent: FunctionComponent = () => {
   const handleLogout = async (): Promise<void> => {
     await BrowserApi.sendRuntimeMessage<undefined>({
       type: BusMessageType.POPUP_LOGOUT
@@ -29,7 +29,7 @@ export const AccountComponent: FunctionComponent = () => {
 
   const handleSyncNotes = async (): Promise<void> => {
     await BrowserApi.sendRuntimeMessage<undefined>({
-      type: BusMessageType.POPUP_SYNC_PINS
+      type: BusMessageType.POPUP_SYNC_DATA
     });
   };
 

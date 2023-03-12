@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class PopupSyncPinsCommand implements ICommand<void> {
+export class PopupSyncDataCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       await BrowserApi.sendRuntimeMessage<BoolDto>({
-        type: BusMessageType.POPUP_SYNC_PINS,
+        type: BusMessageType.POPUP_SYNC_DATA,
         data: {
           value: true
         }

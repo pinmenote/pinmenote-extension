@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import { OptionsSynchronizeDataCommand } from './command/options/options-synchro
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
 import { PopupPinShareCommand } from './command/popup/popup-pin-share.command';
-import { PopupSyncPinsCommand } from './command/popup/popup-sync-pins.command';
+import { PopupSyncDataCommand } from './command/popup/popup-sync-data.command';
 import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
 import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
@@ -77,8 +77,8 @@ const handleMessage = async (
     case BusMessageType.POPUP_LOGOUT:
       await new PopupLogoutCommand().execute();
       break;
-    case BusMessageType.POPUP_SYNC_PINS:
-      await new PopupSyncPinsCommand().execute();
+    case BusMessageType.POPUP_SYNC_DATA:
+      await new PopupSyncDataCommand().execute();
       break;
     case BusMessageType.POPUP_TAKE_SCREENSHOT:
       await new PopupTakeScreenshotCommand().execute();

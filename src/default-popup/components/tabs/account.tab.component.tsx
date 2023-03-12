@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { AccountComponent } from '../account/account.component';
+import { AccountDetailsComponent } from '../account/account-details.component';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { LogManager } from '../../../common/popup/log.manager';
 import { LoginComponent } from '../account/login.component';
@@ -32,7 +32,7 @@ const getAccountComponent = (state: LoginEnum, loginSuccess: () => void): ReactE
     case LoginEnum.LOGIN:
       return <LoginComponent loginSuccess={loginSuccess} />;
     case LoginEnum.ACCOUNT:
-      return <AccountComponent />;
+      return <AccountDetailsComponent />;
   }
   return undefined;
 };
