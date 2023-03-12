@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ import '@fontsource/roboto/700.css';
 import React, { ReactElement, useState } from 'react';
 import { AccountTabComponent } from './components/tabs/account.tab.component';
 import Box from '@mui/material/Box';
-import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { BusMessageType } from '../common/model/bus.model';
 import { LogManager } from '../common/popup/log.manager';
 import LogoDevIcon from '@mui/icons-material/LogoDev';
 import { LogsTabComponent } from './components/tabs/logs.tab.component';
@@ -35,7 +33,6 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import { createRoot } from 'react-dom/client';
 import { environmentConfig } from '../common/environment';
-import { fnConsoleLog } from '../common/fn/console.fn';
 
 enum PanelEnum {
   PIN,
@@ -60,13 +57,6 @@ const ExtensionPopupApp: React.FC = () => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: PanelEnum) => {
     setSelectedPanel(newValue);
-    if (newValue === PanelEnum.ACCOUNT) {
-      BrowserApi.sendRuntimeMessage<void>({
-        type: BusMessageType.POPUP_ACCESS_TOKEN
-      })
-        .then(() => fnConsoleLog('ack'))
-        .catch(() => fnConsoleLog('err'));
-    }
   };
 
   // Show logs panel only on development environment

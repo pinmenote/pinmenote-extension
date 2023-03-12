@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,24 +15,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
-import { ActiveTabStore } from './store/active-tab.store';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { LogManager } from '../common/popup/log.manager';
+import { PopupActiveTabStore } from './store/popup-active-tab.store';
+import { PopupTokenStore } from './store/popup-token.store';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 
 export class PopupMessageHandler {
   static async init(): Promise<void> {
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
-    await ActiveTabStore.initUrlValue();
+
+    await PopupActiveTabStore.initUrlValue();
+
+    await PopupTokenStore.init();
+
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_OPEN });
+
     this.popupInitListener();
   }
 
   private static popupInitListener(): void {
     TinyEventDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
       LogManager.log(`!!! INIT - ${event} ${JSON.stringify(value || {})}`);
-      ActiveTabStore.updateState(value);
+      PopupActiveTabStore.updateState(value);
     });
   }
 

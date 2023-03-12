@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,21 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto } from '../../../common/model/shared/token.dto';
-import { ApiStore } from '../../store/api.store';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { FetchService } from '../../service/fetch.service';
-import { ICommand } from '../../../common/model/shared/common.dto';
+import { AccessTokenDto } from '../../../model/shared/token.dto';
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { environmentConfig } from '../../../environment';
 
-export class ContentRefreshTokenCommand implements ICommand<void> {
+export class TokenStorageSetCommand implements ICommand<Promise<void>> {
+  constructor(private value: AccessTokenDto) {}
   async execute(): Promise<void> {
-    // Fill token data
-    await ApiStore.getTokenData();
-    await FetchService.refreshToken();
-    await BrowserApi.sendTabMessage<AccessTokenDto | undefined>({
-      type: BusMessageType.CONTENT_REFRESH_TOKEN,
-      data: undefined
-    });
+    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.url.api}`;
+    await BrowserStorageWrapper.set(key, this.value);
   }
 }

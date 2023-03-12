@@ -26,6 +26,7 @@ import { ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
+import { environmentConfig } from '../../../common/environment';
 
 const inputContainerStyle = {
   display: 'flex',
@@ -35,15 +36,23 @@ const inputContainerStyle = {
   margin: '5px 10px 5px 10px'
 };
 
-export const LoginComponent: FunctionComponent = () => {
+function getWebsiteUrl(uri: string): string {
+  return `${environmentConfig.url.web}${uri}`;
+}
+
+interface LoginComponentProps {
+  loginSuccess: () => void;
+}
+
+export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSuccess }) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
     const loginKey = TinyEventDispatcher.addListener<TokenUserDto>(BusMessageType.POPUP_LOGIN, (event, key, value) => {
-      TinyEventDispatcher.dispatch<TokenUserDto>(BusMessageType.POPUP_ACCESS_TOKEN, value);
       LogManager.log(`POPUP_LOGIN ${JSON.stringify(value)}`);
+      loginSuccess();
     });
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN, loginKey);
@@ -67,11 +76,6 @@ export const LoginComponent: FunctionComponent = () => {
   };
 
   // Advanced options
-
-  const handleRegisterClick = () => {
-    TinyEventDispatcher.dispatch(BusMessageType.POP_REGISTER_CLICK, {});
-  };
-
   const borderStyle = responseError ? `1px solid ${COLOR_DEFAULT_RED}` : `1px solid ${COLOR_DEFAULT_GREY}`;
   const advancedDescription = `Don't have account ?`;
 
@@ -84,7 +88,7 @@ export const LoginComponent: FunctionComponent = () => {
         <StyledInput onChange={handleEmailChange} value={email} placeholder="email" />
       </div>
       <div style={{ border: borderStyle, ...inputContainerStyle }}>
-        <StyledInput onChange={handlePasswordChange} value={password} placeholder="password" />
+        <StyledInput onChange={handlePasswordChange} value={password} type="password" placeholder="password" />
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', margin: 10 }}>
         <Button sx={{ width: '100%' }} variant="outlined" onClick={handleLoginClick}>
@@ -92,8 +96,8 @@ export const LoginComponent: FunctionComponent = () => {
         </Button>
       </div>
       <Typography align="center" style={{ marginTop: 20 }}>
-        <span>{advancedDescription}</span>
-        <Link style={{ marginLeft: 10 }} href="#" onClick={handleRegisterClick}>
+        <span>{advancedDescription}</span>{' '}
+        <Link target="_blank" href={getWebsiteUrl('/register')}>
           Register
         </Link>
       </Typography>

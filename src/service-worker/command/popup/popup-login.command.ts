@@ -16,7 +16,6 @@
  */
 import { LoginDto, TokenUserDto } from '../../../common/model/shared/token.dto';
 import { ApiLoginCommand } from '../api/api-login.command';
-import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
@@ -27,8 +26,6 @@ export class PopupLoginCommand implements ICommand<void> {
 
   async execute(): Promise<void> {
     try {
-      await ApiStore.clearToken();
-
       const data = await new ApiLoginCommand(this.data).execute();
 
       await BrowserApi.sendRuntimeMessage<TokenUserDto>({

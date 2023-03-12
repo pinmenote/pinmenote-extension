@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjShareDto } from '../../../common/model/obj/obj.dto';
-import { ApiStore } from '../../store/api.store';
+import { ApiHelper } from '../../api/api-helper';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
@@ -25,7 +25,8 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export class ApiSharePinCommand implements ICommand<Promise<ObjShareDto>> {
   constructor(private obj: ObjDto<ObjPagePinDto>) {}
   async execute(): Promise<ObjShareDto> {
-    const authHeaders = await ApiStore.getAuthHeaders();
+    const authHeaders = await ApiHelper.getAuthHeaders();
+
     fnConsoleLog('Send share', this.obj);
     const resp = await FetchService.post<ObjShareDto>(
       `${environmentConfig.url.api}/api/v1/share`,

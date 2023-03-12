@@ -15,15 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BoolDto, ICommand } from '../../../common/model/shared/common.dto';
-import { ApiStore } from '../../store/api.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { TokenStorageRemoveCommand } from '../../../common/command/server/token/token-storage-remove.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PopupLogoutCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
-      await ApiStore.clearToken();
+      await new TokenStorageRemoveCommand().execute();
+
       await BrowserApi.sendRuntimeMessage<BoolDto>({
         type: BusMessageType.POPUP_LOGOUT,
         data: { value: true }

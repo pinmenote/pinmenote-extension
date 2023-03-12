@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto } from '../../common/model/shared/token.dto';
-import { ApiStore } from '../store/api.store';
+import { TokenStorageGetCommand } from '../../common/command/server/token/token-storage-get.command';
+import { TokenStorageSetCommand } from '../../common/command/server/token/token-storage-set.command';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
@@ -81,7 +82,7 @@ export class FetchService {
   }
 
   static async refreshToken(): Promise<void> {
-    const tokenValue = ApiStore.accessToken;
+    const tokenValue = await new TokenStorageGetCommand().execute();
     if (!tokenValue) return;
     const authHeaders = {
       Authorization: `Bearer ${tokenValue.access_token}`
@@ -91,7 +92,7 @@ export class FetchService {
       null,
       authHeaders
     );
-    await ApiStore.setAccessToken(resp);
+    await new TokenStorageSetCommand(resp).execute();
   }
 
   private static applyDefaultHeaders(headers?: { [key: string]: string }): { [key: string]: string } {

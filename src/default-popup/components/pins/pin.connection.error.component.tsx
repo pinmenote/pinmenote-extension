@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent } from 'react';
-import { ActiveTabStore } from '../../store/active-tab.store';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import Button from '@mui/material/Button';
 import { PinBoardButton } from './pin.board.button';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
 
 export const PinConnectionErrorComponent: FunctionComponent = () => {
-  const isExtension = ActiveTabStore.isExtension;
+  const isExtension = PopupActiveTabStore.isExtension;
   return <div>{isExtension ? <ExtensionMessage /> : <NoUrlMessage />}</div>;
 };
 

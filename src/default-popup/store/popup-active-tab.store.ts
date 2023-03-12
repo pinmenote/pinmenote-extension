@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import { PinGetOriginCommand } from '../../common/command/pin/pin-get-origin.com
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
 
-export class ActiveTabStore {
+export class PopupActiveTabStore {
   private static urlValue?: ObjUrlDto;
   private static isError = false;
   private static extensionUrl = false;
@@ -90,8 +90,8 @@ export class ActiveTabStore {
         search: url.search
       };
       LogManager.log(`updateState URL : ${JSON.stringify(this.urlValue)}`);
-      ActiveTabStore.hrefPins = await new PinGetHrefCommand(this.urlValue).execute();
-      ActiveTabStore.originPins = await new PinGetOriginCommand(this.urlValue).execute();
+      PopupActiveTabStore.hrefPins = await new PinGetHrefCommand(this.urlValue).execute();
+      PopupActiveTabStore.originPins = await new PinGetOriginCommand(this.urlValue).execute();
       this.bookmarkValue = await new BookmarkGetCommand(this.urlValue).execute();
       if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
         this.extensionUrl = true;

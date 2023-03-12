@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,25 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export class ObjectStoreKeys {
-  // PIN STATE
-  static readonly PIN_NAVIGATE = 'pin:navigate';
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { environmentConfig } from '../../../environment';
 
-  // ID
-  static readonly OBJECT_ID = 'o:id';
-  static readonly OBJECT_LIST_ID = 'o:list:id';
-  static readonly OBJECT_LIST = 'o:list';
-
-  // DATE INDEX
-  static readonly OBJECT_DT = 'o:dt';
-
-  // LINK
-  static readonly OBJECT_LINK = 'o:link';
-
-  // BOOKMARK
-  static readonly OBJECT_BOOKMARK = 'o:bookmark';
-  static readonly BOOKMARK_LIST = 'o:bookmark:list';
-
-  static readonly ACCESS_TOKEN = 'accessToken';
-  static readonly KEY_NOTE_UPDATE = 'noteSyncUpdate';
+export class TokenStorageRemoveCommand implements ICommand<Promise<void>> {
+  async execute(): Promise<void> {
+    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.url.api}`;
+    await BrowserStorageWrapper.remove(key);
+  }
 }

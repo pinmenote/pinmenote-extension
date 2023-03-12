@@ -3,6 +3,7 @@
   "description": "Browser extension to capture internet content essentials",
   "version": "0.0.1",
   "license": "GPL-3.0-or-later",
+  "private": true,
   "author": "Michal Szczepanski <michal@vane.pl>",
   "scripts": {
     "dev": "parcel watch src/manifest.json --host localhost --target pinmenote-dev --no-cache",

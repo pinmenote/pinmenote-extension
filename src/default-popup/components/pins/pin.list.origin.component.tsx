@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent } from 'react';
-import { ActiveTabStore } from '../../store/active-tab.store';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinListComponent } from './pin.list.component';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
 
 interface PinListOriginProps {
@@ -34,7 +34,7 @@ export const PinListOriginComponent: FunctionComponent<PinListOriginProps> = ({ 
       </Typography>
       <PinListComponent pinList={pinHref} visibility={true} />
       <Typography fontWeight="bold" fontSize="14px">
-        On {ActiveTabStore.url?.origin}
+        On {PopupActiveTabStore.url?.origin}
       </Typography>
       <PinListComponent pinList={pinOrigin} visibility={false} />
     </div>

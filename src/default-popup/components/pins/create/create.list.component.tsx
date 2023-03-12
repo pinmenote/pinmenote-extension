@@ -16,7 +16,6 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { ActiveTabStore } from '../../../store/active-tab.store';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { BookmarkRemoveCommand } from '../../../../common/command/bookmark/bookmark-remove.command';
@@ -29,6 +28,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { ObjBookmarkDto } from '../../../../common/model/obj/obj-bookmark.dto';
+import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import WebOutlined from '@mui/icons-material/WebOutlined';
@@ -51,10 +51,10 @@ enum IsLoadingType {
 
 export const CreateListComponent: FunctionComponent<CreateListProps> = (props) => {
   const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
-  const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(ActiveTabStore.bookmark);
+  const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(PopupActiveTabStore.bookmark);
 
   useEffect(() => {
-    setBookmarkData(ActiveTabStore.bookmark);
+    setBookmarkData(PopupActiveTabStore.bookmark);
   });
 
   const handleBookmarkClick = async () => {
@@ -64,13 +64,13 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
     } else {
       TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_BOOKMARK_ADD, async (event, key) => {
         TinyEventDispatcher.removeListener(event, key);
-        await ActiveTabStore.refreshBookmark();
-        setBookmarkData(ActiveTabStore.bookmark);
+        await PopupActiveTabStore.refreshBookmark();
+        setBookmarkData(PopupActiveTabStore.bookmark);
         setIsLoading(IsLoadingType.None);
         setTimeout(() => props.closeListCallback(), 1000);
       });
       setIsLoading(IsLoadingType.Bookmark);
-      await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_BOOKMARK_ADD, data: ActiveTabStore.url });
+      await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_BOOKMARK_ADD, data: PopupActiveTabStore.url });
     }
   };
 
@@ -80,16 +80,16 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
       setIsLoading(IsLoadingType.None);
       setTimeout(() => props.closeListCallback(), 1000);
     });
-    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: ActiveTabStore.url });
+    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
     setIsLoading(IsLoadingType.PageSave);
   };
 
   const handleSaveElementClick = async (): Promise<void> => {
-    if (!ActiveTabStore.url) return;
+    if (!PopupActiveTabStore.url) return;
     await BrowserApi.sendTabMessage<PopupPinStartRequest>({
       type: BusMessageType.POPUP_CAPTURE_ELEMENT_START,
       data: {
-        url: ActiveTabStore.url,
+        url: PopupActiveTabStore.url,
         type: ObjTypeDto.PageElementSnapshot
       }
     });

@@ -21,20 +21,14 @@ import { ContentFetchCssCommand } from './command/content/content-fetch-css.comm
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
-import { ContentRefreshTokenCommand } from './command/content/content-refresh-token.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { OptionsPinShareCommand } from './command/options/options-pin-share.command';
 import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
-import { PopupAccessTokenCommand } from './command/popup/popup-access-token.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
 import { PopupPinShareCommand } from './command/popup/popup-pin-share.command';
-import { PopupPrivateKeyGetCommand } from './command/popup/popup-private-key-get.command';
-import { PopupPrivateKeyImportCommand } from './command/popup/popup-private-key-import.command';
-import { PopupRegisterCommand } from './command/popup/popup-register.command';
 import { PopupSyncPinsCommand } from './command/popup/popup-sync-pins.command';
-import { PopupSyncQuotaCommand } from './command/popup/popup-sync-quota.command';
 import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
 import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
@@ -59,9 +53,6 @@ const handleMessage = async (
     case BusMessageType.CONTENT_TAKE_SCREENSHOT:
       await new ContentTakeScreenshotCommand().execute();
       break;
-    case BusMessageType.CONTENT_REFRESH_TOKEN:
-      await new ContentRefreshTokenCommand().execute();
-      break;
     case BusMessageType.CONTENT_THEME:
       await new ContentThemeCommand(msg.data).execute();
       break;
@@ -80,9 +71,6 @@ const handleMessage = async (
     case BusMessageType.POPUP_PIN_SHARE:
       await new PopupPinShareCommand(msg.data).execute();
       break;
-    case BusMessageType.POPUP_ACCESS_TOKEN:
-      await new PopupAccessTokenCommand().execute();
-      break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();
       break;
@@ -91,18 +79,6 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_SYNC_PINS:
       await new PopupSyncPinsCommand().execute();
-      break;
-    case BusMessageType.POPUP_SYNC_QUOTA:
-      await new PopupSyncQuotaCommand().execute();
-      break;
-    case BusMessageType.POPUP_REGISTER:
-      await new PopupRegisterCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_PRIVATE_KEY_GET:
-      await new PopupPrivateKeyGetCommand().execute();
-      break;
-    case BusMessageType.POPUP_PRIVATE_KEY_IMPORT:
-      await new PopupPrivateKeyImportCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_TAKE_SCREENSHOT:
       await new PopupTakeScreenshotCommand().execute();

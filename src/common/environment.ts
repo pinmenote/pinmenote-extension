@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ interface EnvironmentConfig {
   isProduction: boolean;
   settings: SettingsConfig;
   objListLimit: number;
-  tosVersion: string;
 }
 
 export const environmentConfig: EnvironmentConfig = {
@@ -61,6 +60,5 @@ export const environmentConfig: EnvironmentConfig = {
     themeColor: '#ff0000',
     videoDisplayTime: 5
   },
-  tosVersion: process.env.TOS_VERSION || 'v1',
   objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
 };

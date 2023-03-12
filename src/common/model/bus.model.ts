@@ -35,18 +35,14 @@ export enum BusMessageType {
   OPT_REFRESH_BOARD = 'opt.refresh.board',
   OPT_SHOW_HTML = 'opt.show.html',
   // Internal popup
-  POP_ACCOUNT_CLICK = 'pop.account.click',
   POP_CONSOLE_LOG = 'pop.console.log',
-  POP_LOGIN_CLICK = 'pop.login.click',
   POP_PIN_REMOVE = 'pop.pin.remove',
-  POP_REGISTER_CLICK = 'pop.register.click',
   POP_UPDATE_URL = 'pop.update.url',
   // Ack
   CONTENT_ACK = 'content.ack',
   POPUP_ACK = 'popup.ack',
   WORKER_ACK = 'worker.ack',
   // Popup
-  POPUP_ACCESS_TOKEN = 'popup.access.token',
   POPUP_API_ERROR = 'popup.api.error',
   POPUP_BOOKMARK_ADD = 'popup.bookmark.add',
   POPUP_CAPTURE_ELEMENT_START = 'popup.capture.element.start',
@@ -60,11 +56,7 @@ export enum BusMessageType {
   POPUP_PIN_START = 'popup.pin.start',
   POPUP_PIN_STOP = 'popup.pin.stop',
   POPUP_PIN_SHARE = 'popup.pin.share',
-  POPUP_PRIVATE_KEY_GET = 'popup.private.key.get',
-  POPUP_PRIVATE_KEY_IMPORT = 'popup.private.key.import',
-  POPUP_REGISTER = 'popup.register',
   POPUP_SYNC_PINS = 'popup.sync.pins',
-  POPUP_SYNC_QUOTA = 'popup.sync.quota',
   POPUP_TAKE_SCREENSHOT = 'popup.take.screenshot',
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
@@ -75,7 +67,6 @@ export enum BusMessageType {
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
   CONTENT_PIN_STOP = 'content.pin.stop',
-  CONTENT_REFRESH_TOKEN = 'content.refresh.token',
   CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
   CONTENT_THEME = 'content.theme',
   // Options

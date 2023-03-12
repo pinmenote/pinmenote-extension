@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { ActiveTabStore } from '../../../store/active-tab.store';
 import AddIcon from '@mui/icons-material/Add';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
@@ -24,16 +23,17 @@ import { CreateListComponent } from './create.list.component';
 import IconButton from '@mui/material/IconButton';
 import { LogManager } from '../../../../common/popup/log.manager';
 import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
+import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 
 export const CreateComponent: FunctionComponent = () => {
-  const [isAdding, setIsAdding] = useState<boolean>(ActiveTabStore.isAddingNote);
+  const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAddingNote);
   const [isListVisible, setIsListVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
-      setIsAdding(ActiveTabStore.isAddingNote);
+      setIsAdding(PopupActiveTabStore.isAddingNote);
     });
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
@@ -42,11 +42,11 @@ export const CreateComponent: FunctionComponent = () => {
 
   const handleNewPin = async () => {
     try {
-      if (!ActiveTabStore.url) return;
+      if (!PopupActiveTabStore.url) return;
       await BrowserApi.sendTabMessage<PopupPinStartRequest>({
         type: BusMessageType.POPUP_PIN_START,
         data: {
-          url: ActiveTabStore.url,
+          url: PopupActiveTabStore.url,
           type: ObjTypeDto.PageElementPin
         }
       });
