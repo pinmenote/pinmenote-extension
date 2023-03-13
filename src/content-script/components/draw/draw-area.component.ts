@@ -40,6 +40,7 @@ export class DrawAreaComponent {
   private size = 4;
   private color = '#ff0000';
 
+  canDraw = false;
   private drawing = false;
   private drawData: ObjDrawDataDto[] = [];
   private drawRedoData: ObjDrawDataDto[] = [];
@@ -158,6 +159,7 @@ no javascript enabled - drawing not working</h1>`;
   }
 
   private handleMouseUp = async (e: MouseEvent): Promise<void> => {
+    if (!this.canDraw) return;
     if (!this.drawing) return;
     if (!this.drawCtx || !this.rasterCtx) return;
     this.drawing = false;
@@ -198,6 +200,7 @@ no javascript enabled - drawing not working</h1>`;
   };
 
   private handleMouseMove = (e: MouseEvent) => {
+    if (!this.canDraw) return;
     if (!this.drawCtx || !this.drawing) return;
     switch (this.tool) {
       case DrawToolDto.Pencil:
@@ -215,6 +218,7 @@ no javascript enabled - drawing not working</h1>`;
   };
 
   private handleMouseDown = (e: MouseEvent) => {
+    if (!this.canDraw) return;
     if (!this.drawCtx || !this.rasterCtx) return;
     this.drawing = true;
     // cleanup redo

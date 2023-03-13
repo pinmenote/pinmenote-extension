@@ -36,7 +36,13 @@ export class PinEditManager {
   }
 
   startDraw = () => {
+    this.parent.drawComponent.drawArea.canDraw = true;
     this.changeVisibleBar(VisibleState.DrawBar);
+  };
+
+  stopDraw = () => {
+    this.parent.drawComponent.drawArea.canDraw = false;
+    this.stopEdit();
   };
 
   startDownload = () => {

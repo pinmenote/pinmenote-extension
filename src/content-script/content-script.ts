@@ -32,12 +32,10 @@ import { ContentMessageHandler } from './content-message.handler';
 import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
-import { ObjectStoreKeys } from '../common/keys/object.store.keys';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
-import { environmentConfig } from '../common/environment';
 import { fnUid } from '../common/fn/uid.fn';
 
 class PinMeScript {
@@ -62,7 +60,6 @@ class PinMeScript {
     TinyEventDispatcher.removeListener(event, key);
 
     // Link so we navigate further
-    if (this.resolveLinkWebsite()) return;
 
     await ContentSettingsStore.initSettings();
 
@@ -79,25 +76,6 @@ class PinMeScript {
         theme
       }
     });
-  };
-
-  private resolveLinkWebsite(): boolean {
-    if (!window.location.href.startsWith(environmentConfig.url.short)) return false;
-    this.redirectInterval = window.setInterval(this.linkRedirect, 100);
-    return true;
-  }
-
-  private linkRedirect = async (): Promise<void> => {
-    const urlData = document.getElementById('urlData');
-    if (urlData) {
-      clearInterval(this.redirectInterval);
-      if (urlData.innerText) {
-        const { data } = JSON.parse(urlData.innerText);
-        await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LINK, data);
-        /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-        document.location.href = data.url.href;
-      }
-    }
   };
 
   private handleVisibilityChange = async (): Promise<void> => {

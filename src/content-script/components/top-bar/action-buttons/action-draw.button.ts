@@ -55,7 +55,7 @@ export class ActionDrawButton implements HtmlComponent<HTMLElement> {
       this.parent.object.local.drawVisible = true;
       this.fillColor = '#ff0000';
     } else {
-      this.parent.edit.stopEdit();
+      this.parent.edit.stopDraw();
       this.fillColor = '#000000';
       this.parent.object.local.drawVisible = false;
     }
