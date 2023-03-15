@@ -59,11 +59,8 @@ class PinMeScript {
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
     TinyEventDispatcher.removeListener(event, key);
 
-    // Link so we navigate further
-
     await ContentSettingsStore.initSettings();
 
-    // if (data.link) new CreateLinkCommand(data.link).execute();
     await new RuntimePinGetHrefCommand().execute();
     this.initTimeout();
 

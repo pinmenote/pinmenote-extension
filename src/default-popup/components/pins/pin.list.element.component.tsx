@@ -28,10 +28,8 @@ import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinExpandComponent } from './pin.expand.component';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
-import { PinShareComponent } from './pin-share.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import RemoveMarkdown from 'remove-markdown';
-import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -44,7 +42,6 @@ interface PinListElementProps {
 
 export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, visibility }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [isShareOpen, setShareOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(pin.local?.visible);
   const handlePinGo = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
     data.local.visible = true;
@@ -68,17 +65,8 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
     TinyEventDispatcher.dispatch(BusMessageType.POP_PIN_REMOVE, data);
   };
 
-  const handleShare = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
-    setShareOpen(!isShareOpen);
-    setIsPopoverOpen(false);
-    if (!data.share && !isShareOpen) {
-      await BrowserApi.sendRuntimeMessage<ObjDto<ObjPagePinDto>>({ type: BusMessageType.POPUP_PIN_SHARE, data });
-    }
-  };
-
   const handlePopover = (): void => {
     setIsPopoverOpen(!isPopoverOpen);
-    setShareOpen(false);
   };
 
   const expandIcon = isPopoverOpen ? (
@@ -124,9 +112,6 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
             justifyContent: 'flex-end'
           }}
         >
-          <IconButton title="Go to pin" size="small" onClick={() => handleShare(pin)}>
-            <ShareIcon sx={{ fontSize: '12px' }} />
-          </IconButton>
           {visibleIcon}
           <IconButton title="Go to pin" size="small" onClick={() => handlePinGo(pin)}>
             <ArrowForwardIcon sx={{ fontSize: '12px' }} />
@@ -137,7 +122,6 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
         </div>
       </div>
       <PinExpandComponent visible={isPopoverOpen} pin={pin}></PinExpandComponent>
-      <PinShareComponent pin={pin} visible={isShareOpen}></PinShareComponent>
     </div>
   );
 };

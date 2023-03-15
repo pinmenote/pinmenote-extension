@@ -55,7 +55,6 @@ export enum BusMessageType {
   POPUP_PAGE_ELEMENT_SNAPSHOT_ADD = 'popup.page.element.snapshot.add',
   POPUP_PIN_START = 'popup.pin.start',
   POPUP_PIN_STOP = 'popup.pin.stop',
-  POPUP_PIN_SHARE = 'popup.pin.share',
   POPUP_SYNC_DATA = 'popup.sync.data',
   POPUP_TAKE_SCREENSHOT = 'popup.take.screenshot',
   // Content script
@@ -71,6 +70,5 @@ export enum BusMessageType {
   CONTENT_THEME = 'content.theme',
   // Options
   OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',
-  OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data',
-  OPTIONS_OBJ_SHARE = 'options.obj.share'
+  OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data'
 }

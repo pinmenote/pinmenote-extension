@@ -28,7 +28,6 @@ import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factor
 import ImageIcon from '@mui/icons-material/Image';
 import { ObjPagePinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
-import ShareIcon from '@mui/icons-material/Share';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
@@ -78,20 +77,10 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
     TinyEventDispatcher.dispatch<ObjDto<ObjPagePinDto>>(BusMessageType.OPT_PIN_SHOW_IMAGE, pin);
   };
 
-  const handleShare = async (): Promise<void> => {
-    await BrowserApi.sendRuntimeMessage<ObjDto<ObjPagePinDto>>({
-      type: BusMessageType.OPTIONS_OBJ_SHARE,
-      data: pin
-    });
-  };
-
   return (
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
       <EditElement pin={pin} />
       <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 20, alignItems: 'center' }}>
-        <IconButton onClick={handleShare} title="share pin">
-          <ShareIcon />
-        </IconButton>
         <IconButton onClick={handleImageDownload} title="switch display image">
           <DownloadIcon />
         </IconButton>

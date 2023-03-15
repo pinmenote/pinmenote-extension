@@ -30,7 +30,7 @@ export class PinAddXpathCommand implements ICommand<boolean> {
     const value = XpathFactory.newXPathResult(pin.xpath);
     fnConsoleLog('PinAddXpathCommand->xpath', pin.xpath, 'singleNodeValue', value.singleNodeValue);
     const node = value.singleNodeValue as HTMLElement;
-    if (!this.data.local.visible || !node || isElementHiddenFn(node)) {
+    if (!this.data.local?.visible || !node || isElementHiddenFn(node)) {
       // will be created on invalidate
       PinPendingStore.add(this.data);
       return false;

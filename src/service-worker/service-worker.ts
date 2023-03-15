@@ -23,11 +23,9 @@ import { ContentInvalidateCommand } from './command/content/content-invalidate.c
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
-import { OptionsPinShareCommand } from './command/options/options-pin-share.command';
 import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
-import { PopupPinShareCommand } from './command/popup/popup-pin-share.command';
 import { PopupSyncDataCommand } from './command/popup/popup-sync-data.command';
 import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
 import { ScriptService } from './service/script.service';
@@ -68,9 +66,6 @@ const handleMessage = async (
     case BusMessageType.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data).execute();
       break;
-    case BusMessageType.POPUP_PIN_SHARE:
-      await new PopupPinShareCommand(msg.data).execute();
-      break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();
       break;
@@ -82,9 +77,6 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_TAKE_SCREENSHOT:
       await new PopupTakeScreenshotCommand().execute();
-      break;
-    case BusMessageType.OPTIONS_OBJ_SHARE:
-      await new OptionsPinShareCommand(msg.data).execute();
       break;
     case BusMessageType.OPTIONS_SYNCHRONIZE_DATA:
       await new OptionsSynchronizeDataCommand().execute();
