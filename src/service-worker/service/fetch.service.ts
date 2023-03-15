@@ -60,6 +60,19 @@ export class FetchService {
     return await response.json();
   }
 
+  static async delete<T>(url: string, headers?: { [key: string]: string }): Promise<T> {
+    headers = this.applyDefaultHeaders(headers);
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers
+    });
+    if (!response.ok) {
+      fnConsoleLog(headers);
+      throw new ResponseError(`Error PATCH ${url}`, await response.json());
+    }
+    return await response.json();
+  }
+
   static async get(url: string, headers: { [key: string]: string }, type = ResponseType.JSON): Promise<any> {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 5000);
