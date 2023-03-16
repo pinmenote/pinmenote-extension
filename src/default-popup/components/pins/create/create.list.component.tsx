@@ -14,11 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { BookmarkRemoveCommand } from '../../../../common/command/bookmark/bookmark-remove.command';
+import React, { FunctionComponent, useState } from 'react';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -27,7 +23,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { ObjBookmarkDto } from '../../../../common/model/obj/obj-bookmark.dto';
+import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
@@ -44,35 +40,12 @@ interface CreateListProps {
 
 enum IsLoadingType {
   None,
-  Bookmark,
   PageSave,
   ElementSave
 }
 
 export const CreateListComponent: FunctionComponent<CreateListProps> = (props) => {
   const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
-  const [bookmarkData, setBookmarkData] = useState<ObjDto<ObjBookmarkDto> | undefined>(PopupActiveTabStore.bookmark);
-
-  useEffect(() => {
-    setBookmarkData(PopupActiveTabStore.bookmark);
-  });
-
-  const handleBookmarkClick = async () => {
-    if (bookmarkData) {
-      await new BookmarkRemoveCommand(bookmarkData).execute();
-      setBookmarkData(undefined);
-    } else {
-      TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_BOOKMARK_ADD, async (event, key) => {
-        TinyEventDispatcher.removeListener(event, key);
-        await PopupActiveTabStore.refreshBookmark();
-        setBookmarkData(PopupActiveTabStore.bookmark);
-        setIsLoading(IsLoadingType.None);
-        setTimeout(() => props.closeListCallback(), 1000);
-      });
-      setIsLoading(IsLoadingType.Bookmark);
-      await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_BOOKMARK_ADD, data: PopupActiveTabStore.url });
-    }
-  };
 
   const handleSavePageClick = async () => {
     TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
@@ -96,24 +69,9 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
     props.closeListCallback();
     window.close();
   };
-
-  let bookmarkIcon = undefined;
-  if (isLoading === IsLoadingType.Bookmark) {
-    bookmarkIcon = <CircularProgress />;
-  } else {
-    bookmarkIcon = bookmarkData !== undefined ? <BookmarkIcon /> : <BookmarkBorderIcon />;
-  }
-  const bookmarkText = bookmarkData !== undefined ? 'Remove Bookmark' : 'Add Bookmark';
-
   return (
     <div>
       <List sx={zeroPad}>
-        <ListItem sx={zeroPad}>
-          <ListItemButton onClick={handleBookmarkClick}>
-            <ListItemIcon>{bookmarkIcon}</ListItemIcon>
-            <ListItemText primary={bookmarkText} />
-          </ListItemButton>
-        </ListItem>
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={handleSavePageClick}>
             <ListItemIcon>{isLoading === IsLoadingType.PageSave ? <CircularProgress /> : <WebOutlined />}</ListItemIcon>

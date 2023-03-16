@@ -21,11 +21,13 @@ import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ApiStoreGetObjectCommand implements ICommand<Promise<ObjDto>> {
-  constructor(private url: string, private id: number) {}
+  constructor(private id: number) {}
 
   async execute(): Promise<ObjDto> {
-    const url = `${this.url}/api/v1/store/obj/${this.id}`;
     const authHeaders = await ApiHelper.getAuthHeaders();
+    const storeUrl = await ApiHelper.getStoreUrl();
+
+    const url = `${storeUrl}/api/v1/store/obj/${this.id}`;
 
     const resp = await FetchService.get(url, authHeaders);
 

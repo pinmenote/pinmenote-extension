@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto } from './obj-pin.dto';
-import { ObjUrlDto } from './obj.dto';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 
-export interface ObjBookmarkDto {
-  url: ObjUrlDto;
-  title: string;
-  screenshot?: string;
-  html: string;
-  css: CssDataDto;
+export class SyncSaveTimeCommand implements ICommand<Promise<void>> {
+  async execute(): Promise<void> {
+    const dt = new Date().toISOString();
+    await BrowserStorageWrapper.set(ObjectStoreKeys.SYNC_TIME, dt);
+  }
 }

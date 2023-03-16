@@ -23,7 +23,6 @@ import { ContentInvalidateCommand } from './command/content/content-invalidate.c
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
-import { OptionsSynchronizeDataCommand } from './command/options/options-synchronize-data.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
 import { PopupSyncDataCommand } from './command/popup/popup-sync-data.command';
@@ -77,9 +76,6 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_TAKE_SCREENSHOT:
       await new PopupTakeScreenshotCommand().execute();
-      break;
-    case BusMessageType.OPTIONS_SYNCHRONIZE_DATA:
-      await new OptionsSynchronizeDataCommand().execute();
       break;
   }
 };

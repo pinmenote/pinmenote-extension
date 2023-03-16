@@ -24,12 +24,13 @@ interface ChangesDto {
 }
 
 export class ApiStoreChangesCommand implements ICommand<Promise<ChangesDto>> {
-  constructor(private url: string) {}
+  constructor(private dt: string) {}
 
   async execute(): Promise<ChangesDto> {
-    const dt = new Date().toISOString();
-    const url = `${this.url}/api/v1/store/changes?dt=${dt}`;
     const authHeaders = await ApiHelper.getAuthHeaders();
+    const storeUrl = await ApiHelper.getStoreUrl();
+
+    const url = `${storeUrl}/api/v1/store/changes?dt=${this.dt}`;
 
     const resp = await FetchService.get(url, authHeaders);
 

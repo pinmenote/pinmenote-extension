@@ -16,7 +16,6 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { ContentBookmarkAddCommand } from './command/bookmark/content-bookmark-add.command';
 import { ContentPageSnapshotAddCommand } from './command/snapshot/content-page-snapshot-add.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
@@ -54,9 +53,6 @@ export class ContentMessageHandler {
       type: BusMessageType.CONTENT_ACK
     });
     switch (msg.type) {
-      case BusMessageType.POPUP_BOOKMARK_ADD:
-        await new ContentBookmarkAddCommand(msg.data, this.href).execute();
-        break;
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
         await new ContentPageSnapshotAddCommand(msg.data, this.href).execute();
         break;

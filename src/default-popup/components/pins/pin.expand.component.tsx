@@ -31,7 +31,7 @@ export const PinExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, vis
 
   useEffect(() => {
     img.width = 280;
-    if (pin.data.html[0].screenshot) img.src = pin.data?.html[0].screenshot;
+    if (pin.data.html.screenshot) img.src = pin.data?.html.screenshot;
     ref.current?.appendChild(img);
     if (valueRef.current) valueRef.current.innerHTML = marked(pin.data.value);
     return () => {

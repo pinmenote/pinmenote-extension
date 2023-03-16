@@ -24,13 +24,13 @@ import { XpathFactory } from '../../common/factory/xpath.factory';
 export class PinFactory {
   static objPagePinNew = async (ref: HTMLElement): Promise<ObjPagePinDto> => {
     const url = UrlFactory.newUrl();
-    const htmlData = await HtmlFactory.computeHtmlData(ref, url);
+    const html = await HtmlFactory.computeHtmlData(ref, url);
     return {
       title: document.title,
       xpath: XpathFactory.newXPathString(ref),
       value: '',
       url,
-      html: [htmlData],
+      html,
       video: [],
       draw: []
     };

@@ -20,11 +20,11 @@ import { FetchService } from '../../service/fetch.service';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ApiStoreCreateCommand implements ICommand<Promise<BoolDto>> {
-  constructor(private url: string) {}
-
   async execute(): Promise<BoolDto> {
-    const url = `${this.url}/api/v1/store/obj/create`;
     const authHeaders = await ApiHelper.getAuthHeaders();
+    const storeUrl = await ApiHelper.getStoreUrl();
+
+    const url = `${storeUrl}/api/v1/store/obj/create`;
 
     const resp = await FetchService.post<BoolDto>(url, {}, authHeaders);
 

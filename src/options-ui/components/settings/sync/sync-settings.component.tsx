@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,33 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useEffect } from 'react';
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../../common/model/bus.model';
+import React, { FunctionComponent } from 'react';
 import Button from '@mui/material/Button';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 export const SyncSettingsComponent: FunctionComponent = () => {
-  useEffect(() => {
-    const syncKey = TinyEventDispatcher.addListener<any>(
-      BusMessageType.OPTIONS_SYNCHRONIZE_DATA,
-      (event, key, value) => {
-        fnConsoleLog('RESULT', value);
-      }
-    );
-    return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.OPTIONS_SYNCHRONIZE_DATA, syncKey);
-    };
-  });
-
-  const handleSynchronize = async () => {
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_DATA });
+  const handleSynchronize = () => {
+    fnConsoleLog('SyncSettingsComponent->handleSynchronize');
   };
 
-  const handleClear = async () => {
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_CLEAR });
+  const handleClear = () => {
+    fnConsoleLog('SyncSettingsComponent->handleClear');
   };
 
   return (

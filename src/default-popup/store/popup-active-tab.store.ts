@@ -15,12 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjUrlDto } from '../../common/model/obj/obj.dto';
-import { BookmarkGetCommand } from '../../common/command/bookmark/bookmark-get.command';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ExtensionPopupInitData } from '../../common/model/obj-request.model';
 import { LogManager } from '../../common/popup/log.manager';
-import { ObjBookmarkDto } from '../../common/model/obj/obj-bookmark.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { PinGetHrefCommand } from '../../common/command/pin/pin-get-href.command';
 import { PinGetOriginCommand } from '../../common/command/pin/pin-get-origin.command';
@@ -32,7 +30,6 @@ export class PopupActiveTabStore {
   private static isError = false;
   private static extensionUrl = false;
   private static isAddingNoteValue = false;
-  private static bookmarkValue?: ObjDto<ObjBookmarkDto>;
 
   private static originPinsValue: ObjDto<ObjPagePinDto>[] = [];
   private static hrefPinsValue: ObjDto<ObjPagePinDto>[] = [];
@@ -61,10 +58,6 @@ export class PopupActiveTabStore {
     return this.urlValue;
   }
 
-  static get bookmark(): ObjDto<ObjBookmarkDto> | undefined {
-    return this.bookmarkValue;
-  }
-
   static get showErrorText(): boolean {
     return this.isError;
   }
@@ -72,12 +65,6 @@ export class PopupActiveTabStore {
   static get isExtension(): boolean {
     return this.extensionUrl;
   }
-
-  static refreshBookmark = async () => {
-    if (this.urlValue) {
-      this.bookmarkValue = await new BookmarkGetCommand(this.urlValue).execute();
-    }
-  };
 
   static initUrlValue = async () => {
     const tab = await BrowserApi.activeTab();
@@ -92,7 +79,6 @@ export class PopupActiveTabStore {
       LogManager.log(`updateState URL : ${JSON.stringify(this.urlValue)}`);
       PopupActiveTabStore.hrefPins = await new PinGetHrefCommand(this.urlValue).execute();
       PopupActiveTabStore.originPins = await new PinGetOriginCommand(this.urlValue).execute();
-      this.bookmarkValue = await new BookmarkGetCommand(this.urlValue).execute();
       if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
         this.extensionUrl = true;
         this.isError = true;

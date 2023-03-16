@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBookmarkDto } from './obj-bookmark.dto';
 import { ObjNoteDto } from './obj-note.dto';
 import { ObjPagePinDto } from './obj-pin.dto';
+import { ObjSnapshotDto } from './obj-snapshot.dto';
 
 export enum ObjBoardViewDto {
   Screenshot = 'SCREENSHOT',
@@ -38,12 +38,6 @@ export interface ObjUrlDto {
   search: string;
 }
 
-export interface ObjLinkDto {
-  url: ObjUrlDto;
-  xpath: string;
-  value: string;
-}
-
 export interface ObjIdentityDto {
   id: number;
   user: string;
@@ -57,7 +51,6 @@ export enum ObjTypeDto {
   CodeSnippet = 'CODE_SNIPPET',
   Drawing = 'DRAWING',
   Note = 'NOTE',
-  PageBookmark = 'PAGE_BOOKMARK',
   PageElementPin = 'ELEMENT_PIN',
   PageElementSnapshot = 'ELEMENT_SNAPSHOT',
   PageCanvasPin = 'PAGE_CANVAS_PIN',
@@ -67,7 +60,7 @@ export enum ObjTypeDto {
   Todo = 'TODO'
 }
 
-export type ObjDataDto = ObjPagePinDto | ObjBookmarkDto | ObjNoteDto | ObjLinkDto;
+export type ObjDataDto = ObjPagePinDto | ObjSnapshotDto | ObjNoteDto;
 
 export interface ObjDto<T = ObjDataDto> {
   id: number;

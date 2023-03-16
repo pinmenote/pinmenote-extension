@@ -15,10 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDataDto, ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
-import { BookmarkRemoveCommand } from '../../common/command/bookmark/bookmark-remove.command';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
-import { ObjBookmarkDto } from '../../common/model/obj/obj-bookmark.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
@@ -52,8 +50,6 @@ export class BoardStore {
         this.objData.splice(i, 1);
         if (value.type === ObjTypeDto.PageElementPin) {
           await new PinRemoveCommand(value as ObjDto<ObjPagePinDto>).execute();
-        } else if (value.type === ObjTypeDto.PageBookmark) {
-          await new BookmarkRemoveCommand(value as ObjDto<ObjBookmarkDto>).execute();
         } else if (value.type === ObjTypeDto.PageSnapshot) {
           await new PageSnapshotRemoveCommand(value as ObjDto<ObjSnapshotDto>).execute();
         } else if (value.type === ObjTypeDto.PageElementSnapshot) {
@@ -98,7 +94,7 @@ export class BoardStore {
     fnConsoleLog('PinBoardStore->getRange', this.search);
     this.loading = true;
     const result = await new OptionsObjGetRangeCommand(this.search).execute();
-    if (result) {
+    if (result && result.data.length > 0) {
       const lastResultObj = result.data[result.data.length - 1];
       const firstResultObj = result.data[0];
       const lastObj = this.objData[this.objData.length - 1];

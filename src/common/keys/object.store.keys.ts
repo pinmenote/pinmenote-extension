@@ -29,10 +29,8 @@ export class ObjectStoreKeys {
   // LINK
   static readonly OBJECT_LINK = 'o:link';
 
-  // BOOKMARK
-  static readonly OBJECT_BOOKMARK = 'o:bookmark';
-  static readonly BOOKMARK_LIST = 'o:bookmark:list';
-
   static readonly ACCESS_TOKEN = 'accessToken';
-  static readonly KEY_NOTE_UPDATE = 'noteSyncUpdate';
+
+  // SYNC
+  static readonly SYNC_TIME = 'sync';
 }

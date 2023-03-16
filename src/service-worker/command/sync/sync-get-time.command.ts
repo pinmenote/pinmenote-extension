@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 
-export class OptionsSynchronizeDataCommand implements ICommand<Promise<void>> {
-  async execute(): Promise<void> {
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNCHRONIZE_DATA, data: 'foo' });
+export class SyncGetTimeCommand implements ICommand<Promise<string>> {
+  async execute(): Promise<string> {
+    const dt = await BrowserStorageWrapper.get<string>(ObjectStoreKeys.SYNC_TIME);
+    if (!dt) '1970-01-01T00:00:00Z';
+    return dt;
   }
 }

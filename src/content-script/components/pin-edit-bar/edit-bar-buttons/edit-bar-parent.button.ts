@@ -66,9 +66,9 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       const css = await CssFactory.computeCssContent();
 
       this.parent.object.data.htmlEdit = undefined;
-      this.parent.object.data.html[0].html = htmlContent.html;
+      this.parent.object.data.html.html = htmlContent.html;
       this.parent.object.data.video = htmlContent.videoTime;
-      this.parent.object.data.html[0].css = css;
+      this.parent.object.data.html.css = css;
       this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref);
       const rect = XpathFactory.computeRect(this.parent.ref);
 
@@ -94,7 +94,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
             this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
           }
 
-          this.parent.object.data.html[0].screenshot = await ImageResizeFactory.resize(rect, value);
+          this.parent.object.data.html.screenshot = await ImageResizeFactory.resize(rect, value);
 
           await new PinUpdateCommand(this.parent.object).execute();
           this.parent.resize();

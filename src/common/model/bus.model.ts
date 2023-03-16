@@ -44,7 +44,6 @@ export enum BusMessageType {
   WORKER_ACK = 'worker.ack',
   // Popup
   POPUP_API_ERROR = 'popup.api.error',
-  POPUP_BOOKMARK_ADD = 'popup.bookmark.add',
   POPUP_CAPTURE_ELEMENT_START = 'popup.capture.element.start',
   POPUP_CAPTURE_ELEMENT_STOP = 'popup.capture.element.stop',
   POPUP_INIT = 'popup.init',
@@ -56,6 +55,8 @@ export enum BusMessageType {
   POPUP_PIN_START = 'popup.pin.start',
   POPUP_PIN_STOP = 'popup.pin.stop',
   POPUP_SYNC_DATA = 'popup.sync.data',
+  POPUP_SYNC_DATA_COMPLETE = 'popup.sync.data.complete',
+  POPUP_SYNC_DATA_CLEAR = 'popup.sync.data.clear',
   POPUP_TAKE_SCREENSHOT = 'popup.take.screenshot',
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
@@ -67,8 +68,6 @@ export enum BusMessageType {
   CONTENT_PIN_REMOVE = 'content.pin.remove',
   CONTENT_PIN_STOP = 'content.pin.stop',
   CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
-  CONTENT_THEME = 'content.theme',
+  CONTENT_THEME = 'content.theme'
   // Options
-  OPTIONS_SYNCHRONIZE_CLEAR = 'options.synchronize.clear',
-  OPTIONS_SYNCHRONIZE_DATA = 'options.synchronize.data'
 }

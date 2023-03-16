@@ -42,10 +42,10 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ pin }) => {
     if (!pin.local.boardView || pin.local.boardView === ObjBoardViewDto.Screenshot) {
       const img = new Image();
       img.width = window.innerWidth / 3;
-      img.src = pin.data.html[0].screenshot || '';
+      img.src = pin.data.html.screenshot || '';
       ref.appendChild(img);
     } else {
-      IframeHtmlFactory.computePinHtml(pin.data.html[0], ref);
+      IframeHtmlFactory.computePinHtml(pin.data.html, ref);
     }
   };
 

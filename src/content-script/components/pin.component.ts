@@ -80,8 +80,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   setNewRef(ref: HTMLElement): void {
     this.mouseManager.stop();
-    this.refValue.style.border = this.object.data.html[0].border.style;
-    this.refValue.style.borderRadius = this.object.data.html[0].border.radius;
+    this.refValue.style.border = this.object.data.html.border.style;
+    this.refValue.style.borderRadius = this.object.data.html.border.radius;
     this.refValue.removeEventListener('mouseover', this.handleMouseOver);
     this.refValue.removeEventListener('mouseout', this.handleMouseOut);
     this.refValue.innerHTML = this.htmlEditComponent.originalHtml;
@@ -166,8 +166,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   }
 
   cleanup(): void {
-    this.refValue.style.border = this.object.data.html[0].border.style;
-    this.refValue.style.borderRadius = this.object.data.html[0].border.radius;
+    this.refValue.style.border = this.object.data.html.border.style;
+    this.refValue.style.borderRadius = this.object.data.html.border.radius;
 
     this.text.cleanup();
     this.topBar.cleanup();

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBookmarkDto } from '../model/obj/obj-bookmark.dto';
+import { ObjSnapshotDto } from '../model/obj/obj-snapshot.dto';
 import { PinHtmlDataDto } from '../model/obj/obj-pin.dto';
 
 export class IframeHtmlFactory {
@@ -45,7 +45,7 @@ export class IframeHtmlFactory {
     return html;
   };
 
-  static computeHtml = (value: ObjBookmarkDto): string => {
+  static computeHtml = (value: ObjSnapshotDto): string => {
     const html = `<html>
         <head>            
             ${value.css.href

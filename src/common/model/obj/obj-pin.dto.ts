@@ -21,7 +21,7 @@ import { ObjUrlDto } from './obj.dto';
 export interface ObjPagePinDto {
   xpath: string;
   url: ObjUrlDto;
-  html: PinHtmlDataDto[];
+  html: PinHtmlDataDto;
   video: PinVideoDataDto[];
   draw: ObjDrawDto[];
   value: string;

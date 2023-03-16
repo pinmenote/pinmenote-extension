@@ -51,11 +51,11 @@ export const PinValueElement: FunctionComponent<PinValueProps> = ({ pin }): JSX.
   const handleImageDownload = async (): Promise<void> => {
     let url: string, filename: string;
     if (!pin.local.boardView || pin.local.boardView === ObjBoardViewDto.Screenshot) {
-      if (!pin.data.html[0].screenshot) return;
-      url = window.URL.createObjectURL(fnB64toBlob(pin.data.html[0].screenshot, 'image/jpeg'));
+      if (!pin.data.html.screenshot) return;
+      url = window.URL.createObjectURL(fnB64toBlob(pin.data.html.screenshot, 'image/jpeg'));
       filename = `${fnUid()}.jpg`;
     } else {
-      const html = IframeHtmlFactory.computePinHtml(pin.data.html[0]) || '';
+      const html = IframeHtmlFactory.computePinHtml(pin.data.html) || '';
       url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
       filename = `${fnUid()}.html`;
     }

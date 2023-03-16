@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { TokenDataDto } from '../../common/model/shared/token.dto';
 import { TokenStorageGetCommand } from '../../common/command/server/token/token-storage-get.command';
+import jwtDecode from 'jwt-decode';
 
 export class ApiHelper {
   static async getAuthHeaders(): Promise<{ [key: string]: string }> {
@@ -23,5 +25,19 @@ export class ApiHelper {
     return {
       Authorization: `Bearer ${token.access_token}`
     };
+  }
+
+  static async getStoreUrl(): Promise<string> {
+    const token = await new TokenStorageGetCommand().execute();
+    if (!token) throw new Error('Empty token');
+    const { data } = jwtDecode<TokenDataDto>(token.access_token);
+    return data.store;
+  }
+
+  static async getRefreshToken(): Promise<string | undefined> {
+    const token = await new TokenStorageGetCommand().execute();
+    if (!token) return undefined;
+    const { refresh_token } = jwtDecode<TokenDataDto>(token.access_token);
+    return refresh_token.token;
   }
 }

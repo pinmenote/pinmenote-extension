@@ -19,10 +19,8 @@ import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardAddElementSearch } from './search/board-add-element.search';
 import { BoardInputSearch } from './search/board-input.search';
 import { BoardStore } from '../../store/board.store';
-import { BookmarkElement } from './bookmark/bookmark.element';
 import Box from '@mui/material/Box';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ObjBookmarkDto } from '../../../common/model/obj/obj-bookmark.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { PageElementSnapshotElement } from './page-element-snapshot/page-element-snapshot.element';
@@ -78,8 +76,6 @@ export const BoardComponent: FunctionComponent = () => {
     const obj = objData[i];
     if (obj.type === ObjTypeDto.PageElementPin) {
       boardElements.push(<PinElement pin={obj as ObjDto<ObjPagePinDto>} key={obj.id} />);
-    } else if (obj.type === ObjTypeDto.PageBookmark) {
-      boardElements.push(<BookmarkElement dto={obj as ObjDto<ObjBookmarkDto>} key={obj.id} />);
     } else if (obj.type === ObjTypeDto.PageSnapshot) {
       boardElements.push(<PageSnapshotElement dto={obj as ObjDto<ObjSnapshotDto>} key={obj.id} />);
     } else if (obj.type === ObjTypeDto.PageElementSnapshot) {

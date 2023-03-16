@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 export enum TokenTypeDto {
-  Bearer = 'Bearer'
+  Bearer = 'Bearer',
+  GoogleAuthenticator = 'GoogleAuthenticator'
+}
+
+export interface RefreshTokenDto {
+  token: string;
+  iat: number;
 }
 
 export interface AccessTokenDto {
@@ -27,29 +33,19 @@ export interface AccessTokenDto {
 export interface TokenDataDto {
   sub: string;
   exp: number;
+  refresh_token: RefreshTokenDto;
   data: TokenUserDto;
 }
 
 export interface TokenUserDto {
   username: string;
   email: string;
-  api: string;
-  short: string;
+  store: string;
+  use2fa: boolean;
+  role: number[];
 }
 
 export interface LoginDto {
   email: string;
   password: string;
-}
-
-export interface RegisterDto {
-  email: string;
-  username: string;
-  publicKey: string;
-  acceptedVersion: string;
-}
-
-export interface DiskQuotaDto {
-  used: number;
-  available: number;
 }
