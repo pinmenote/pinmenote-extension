@@ -20,7 +20,6 @@ import { ActionDownloadButton } from './action-buttons/action-download.button';
 import { ActionDrawButton } from './action-buttons/action-draw.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
-import { ActionTextButton } from './action-buttons/action-text.button';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
@@ -63,12 +62,6 @@ const drawIconStyles = {
   'background-color': '#ffffff00'
 };
 
-const textIconStyles = {
-  left: '26px',
-  position: 'absolute',
-  'background-color': '#ffffff00'
-};
-
 export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
@@ -77,7 +70,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   private readonly copyIcon: ActionCopyButton;
   private readonly downloadIcon: ActionDownloadButton;
 
-  private readonly textIcon: ActionTextButton;
   private readonly drawIcon: ActionDrawButton;
 
   private topMargin = '-24px';
@@ -88,7 +80,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.copyIcon = new ActionCopyButton(parent);
     this.downloadIcon = new ActionDownloadButton(parent);
 
-    this.textIcon = new ActionTextButton(parent);
     this.drawIcon = new ActionDrawButton(parent);
   }
 
@@ -140,10 +131,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.el.appendChild(drawComponent);
     applyStylesToElement(drawComponent, drawIconStyles);
 
-    const textComponent = this.textIcon.render();
-    this.el.appendChild(textComponent);
-    applyStylesToElement(textComponent, textIconStyles);
-
     this.adjustTop();
 
     return this.el;
@@ -174,7 +161,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.copyIcon.cleanup();
     this.downloadIcon.cleanup();
 
-    this.textIcon.cleanup();
     this.drawIcon.cleanup();
   }
 

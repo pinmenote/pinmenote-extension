@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, PageComponent } from '../../common/model/html.model';
+import { BottomBarComponent } from './bottom-bar/bottom-bar.component';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
@@ -41,6 +42,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private readonly mouseManager: PinMouseManager;
 
   readonly topBar: TopBarComponent;
+  readonly bottomBar: BottomBarComponent;
   readonly text: TextContainerComponent;
 
   readonly drawComponent: DrawContainerComponent;
@@ -62,6 +64,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.refValue = ref;
     this.rect = PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this, object, this.rect);
+    this.bottomBar = new BottomBarComponent(this, object, this.rect);
     this.text = new TextContainerComponent(object, this.rect);
 
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
@@ -94,8 +97,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     return this.refValue;
   }
 
-  focus(goto = false): void {
-    this.text.focus(goto);
+  focus(): void {
+    this.text.focus();
   }
 
   render(): void {
@@ -115,6 +118,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     );
     applyStylesToElement(this.bottom, bottomStyles);
     applyStylesToElement(this.top, topStyles);
+    this.bottom.appendChild(this.bottomBar.render());
     this.bottom.appendChild(this.text.render());
 
     this.top.appendChild(this.topBar.render());
@@ -139,8 +143,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.top.appendChild(this.htmlEditComponent.render());
     this.edit.updateHtml();
 
-    this.top.appendChild(this.topBar.render());
-
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
 
@@ -159,6 +161,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.text.resize(this.rect);
     this.topBar.resize(this.rect);
+    this.bottomBar.resize(this.rect);
     this.drawComponent.resize(this.rect);
     this.drawBar.resize(this.rect);
     this.downloadBar.resize(this.rect);
@@ -171,6 +174,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.text.cleanup();
     this.topBar.cleanup();
+    this.bottomBar.cleanup();
     this.top.remove();
     this.bottom.remove();
     this.mouseManager.stop();
@@ -186,8 +190,10 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   private handleMouseOver = () => {
     window.clearTimeout(this.timeoutId);
-    this.text.focusin();
+
     if (!this.edit.isScreenshot) this.topBar.focusin();
+    if (!this.edit.isScreenshot) this.bottomBar.focusin();
+
     this.drawBar.focusin();
     this.downloadBar.focusin();
     this.editBar.focusin();
@@ -200,8 +206,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private handleMouseOut = () => {
     window.clearTimeout(this.timeoutId);
     this.timeoutId = window.setTimeout(() => {
-      this.text.focusout();
       this.topBar.focusout();
+      this.bottomBar.focusout();
       this.drawBar.focusout();
       this.downloadBar.focusout();
       this.editBar.focusout();

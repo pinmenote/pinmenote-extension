@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { ContentSettingsStore } from '../../store/content-settings.store';
 import { EditorView } from 'prosemirror-view';
+import { HtmlComponent } from '../../../common/model/html.model';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
@@ -26,9 +26,8 @@ import { TextContainerComponent } from './text-container.component';
 import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { scrollToElementFn } from '../../fn/scroll-to-element.fn';
 
-export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
+export class TextEditorComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   private editorView?: EditorView;
@@ -58,18 +57,7 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
     this.el.style.width = `${rect.width}px`;
   }
 
-  focusin() {
-    this.el.style.display = 'inline-block';
-  }
-
-  focusout() {
-    this.el.style.display = 'none';
-  }
-
-  focus(goto = false): void {
-    this.focusin();
-    const height = parseInt(this.el.style.height.split('px')[0]);
-    if (goto) scrollToElementFn(this.editorView?.dom, height);
+  focus(): void {
     this.editorView?.focus();
   }
 
@@ -92,7 +80,6 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement>, HtmlComp
         } catch (e) {
           fnConsoleLog('ERROR UPDATE PIN', e);
         }
-        this.parent.textBar.setState(state);
       }
     });
   }

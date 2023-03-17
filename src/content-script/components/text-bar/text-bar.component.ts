@@ -31,8 +31,7 @@ const elStyles = {
   'align-items': 'center',
   'background-color': '#ffffff',
   color: '#000000',
-  height: '24px',
-  'padding-left': '5px'
+  height: '24px'
 };
 
 export class TextBarComponent implements HtmlComponent<HTMLElement> {

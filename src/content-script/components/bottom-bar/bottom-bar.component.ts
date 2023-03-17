@@ -14,49 +14,61 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { AddCommentButton } from './buttons/add-comment.button';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
+import { PinComponent } from '../pin.component';
 import { VideoTimeComponent } from './video-time/video-time.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const elStyles = {
-  'background-color': '#ffffff',
-  display: 'none',
-  'flex-direction': 'row',
-  'justify-content': 'space-between',
   height: '15px',
-  margin: '0',
-  padding: '5px 5px 5px 5px',
+  display: 'flex',
+  'background-color': '#ffffff',
+  'justify-content': 'space-between',
   'align-items': 'center'
 };
 
-export class BottomBarComponent {
+export class BottomBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private el = document.createElement('div');
 
   private videoTime: VideoTimeComponent;
+  private addComment: AddCommentButton;
   private shouldDisplay = false;
 
-  constructor(private pin: ObjPagePinDto) {
-    this.videoTime = new VideoTimeComponent(pin.video);
-    this.shouldDisplay = pin.video.length > 0;
+  constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
+    this.videoTime = new VideoTimeComponent(object.data.video);
+    this.addComment = new AddCommentButton(parent);
   }
 
   render(): HTMLDivElement {
-    applyStylesToElement(this.el, elStyles);
+    const style = Object.assign({ width: `${this.rect.width}px` }, elStyles);
+    applyStylesToElement(this.el, style);
 
     this.el.appendChild(this.videoTime.render());
+    this.el.appendChild(this.addComment.render());
 
     return this.el;
   }
 
   cleanup(): void {
     this.videoTime.cleanup();
+    this.addComment.cleanup();
+  }
+
+  resize(rect: ObjRectangleDto): void {
+    this.rect = rect;
+    this.el.style.width = `${rect.width}px`;
   }
 
   focusin(): void {
-    if (this.shouldDisplay) this.el.style.display = 'inline-block';
+    this.el.style.display = 'flex';
   }
 
   focusout(): void {
-    if (this.shouldDisplay) this.el.style.display = 'none';
+    if (this.addComment.isVisible) return;
+    this.el.style.display = 'none';
   }
 }
