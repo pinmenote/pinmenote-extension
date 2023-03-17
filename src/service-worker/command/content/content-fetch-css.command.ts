@@ -15,23 +15,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { FetchCssRequest, FetchCssResponse } from '../../../common/model/obj-request.model';
-import { FetchService, ResponseType } from '../../service/fetch.service';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ResponseType } from '../../../common/model/api.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}
   async execute(): Promise<void> {
     try {
-      const css = await FetchService.get(this.req.url, {}, ResponseType.TEXT);
+      const css = await FetchService.get<string>(this.req.url, ResponseType.TEXT);
       // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
       await BrowserApi.sendTabMessage<FetchCssResponse>({
         type: BusMessageType.CONTENT_FETCH_CSS,
         data: {
           url: this.req.url,
-          data: css,
+          data: css.res,
           error: false
         }
       });

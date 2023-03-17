@@ -16,28 +16,28 @@
  */
 import { TokenDataDto } from '../../common/model/shared/token.dto';
 import { TokenStorageGetCommand } from '../../common/command/server/token/token-storage-get.command';
+import { environmentConfig } from '../../common/environment';
 import jwtDecode from 'jwt-decode';
 
 export class ApiHelper {
   static async getAuthHeaders(): Promise<{ [key: string]: string }> {
     const token = await new TokenStorageGetCommand().execute();
     if (!token) return {};
+
     return {
       Authorization: `Bearer ${token.access_token}`
     };
   }
 
-  static async getStoreUrl(): Promise<string> {
-    const token = await new TokenStorageGetCommand().execute();
-    if (!token) throw new Error('Empty token');
-    const { data } = jwtDecode<TokenDataDto>(token.access_token);
-    return data.store;
+  static get apiUrl(): string {
+    return environmentConfig.url.api;
   }
 
-  static async getRefreshToken(): Promise<string | undefined> {
+  static async getStoreUrl(): Promise<string> {
     const token = await new TokenStorageGetCommand().execute();
-    if (!token) return undefined;
-    const { refresh_token } = jwtDecode<TokenDataDto>(token.access_token);
-    return refresh_token.token;
+    if (!token) return '';
+
+    const { data } = jwtDecode<TokenDataDto>(token.access_token);
+    return data.store;
   }
 }

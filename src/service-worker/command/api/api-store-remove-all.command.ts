@@ -21,12 +21,11 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ApiStoreRemoveAllCommand implements ICommand<Promise<BoolDto>> {
   async execute(): Promise<BoolDto> {
-    const authHeaders = await ApiHelper.getAuthHeaders();
     const storeUrl = await ApiHelper.getStoreUrl();
 
     const url = `${storeUrl}/api/v1/store/obj`;
 
-    const resp = await FetchService.delete<BoolDto>(url, authHeaders);
+    const resp = await FetchService.delete<BoolDto>(url, true);
 
     fnConsoleLog('ApiStoreRemoveAllCommand->execute', resp);
 

@@ -14,28 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto, LoginDto, TokenDataDto, TokenUserDto } from '../../../common/model/shared/token.dto';
+import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
+import { ApiHelper } from '../../api/api-helper';
+import { FetchResponse } from '../../../common/model/api.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
-import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import jwtDecode from 'jwt-decode';
 
-export class ApiLoginCommand implements ICommand<Promise<TokenUserDto>> {
+export class ApiLoginCommand implements ICommand<Promise<FetchResponse<AccessTokenDto>>> {
   constructor(private data: LoginDto) {}
-  async execute(): Promise<TokenUserDto> {
-    fnConsoleLog('ApiLoginCommand->execute', environmentConfig.url.api);
+  async execute(): Promise<FetchResponse<AccessTokenDto>> {
+    const data = await FetchService.post<AccessTokenDto>(`${ApiHelper.apiUrl}/api/v1/auth/login`, this.data);
 
-    const resp = await FetchService.post<AccessTokenDto>(`${environmentConfig.url.api}/api/v1/auth/login`, this.data);
+    fnConsoleLog('ApiLoginCommand->execute', data);
 
-    fnConsoleLog('ApiLoginCommand->execute', resp);
+    if (data.status === 200) {
+      await new TokenStorageSetCommand(data.res).execute();
+    }
 
-    await new TokenStorageSetCommand(resp).execute();
-
-    const tokenDataDto = jwtDecode<TokenDataDto>(resp.access_token);
-    if (!tokenDataDto) throw new Error('No tokenData');
-
-    return tokenDataDto.data;
+    return data;
   }
 }

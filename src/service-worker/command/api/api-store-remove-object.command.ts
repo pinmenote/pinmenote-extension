@@ -23,12 +23,11 @@ export class ApiStoreRemoveObjectCommand implements ICommand<Promise<BoolDto>> {
   constructor(private id: number) {}
 
   async execute(): Promise<BoolDto> {
-    const authHeaders = await ApiHelper.getAuthHeaders();
     const storeUrl = await ApiHelper.getStoreUrl();
 
     const url = `${storeUrl}/api/v1/store/obj/${this.id}`;
 
-    const resp = await FetchService.delete<BoolDto>(url, authHeaders);
+    const resp = await FetchService.delete<BoolDto>(url, true);
 
     fnConsoleLog('ApiStoreRemoveObjectCommand->execute', resp);
 

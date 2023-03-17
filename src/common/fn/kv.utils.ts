@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 export function fnGetKey<T>(obj: any, key: string): T {
-  return obj[key]; // eslint-disable-line @typescript-eslint/no-unsafe-member-access
+  return obj[key];
 }
 
 export function fnSetKeyValue(obj: any, key: string, value?: any): void {
-  obj[key] = value; // eslint-disable-line @typescript-eslint/no-unsafe-member-access
+  obj[key] = value;
 }

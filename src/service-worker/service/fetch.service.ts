@@ -14,99 +14,121 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto } from '../../common/model/shared/token.dto';
-import { TokenStorageGetCommand } from '../../common/command/server/token/token-storage-get.command';
+import { FetchResponse, ResponseType } from '../../common/model/api.model';
+import { ApiHelper } from '../api/api-helper';
+import { TokenStorageRemoveCommand } from '../../common/command/server/token/token-storage-remove.command';
 import { TokenStorageSetCommand } from '../../common/command/server/token/token-storage-set.command';
-import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
-export enum ResponseType {
-  JSON = 1,
-  TEXT,
-  BLOB
-}
-
-export class ResponseError extends Error {
-  constructor(message: string, readonly error: any) {
-    super(message);
-  }
-}
-
 export class FetchService {
-  static async post<T>(url: string, data?: any, headers?: { [key: string]: string }): Promise<T> {
-    headers = this.applyDefaultHeaders(headers);
-    const response = await fetch(url, {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
-      headers
-    });
-    if (!response.ok) {
-      throw new ResponseError(`Error POST ${url}`, await response.json());
-    }
-    return await response.json();
-  }
-
-  static async patch<T>(url: string, data?: any, headers?: { [key: string]: string }): Promise<T> {
-    headers = this.applyDefaultHeaders(headers);
-    const response = await fetch(url, {
-      method: 'PATCH',
-      body: data ? JSON.stringify(data) : undefined,
-      headers
-    });
-    if (!response.ok) {
-      fnConsoleLog(headers);
-      throw new ResponseError(`Error PATCH ${url}`, await response.json());
-    }
-    return await response.json();
-  }
-
-  static async delete<T>(url: string, headers?: { [key: string]: string }): Promise<T> {
-    headers = this.applyDefaultHeaders(headers);
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers
-    });
-    if (!response.ok) {
-      fnConsoleLog(headers);
-      throw new ResponseError(`Error PATCH ${url}`, await response.json());
-    }
-    return await response.json();
-  }
-
-  static async get(url: string, headers: { [key: string]: string }, type = ResponseType.JSON): Promise<any> {
+  static async post<T>(url: string, data?: any, authenticate = false): Promise<FetchResponse<T>> {
     const ctrl = new AbortController();
-    setTimeout(() => ctrl.abort(), 5000);
-    const response = await fetch(url, {
-      method: 'GET',
-      headers,
-      signal: ctrl.signal
-    });
-    if (response.headers.get('x-refresh-token') === 'yes') {
+    setTimeout(() => ctrl.abort(), 15000);
+
+    const requestInit = { method: 'POST', body: data ? JSON.stringify(data) : undefined };
+
+    if (authenticate) {
+      const headers = this.applyDefaultHeaders(await ApiHelper.getAuthHeaders());
+      return await this.refetch(url, { ...requestInit, headers });
+    }
+    const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
+    return { type: ResponseType.JSON, status: req.status, res: await req.json() };
+  }
+
+  static async patch<T>(url: string, data?: any, authenticate = false): Promise<FetchResponse<T>> {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 15000);
+
+    const requestInit = { method: 'PATCH', body: data ? JSON.stringify(data) : undefined };
+
+    if (authenticate) {
+      const headers = this.applyDefaultHeaders(await ApiHelper.getAuthHeaders());
+      return await this.refetch(url, { ...requestInit, headers });
+    }
+    const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
+    return { type: ResponseType.JSON, status: req.status, res: await req.json() };
+  }
+
+  static async delete<T>(url: string, authenticate = false): Promise<FetchResponse<T>> {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 15000);
+
+    const requestInit = { method: 'DELETE' };
+
+    if (authenticate) {
+      const headers = await ApiHelper.getAuthHeaders();
+      return await this.refetch(url, { ...requestInit, headers });
+    }
+    const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
+    return { type: ResponseType.JSON, status: req.status, res: await req.json() };
+  }
+
+  static async get<T>(url: string, type = ResponseType.JSON, authenticate = false): Promise<FetchResponse<T>> {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 15000);
+
+    const requestInit = { method: 'GET', signal: ctrl.signal };
+
+    if (authenticate) {
+      const headers = await ApiHelper.getAuthHeaders();
+      return await this.refetch<T>(url, { ...requestInit, headers });
+    }
+    const req = await fetch(url, requestInit);
+
+    let res;
+    if (type === ResponseType.BLOB) {
+      res = await req.blob();
+    } else if (type === ResponseType.JSON) {
+      res = await req.json();
+    } else {
+      res = req.text();
+    }
+    return {
+      type,
+      status: req.status,
+      res
+    };
+  }
+
+  private static async refreshToken(): Promise<void> {
+    try {
+      const req = await fetch(`${ApiHelper.apiUrl}/api/v1/refresh-token`, {
+        method: 'POST',
+        headers: await ApiHelper.getAuthHeaders()
+      });
+      const res = await req.json();
+      await new TokenStorageSetCommand(res).execute();
+    } catch (e) {
+      fnConsoleLog('ERROR REFRESH TOKEN', e);
+      await new TokenStorageRemoveCommand().execute();
+    }
+  }
+
+  private static refetch = async <T>(
+    input: RequestInfo | URL,
+    init: RequestInit,
+    type = ResponseType.JSON
+  ): Promise<FetchResponse<T>> => {
+    let req = await fetch(input, init);
+    const res = await req.json();
+
+    if (req.status === 401 && type === ResponseType.JSON && res.message === 'jwt expired') {
+      await this.refreshToken();
+      const authHeaders = await ApiHelper.getAuthHeaders();
+      if (init?.headers) init.headers = { ...init?.headers, ...authHeaders };
+
+      req = await fetch(input, init);
+      //eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    } else if (res.headers.get('x-refresh-token') === 'yes') {
+      // Forced by server
       await this.refreshToken();
     }
-    if (!response.ok) {
-      const errorData = type === ResponseType.JSON ? await response.json() : await response.text();
-      fnConsoleLog(`Error GET ${url}`, errorData);
-      throw new ResponseError(`Error GET ${url}`, errorData);
-    }
-    if (type === ResponseType.BLOB) return await response.blob();
-    if (type === ResponseType.JSON) return await response.json();
-    return await response.text();
-  }
-
-  static async refreshToken(): Promise<void> {
-    const tokenValue = await new TokenStorageGetCommand().execute();
-    if (!tokenValue) return;
-    const authHeaders = {
-      Authorization: `Bearer ${tokenValue.access_token}`
+    return {
+      type,
+      status: req.status,
+      res
     };
-    const resp = await this.patch<AccessTokenDto>(
-      `${environmentConfig.url.api}/api/v1/refresh-token`,
-      null,
-      authHeaders
-    );
-    await new TokenStorageSetCommand(resp).execute();
-  }
+  };
 
   private static applyDefaultHeaders(headers?: { [key: string]: string }): { [key: string]: string } {
     if (!headers) headers = {};

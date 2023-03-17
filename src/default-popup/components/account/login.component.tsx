@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
 import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../common/components/colors';
-import { LoginDto, TokenUserDto } from '../../../common/model/shared/token.dto';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
+import { FetchResponse } from '../../../common/model/api.model';
 import Link from '@mui/material/Link';
 import { LogManager } from '../../../common/popup/log.manager';
 import { ServerErrorDto } from '../../../common/model/shared/common.dto';
@@ -50,10 +51,17 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
-    const loginKey = TinyEventDispatcher.addListener<TokenUserDto>(BusMessageType.POPUP_LOGIN, (event, key, value) => {
-      LogManager.log(`POPUP_LOGIN ${JSON.stringify(value)}`);
-      loginSuccess();
-    });
+    const loginKey = TinyEventDispatcher.addListener<FetchResponse<AccessTokenDto>>(
+      BusMessageType.POPUP_LOGIN,
+      (event, key, value) => {
+        LogManager.log(`POPUP_LOGIN: ${JSON.stringify(value)}`);
+        if (value.status == 200) {
+          loginSuccess();
+        } else {
+          setResponseError((value.res as any).message);
+        }
+      }
+    );
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN, loginKey);
     };

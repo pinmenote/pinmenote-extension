@@ -15,10 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { FetchImageRequest, FetchImageResponse } from '../../../common/model/obj-request.model';
-import { FetchService, ResponseType } from '../../service/fetch.service';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ResponseType } from '../../../common/model/api.model';
 import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
@@ -26,8 +27,8 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}
   async execute(): Promise<void> {
     try {
-      const blob = await FetchService.get(this.req.url, {}, ResponseType.BLOB);
-      const data = await UrlFactory.toDataUri(blob);
+      const blob = await FetchService.get<Blob>(this.req.url, ResponseType.BLOB);
+      const data = await UrlFactory.toDataUri(blob.res);
       // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
       await BrowserApi.sendTabMessage<FetchImageResponse>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,

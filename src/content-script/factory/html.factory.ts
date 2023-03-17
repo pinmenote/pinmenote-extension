@@ -130,7 +130,7 @@ export class HtmlFactory {
         if (tagName === 'a' && !hrefFilled) {
           try {
             const dataJSON = window.atob(attrValue);
-            /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
             const url: string = JSON.parse(dataJSON).src;
             if (url.startsWith('http')) {
               html += `href="${url}" `;

@@ -24,12 +24,11 @@ export class ApiStoreAddObjectCommand implements ICommand<Promise<BoolDto>> {
   constructor(private obj: ObjDto) {}
 
   async execute(): Promise<BoolDto> {
-    const authHeaders = await ApiHelper.getAuthHeaders();
     const storeUrl = await ApiHelper.getStoreUrl();
 
     const url = `${storeUrl}/api/v1/store/obj/add`;
 
-    const resp = await FetchService.post<BoolDto>(url, this.obj, authHeaders);
+    const resp = await FetchService.post<BoolDto>(url, this.obj, true);
 
     fnConsoleLog('ApiStoreAddObjectCommand->execute', resp);
 
