@@ -19,19 +19,15 @@ import { ApiHelper } from '../../api/api-helper';
 import { FetchResponse } from '../../../common/model/api.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ApiLoginCommand implements ICommand<Promise<FetchResponse<AccessTokenDto>>> {
   constructor(private data: LoginDto) {}
+
   async execute(): Promise<FetchResponse<AccessTokenDto>> {
     const data = await FetchService.post<AccessTokenDto>(`${ApiHelper.apiUrl}/api/v1/auth/login`, this.data);
 
     fnConsoleLog('ApiLoginCommand->execute', data);
-
-    if (data.status === 200) {
-      await new TokenStorageSetCommand(data.res).execute();
-    }
 
     return data;
   }

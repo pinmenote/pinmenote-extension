@@ -22,6 +22,8 @@ export enum ResponseType {
 }
 
 export interface FetchResponse<T> {
+  url: string;
+  ok: boolean;
   status: number;
   res: T;
   type: ResponseType;

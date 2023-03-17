@@ -14,40 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchImageRequest, FetchImageResponse } from '../../../common/model/obj-request.model';
+import { FetchResponse, ResponseType } from '../../../common/model/api.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchImageRequest } from '../../../common/model/obj-request.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ResponseType } from '../../../common/model/api.model';
 import { UrlFactory } from '../../../common/factory/url.factory';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}
   async execute(): Promise<void> {
-    try {
-      const blob = await FetchService.get<Blob>(this.req.url, ResponseType.BLOB);
-      const data = await UrlFactory.toDataUri(blob.res);
-      // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
-      await BrowserApi.sendTabMessage<FetchImageResponse>({
-        type: BusMessageType.CONTENT_FETCH_IMAGE,
-        data: {
-          url: this.req.url,
-          data,
-          error: false
-        }
-      });
-    } catch (e: unknown) {
-      fnConsoleLog('ERROR !!!', e);
-      await BrowserApi.sendTabMessage<FetchImageResponse>({
-        type: BusMessageType.CONTENT_FETCH_IMAGE,
-        data: {
-          url: this.req.url,
-          data: '',
-          error: true
-        }
-      });
-    }
+    const blob = await FetchService.get<Blob>(this.req.url, ResponseType.BLOB);
+    const data = await UrlFactory.toDataUri(blob.res);
+    // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
+    await BrowserApi.sendTabMessage<FetchResponse<string>>({
+      type: BusMessageType.CONTENT_FETCH_IMAGE,
+      data: { ...blob, res: data }
+    });
   }
 }

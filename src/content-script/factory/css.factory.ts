@@ -15,9 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CssDataDto, CssHrefDto } from '../../common/model/obj/obj-pin.dto';
-import { FetchCssRequest, FetchCssResponse } from '../../common/model/obj-request.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
+import { FetchCssRequest } from '../../common/model/obj-request.model';
+import { FetchResponse } from '../../common/model/api.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
@@ -35,7 +36,7 @@ export class CssFactory {
         href.push({
           href: s.href,
           media: s.media.mediaText,
-          data: cssFetchData.error ? undefined : cssFetchData.data
+          data: cssFetchData.ok ? cssFetchData.res : undefined
         });
         // fnConsoleLog('CssFactory->computeCssContent', s.href, s);
       } else {
@@ -59,7 +60,7 @@ export class CssFactory {
         hrefList.push({
           href,
           media: r.parentStyleSheet ? r.parentStyleSheet.media.mediaText : r.styleSheet.media.mediaText,
-          data: cssFetchData.error ? undefined : cssFetchData.data
+          data: cssFetchData.ok ? cssFetchData.res : undefined
         });
         // fnConsoleLog('CssFactory->computeSelectorRules->href', r);
       } else if (r.media) {
@@ -79,10 +80,10 @@ export class CssFactory {
     return output;
   };
 
-  private static fetchCss(url: string): Promise<FetchCssResponse> {
+  private static fetchCss(url: string): Promise<FetchResponse<string>> {
     // fnConsoleLog('CssFactory->fetchCss', url);
-    return new Promise<FetchCssResponse>((resolve, reject) => {
-      TinyEventDispatcher.addListener<FetchCssResponse>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
+    return new Promise<FetchResponse<string>>((resolve, reject) => {
+      TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
         if (value.url === url) {
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
           resolve(value);

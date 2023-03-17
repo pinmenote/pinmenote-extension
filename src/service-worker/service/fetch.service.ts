@@ -32,7 +32,7 @@ export class FetchService {
       return await this.refetch(url, { ...requestInit, headers });
     }
     const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
-    return { type: ResponseType.JSON, status: req.status, res: await req.json() };
+    return { url, type: ResponseType.JSON, status: req.status, res: await req.json(), ok: req.ok };
   }
 
   static async patch<T>(url: string, data?: any, authenticate = false): Promise<FetchResponse<T>> {
@@ -46,7 +46,7 @@ export class FetchService {
       return await this.refetch(url, { ...requestInit, headers });
     }
     const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
-    return { type: ResponseType.JSON, status: req.status, res: await req.json() };
+    return { url, type: ResponseType.JSON, status: req.status, res: await req.json(), ok: req.ok };
   }
 
   static async delete<T>(url: string, authenticate = false): Promise<FetchResponse<T>> {
@@ -60,7 +60,7 @@ export class FetchService {
       return await this.refetch(url, { ...requestInit, headers });
     }
     const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
-    return { type: ResponseType.JSON, status: req.status, res: await req.json() };
+    return { url, type: ResponseType.JSON, status: req.status, res: await req.json(), ok: req.ok };
   }
 
   static async get<T>(url: string, type = ResponseType.JSON, authenticate = false): Promise<FetchResponse<T>> {
@@ -81,13 +81,9 @@ export class FetchService {
     } else if (type === ResponseType.JSON) {
       res = await req.json();
     } else {
-      res = req.text();
+      res = await req.text();
     }
-    return {
-      type,
-      status: req.status,
-      res
-    };
+    return { url, ok: req.ok, status: req.status, type, res };
   }
 
   private static async refreshToken(): Promise<void> {
@@ -105,11 +101,11 @@ export class FetchService {
   }
 
   private static refetch = async <T>(
-    input: RequestInfo | URL,
+    url: string,
     init: RequestInit,
     type = ResponseType.JSON
   ): Promise<FetchResponse<T>> => {
-    let req = await fetch(input, init);
+    let req = await fetch(url, init);
     const res = await req.json();
 
     if (req.status === 401 && type === ResponseType.JSON && res.message === 'jwt expired') {
@@ -117,17 +113,13 @@ export class FetchService {
       const authHeaders = await ApiHelper.getAuthHeaders();
       if (init?.headers) init.headers = { ...init?.headers, ...authHeaders };
 
-      req = await fetch(input, init);
+      req = await fetch(url, init);
       //eslint-disable-next-line @typescript-eslint/no-unsafe-call
     } else if (res.headers.get('x-refresh-token') === 'yes') {
       // Forced by server
       await this.refreshToken();
     }
-    return {
-      type,
-      status: req.status,
-      res
-    };
+    return { url, ok: req.ok, status: req.status, type, res };
   };
 
   private static applyDefaultHeaders(headers?: { [key: string]: string }): { [key: string]: string } {

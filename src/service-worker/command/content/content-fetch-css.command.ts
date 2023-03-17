@@ -14,38 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchCssRequest, FetchCssResponse } from '../../../common/model/obj-request.model';
+import { FetchResponse, ResponseType } from '../../../common/model/api.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchCssRequest } from '../../../common/model/obj-request.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ResponseType } from '../../../common/model/api.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}
   async execute(): Promise<void> {
-    try {
-      const css = await FetchService.get<string>(this.req.url, ResponseType.TEXT);
-      // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
-      await BrowserApi.sendTabMessage<FetchCssResponse>({
-        type: BusMessageType.CONTENT_FETCH_CSS,
-        data: {
-          url: this.req.url,
-          data: css.res,
-          error: false
-        }
-      });
-    } catch (e: unknown) {
-      fnConsoleLog('ERROR !!!', e);
-      await BrowserApi.sendTabMessage<FetchCssResponse>({
-        type: BusMessageType.CONTENT_FETCH_CSS,
-        data: {
-          url: this.req.url,
-          data: '',
-          error: true
-        }
-      });
-    }
+    const data = await FetchService.get<string>(this.req.url, ResponseType.TEXT);
+    // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, data);
+    await BrowserApi.sendTabMessage<FetchResponse<string>>({ type: BusMessageType.CONTENT_FETCH_CSS, data });
   }
 }

@@ -26,6 +26,7 @@ import { LogManager } from '../../../common/popup/log.manager';
 import { ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { StyledInput } from '../../../common/components/react/styled.input';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
 import Typography from '@mui/material/Typography';
 import { environmentConfig } from '../../../common/environment';
 
@@ -53,9 +54,10 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
   useEffect(() => {
     const loginKey = TinyEventDispatcher.addListener<FetchResponse<AccessTokenDto>>(
       BusMessageType.POPUP_LOGIN,
-      (event, key, value) => {
+      async (event, key, value) => {
         LogManager.log(`POPUP_LOGIN: ${JSON.stringify(value)}`);
         if (value.status == 200) {
+          await new TokenStorageSetCommand(value.res).execute();
           loginSuccess();
         } else {
           setResponseError((value.res as any).message);

@@ -15,10 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
-import { FetchImageRequest, FetchImageResponse } from '../../common/model/obj-request.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CssFactory } from './css.factory';
+import { FetchImageRequest } from '../../common/model/obj-request.model';
+import { FetchResponse } from '../../common/model/api.model';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
@@ -88,11 +89,11 @@ export class HtmlFactory {
             srcFilled = true;
           } else {
             const imageData = await this.fetchImage(url);
-            if (imageData.error) {
-              html += `src="${url}" `;
-            } else {
-              html += `src="${imageData.data}" `;
+            if (imageData.ok) {
+              html += `src="${imageData.res}" `;
               srcFilled = true;
+            } else {
+              html += `src="${url}" `;
             }
           }
         } else {
@@ -103,11 +104,11 @@ export class HtmlFactory {
         const url = this.computeUrl(attrValue);
         if (tagName === 'img' && !srcFilled) {
           const imageData = await this.fetchImage(url);
-          if (imageData.error) {
-            html += `src="${url}" `;
-          } else {
-            html += `src="${imageData.data}" `;
+          if (imageData.ok) {
+            html += `src="${imageData.res}" `;
             srcFilled = true;
+          } else {
+            html += `src="${url}" `;
           }
         }
       } else if (attr.name === 'srcset') {
@@ -119,11 +120,11 @@ export class HtmlFactory {
         const url = this.computeUrl(urlvalue);
         if (url.startsWith('http') && tagName === 'img' && !srcFilled) {
           const imageData = await this.fetchImage(url);
-          if (imageData.error) {
-            html += `src="${url}" `;
-          } else {
-            html += `src="${imageData.data}" `;
+          if (imageData.ok) {
+            html += `src="${imageData.res}" `;
             srcFilled = true;
+          } else {
+            html += `src="${url}" `;
           }
         }
       } else if (attr.name === 'data-iframe') {
@@ -237,14 +238,17 @@ export class HtmlFactory {
     return data;
   };
 
-  private static fetchImage = (url: string): Promise<FetchImageResponse> => {
-    return new Promise<FetchImageResponse>((resolve, reject) => {
-      TinyEventDispatcher.addListener<FetchImageResponse>(BusMessageType.CONTENT_FETCH_IMAGE, (event, key, value) => {
-        if (value.url === url) {
-          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
-          resolve(value);
+  private static fetchImage = (url: string): Promise<FetchResponse<string>> => {
+    return new Promise<FetchResponse<string>>((resolve, reject) => {
+      TinyEventDispatcher.addListener<FetchResponse<string>>(
+        BusMessageType.CONTENT_FETCH_IMAGE,
+        (event, key, value) => {
+          if (value.url === url) {
+            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
+            resolve(value);
+          }
         }
-      });
+      );
       BrowserApi.sendRuntimeMessage<FetchImageRequest>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,
         data: { url }

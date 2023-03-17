@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,20 +42,8 @@ export interface FetchCssRequest {
   url: string;
 }
 
-export interface FetchCssResponse {
-  url: string;
-  data: string;
-  error: boolean;
-}
-
 export interface FetchImageRequest {
   url: string;
-}
-
-export interface FetchImageResponse {
-  url: string;
-  data: string;
-  error: boolean;
 }
 
 export interface ExtensionPopupInitData {
