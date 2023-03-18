@@ -108,7 +108,7 @@ export class FetchService {
     let req = await fetch(url, init);
     const res = await req.json();
 
-    if (req.status === 401 && type === ResponseType.JSON && res.message === 'jwt expired') {
+    if (!req.ok && type === ResponseType.JSON && res.message === 'jwt expired') {
       await this.refreshToken();
       const authHeaders = await ApiHelper.getAuthHeaders();
       if (init?.headers) init.headers = { ...init?.headers, ...authHeaders };

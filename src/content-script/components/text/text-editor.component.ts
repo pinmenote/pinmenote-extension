@@ -22,7 +22,6 @@ import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { ObjUpdateHashtagsCommand } from '../../../common/command/obj/hashtag/obj-update-hashtags.command';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
-import { TextContainerComponent } from './text-container.component';
 import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -32,11 +31,7 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement> {
 
   private editorView?: EditorView;
 
-  constructor(
-    private obj: ObjDto<ObjPagePinDto>,
-    private rect: ObjRectangleDto,
-    private parent: TextContainerComponent
-  ) {}
+  constructor(private obj: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {}
 
   get editor(): EditorView | undefined {
     return this.editorView;

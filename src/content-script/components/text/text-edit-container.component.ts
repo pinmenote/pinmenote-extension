@@ -18,43 +18,39 @@ import { HtmlComponent } from '../../../common/model/html.model';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
-import { TextEditContainerComponent } from './text-edit-container.component';
-import { applyStylesToElement } from '../../../common/style.utils';
+import { TextEditorComponent } from './text-editor.component';
 
-const elStyles = {
-  'min-height': '40px',
-  'background-color': '#ffffff'
-};
-
-export class TextContainerComponent implements HtmlComponent<HTMLElement> {
+export class TextEditContainerComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  private editContainer: TextEditContainerComponent;
+  private textEditor: TextEditorComponent;
+  private saveButton: HTMLButtonElement = document.createElement('button');
 
   constructor(private object: ObjDto<ObjPagePinDto>, rect: ObjRectangleDto) {
-    this.editContainer = new TextEditContainerComponent(object, rect);
+    this.textEditor = new TextEditorComponent(object, rect);
+    this.saveButton.innerText = 'SAVE';
+    this.saveButton.style.color = '#000000';
+    this.saveButton.style.backgroundColor = '#ffffff';
   }
 
   render(): HTMLElement {
-    applyStylesToElement(this.el, elStyles);
-    const text = this.editContainer.render();
+    const text = this.textEditor.render();
     this.el.appendChild(text);
-    this.el.style.display = 'none';
-
+    this.el.appendChild(this.saveButton);
     return this.el;
   }
 
   focus(): void {
-    this.editContainer.focus();
+    this.textEditor.focus();
   }
 
   resize(rect: ObjRectangleDto): void {
-    this.editContainer.resize(rect);
+    this.textEditor.resize(rect);
   }
 
   show(): void {
     this.el.style.display = 'inline-block';
-    this.editContainer.focus();
+    this.textEditor.focus();
   }
 
   hide(): void {
@@ -62,6 +58,6 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement> {
   }
 
   cleanup(): void {
-    this.editContainer.cleanup();
+    this.textEditor.cleanup();
   }
 }

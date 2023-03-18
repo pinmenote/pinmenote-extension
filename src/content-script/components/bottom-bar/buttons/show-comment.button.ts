@@ -20,12 +20,14 @@ import { applyStylesToElement } from '../../../../common/style.utils';
 
 const elStyles = {
   color: '#000000',
+  'margin-right': '5px',
   'font-size': '0.8em',
   'text-decoration': 'underline',
+  'user-select': 'none',
   cursor: 'pointer'
 };
 
-export class AddCommentButton implements HtmlComponent<HTMLElement> {
+export class ShowCommentButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   private visible = false;
@@ -42,7 +44,7 @@ export class AddCommentButton implements HtmlComponent<HTMLElement> {
 
   render(): HTMLElement {
     applyStylesToElement(this.el, elStyles);
-    this.el.innerText = 'add comment';
+    this.el.innerText = 'show comment';
     this.el.addEventListener('click', this.handleClick);
     return this.el;
   }
@@ -51,8 +53,10 @@ export class AddCommentButton implements HtmlComponent<HTMLElement> {
     this.visible = !this.visible;
     if (this.visible) {
       this.parent.edit.showText();
+      this.el.innerText = 'hide comment';
     } else {
       this.parent.edit.hideText();
+      this.el.innerText = 'show comment';
     }
   };
 }

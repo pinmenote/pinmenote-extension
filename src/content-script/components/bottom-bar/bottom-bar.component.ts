@@ -15,16 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
-import { AddCommentButton } from './buttons/add-comment.button';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
+import { ShowCommentButton } from './buttons/show-comment.button';
 import { VideoTimeComponent } from './video-time/video-time.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const elStyles = {
-  height: '15px',
+  height: '20px',
   display: 'flex',
   'background-color': '#ffffff',
   'justify-content': 'space-between',
@@ -35,12 +35,12 @@ export class BottomBarComponent implements HtmlComponent<HTMLElement>, HtmlCompo
   private el = document.createElement('div');
 
   private videoTime: VideoTimeComponent;
-  private addComment: AddCommentButton;
+  private addComment: ShowCommentButton;
   private shouldDisplay = false;
 
   constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
     this.videoTime = new VideoTimeComponent(object.data.video);
-    this.addComment = new AddCommentButton(parent);
+    this.addComment = new ShowCommentButton(parent);
   }
 
   render(): HTMLDivElement {

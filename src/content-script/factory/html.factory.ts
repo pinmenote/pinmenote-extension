@@ -55,7 +55,7 @@ export class HtmlFactory {
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
     // fnConsoleLog(tagName, ref);
-
+    if (tagName === 'script') return { html: '', videoTime: [] };
     if (tagName === 'video') {
       // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
       videoTime.push({

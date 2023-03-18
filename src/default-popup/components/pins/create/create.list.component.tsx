@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
+import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -23,6 +24,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import LockIcon from '@mui/icons-material/Lock';
 import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../../common/model/obj-request.model';
@@ -40,8 +42,7 @@ interface CreateListProps {
 
 enum IsLoadingType {
   None,
-  PageSave,
-  ElementSave
+  PageSave
 }
 
 export const CreateListComponent: FunctionComponent<CreateListProps> = (props) => {
@@ -69,9 +70,25 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
     props.closeListCallback();
     window.close();
   };
+
+  const handleAddTask = () => {
+    alert('add task');
+  };
+
+  const handleEncrypt = () => {
+    alert('encrypt');
+  };
   return (
     <div>
       <List sx={zeroPad}>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={handleSaveElementClick}>
+            <ListItemIcon>
+              <SaveElementIcon />
+            </ListItemIcon>
+            <ListItemText primary="Save Element" />
+          </ListItemButton>
+        </ListItem>
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={handleSavePageClick}>
             <ListItemIcon>{isLoading === IsLoadingType.PageSave ? <CircularProgress /> : <WebOutlined />}</ListItemIcon>
@@ -79,11 +96,19 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
-          <ListItemButton onClick={handleSaveElementClick}>
+          <ListItemButton onClick={handleAddTask}>
             <ListItemIcon>
-              {isLoading === IsLoadingType.ElementSave ? <CircularProgress /> : <SaveElementIcon />}
+              <AddTaskIcon />
             </ListItemIcon>
-            <ListItemText primary="Save Element" />
+            <ListItemText primary="Add Task" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={handleEncrypt}>
+            <ListItemIcon>
+              <LockIcon />
+            </ListItemIcon>
+            <ListItemText primary="Encrypt / Decrypt" />
           </ListItemButton>
         </ListItem>
       </List>

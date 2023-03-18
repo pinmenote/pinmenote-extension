@@ -56,7 +56,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
       BusMessageType.POPUP_LOGIN,
       async (event, key, value) => {
         LogManager.log(`POPUP_LOGIN: ${JSON.stringify(value)}`);
-        if (value.status == 200) {
+        if (value.ok) {
           await new TokenStorageSetCommand(value.res).execute();
           loginSuccess();
         } else {
@@ -81,7 +81,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
     setResponseError(undefined);
     await BrowserApi.sendRuntimeMessage<LoginDto>({
       type: BusMessageType.POPUP_LOGIN,
-      data: { email, password }
+      data: { email, password, source: 'EXTENSION' }
     });
   };
 

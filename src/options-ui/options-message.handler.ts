@@ -41,7 +41,7 @@ export class OptionsMessageHandler {
 
   private static handlePopupOpen = async (): Promise<void> => {
     const url = UrlFactory.newUrl();
-    const data: ExtensionPopupInitData = { url, isAddingNote: false, pageTitle: document.title };
+    const data: ExtensionPopupInitData = { href: url.href, isAddingNote: false };
     fnConsoleLog(`handlePopupOpen->${JSON.stringify(data)}`);
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });
   };

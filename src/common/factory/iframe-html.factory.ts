@@ -46,12 +46,19 @@ export class IframeHtmlFactory {
   };
 
   static computeHtml = (value: ObjSnapshotDto): string => {
-    const html = `<html>
+    // https://www.uefa.com workaround -> <noscript> html {opacity: 1}</noscript> -> seriously ????
+    const html = `<html style="opacity: 1">
         <head>            
             ${value.css.href
-              .map((h) =>
-                h.data ? `<style media="${h.media}">${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`
-              )
+              .map((h) => {
+                if (h.data) {
+                  let out = '<style';
+                  h.media ? (out += ` media="${h.media}">`) : (out += '>');
+                  out += `${h.data}</style>`;
+                  return out;
+                }
+                return `<link rel="stylesheet" href="${h.href}" />`;
+              })
               .join('')}
             <style>${value.css.css}</style>            
         </head>

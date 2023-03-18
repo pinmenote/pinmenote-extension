@@ -14,39 +14,4 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export enum TokenTypeDto {
-  Bearer = 'Bearer',
-  GoogleAuthenticator = 'GoogleAuthenticator'
-}
-
-export interface RefreshTokenDto {
-  token: string;
-  iat: number;
-}
-
-export interface AccessTokenDto {
-  access_token: string;
-  expires_in: number;
-  token_type: TokenTypeDto;
-}
-
-export interface TokenDataDto {
-  sub: string;
-  exp: number;
-  refresh_token: RefreshTokenDto;
-  data: TokenUserDto;
-}
-
-export interface TokenUserDto {
-  username: string;
-  email: string;
-  store: string;
-  use2fa: boolean;
-  role: number[];
-}
-
-export interface LoginDto {
-  email: string;
-  password: string;
-  source: string;
-}
+export class CancelButton {}
