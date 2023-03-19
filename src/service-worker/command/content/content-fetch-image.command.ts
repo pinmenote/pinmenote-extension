@@ -21,13 +21,14 @@ import { FetchImageRequest } from '../../../common/model/obj-request.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { UrlFactory } from '../../../common/factory/url.factory';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}
   async execute(): Promise<void> {
     const blob = await FetchService.get<Blob>(this.req.url, ResponseType.BLOB);
     const data = await UrlFactory.toDataUri(blob.res);
-    // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, css);
+    fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, blob);
     await BrowserApi.sendTabMessage<FetchResponse<string>>({
       type: BusMessageType.CONTENT_FETCH_IMAGE,
       data: { ...blob, res: data }

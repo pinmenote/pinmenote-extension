@@ -66,7 +66,6 @@ export class HtmlFactory {
     }
 
     const attributes: Attr[] = Array.from(ref.attributes);
-    let srcFilled = false;
     let hrefFilled = false;
     for (const attr of attributes) {
       let attrValue = attr.value;
@@ -81,51 +80,13 @@ export class HtmlFactory {
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
       } else if (attr.name === 'src') {
-        const url = this.computeUrl(attrValue);
         if (tagName === 'img') {
-          // we have data already inside image so just add it
-          if (attrValue.startsWith('data:')) {
-            html += `src="${attrValue}" `;
-            srcFilled = true;
-          } else {
-            const imageData = await this.fetchImage(url);
-            if (imageData.ok) {
-              html += `src="${imageData.res}" `;
-              srcFilled = true;
-            } else {
-              html += `src="${url}" `;
-            }
-          }
+          const value = await this.computeImgValue(ref, attr);
+          html += `src="${value}" `;
         } else {
+          const url = this.computeUrl(attrValue);
           html += `src="${url}" `;
           srcFilled = true;
-        }
-      } else if (attr.name == 'data-src') {
-        const url = this.computeUrl(attrValue);
-        if (tagName === 'img' && !srcFilled) {
-          const imageData = await this.fetchImage(url);
-          if (imageData.ok) {
-            html += `src="${imageData.res}" `;
-            srcFilled = true;
-          } else {
-            html += `src="${url}" `;
-          }
-        }
-      } else if (attr.name === 'srcset') {
-        // TODO check if ok for all cases
-        const srcset = attrValue.split(',');
-        // last value so it's biggest image
-        const urlvalue = srcset[srcset.length - 1].trim().split(' ')[0];
-
-        const url = this.computeUrl(urlvalue);
-        if (url.startsWith('http') && tagName === 'img' && !srcFilled) {
-          const imageData = await this.fetchImage(url);
-          if (imageData.ok) {
-            html += `src="${imageData.res}" `;
-            srcFilled = true;
-          } else {
-            html += `src="${url}" `;
-          }
         }
       } else if (attr.name === 'data-iframe') {
         if (tagName === 'a' && !hrefFilled) {
@@ -186,6 +147,57 @@ export class HtmlFactory {
       html,
       videoTime
     };
+  };
+
+  private static computeImgValue = async (ref: Element, attr: Attr): Promise<string> => {
+    let value = attr.value;
+    value = value.replaceAll('"', '&quot;');
+
+    // we have data already inside image so just add it
+    if (value.startsWith('data:')) {
+      return value;
+    }
+    // data-src
+    if (ref.getAttribute('data-src')) {
+      value = ref.getAttribute('data-src') || '';
+      const url = this.computeUrl(value);
+      const imageData = await this.fetchImage(url);
+      if (imageData.ok) {
+        return imageData.res;
+      }
+    }
+
+    // data-pin-media - maybe merge with data-src
+    if (ref.getAttribute('data-pin-media')) {
+      value = ref.getAttribute('data-pin-media') || '';
+      const url = this.computeUrl(value);
+      const imageData = await this.fetchImage(url);
+      if (imageData.ok) {
+        return imageData.res;
+      }
+    }
+
+    // srcset
+    if (ref.getAttribute('srcset')) {
+      // TODO check if ok for all cases
+      const srcset = (ref.getAttribute('srcset') || '').split(',');
+      // last value so it's biggest image
+      value = srcset[srcset.length - 1].trim().split(' ')[0];
+      const url = this.computeUrl(value);
+      if (url.startsWith('http')) {
+        const imageData = await this.fetchImage(url);
+        if (imageData.ok) {
+          return imageData.res;
+        }
+      }
+    }
+
+    const url = this.computeUrl(value);
+    const imageData = await this.fetchImage(url);
+    if (imageData.ok) {
+      return imageData.res;
+    }
+    return url;
   };
 
   private static computeUrl(value: string): string {
