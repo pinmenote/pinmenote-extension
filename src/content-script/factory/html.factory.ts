@@ -65,6 +65,11 @@ export class HtmlFactory {
       });
     }
 
+    if (tagName === 'img') {
+      const value = await this.computeImgValue(ref);
+      html += `src="${value}" `;
+    }
+
     const attributes: Attr[] = Array.from(ref.attributes);
     let hrefFilled = false;
     for (const attr of attributes) {
@@ -79,15 +84,9 @@ export class HtmlFactory {
         hrefFilled = true;
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
-      } else if (attr.name === 'src') {
-        if (tagName === 'img') {
-          const value = await this.computeImgValue(ref, attr);
-          html += `src="${value}" `;
-        } else {
-          const url = this.computeUrl(attrValue);
-          html += `src="${url}" `;
-          srcFilled = true;
-        }
+      } else if (attr.name === 'src' && tagName !== 'img') {
+        const url = this.computeUrl(attrValue);
+        html += `src="${url}" `;
       } else if (attr.name === 'data-iframe') {
         if (tagName === 'a' && !hrefFilled) {
           try {
@@ -149,9 +148,8 @@ export class HtmlFactory {
     };
   };
 
-  private static computeImgValue = async (ref: Element, attr: Attr): Promise<string> => {
-    let value = attr.value;
-    value = value.replaceAll('"', '&quot;');
+  private static computeImgValue = async (ref: Element): Promise<string> => {
+    let value = '';
 
     // we have data already inside image so just add it
     if (value.startsWith('data:')) {
@@ -191,6 +189,9 @@ export class HtmlFactory {
         }
       }
     }
+
+    value = ref.getAttribute('src') || '';
+    value = value.replaceAll('"', '&quot;');
 
     const url = this.computeUrl(value);
     const imageData = await this.fetchImage(url);
