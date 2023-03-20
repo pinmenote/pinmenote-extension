@@ -24,7 +24,7 @@ import { environmentConfig } from '../../../environment';
 export class ObjAddIdCommand implements ICommand<Promise<void>> {
   private readonly listLimit = environmentConfig.objListLimit;
 
-  constructor(private id: number, private dt: Date) {}
+  constructor(private id: number, private dt: number) {}
   async execute(): Promise<void> {
     let listId = await this.getListId();
     let ids = await this.getList(listId);

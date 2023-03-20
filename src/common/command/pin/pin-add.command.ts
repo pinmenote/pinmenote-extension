@@ -35,14 +35,14 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
     fnConsoleLog('PinAddCommand->execute', this.pin);
 
     const id = await new ObjNextIdCommand().execute();
-    const dt = new Date();
+    const dt = Date.now();
     const hashtags = new HashtagFindCommand(this.pin.value).execute();
 
     const dto: ObjDto<ObjPagePinDto> = {
       id,
       type: ObjTypeDto.PageElementPin,
-      createdAt: dt.toISOString(),
-      updatedAt: dt.toISOString(),
+      createdAt: dt,
+      updatedAt: dt,
       data: this.pin,
       version: OBJ_DTO_VERSION,
       local: {

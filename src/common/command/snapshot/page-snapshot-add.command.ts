@@ -27,13 +27,13 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
 
   async execute(): Promise<void> {
     const id = await new ObjNextIdCommand().execute();
-    const dt = new Date();
+    const dt = Date.now();
 
     const dto: ObjDto<ObjSnapshotDto> = {
       id,
       type: ObjTypeDto.PageSnapshot,
-      createdAt: dt.toISOString(),
-      updatedAt: dt.toISOString(),
+      createdAt: dt,
+      updatedAt: dt,
       data: this.dto,
       version: OBJ_DTO_VERSION,
       local: {

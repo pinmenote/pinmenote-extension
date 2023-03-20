@@ -20,10 +20,10 @@ import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnYearMonthFormat } from '../../../fn/date.format.fn';
 
 export class ObjAddDtIndexCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private dt: Date) {}
+  constructor(private id: number, private dt: number) {}
 
   async execute(): Promise<void> {
-    const yearMonth = fnYearMonthFormat(this.dt);
+    const yearMonth = fnYearMonthFormat(new Date(this.dt));
     const key = `${ObjectStoreKeys.OBJECT_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);

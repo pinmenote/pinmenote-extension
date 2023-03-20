@@ -38,11 +38,6 @@ export interface ObjUrlDto {
   search: string;
 }
 
-export interface ObjIdentityDto {
-  id: number;
-  user: string;
-}
-
 export interface ObjEncryptionDto {
   encrypted: boolean;
 }
@@ -66,10 +61,9 @@ export interface ObjDto<T = ObjDataDto> {
   id: number;
   version: number;
   type: ObjTypeDto;
-  updatedAt: string;
-  createdAt: string;
+  updatedAt: number;
+  createdAt: number;
   local: ObjLocalDto;
-  identity?: ObjIdentityDto;
   encryption: ObjEncryptionDto;
   hashtags: string[];
   data: T;

@@ -26,7 +26,7 @@ export class CanvasPinAddCommand implements ICommand<Promise<ObjDto<ObjCanvasPin
 
   async execute(): Promise<ObjDto<ObjCanvasPinDto>> {
     const id = await new ObjNextIdCommand().execute();
-    const dt = new Date().toISOString();
+    const dt = Date.now();
 
     // await new ObjAddIdCommand(id).execute();
 
