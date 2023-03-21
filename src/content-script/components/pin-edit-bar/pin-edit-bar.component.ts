@@ -15,8 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
-import { EditBarDecryptButton } from './edit-bar-buttons/edit-bar-decrypt.button';
-import { EditBarEncryptButton } from './edit-bar-buttons/edit-bar-encrypt.button';
 import { EditBarHtmlButton } from './edit-bar-buttons/edit-bar-html.button';
 import { EditBarParentButton } from './edit-bar-buttons/edit-bar-parent.button';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
@@ -40,14 +38,10 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
   private parentButton: EditBarParentButton;
   private htmlButton: EditBarHtmlButton;
-  private encryptButton: EditBarEncryptButton;
-  private decryptButton: EditBarDecryptButton;
 
   constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.parentButton = new EditBarParentButton(parent);
     this.htmlButton = new EditBarHtmlButton(parent);
-    this.encryptButton = new EditBarEncryptButton(parent);
-    this.decryptButton = new EditBarDecryptButton(parent);
   }
 
   render(): HTMLElement {
@@ -59,9 +53,6 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
     this.el.appendChild(this.htmlButton.render());
 
     this.el.appendChild(this.parentButton.render());
-
-    this.el.appendChild(this.encryptButton.render());
-    this.el.appendChild(this.decryptButton.render());
 
     return this.el;
   }
