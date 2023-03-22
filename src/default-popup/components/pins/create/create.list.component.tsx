@@ -19,6 +19,7 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import CircularProgress from '@mui/material/CircularProgress';
+import FunctionsIcon from '@mui/icons-material/Functions';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -78,6 +79,10 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
   const handleEncrypt = () => {
     alert('encrypt');
   };
+
+  const handleFunctionClick = () => {
+    alert('function');
+  };
   return (
     <div>
       <List sx={zeroPad}>
@@ -93,6 +98,14 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
           <ListItemButton onClick={handleSavePageClick}>
             <ListItemIcon>{isLoading === IsLoadingType.PageSave ? <CircularProgress /> : <WebOutlined />}</ListItemIcon>
             <ListItemText primary="Save Page" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={handleFunctionClick}>
+            <ListItemIcon>
+              <FunctionsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Use Function" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
