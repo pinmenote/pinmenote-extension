@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
+import { AccessTokenDto, VerifyTokenDto } from '../../../common/model/shared/token.dto';
 import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../common/components/colors';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
@@ -41,18 +41,18 @@ function getWebsiteUrl(uri: string): string {
   return `${environmentConfig.url.web}${uri}`;
 }
 
-interface LoginComponentProps {
+interface Verify2faComponentProps {
   loginSuccess: (res: AccessTokenDto) => void;
+  verifyToken: string;
 }
 
-export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSuccess }) => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+export const Verify2faComponent: FunctionComponent<Verify2faComponentProps> = ({ loginSuccess, verifyToken }) => {
+  const [totp, setTotp] = useState<string>('');
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
     const loginKey = TinyEventDispatcher.addListener<FetchResponse<AccessTokenDto>>(
-      BusMessageType.POPUP_LOGIN,
+      BusMessageType.POPUP_VERIFY_2FA,
       (event, key, value) => {
         LogManager.log(`POPUP_LOGIN: ${JSON.stringify(value)}`);
         if (value.ok) {
@@ -63,23 +63,19 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
       }
     );
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN, loginKey);
+      TinyEventDispatcher.removeListener(BusMessageType.POPUP_VERIFY_2FA, loginKey);
     };
   });
 
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setPassword(e.target.value);
+  const handleTotpChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setTotp(e.target.value);
   };
 
   const handleLoginClick = async (): Promise<void> => {
     setResponseError(undefined);
-    await BrowserApi.sendRuntimeMessage<LoginDto>({
+    await BrowserApi.sendRuntimeMessage<VerifyTokenDto>({
       type: BusMessageType.POPUP_LOGIN,
-      data: { email, password, source: 'EXTENSION' }
+      data: { token: verifyToken, totp, source: 'EXTENSION' }
     });
   };
 
@@ -93,10 +89,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
         Login
       </Typography>
       <div style={{ border: borderStyle, ...inputContainerStyle }}>
-        <StyledInput onChange={handleEmailChange} value={email} placeholder="email" />
-      </div>
-      <div style={{ border: borderStyle, ...inputContainerStyle }}>
-        <StyledInput onChange={handlePasswordChange} value={password} type="password" placeholder="password" />
+        <StyledInput onChange={handleTotpChange} value={totp} placeholder="token" />
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', margin: 10 }}>
         <Button sx={{ width: '100%' }} variant="outlined" onClick={handleLoginClick}>

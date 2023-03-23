@@ -50,3 +50,9 @@ export interface LoginDto {
   password: string;
   source: string;
 }
+
+export interface VerifyTokenDto {
+  totp: string;
+  token: string;
+  source: string;
+}
