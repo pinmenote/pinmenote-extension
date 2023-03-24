@@ -19,7 +19,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjIframeSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { ObjIframeContentDto } from '../../../common/model/obj/obj-iframe.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
@@ -32,7 +32,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     }
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body);
     const css = await CssFactory.computeCssContent();
-    const dto: ObjIframeSnapshotDto = {
+    const dto: ObjIframeContentDto = {
       url: this.data.url,
       html: htmlContent.html,
       css

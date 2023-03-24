@@ -15,13 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
+import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CssFactory } from './css.factory';
 import { FetchImageRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
-import { IframeHtmlFactory } from '../../common/factory/iframe-html.factory';
-import { ObjIframeSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
@@ -30,6 +29,7 @@ import { UrlFactory } from '../../common/factory/url.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnUid } from '../../common/fn/uid.fn';
 
 export class HtmlFactory {
   static async computeHtmlData(ref: HTMLElement, url?: ObjUrlDto): Promise<PinHtmlDataDto> {
@@ -53,20 +53,32 @@ export class HtmlFactory {
     };
   }
 
+  static computeIframe = async (ref: Element): Promise<HtmlIntermediateData> => {
+    const url = UrlFactory.normalizeHref((ref as HTMLIFrameElement).src);
+    const html = await this.fetchIframe(url);
+    const uid = fnUid();
+    const width = ref.getAttribute('width') || '100%';
+    const height = ref.getAttribute('width') || '100%';
+    const style = ref.getAttribute('style') || '';
+    const clazz = ref.getAttribute('class') || '';
+    return {
+      html: `<iframe width="${width}" height="${height}" style="${style}" class="${clazz}" id="${uid}"></iframe>`,
+      videoTime: [],
+      iframe: [{ uid, html }]
+    };
+  };
+
   static computeHtmlIntermediateData = async (ref: Element): Promise<HtmlIntermediateData> => {
     const tagName = ref.tagName.toLowerCase();
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
-    // fnConsoleLog(tagName, ref);
-    if (tagName === 'script') return { html: '', videoTime: [] };
+    const iframe: ObjIframeDataDto[] = [];
+    if (tagName === 'script') return { html: '', videoTime: [], iframe: [] };
 
     // IFRAME POC
     // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
-      const url = UrlFactory.normalizeHref((ref as HTMLIFrameElement).src);
-      const result = await this.fetchIframe(url);
-      const html = IframeHtmlFactory.computeHtml(result.css, result.html);
-      return { html, videoTime: [] };
+      return this.computeIframe(ref);
     }
 
     if (tagName === 'video') {
@@ -135,6 +147,7 @@ export class HtmlFactory {
         const computed = await this.computeHtmlIntermediateData(node as Element);
         html += computed.html;
         videoTime.push(...computed.videoTime);
+        iframe.push(...computed.iframe);
       } else if (node.nodeType === Node.COMMENT_NODE) {
         // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
       } else {
@@ -157,7 +170,8 @@ export class HtmlFactory {
 
     return {
       html,
-      videoTime
+      videoTime,
+      iframe
     };
   };
 
@@ -264,9 +278,9 @@ export class HtmlFactory {
     return data;
   };
 
-  private static fetchIframe = (url: string): Promise<ObjIframeSnapshotDto> => {
-    return new Promise<ObjIframeSnapshotDto>((resolve, reject) => {
-      TinyEventDispatcher.addListener<ObjIframeSnapshotDto>(
+  private static fetchIframe = (url: string): Promise<ObjIframeContentDto> => {
+    return new Promise<ObjIframeContentDto>((resolve, reject) => {
+      TinyEventDispatcher.addListener<ObjIframeContentDto>(
         BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
         (event, key, value) => {
           if (value.url === url) {

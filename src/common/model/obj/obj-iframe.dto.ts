@@ -14,19 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjIframeContentDto } from '../../../common/model/obj/obj-iframe.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { CssDataDto } from './obj-pin.dto';
 
-export class ContentFetchIframeResultCommand implements ICommand<Promise<void>> {
-  constructor(private data: ObjIframeContentDto) {}
-  async execute(): Promise<void> {
-    fnConsoleLog('ContentFetchIframeResultCommand->execute', this.data);
-    await BrowserApi.sendTabMessage<ObjIframeContentDto>({
-      type: BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
-      data: this.data
-    });
-  }
+export interface ObjIframeContentDto {
+  url: string;
+  html: string;
+  css: CssDataDto;
+}
+
+export interface ObjIframeDataDto {
+  uid: string;
+  html: ObjIframeContentDto;
 }

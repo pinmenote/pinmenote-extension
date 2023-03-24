@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CssDataDto } from './obj-pin.dto';
+import { ObjIframeDataDto } from './obj-iframe.dto';
 import { ObjUrlDto } from './obj.dto';
 
 export interface ObjSnapshotDto {
@@ -23,10 +24,5 @@ export interface ObjSnapshotDto {
   screenshot?: string;
   html: string;
   css: CssDataDto;
-}
-
-export interface ObjIframeSnapshotDto {
-  url: string;
-  html: string;
-  css: CssDataDto;
+  iframe: ObjIframeDataDto[];
 }

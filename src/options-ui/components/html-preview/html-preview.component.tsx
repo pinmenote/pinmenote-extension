@@ -49,6 +49,22 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
         doc.write(html);
         doc.close();
 
+        // TODO remove condition before release
+        if (value.iframe) {
+          for (const iframe of value.iframe) {
+            const el = doc.getElementById(iframe.uid);
+            if (el) {
+              const iframeEl = el as HTMLIFrameElement;
+              const iframeDoc = iframeEl.contentWindow?.document;
+              if (iframeDoc) {
+                const iframeHtml = IframeHtmlFactory.computeHtml(iframe.html.css, iframe.html.html);
+                iframeDoc.write(iframeHtml);
+                iframeDoc.close();
+              }
+            }
+          }
+        }
+
         if (!titleRef.current) return;
         titleRef.current.innerText = value.title;
       }

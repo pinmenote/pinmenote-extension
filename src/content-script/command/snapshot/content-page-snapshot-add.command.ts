@@ -41,7 +41,8 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
       url: this.url,
       screenshot,
       html: htmlContent.html,
-      css
+      css,
+      iframe: htmlContent.iframe
     };
     await new PageSnapshotAddCommand(dto).execute();
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
