@@ -288,18 +288,19 @@ export class HtmlFactory {
 
   private static fetchIframe = (url: string): Promise<ObjIframeContentDto> => {
     return new Promise<ObjIframeContentDto>((resolve, reject) => {
-      TinyEventDispatcher.addListener<ObjIframeContentDto>(
+      const eventKey = TinyEventDispatcher.addListener<ObjIframeContentDto>(
         BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
         (event, key, value) => {
           if (value.url === url) {
-            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, key);
+            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
             clearTimeout(iframeTimeout);
             resolve(value);
           }
         }
       );
       const iframeTimeout = setTimeout(() => {
-        reject('Iframe timeout');
+        TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
+        reject(`Iframe timeout ${url}`);
       }, 10000);
       BrowserApi.sendRuntimeMessage<FetchImageRequest>({
         type: BusMessageType.CONTENT_FETCH_IFRAME,
