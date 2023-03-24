@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiHelper } from '../../api/api-helper';
+import { FetchResponse } from '../../../common/model/api.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -23,16 +24,15 @@ interface ChangesDto {
   data: number[];
 }
 
-export class ApiStoreChangesCommand implements ICommand<Promise<ChangesDto>> {
+export class ApiStoreChangesCommand implements ICommand<Promise<FetchResponse<ChangesDto>>> {
   constructor(private dt: string) {}
 
-  async execute(): Promise<ChangesDto> {
-    const authHeaders = await ApiHelper.getAuthHeaders();
+  async execute(): Promise<FetchResponse<ChangesDto>> {
     const storeUrl = await ApiHelper.getStoreUrl();
 
     const url = `${storeUrl}/api/v1/store/changes?dt=${this.dt}`;
 
-    const resp = await FetchService.get(url, authHeaders);
+    const resp = await FetchService.get<ChangesDto>(url);
 
     fnConsoleLog('ApiStoreChangesCommand->execute', resp);
 

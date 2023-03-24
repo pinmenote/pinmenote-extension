@@ -24,3 +24,9 @@ export interface ObjSnapshotDto {
   html: string;
   css: CssDataDto;
 }
+
+export interface ObjIframeSnapshotDto {
+  url: string;
+  html: string;
+  css: CssDataDto;
+}

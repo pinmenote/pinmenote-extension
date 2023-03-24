@@ -16,6 +16,7 @@
  */
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
+import { ContentFetchIframeCommand } from './command/snapshot/content-fetch-iframe.command';
 import { ContentPageSnapshotAddCommand } from './command/snapshot/content-page-snapshot-add.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
@@ -55,6 +56,9 @@ export class ContentMessageHandler {
     switch (msg.type) {
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
         await new ContentPageSnapshotAddCommand(msg.data, this.href).execute();
+        break;
+      case BusMessageType.CONTENT_FETCH_IFRAME:
+        await new ContentFetchIframeCommand(msg.data, this.href).execute();
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PIN_START:

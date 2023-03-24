@@ -14,25 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoolDto, ICommand } from '../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../api/api-helper';
-import { FetchResponse } from '../../../common/model/api.model';
-import { FetchService } from '../../service/fetch.service';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjIframeSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class ApiStoreAddObjectCommand implements ICommand<Promise<FetchResponse<BoolDto>>> {
-  constructor(private obj: ObjDto) {}
-
-  async execute(): Promise<FetchResponse<BoolDto>> {
-    const storeUrl = await ApiHelper.getStoreUrl();
-
-    const url = `${storeUrl}/api/v1/store/obj/add`;
-
-    const resp = await FetchService.post<BoolDto>(url, this.obj, true);
-
-    fnConsoleLog('ApiStoreAddObjectCommand->execute', resp);
-
-    return resp;
+export class ContentFetchIframeResultCommand implements ICommand<Promise<void>> {
+  constructor(private data: ObjIframeSnapshotDto) {}
+  async execute(): Promise<void> {
+    fnConsoleLog('ContentFetchIframeResultCommand->execute', this.data);
+    await BrowserApi.sendTabMessage<ObjIframeSnapshotDto>({
+      type: BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
+      data: this.data
+    });
   }
 }

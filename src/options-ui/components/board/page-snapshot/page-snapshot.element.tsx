@@ -44,7 +44,7 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   });
 
   const handleDownload = async () => {
-    const html = IframeHtmlFactory.computeHtml(params.dto.data) || '';
+    const html = IframeHtmlFactory.computeHtml(params.dto.data.css, params.dto.data.html) || '';
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
     const filename = `${fnUid()}.html`;

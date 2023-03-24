@@ -18,6 +18,8 @@ import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
+import { ContentFetchIframeCommand } from './command/content/content-fetch-iframe.command';
+import { ContentFetchIframeResultCommand } from './command/content/content-fetch-iframe-result.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
@@ -49,7 +51,7 @@ const handleMessage = async (
       await new ContentDownloadDataCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_TAKE_SCREENSHOT:
-      await new ContentTakeScreenshotCommand().execute();
+      await new ContentTakeScreenshotCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_THEME:
       await new ContentThemeCommand(msg.data).execute();
@@ -65,6 +67,12 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data).execute();
+      break;
+    case BusMessageType.CONTENT_FETCH_IFRAME:
+      await new ContentFetchIframeCommand(msg.data).execute();
+      break;
+    case BusMessageType.CONTENT_FETCH_IFRAME_RESULT:
+      await new ContentFetchIframeResultCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();

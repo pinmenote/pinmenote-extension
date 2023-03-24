@@ -20,10 +20,13 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { CssFactory } from './css.factory';
 import { FetchImageRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
+import { IframeHtmlFactory } from '../../common/factory/iframe-html.factory';
+import { ObjIframeSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { UrlFactory } from '../../common/factory/url.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -56,6 +59,16 @@ export class HtmlFactory {
     const videoTime: ContentVideoTime[] = [];
     // fnConsoleLog(tagName, ref);
     if (tagName === 'script') return { html: '', videoTime: [] };
+
+    // IFRAME POC
+    // TODO add iframe attributes and save as iframe and iframe content save separately
+    if (tagName === 'iframe') {
+      const url = UrlFactory.normalizeHref((ref as HTMLIFrameElement).src);
+      const result = await this.fetchIframe(url);
+      const html = IframeHtmlFactory.computeHtml(result.css, result.html);
+      return { html, videoTime: [] };
+    }
+
     if (tagName === 'video') {
       // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
       videoTime.push({
@@ -249,6 +262,30 @@ export class HtmlFactory {
       parent = parent.parentElement;
     }
     return data;
+  };
+
+  private static fetchIframe = (url: string): Promise<ObjIframeSnapshotDto> => {
+    return new Promise<ObjIframeSnapshotDto>((resolve, reject) => {
+      TinyEventDispatcher.addListener<ObjIframeSnapshotDto>(
+        BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
+        (event, key, value) => {
+          if (value.url === url) {
+            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, key);
+            resolve(value);
+          }
+        }
+      );
+      BrowserApi.sendRuntimeMessage<FetchImageRequest>({
+        type: BusMessageType.CONTENT_FETCH_IFRAME,
+        data: { url }
+      })
+        .then(() => {
+          /* SKIP */
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
   };
 
   private static fetchImage = (url: string): Promise<FetchResponse<string>> => {

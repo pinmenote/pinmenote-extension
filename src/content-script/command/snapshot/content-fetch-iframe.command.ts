@@ -14,22 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoolDto, ICommand } from '../../../common/model/shared/common.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { CssFactory } from '../../factory/css.factory';
+import { HtmlFactory } from '../../factory/html.factory';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjIframeSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class PopupSyncDataCommand implements ICommand<void> {
+export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
+  constructor(private data: { url: string }, private href?: string) {}
+
   async execute(): Promise<void> {
-    try {
-      await BrowserApi.sendRuntimeMessage<BoolDto>({
-        type: BusMessageType.POPUP_SYNC_DATA,
-        data: {
-          value: true
-        }
-      });
-    } catch (e) {
-      fnConsoleLog('Error', e);
+    if (this.href !== this.data.url) {
+      fnConsoleLog('SKIP', this.href, this.data.url);
+      return;
     }
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body);
+    const css = await CssFactory.computeCssContent();
+    const dto: ObjIframeSnapshotDto = {
+      url: this.data.url,
+      html: htmlContent.html,
+      css
+    };
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_FETCH_IFRAME_RESULT, data: dto });
   }
 }

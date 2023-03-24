@@ -14,22 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoolDto, ICommand } from '../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../api/api-helper';
-import { FetchService } from '../../service/fetch.service';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class ApiStoreCreateCommand implements ICommand<Promise<BoolDto>> {
-  async execute(): Promise<BoolDto> {
-    const authHeaders = await ApiHelper.getAuthHeaders();
-    const storeUrl = await ApiHelper.getStoreUrl();
-
-    const url = `${storeUrl}/api/v1/store/obj/create`;
-
-    const resp = await FetchService.post<BoolDto>(url, {}, authHeaders);
-
-    fnConsoleLog('ApiStoreCreateCommand->execute', resp);
-
-    return resp;
+export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
+  constructor(private data: string) {}
+  async execute(): Promise<void> {
+    fnConsoleLog('ContentFetchIframeCommand->execute', this.data);
+    await BrowserApi.sendTabMessage<string>({ type: BusMessageType.CONTENT_FETCH_IFRAME, data: this.data });
   }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@ import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentTakeScreenshotCommand implements ICommand<void> {
+  constructor(private url: string) {}
   async execute(): Promise<void> {
     try {
+      fnConsoleLog('ContentTakeScreenshotCommand->execute', this.url);
       const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
       const data = await BrowserApi.tabs.captureVisibleTab({
         format: settings.screenshotFormat,

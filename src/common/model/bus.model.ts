@@ -64,6 +64,8 @@ export enum BusMessageType {
   CONTENT_INVALIDATE = 'content.invalidate',
   CONTENT_FETCH_CSS = 'content.fetch.css',
   CONTENT_FETCH_IMAGE = 'content.fetch.image',
+  CONTENT_FETCH_IFRAME = 'content.fetch.iframe',
+  CONTENT_FETCH_IFRAME_RESULT = 'content.fetch.iframe.result',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
