@@ -33,8 +33,11 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
       fnConsoleLog('SKIP', this.href, this.url.href);
       return;
     }
+    fnConsoleLog('START');
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body);
+    fnConsoleLog('HTML DONE');
     const css = await CssFactory.computeCssContent();
+    fnConsoleLog('CSS DONE');
     const screenshot = await ScreenshotFactory.takeScreenshot(undefined, this.url);
     const dto: ObjSnapshotDto = {
       title: document.title,

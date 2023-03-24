@@ -54,7 +54,10 @@ export class HtmlFactory {
   }
 
   static computeIframe = async (ref: Element): Promise<HtmlIntermediateData> => {
-    const url = UrlFactory.normalizeHref((ref as HTMLIFrameElement).src);
+    const src = (ref as HTMLIFrameElement).src;
+    fnConsoleLog('URL', src);
+    if (!src) throw new Error('Invalid url');
+    const url = UrlFactory.normalizeHref(src);
     const html = await this.fetchIframe(url);
     const uid = fnUid();
     const width = ref.getAttribute('width') || '100%';
@@ -78,7 +81,12 @@ export class HtmlFactory {
     // IFRAME POC
     // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
-      return this.computeIframe(ref);
+      try {
+        fnConsoleLog('COMPUTE IFRAME');
+        return await this.computeIframe(ref);
+      } catch (e) {
+        fnConsoleLog('COMPUTE IFRAME PROBLEM', e);
+      }
     }
 
     if (tagName === 'video') {
@@ -285,10 +293,14 @@ export class HtmlFactory {
         (event, key, value) => {
           if (value.url === url) {
             TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, key);
+            clearTimeout(iframeTimeout);
             resolve(value);
           }
         }
       );
+      const iframeTimeout = setTimeout(() => {
+        reject('Iframe timeout');
+      }, 10000);
       BrowserApi.sendRuntimeMessage<FetchImageRequest>({
         type: BusMessageType.CONTENT_FETCH_IFRAME,
         data: { url }
