@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiLoginCommand } from '../api/api-login.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchResponse } from '../../../common/model/api.model';
-import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class PopupLoginCommand implements ICommand<void> {
@@ -30,7 +30,7 @@ export class PopupLoginCommand implements ICommand<void> {
 
     const data = await new ApiLoginCommand(this.data).execute();
 
-    await BrowserApi.sendRuntimeMessage<FetchResponse<AccessTokenDto>>({
+    await BrowserApi.sendRuntimeMessage<FetchResponse<AccessTokenDto | ServerErrorDto>>({
       type: BusMessageType.POPUP_LOGIN,
       data
     });

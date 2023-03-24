@@ -20,6 +20,7 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
@@ -29,6 +30,7 @@ export class CssFactory {
     let css = '';
     const href: CssHrefDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
+    fnConsoleLog('CssFactory->computeCssContent');
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
       if (s.href) {
@@ -81,9 +83,10 @@ export class CssFactory {
   };
 
   private static fetchCss(url: string): Promise<FetchResponse<string>> {
-    // fnConsoleLog('CssFactory->fetchCss', url);
+    fnConsoleLog('CssFactory->fetchCss', url);
     return new Promise<FetchResponse<string>>((resolve, reject) => {
       TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
+        fnConsoleLog('fetchCss->CONTENT_FETCH_CSS', value);
         if (value.url === url) {
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
           resolve(value);

@@ -26,12 +26,26 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}
   async execute(): Promise<void> {
-    const blob = await FetchService.get<Blob>(this.req.url, ResponseType.BLOB);
-    const data = await UrlFactory.toDataUri(blob.res);
-    fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, blob);
-    await BrowserApi.sendTabMessage<FetchResponse<string>>({
-      type: BusMessageType.CONTENT_FETCH_IMAGE,
-      data: { ...blob, res: data }
-    });
+    fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
+    try {
+      const blob = await FetchService.get<Blob>(this.req.url, ResponseType.BLOB);
+      const data = await UrlFactory.toDataUri(blob.res);
+      await BrowserApi.sendTabMessage<FetchResponse<string>>({
+        type: BusMessageType.CONTENT_FETCH_IMAGE,
+        data: { ...blob, res: data }
+      });
+    } catch (e) {
+      fnConsoleLog('ERROR', e);
+      await BrowserApi.sendTabMessage<FetchResponse<string>>({
+        type: BusMessageType.CONTENT_FETCH_IMAGE,
+        data: {
+          url: this.req.url,
+          ok: false,
+          status: 500,
+          type: ResponseType.BLOB,
+          res: ''
+        }
+      });
+    }
   }
 }

@@ -15,20 +15,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
+import { FetchResponse, ResponseType } from '../../../common/model/api.model';
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiHelper } from '../../api/api-helper';
-import { FetchResponse } from '../../../common/model/api.model';
 import { FetchService } from '../../service/fetch.service';
-import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class ApiLoginCommand implements ICommand<Promise<FetchResponse<AccessTokenDto>>> {
+export class ApiLoginCommand implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>> {
   constructor(private data: LoginDto) {}
 
-  async execute(): Promise<FetchResponse<AccessTokenDto>> {
-    const data = await FetchService.post<AccessTokenDto>(`${ApiHelper.apiUrl}/api/v1/auth/login`, this.data);
-
-    fnConsoleLog('ApiLoginCommand->execute', data);
-
-    return data;
+  async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
+    fnConsoleLog('ApiLoginCommand->execute', this.data);
+    const url = `${ApiHelper.apiUrl}/api/v1/auth/login`;
+    try {
+      const data = await FetchService.post<AccessTokenDto>(`${ApiHelper.apiUrl}/api/v1/auth/login`, this.data);
+      return data;
+    } catch (e) {
+      return {
+        ok: false,
+        url,
+        status: 500,
+        type: ResponseType.JSON,
+        res: { message: 'Send request problem' }
+      };
+    }
   }
 }

@@ -58,16 +58,25 @@ export class HtmlFactory {
     fnConsoleLog('URL', src);
     if (!src) throw new Error('Invalid url');
     const url = UrlFactory.normalizeHref(src);
-    const html = await this.fetchIframe(url);
-    const uid = fnUid();
-    const width = ref.getAttribute('width') || '100%';
-    const height = ref.getAttribute('width') || '100%';
-    const style = ref.getAttribute('style') || '';
-    const clazz = ref.getAttribute('class') || '';
+    try {
+      const html = await this.fetchIframe(url);
+      const uid = fnUid();
+      const width = ref.getAttribute('width') || '100%';
+      const height = ref.getAttribute('width') || '100%';
+      const style = ref.getAttribute('style') || '';
+      const clazz = ref.getAttribute('class') || '';
+      return {
+        html: `<iframe width="${width}" height="${height}" style="${style}" class="${clazz}" id="${uid}"></iframe>`,
+        videoTime: [],
+        iframe: [{ uid, html }]
+      };
+    } catch (e) {
+      fnConsoleLog('Error', e);
+    }
     return {
-      html: `<iframe width="${width}" height="${height}" style="${style}" class="${clazz}" id="${uid}"></iframe>`,
+      html: '',
       videoTime: [],
-      iframe: [{ uid, html }]
+      iframe: []
     };
   };
 
@@ -306,7 +315,7 @@ export class HtmlFactory {
       const iframeTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${url}`);
-      }, 10000);
+      }, 5000);
       BrowserApi.sendRuntimeMessage<FetchImageRequest>({
         type: BusMessageType.CONTENT_FETCH_IFRAME,
         data: { url }

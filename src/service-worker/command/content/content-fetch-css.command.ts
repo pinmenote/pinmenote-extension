@@ -20,12 +20,27 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchCssRequest } from '../../../common/model/obj-request.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}
   async execute(): Promise<void> {
-    const data = await FetchService.get<string>(this.req.url, ResponseType.TEXT);
-    // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url, data);
-    await BrowserApi.sendTabMessage<FetchResponse<string>>({ type: BusMessageType.CONTENT_FETCH_CSS, data });
+    fnConsoleLog('ContentFetchCssCommand->execute', this.req.url);
+    try {
+      const data = await FetchService.get<string>(this.req.url, ResponseType.TEXT);
+      await BrowserApi.sendTabMessage<FetchResponse<string>>({ type: BusMessageType.CONTENT_FETCH_CSS, data });
+    } catch (e) {
+      fnConsoleLog('ERROR', e);
+      await BrowserApi.sendTabMessage<FetchResponse<string>>({
+        type: BusMessageType.CONTENT_FETCH_CSS,
+        data: {
+          url: this.req.url,
+          ok: false,
+          status: 500,
+          type: ResponseType.TEXT,
+          res: ''
+        }
+      });
+    }
   }
 }
