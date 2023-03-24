@@ -54,20 +54,22 @@ export class HtmlFactory {
   }
 
   static computeIframe = async (ref: Element, isIframe: boolean): Promise<HtmlIntermediateData> => {
+    const emptyResult = {
+      html: '',
+      videoTime: [],
+      iframe: []
+    };
     // Skip iframe inside iframe
-    if (isIframe)
-      return {
-        html: '',
-        videoTime: [],
-        iframe: []
-      };
+    if (isIframe) return emptyResult;
 
     const src = (ref as HTMLIFrameElement).src;
-    fnConsoleLog('URL', src);
+    fnConsoleLog('computeIframe->URL', src);
     if (!src) throw new Error('Invalid url');
     const url = UrlFactory.normalizeHref(src);
+
     try {
       const html = await this.fetchIframe(url);
+      if (!html.ok) return emptyResult;
       const uid = fnUid();
       const width = ref.getAttribute('width') || '100%';
       const height = ref.getAttribute('width') || '100%';
@@ -79,13 +81,9 @@ export class HtmlFactory {
         iframe: [{ uid, html }]
       };
     } catch (e) {
-      fnConsoleLog('Error', e);
+      fnConsoleLog('computeIframe->Error', e);
     }
-    return {
-      html: '',
-      videoTime: [],
-      iframe: []
-    };
+    return emptyResult;
   };
 
   static computeHtmlIntermediateData = async (ref: Element, isIframe = false): Promise<HtmlIntermediateData> => {

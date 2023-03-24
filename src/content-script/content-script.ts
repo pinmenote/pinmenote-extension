@@ -48,7 +48,7 @@ class PinMeScript {
 
     ContentMessageHandler.start(this.href);
 
-    fnConsoleLog('PinMeScript->constructor', this.href, window.location.href);
+    fnConsoleLog('PinMeScript->constructor', this.href);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
@@ -103,7 +103,7 @@ class PinMeScript {
       await BrowserStorageWrapper.get('foo');
       return true;
     } catch (e) {
-      fnConsoleLog('PinMeScript->invalidateContentScript', this.id, e);
+      fnConsoleLog('PinMeScript->Error', this.id, e);
       this.cleanup();
     }
     return false;
@@ -134,7 +134,6 @@ class PinMeScript {
 }
 try {
   new PinMeScript(fnUid(), 250);
-  fnConsoleLog('PinMeScript->STARTED !!!');
 } catch (e: unknown) {
   fnConsoleError('PinMeScript->PROBLEM !!!', e);
 }

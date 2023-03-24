@@ -14,16 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto } from './obj-pin.dto';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../common/model/bus.model';
+import { ICommand } from '../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 
-export interface ObjIframeContentDto {
-  ok: boolean;
-  url: string;
-  html: string;
-  css: CssDataDto;
-}
-
-export interface ObjIframeDataDto {
-  uid: string;
-  html: ObjIframeContentDto;
+export class ContentPingUrlCommand implements ICommand<Promise<void>> {
+  constructor(private data: { url: string }, private href?: string) {}
+  async execute(): Promise<void> {
+    if (this.data.url === this.href) {
+      fnConsoleLog('ContentPingCommand->execute->OK!!!', this.href);
+      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_PING_URL, data: this.data });
+    }
+  }
 }

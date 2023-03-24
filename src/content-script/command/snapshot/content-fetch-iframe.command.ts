@@ -34,6 +34,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body, true);
     const css = await CssFactory.computeCssContent();
     const dto: ObjIframeContentDto = {
+      ok: true,
       url: this.data.url,
       html: htmlContent.html,
       css

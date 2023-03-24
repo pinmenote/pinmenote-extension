@@ -23,6 +23,7 @@ import { ContentFetchIframeResultCommand } from './command/content/content-fetch
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
+import { ContentPingCommand } from './command/content/content-ping.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
@@ -58,6 +59,9 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_INVALIDATE:
       await new ContentInvalidateCommand().execute();
+      break;
+    case BusMessageType.CONTENT_PING_URL:
+      new ContentPingCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_PIN_STOP:
       await new ContentPinStopCommand().execute();

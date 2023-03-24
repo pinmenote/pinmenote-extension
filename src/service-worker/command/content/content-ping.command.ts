@@ -14,16 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto } from './obj-pin.dto';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { PingStore } from '../../ping.store';
 
-export interface ObjIframeContentDto {
-  ok: boolean;
-  url: string;
-  html: string;
-  css: CssDataDto;
-}
-
-export interface ObjIframeDataDto {
-  uid: string;
-  html: ObjIframeContentDto;
+export class ContentPingCommand implements ICommand<void> {
+  constructor(private data: { url: string }) {}
+  execute(): void {
+    PingStore.success(this.data.url);
+  }
 }

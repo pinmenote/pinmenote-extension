@@ -14,16 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto } from './obj-pin.dto';
+export class PingStore {
+  private static data: { [key: string]: () => void } = {};
 
-export interface ObjIframeContentDto {
-  ok: boolean;
-  url: string;
-  html: string;
-  css: CssDataDto;
-}
+  static register(url: string, successHandler: () => void): void {
+    this.data[url] = successHandler;
+  }
 
-export interface ObjIframeDataDto {
-  uid: string;
-  html: ObjIframeContentDto;
+  static success(url: string) {
+    if (url in this.data) {
+      this.data[url]();
+    }
+  }
+
+  static remove(url: string): void {
+    delete this.data[url];
+  }
 }
