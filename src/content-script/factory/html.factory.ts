@@ -117,7 +117,11 @@ export class HtmlFactory {
         hrefFilled = true;
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
-      } else if (attr.name === 'src' && tagName !== 'img') {
+      } else if (attr.name === 'srcset' && tagName === 'img') {
+        // skip image
+      } else if (attr.name === 'src') {
+        //  skip image
+        if (tagName === 'img') continue;
         const url = this.computeUrl(attrValue);
         html += `src="${url}" `;
       } else if (attr.name === 'data-iframe') {
@@ -229,6 +233,7 @@ export class HtmlFactory {
     value = value.replaceAll('"', '&quot;');
 
     const url = this.computeUrl(value);
+
     const imageData = await this.fetchImage(url);
     if (imageData.ok) {
       return imageData.res;
