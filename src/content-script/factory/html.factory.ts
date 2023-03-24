@@ -53,7 +53,15 @@ export class HtmlFactory {
     };
   }
 
-  static computeIframe = async (ref: Element): Promise<HtmlIntermediateData> => {
+  static computeIframe = async (ref: Element, isIframe: boolean): Promise<HtmlIntermediateData> => {
+    // Skip iframe inside iframe
+    if (isIframe)
+      return {
+        html: '',
+        videoTime: [],
+        iframe: []
+      };
+
     const src = (ref as HTMLIFrameElement).src;
     fnConsoleLog('URL', src);
     if (!src) throw new Error('Invalid url');
@@ -80,7 +88,7 @@ export class HtmlFactory {
     };
   };
 
-  static computeHtmlIntermediateData = async (ref: Element): Promise<HtmlIntermediateData> => {
+  static computeHtmlIntermediateData = async (ref: Element, isIframe = false): Promise<HtmlIntermediateData> => {
     const tagName = ref.tagName.toLowerCase();
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
@@ -92,7 +100,7 @@ export class HtmlFactory {
     if (tagName === 'iframe') {
       try {
         fnConsoleLog('COMPUTE IFRAME');
-        return await this.computeIframe(ref);
+        return await this.computeIframe(ref, isIframe);
       } catch (e) {
         fnConsoleLog('COMPUTE IFRAME PROBLEM', e);
       }
@@ -165,7 +173,7 @@ export class HtmlFactory {
         txt = txt.replace('<', '&lt').replace('>', '&gt;');
         html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const computed = await this.computeHtmlIntermediateData(node as Element);
+        const computed = await this.computeHtmlIntermediateData(node as Element, isIframe);
         html += computed.html;
         videoTime.push(...computed.videoTime);
         iframe.push(...computed.iframe);
@@ -181,7 +189,7 @@ export class HtmlFactory {
       const children = Array.from(ref.contentDocument.childNodes);
       for (const node of children) {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          const computed = await this.computeHtmlIntermediateData(node as Element);
+          const computed = await this.computeHtmlIntermediateData(node as Element, isIframe);
           html += computed.html;
         }
       }
@@ -315,7 +323,7 @@ export class HtmlFactory {
       const iframeTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${url}`);
-      }, 5000);
+      }, 10000);
       BrowserApi.sendRuntimeMessage<FetchImageRequest>({
         type: BusMessageType.CONTENT_FETCH_IFRAME,
         data: { url }

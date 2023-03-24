@@ -27,10 +27,11 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
 
   async execute(): Promise<void> {
     if (this.href !== this.data.url) {
-      fnConsoleLog('SKIP', this.href, this.data.url);
+      // fnConsoleLog('SKIP', this.href, this.data.url);
       return;
     }
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body);
+    fnConsoleLog('ContentFetchIframeCommand->execute', this.href);
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body, true);
     const css = await CssFactory.computeCssContent();
     const dto: ObjIframeContentDto = {
       url: this.data.url,

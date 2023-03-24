@@ -34,9 +34,10 @@ export class DocumentMediator {
 
   static startListeners(data: PopupPinStartRequest, href?: string): void {
     if (href !== data.url.href) {
-      fnConsoleLog('SKIP', href);
+      // fnConsoleLog('SKIP', href);
       return;
     }
+    fnConsoleLog('DocumentMediator->startListeners', href);
     this.type = data.type;
     const canvasList = Array.from(document.getElementsByTagName('canvas'));
     let canvasFound = false;
