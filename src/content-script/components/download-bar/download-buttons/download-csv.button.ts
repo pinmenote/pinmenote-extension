@@ -46,10 +46,12 @@ export class DownloadCsvButton {
   }
 
   visible(): boolean {
+    const parent = this.parent.ref.parentElement;
     return (
       this.parent.ref.tagName === 'TABLE' ||
       this.parent.ref.getElementsByTagName('table').length > 0 ||
-      document.getElementsByClassName(this.parent.ref.className).length > 1
+      document.getElementsByClassName(this.parent.ref.className).length > 1 ||
+      (!!parent && parent.getElementsByTagName(this.parent.ref.tagName).length > 0)
     );
   }
 
@@ -68,9 +70,24 @@ export class DownloadCsvButton {
       await this.downloadTable(table);
     } else if (this.parent.ref.tagName === 'TABLE') {
       await this.downloadTable(this.parent.ref as HTMLTableElement);
-    } else {
+    } else if (document.getElementsByClassName(this.parent.ref.className).length > 1) {
       await this.downloadSameClass(this.parent.ref);
+    } else {
+      const parent = this.parent.ref.parentElement;
+      if (!!parent && parent.getElementsByTagName(this.parent.ref.tagName).length > 0) {
+        await this.downloadSameTag(parent, this.parent.ref.tagName);
+      }
     }
+  };
+
+  private downloadSameTag = async (element: HTMLElement, tagName: string): Promise<void> => {
+    const refList = Array.from(element.getElementsByTagName(tagName));
+    const data: string[][] = [];
+    for (const ref of refList) {
+      const row = this.refStringList(ref as HTMLElement);
+      data.push(row);
+    }
+    await this.downloadCsv(data);
   };
 
   private downloadSameClass = async (element: HTMLElement): Promise<void> => {
