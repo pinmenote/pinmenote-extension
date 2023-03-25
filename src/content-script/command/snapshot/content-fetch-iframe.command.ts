@@ -24,19 +24,16 @@ import { ObjIframeContentDto } from '../../../common/model/obj/obj-iframe.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
-  constructor(private data: FetchIframeRequest, private href?: string) {}
+  constructor(private data: FetchIframeRequest, private href: string) {}
 
   async execute(): Promise<void> {
-    if (this.href !== this.data.url) {
-      // fnConsoleLog('SKIP', this.href, this.data.url);
-      return;
-    }
-    fnConsoleLog('ContentFetchIframeCommand->execute', this.href);
+    fnConsoleLog('ContentFetchIframeCommand->execute', this.data);
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body, this.data.depth + 1);
     const css = await CssFactory.computeCssContent();
     const dto: ObjIframeContentDto = {
       ok: true,
-      url: this.data.url,
+      id: this.data.id,
+      url: this.href,
       html: htmlContent.html,
       css
     };

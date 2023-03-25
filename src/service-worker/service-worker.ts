@@ -18,12 +18,10 @@ import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
-import { ContentFetchIframeCommand } from './command/content/content-fetch-iframe.command';
 import { ContentFetchIframeResultCommand } from './command/content/content-fetch-iframe-result.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
-import { ContentPingCommand } from './command/content/content-ping.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
@@ -60,9 +58,6 @@ const handleMessage = async (
     case BusMessageType.CONTENT_INVALIDATE:
       await new ContentInvalidateCommand().execute();
       break;
-    case BusMessageType.CONTENT_PING_URL:
-      new ContentPingCommand(msg.data).execute();
-      break;
     case BusMessageType.CONTENT_PIN_STOP:
       await new ContentPinStopCommand().execute();
       break;
@@ -71,9 +66,6 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data).execute();
-      break;
-    case BusMessageType.CONTENT_FETCH_IFRAME:
-      await new ContentFetchIframeCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_FETCH_IFRAME_RESULT:
       await new ContentFetchIframeResultCommand(msg.data).execute();

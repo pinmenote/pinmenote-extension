@@ -28,6 +28,7 @@ import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../common/model/bus.model';
+import { ContentFetchIframeCommand } from './command/snapshot/content-fetch-iframe.command';
 import { ContentMessageHandler } from './content-message.handler';
 import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
@@ -44,7 +45,17 @@ class PinMeScript {
 
   constructor(private readonly id: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
-
+    window.addEventListener('message', async (e) => {
+      // TODO RECEIVE
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.foo === 'bar') {
+          await new ContentFetchIframeCommand(msg, this.href).execute();
+        }
+      } catch (e) {
+        /* IGNORE */
+      }
+    });
     ContentMessageHandler.start(this.href);
 
     fnConsoleLog('PinMeScript->constructor', this.href, 'referrer', document.referrer);

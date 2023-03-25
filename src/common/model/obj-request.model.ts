@@ -47,7 +47,7 @@ export interface FetchImageRequest {
 }
 
 export interface FetchIframeRequest {
-  url: string;
+  id: string;
   depth: number;
 }
 

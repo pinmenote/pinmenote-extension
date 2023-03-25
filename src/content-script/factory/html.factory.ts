@@ -15,18 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
-import { FetchIframeRequest, FetchImageRequest } from '../../common/model/obj-request.model';
 import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { CssFactory } from './css.factory';
+import { FetchImageRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
-import { UrlFactory } from '../../common/factory/url.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -77,18 +76,13 @@ export class HtmlFactory {
     };
   };
 
-  static computeIframe = async (ref: Element, depth: number): Promise<HtmlIntermediateData> => {
+  static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
     // Skip iframe->iframe->skip
     if (depth > 3) return this.EMPTY_RESULT;
-
-    const src = (ref as HTMLIFrameElement).src;
-    fnConsoleLog('HtmlFactory->computeIframe->URL', src);
-    if (!src) throw new Error('Invalid url');
-
     try {
-      const url = UrlFactory.normalizeHref(src);
-      const html = await this.fetchIframe(url, depth);
+      const html = await this.fetchIframe(ref, depth);
       if (!html.ok) return this.EMPTY_RESULT;
+      fnConsoleLog('IFRAME !!!', ref.id, html);
       const uid = fnUid();
       const width = ref.getAttribute('width') || '100%';
       const height = ref.getAttribute('width') || '100%';
@@ -115,7 +109,7 @@ export class HtmlFactory {
     // IFRAME POC
     // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
-      return await this.computeIframe(ref, depth);
+      return await this.computeIframe(ref as HTMLIFrameElement, depth);
     }
 
     if (tagName === 'canvas') {
@@ -329,32 +323,25 @@ export class HtmlFactory {
     return data;
   };
 
-  private static fetchIframe = (url: string, depth: number): Promise<ObjIframeContentDto> => {
+  private static fetchIframe = (ref: HTMLIFrameElement, depth: number): Promise<ObjIframeContentDto> => {
     return new Promise<ObjIframeContentDto>((resolve, reject) => {
+      if (!ref.contentWindow) return HtmlFactory.EMPTY_RESULT;
       const eventKey = TinyEventDispatcher.addListener<ObjIframeContentDto>(
         BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
         (event, key, value) => {
-          if (value.url === url) {
-            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
+          if (value.id === ref.id) {
+            fnConsoleLog('HtmlFactory->fetchIframe->result', ref.id, value.url, value);
             clearTimeout(iframeTimeout);
+            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
             resolve(value);
           }
         }
       );
+      ref.contentWindow.postMessage(`{"foo":"bar", "depth":${depth}, "id":"${ref.id}"}`, '*');
       const iframeTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
-        reject(`Iframe timeout ${url}`);
+        reject(`Iframe timeout ${ref.id}`);
       }, 10000);
-      BrowserApi.sendRuntimeMessage<FetchIframeRequest>({
-        type: BusMessageType.CONTENT_FETCH_IFRAME,
-        data: { url, depth }
-      })
-        .then(() => {
-          /* SKIP */
-        })
-        .catch((e) => {
-          reject(e);
-        });
     });
   };
 

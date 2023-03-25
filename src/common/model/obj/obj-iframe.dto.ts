@@ -17,6 +17,7 @@
 import { CssDataDto } from './obj-pin.dto';
 
 export interface ObjIframeContentDto {
+  id: string;
   ok: boolean;
   url: string;
   html: string;
