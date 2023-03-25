@@ -1,0 +1,3 @@
+[submodule "src/vendor/mathml-to-latex"]
+	path = src/vendor/mathml-to-latex
+	url = git@github.com:vane/mathml-to-latex.git

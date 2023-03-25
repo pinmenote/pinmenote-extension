@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../../common/model/html.model';
-import MathMLToLaTeX from 'mathml-to-latex';
+import MathMLToLaTeX from '../../../../vendor/mathml-to-latex/src/index';
 import { PinComponent } from '../../pin.component';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
