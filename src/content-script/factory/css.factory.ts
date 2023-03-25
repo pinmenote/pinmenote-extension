@@ -34,15 +34,16 @@ const IMPORT_REG = new RegExp(
 
 export class CssFactory {
   static computeCssContent = async (): Promise<CssDataDto> => {
-    // TODO fetch missing data from css tags key: url(relative/path)
     let css = '';
     const href: CssHrefDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
     fnConsoleLog('CssFactory->computeCssContent');
+
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
       if (s.href) {
         const cssFetchData = await this.fetchCss(s.href);
+
         if (cssFetchData.ok) {
           const imports = await this.fetchImports(cssFetchData.res, s.href);
           href.push(...imports);
@@ -62,7 +63,6 @@ export class CssFactory {
             data: undefined
           });
         }
-        // fnConsoleLog('CssFactory->computeCssContent', s.href, s);
       } else {
         css += await this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], href);
       }
@@ -82,15 +82,13 @@ export class CssFactory {
     let output = '';
     for (const r of cssRules) {
       if (r.href) {
-        let href = r.href;
-        if (!href.startsWith('http')) href = location.protocol + href;
+        const href = fnComputeUrl(r.href);
         const cssFetchData = await this.fetchCss(href);
         hrefList.push({
           href,
           media: r.parentStyleSheet ? r.parentStyleSheet.media.mediaText : r.styleSheet.media.mediaText,
           data: cssFetchData.ok ? cssFetchData.res : undefined
         });
-        // fnConsoleLog('CssFactory->computeSelectorRules->href', r);
       } else if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
         output += `@media ${r.conditionText} {
@@ -111,13 +109,16 @@ export class CssFactory {
   private static fetchImports = async (css: string, baseUrl?: string): Promise<CssHrefDto[]> => {
     const importList = css.match(IMPORT_REG);
     if (!importList) return [];
+
     const out = [];
+
     for (const importUrl of importList) {
       let url = importUrl.split(' ')[1];
       url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
       if (baseUrl) {
         const tmp = baseUrl.split('/');
         const startUrl = tmp.slice(0, tmp.length - 1).join('/');
+
         if (url.startsWith('/') && startUrl.endsWith('/')) {
           url = startUrl.substring(0, startUrl.length - 1) + url;
         } else if (url.startsWith('/') || startUrl.endsWith('/')) {
@@ -128,6 +129,7 @@ export class CssFactory {
       }
       url = fnComputeUrl(url);
       const result = await this.fetchCss(url);
+
       if (result.ok) {
         // Now fetch urls to save offline
         const data = await this.fetchUrls(result.res);
@@ -146,10 +148,12 @@ export class CssFactory {
   private static fetchUrls = async (css: string): Promise<string> => {
     const urlList = css.match(URL_REG);
     if (!urlList) return css;
+
     for (const urlMatch of urlList) {
       let url = urlMatch.substring(5, urlMatch.length - 2);
       url = fnComputeUrl(url);
       const result = await fnFetchImage(url);
+
       if (result.ok) {
         const newUrl = `url(${result.res})`;
         css = css.replace(urlMatch, newUrl);
@@ -164,7 +168,7 @@ export class CssFactory {
     fnConsoleLog('CssFactory->fetchCss', url);
     return new Promise<FetchResponse<string>>((resolve, reject) => {
       TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
-        fnConsoleLog('fetchCss->CONTENT_FETCH_CSS', value);
+        fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
         if (value.url === url) {
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
           resolve(value);
