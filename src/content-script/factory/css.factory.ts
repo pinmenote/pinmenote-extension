@@ -20,9 +20,17 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { fnComputeUrl } from '../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
+
+const URL_REG = new RegExp('url\\(["\'].*["\']\\)', 'g');
+const IMPORT_REG = new RegExp(
+  '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
+  'gi'
+);
 
 export class CssFactory {
   static computeCssContent = async (): Promise<CssDataDto> => {
@@ -35,17 +43,35 @@ export class CssFactory {
       const s = styleSheets[i];
       if (s.href) {
         const cssFetchData = await this.fetchCss(s.href);
-        href.push({
-          href: s.href,
-          media: s.media.mediaText,
-          data: cssFetchData.ok ? cssFetchData.res : undefined
-        });
+        if (cssFetchData.ok) {
+          const imports = await this.fetchImports(cssFetchData.res, s.href);
+          href.push(...imports);
+
+          let data = cssFetchData.res.replaceAll(IMPORT_REG, '').trim();
+          data = await this.fetchUrls(data);
+
+          href.push({
+            href: s.href,
+            media: s.media.mediaText,
+            data
+          });
+        } else {
+          href.push({
+            href: s.href,
+            media: s.media.mediaText,
+            data: undefined
+          });
+        }
         // fnConsoleLog('CssFactory->computeCssContent', s.href, s);
       } else {
         css += await this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], href);
       }
     }
-    // fnConsoleLog('CssFactory->computeCssContent', href);
+    const imports = await this.fetchImports(css);
+    href.push(...imports);
+
+    css = css.replaceAll(IMPORT_REG, '').trim();
+    css = await this.fetchUrls(css);
     return {
       href,
       css
@@ -80,6 +106,58 @@ export class CssFactory {
       }
     }
     return output;
+  };
+
+  private static fetchImports = async (css: string, baseUrl?: string): Promise<CssHrefDto[]> => {
+    const importList = css.match(IMPORT_REG);
+    if (!importList) return [];
+    const out = [];
+    for (const importUrl of importList) {
+      let url = importUrl.split(' ')[1];
+      url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
+      if (baseUrl) {
+        const tmp = baseUrl.split('/');
+        const startUrl = tmp.slice(0, tmp.length - 1).join('/');
+        if (url.startsWith('/') && startUrl.endsWith('/')) {
+          url = startUrl.substring(0, startUrl.length - 1) + url;
+        } else if (url.startsWith('/') || startUrl.endsWith('/')) {
+          url = startUrl + url;
+        } else {
+          url = startUrl + '/' + url;
+        }
+      }
+      url = fnComputeUrl(url);
+      const result = await this.fetchCss(url);
+      if (result.ok) {
+        // Now fetch urls to save offline
+        const data = await this.fetchUrls(result.res);
+        out.push({
+          href: result.url,
+          media: '',
+          data
+        });
+      } else {
+        fnConsoleLog('CssFactory->fetchImports->ERROR !!!', result);
+      }
+    }
+    return out;
+  };
+
+  private static fetchUrls = async (css: string): Promise<string> => {
+    const urlList = css.match(URL_REG);
+    if (!urlList) return css;
+    for (const urlMatch of urlList) {
+      let url = urlMatch.substring(5, urlMatch.length - 2);
+      url = fnComputeUrl(url);
+      const result = await fnFetchImage(url);
+      if (result.ok) {
+        const newUrl = `url(${result.res})`;
+        css = css.replace(urlMatch, newUrl);
+      } else {
+        fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result);
+      }
+    }
+    return css;
   };
 
   private static fetchCss(url: string): Promise<FetchResponse<string>> {

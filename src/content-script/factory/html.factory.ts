@@ -16,19 +16,18 @@
  */
 import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
 import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
-import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { CssFactory } from './css.factory';
-import { FetchImageRequest } from '../../common/model/obj-request.model';
-import { FetchResponse } from '../../common/model/api.model';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
+import { fnComputeUrl } from '../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 import { fnUid } from '../../common/fn/uid.fn';
 
 export class HtmlFactory {
@@ -143,7 +142,7 @@ export class HtmlFactory {
 
       if (attr.name === 'href' && !hrefFilled) {
         // HREF
-        const url = this.computeUrl(attrValue);
+        const url = fnComputeUrl(attrValue);
         html += `href="${url}" `;
         html += `target="_blank" `;
         hrefFilled = true;
@@ -154,7 +153,7 @@ export class HtmlFactory {
       } else if (attr.name === 'src') {
         //  skip image
         if (tagName === 'img') continue;
-        const url = this.computeUrl(attrValue);
+        const url = fnComputeUrl(attrValue);
         html += `src="${url}" `;
       } else if (attr.name === 'data-iframe') {
         if (tagName === 'a' && !hrefFilled) {
@@ -229,8 +228,8 @@ export class HtmlFactory {
     // data-src
     if (ref.getAttribute('data-src')) {
       value = ref.getAttribute('data-src') || '';
-      const url = this.computeUrl(value);
-      const imageData = await this.fetchImage(url);
+      const url = fnComputeUrl(value);
+      const imageData = await fnFetchImage(url);
       if (imageData.ok) {
         return imageData.res;
       }
@@ -239,8 +238,8 @@ export class HtmlFactory {
     // data-pin-media - maybe merge with data-src
     if (ref.getAttribute('data-pin-media')) {
       value = ref.getAttribute('data-pin-media') || '';
-      const url = this.computeUrl(value);
-      const imageData = await this.fetchImage(url);
+      const url = fnComputeUrl(value);
+      const imageData = await fnFetchImage(url);
       if (imageData.ok) {
         return imageData.res;
       }
@@ -252,9 +251,9 @@ export class HtmlFactory {
       const srcset = (ref.getAttribute('srcset') || '').split(',');
       // last value so it's biggest image
       value = srcset[srcset.length - 1].trim().split(' ')[0];
-      const url = this.computeUrl(value);
+      const url = fnComputeUrl(value);
       if (url.startsWith('http')) {
-        const imageData = await this.fetchImage(url);
+        const imageData = await fnFetchImage(url);
         if (imageData.ok) {
           return imageData.res;
         }
@@ -264,39 +263,14 @@ export class HtmlFactory {
     value = ref.getAttribute('src') || '';
     value = value.replaceAll('"', '&quot;');
 
-    const url = this.computeUrl(value);
+    const url = fnComputeUrl(value);
 
-    const imageData = await this.fetchImage(url);
+    const imageData = await fnFetchImage(url);
     if (imageData.ok) {
       return imageData.res;
     }
     return url;
   };
-
-  private static computeUrl(value: string): string {
-    let baseurl = window.location.href;
-    // cleanup baseurl ending with html/htm
-    if (baseurl.endsWith('html') || baseurl.endsWith('htm')) {
-      const a = window.location.pathname.split('/');
-      const subpath = a.slice(0, a.length - 1).join('/');
-      baseurl = `${window.location.origin}${subpath}`;
-    }
-    // cleanup ending /
-    if (baseurl.endsWith('/')) baseurl = baseurl.substring(0, baseurl.length - 1);
-
-    if (value.startsWith('//')) {
-      return `${window.location.protocol}${value}`;
-    } else if (value.startsWith('/')) {
-      return `${window.location.origin}${value}`;
-    } else if (value.startsWith('./')) {
-      // URL constructor is good with subpath resolution so ../../foo ../foo ./foo
-      const url = new URL(baseurl + '/' + value);
-      return url.href;
-    } else if (!value.startsWith('http')) {
-      return `${baseurl}/${value}`;
-    }
-    return value;
-  }
 
   static computeHtmlParent = (parent: Element | null, content: string): string => {
     let data = content;
@@ -349,30 +323,6 @@ export class HtmlFactory {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${ref.id} ${ref.src}`);
       }, 1000);
-    });
-  };
-
-  private static fetchImage = (url: string): Promise<FetchResponse<string>> => {
-    return new Promise<FetchResponse<string>>((resolve, reject) => {
-      TinyEventDispatcher.addListener<FetchResponse<string>>(
-        BusMessageType.CONTENT_FETCH_IMAGE,
-        (event, key, value) => {
-          if (value.url === url) {
-            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
-            resolve(value);
-          }
-        }
-      );
-      BrowserApi.sendRuntimeMessage<FetchImageRequest>({
-        type: BusMessageType.CONTENT_FETCH_IMAGE,
-        data: { url }
-      })
-        .then(() => {
-          /* SKIP */
-        })
-        .catch((e) => {
-          reject(e);
-        });
     });
   };
 }
