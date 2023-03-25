@@ -50,7 +50,12 @@ class PinMeScript {
       try {
         const msg = JSON.parse(e.data);
         if (msg.foo === 'bar') {
+          //eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          window.top?.postMessage(`{"bar":"foo", "id":"${msg.id}"}`, '*');
           await new ContentFetchIframeCommand(msg, this.href).execute();
+        } else if (msg.bar === 'foo') {
+          fnConsoleLog('PinMeScript->constructor->ping->from-iframe', msg);
+          TinyEventDispatcher.dispatch(BusMessageType.CONTENT_FETCH_IFRAME_PING, msg);
         }
       } catch (e) {
         /* IGNORE */

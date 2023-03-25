@@ -65,6 +65,7 @@ export enum BusMessageType {
   CONTENT_FETCH_CSS = 'content.fetch.css',
   CONTENT_FETCH_IMAGE = 'content.fetch.image',
   CONTENT_FETCH_IFRAME_RESULT = 'content.fetch.iframe.result',
+  CONTENT_FETCH_IFRAME_PING = 'content.fetch.iframe.ping',
   CONTENT_PING_URL = 'content.ping.url',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',

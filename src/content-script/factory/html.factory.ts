@@ -326,13 +326,20 @@ export class HtmlFactory {
   private static fetchIframe = (ref: HTMLIFrameElement, depth: number): Promise<ObjIframeContentDto> => {
     return new Promise<ObjIframeContentDto>((resolve, reject) => {
       if (!ref.contentWindow) return HtmlFactory.EMPTY_RESULT;
+      TinyEventDispatcher.addListener<{ id: string }>(BusMessageType.CONTENT_FETCH_IFRAME_PING, (event, key, value) => {
+        fnConsoleLog('HtmlFactory->fetchIframe->ping->clear', value.id, ref.id);
+        if (value.id === ref.id) {
+          TinyEventDispatcher.removeListener(event, key);
+          clearTimeout(iframeTimeout);
+        }
+      });
       const eventKey = TinyEventDispatcher.addListener<ObjIframeContentDto>(
         BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
         (event, key, value) => {
           if (value.id === ref.id) {
             fnConsoleLog('HtmlFactory->fetchIframe->result', ref.id, value.url, value);
             clearTimeout(iframeTimeout);
-            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
+            TinyEventDispatcher.removeListener(event, eventKey);
             resolve(value);
           }
         }
@@ -340,8 +347,8 @@ export class HtmlFactory {
       ref.contentWindow.postMessage(`{"foo":"bar", "depth":${depth}, "id":"${ref.id}"}`, '*');
       const iframeTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
-        reject(`Iframe timeout ${ref.id}`);
-      }, 10000);
+        reject(`Iframe timeout ${ref.id} ${ref.src}`);
+      }, 1000);
     });
   };
 
