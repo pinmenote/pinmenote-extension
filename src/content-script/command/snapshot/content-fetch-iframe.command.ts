@@ -17,13 +17,14 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../../factory/css.factory';
+import { FetchIframeRequest } from '../../../common/model/obj-request.model';
 import { HtmlFactory } from '../../factory/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjIframeContentDto } from '../../../common/model/obj/obj-iframe.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
-  constructor(private data: { url: string }, private href?: string) {}
+  constructor(private data: FetchIframeRequest, private href?: string) {}
 
   async execute(): Promise<void> {
     if (this.href !== this.data.url) {
@@ -31,7 +32,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       return;
     }
     fnConsoleLog('ContentFetchIframeCommand->execute', this.href);
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body, true);
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body, this.data.depth + 1);
     const css = await CssFactory.computeCssContent();
     const dto: ObjIframeContentDto = {
       ok: true,

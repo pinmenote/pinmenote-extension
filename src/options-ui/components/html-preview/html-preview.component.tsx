@@ -52,6 +52,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
         // TODO remove condition before release
         if (value.iframe) {
           for (const iframe of value.iframe) {
+            fnConsoleLog('IFRAME RENDER : ', iframe.uid);
             const el = doc.getElementById(iframe.uid);
             if (el) {
               const iframeEl = el as HTMLIFrameElement;

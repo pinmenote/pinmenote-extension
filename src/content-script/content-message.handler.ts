@@ -26,7 +26,6 @@ import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class ContentMessageHandler {
   private static href?: string;
@@ -50,7 +49,7 @@ export class ContentMessageHandler {
     runtime: BrowserGlobalSender,
     sendResponse: (response: BusMessage<undefined>) => void
   ): Promise<void> => {
-    fnConsoleLog('ContentMessageHandler->handleMessage', this.href, msg);
+    // fnConsoleLog('ContentMessageHandler->handleMessage', this.href, msg);
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });

@@ -16,6 +16,7 @@
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchIframeRequest } from '../../../common/model/obj-request.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjIframeContentDto } from '../../../common/model/obj/obj-iframe.dto';
 import { PingStore } from '../../ping.store';
@@ -24,14 +25,14 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   private pingTimeout = -1;
 
-  constructor(private data: { url: string }) {}
+  constructor(private data: FetchIframeRequest) {}
 
   async execute(): Promise<void> {
     fnConsoleLog('ContentFetchIframeCommand->execute', this.data);
     PingStore.register(this.data.url, this.pingSuccess);
 
     this.pingTimeout = setTimeout(this.pingFailure, 1000);
-    await BrowserApi.sendTabMessage<{ url: string }>({ type: BusMessageType.CONTENT_PING_URL, data: this.data });
+    await BrowserApi.sendTabMessage<FetchIframeRequest>({ type: BusMessageType.CONTENT_PING_URL, data: this.data });
   }
 
   pingSuccess = async () => {
@@ -40,7 +41,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
 
     PingStore.remove(this.data.url);
 
-    await BrowserApi.sendTabMessage<{ url: string }>({ type: BusMessageType.CONTENT_FETCH_IFRAME, data: this.data });
+    await BrowserApi.sendTabMessage<FetchIframeRequest>({ type: BusMessageType.CONTENT_FETCH_IFRAME, data: this.data });
   };
 
   pingFailure = async () => {

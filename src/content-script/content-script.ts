@@ -40,7 +40,6 @@ import { fnUid } from '../common/fn/uid.fn';
 
 class PinMeScript {
   private href: string;
-  private redirectInterval = 0;
   private timeoutId = 0;
 
   constructor(private readonly id: string, private ms: number) {
@@ -48,7 +47,7 @@ class PinMeScript {
 
     ContentMessageHandler.start(this.href);
 
-    fnConsoleLog('PinMeScript->constructor', this.href);
+    fnConsoleLog('PinMeScript->constructor', this.href, 'referrer', document.referrer);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 

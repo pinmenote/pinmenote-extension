@@ -15,11 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
+import { FetchIframeRequest, FetchImageRequest } from '../../common/model/obj-request.model';
 import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { CssFactory } from './css.factory';
-import { FetchImageRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
@@ -32,6 +33,12 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnUid } from '../../common/fn/uid.fn';
 
 export class HtmlFactory {
+  private static EMPTY_RESULT = {
+    html: '',
+    videoTime: [],
+    iframe: []
+  };
+
   static async computeHtmlData(ref: HTMLElement, url?: ObjUrlDto): Promise<PinHtmlDataDto> {
     const htmlContent = await this.computeHtmlIntermediateData(ref);
     const html = HtmlFactory.computeHtmlParent(ref.parentElement, htmlContent.html);
@@ -53,23 +60,35 @@ export class HtmlFactory {
     };
   }
 
-  static computeIframe = async (ref: Element, isIframe: boolean): Promise<HtmlIntermediateData> => {
-    const emptyResult = {
-      html: '',
+  static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
+    const imgData = ref.toDataURL(
+      `image/${ContentSettingsStore.screenshotFormat}`,
+      ContentSettingsStore.screenshotQuality
+    );
+    fnConsoleLog('HtmlFactory->computeCanvas');
+    const width = ref.getAttribute('width') || '100%';
+    const height = ref.getAttribute('width') || '100%';
+    const style = ref.getAttribute('style') || '';
+    const clazz = ref.getAttribute('class') || '';
+    return {
+      html: `<img src="${imgData}" width="${width}" height="${height}" style="${style}" class="${clazz}" />`,
       videoTime: [],
       iframe: []
     };
-    // Skip iframe inside iframe
-    if (isIframe) return emptyResult;
+  };
+
+  static computeIframe = async (ref: Element, depth: number): Promise<HtmlIntermediateData> => {
+    // Skip iframe->iframe->skip
+    if (depth > 3) return this.EMPTY_RESULT;
 
     const src = (ref as HTMLIFrameElement).src;
-    fnConsoleLog('computeIframe->URL', src);
+    fnConsoleLog('HtmlFactory->computeIframe->URL', src);
     if (!src) throw new Error('Invalid url');
-    const url = UrlFactory.normalizeHref(src);
 
     try {
-      const html = await this.fetchIframe(url);
-      if (!html.ok) return emptyResult;
+      const url = UrlFactory.normalizeHref(src);
+      const html = await this.fetchIframe(url, depth);
+      if (!html.ok) return this.EMPTY_RESULT;
       const uid = fnUid();
       const width = ref.getAttribute('width') || '100%';
       const height = ref.getAttribute('width') || '100%';
@@ -81,12 +100,12 @@ export class HtmlFactory {
         iframe: [{ uid, html }]
       };
     } catch (e) {
-      fnConsoleLog('computeIframe->Error', e);
+      fnConsoleLog('HtmlFactory->computeIframe->Error', e);
     }
-    return emptyResult;
+    return this.EMPTY_RESULT;
   };
 
-  static computeHtmlIntermediateData = async (ref: Element, isIframe = false): Promise<HtmlIntermediateData> => {
+  static computeHtmlIntermediateData = async (ref: Element, depth = 1): Promise<HtmlIntermediateData> => {
     const tagName = ref.tagName.toLowerCase();
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
@@ -96,11 +115,15 @@ export class HtmlFactory {
     // IFRAME POC
     // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
+      return await this.computeIframe(ref, depth);
+    }
+
+    if (tagName === 'canvas') {
       try {
-        fnConsoleLog('COMPUTE IFRAME');
-        return await this.computeIframe(ref, isIframe);
+        return this.computeCanvas(ref as HTMLCanvasElement);
       } catch (e) {
-        fnConsoleLog('COMPUTE IFRAME PROBLEM', e);
+        fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
+        return this.EMPTY_RESULT;
       }
     }
 
@@ -151,7 +174,7 @@ export class HtmlFactory {
               hrefFilled = true;
             }
           } catch (e) {
-            fnConsoleLog('computeHtmlIntermediateData->Error', e);
+            fnConsoleLog('HtmlFactory->computeHtmlIntermediateData->Error', e);
           }
         }
       } else if (attrValue) {
@@ -171,7 +194,7 @@ export class HtmlFactory {
         txt = txt.replace('<', '&lt').replace('>', '&gt;');
         html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const computed = await this.computeHtmlIntermediateData(node as Element, isIframe);
+        const computed = await this.computeHtmlIntermediateData(node as Element, depth);
         html += computed.html;
         videoTime.push(...computed.videoTime);
         iframe.push(...computed.iframe);
@@ -187,7 +210,7 @@ export class HtmlFactory {
       const children = Array.from(ref.contentDocument.childNodes);
       for (const node of children) {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          const computed = await this.computeHtmlIntermediateData(node as Element, isIframe);
+          const computed = await this.computeHtmlIntermediateData(node as Element, depth);
           html += computed.html;
         }
       }
@@ -306,7 +329,7 @@ export class HtmlFactory {
     return data;
   };
 
-  private static fetchIframe = (url: string): Promise<ObjIframeContentDto> => {
+  private static fetchIframe = (url: string, depth: number): Promise<ObjIframeContentDto> => {
     return new Promise<ObjIframeContentDto>((resolve, reject) => {
       const eventKey = TinyEventDispatcher.addListener<ObjIframeContentDto>(
         BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
@@ -322,9 +345,9 @@ export class HtmlFactory {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${url}`);
       }, 10000);
-      BrowserApi.sendRuntimeMessage<FetchImageRequest>({
+      BrowserApi.sendRuntimeMessage<FetchIframeRequest>({
         type: BusMessageType.CONTENT_FETCH_IFRAME,
-        data: { url }
+        data: { url, depth }
       })
         .then(() => {
           /* SKIP */

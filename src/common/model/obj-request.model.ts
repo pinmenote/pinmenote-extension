@@ -46,6 +46,11 @@ export interface FetchImageRequest {
   url: string;
 }
 
+export interface FetchIframeRequest {
+  url: string;
+  depth: number;
+}
+
 export interface ExtensionPopupInitData {
   href?: string;
   isAddingNote: boolean;

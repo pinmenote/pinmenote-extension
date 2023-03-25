@@ -16,14 +16,15 @@
  */
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
+import { FetchIframeRequest } from '../../common/model/obj-request.model';
 import { ICommand } from '../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class ContentPingUrlCommand implements ICommand<Promise<void>> {
-  constructor(private data: { url: string }, private href?: string) {}
+  constructor(private data: FetchIframeRequest, private href?: string) {}
   async execute(): Promise<void> {
     if (this.data.url === this.href) {
-      fnConsoleLog('ContentPingCommand->execute->OK!!!', this.href);
+      fnConsoleLog('ContentPingCommand->execute->OK!!!', this.data.depth, this.href);
       await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_PING_URL, data: this.data });
     }
   }
