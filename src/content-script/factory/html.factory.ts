@@ -64,8 +64,13 @@ export class HtmlFactory {
       ContentSettingsStore.screenshotQuality
     );
     fnConsoleLog('HtmlFactory->computeCanvas');
-    const width = ref.getAttribute('width') || '100%';
-    const height = ref.getAttribute('width') || '100%';
+    let width = ref.getAttribute('width') || '100%';
+    let height = ref.getAttribute('height') || '100%';
+    const rect = ref.parentElement?.getBoundingClientRect();
+    if (rect) {
+      width = `${rect.width}px`;
+      height = `${rect.height}px`;
+    }
     const style = ref.getAttribute('style') || '';
     const clazz = ref.getAttribute('class') || '';
     return {

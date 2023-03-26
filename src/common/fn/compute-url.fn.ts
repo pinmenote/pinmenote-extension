@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+const EXT_REGEX = new RegExp('\\.[a-zA-Z0-9]+$');
+
 export const fnComputeUrl = (value: string): string => {
-  let baseurl = window.location.href;
+  let baseurl = window.location.origin + window.location.pathname;
   // cleanup baseurl ending with html/htm
-  if (baseurl.endsWith('html') || baseurl.endsWith('htm')) {
+  if (baseurl.match(EXT_REGEX)) {
     const a = window.location.pathname.split('/');
     const subpath = a.slice(0, a.length - 1).join('/');
     baseurl = `${window.location.origin}${subpath}`;

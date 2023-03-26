@@ -113,6 +113,7 @@ export class CssFactory {
     const out = [];
 
     for (const importUrl of importList) {
+      if (importUrl.startsWith('http')) continue;
       let url = importUrl.split(' ')[1];
       url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
       if (baseUrl) {
