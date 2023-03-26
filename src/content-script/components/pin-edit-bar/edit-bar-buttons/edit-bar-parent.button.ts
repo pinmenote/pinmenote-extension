@@ -17,7 +17,6 @@
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { ContentSettingsStore } from '../../../store/content-settings.store';
-import { CssFactory } from '../../../factory/css.factory';
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { HtmlFactory } from '../../../factory/html.factory';
 import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
@@ -63,12 +62,12 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       await fnSleep(100);
 
       const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.parent.ref);
-      const css = await CssFactory.computeCssContent();
+      // const css = await CssFactory.computeCssContent();
 
       this.parent.object.data.htmlEdit = undefined;
       this.parent.object.data.html.html = htmlContent.html;
       this.parent.object.data.video = htmlContent.videoTime;
-      this.parent.object.data.html.css = css;
+      // this.parent.object.data.html.css = css;
       this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref);
       const rect = XpathFactory.computeRect(this.parent.ref);
 

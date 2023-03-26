@@ -152,6 +152,9 @@ export class CssFactory {
 
     for (const urlMatch of urlList) {
       let url = urlMatch.substring(5, urlMatch.length - 2);
+      // skip data elements
+      if (url.startsWith('data:')) continue;
+
       url = fnComputeUrl(url);
       const result = await fnFetchImage(url);
 
