@@ -30,17 +30,22 @@ export class ImageResizeFactory {
       img.onload = () => {
         try {
           const can = document.createElement('canvas');
-          if (rect.height <= img.naturalHeight) {
-            can.width = rect.width;
-            can.height = rect.height;
-            const ctx = can.getContext('2d');
-            ctx?.drawImage(img, rect.x * 2, rect.y * 2, rect.width * 2, rect.height * 2, 0, 0, rect.width, rect.height);
-          } else {
-            can.width = rect.width;
-            can.height = img.naturalHeight / 2 - rect.y;
-            const ctx = can.getContext('2d');
-            ctx?.drawImage(img, rect.x * 2, rect.y * 2, rect.width * 2, rect.height * 2, 0, 0, rect.width, rect.height);
-          }
+          can.width = rect.width;
+          can.height = rect.height;
+          const wr = img.naturalWidth / window.innerWidth;
+          const hr = img.naturalHeight / window.innerHeight;
+          const ctx = can.getContext('2d');
+          ctx?.drawImage(
+            img,
+            rect.x * wr,
+            rect.y * hr,
+            rect.width * wr,
+            rect.height * hr,
+            0,
+            0,
+            rect.width,
+            rect.height
+          );
           b64image = can.toDataURL(
             `image/${ContentSettingsStore.screenshotFormat}`,
             ContentSettingsStore.screenshotQuality
