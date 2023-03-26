@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { PinExpandComponent } from './pin.expand.component';
+import { PinElementExpandComponent } from './pin-element-expand.component';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import RemoveMarkdown from 'remove-markdown';
@@ -121,7 +121,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
           </IconButton>
         </div>
       </div>
-      <PinExpandComponent visible={isPopoverOpen} pin={pin}></PinExpandComponent>
+      <PinElementExpandComponent visible={isPopoverOpen} pin={pin}></PinElementExpandComponent>
     </div>
   );
 };

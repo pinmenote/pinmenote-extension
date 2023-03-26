@@ -20,13 +20,13 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import React, { ReactElement, useState } from 'react';
-import { AccountTabComponent } from './components/tabs/account.tab.component';
+import { AccountTabComponent } from './components/tabs/account-tab.component';
 import Box from '@mui/material/Box';
 import { LogManager } from '../common/popup/log.manager';
 import LogoDevIcon from '@mui/icons-material/LogoDev';
-import { LogsTabComponent } from './components/tabs/logs.tab.component';
+import { LogsTabComponent } from './components/tabs/logs-tab.component';
+import { MainTabComponent } from './components/tabs/main-tab.component';
 import PersonIcon from '@mui/icons-material/Person';
-import { PinTabComponent } from './components/tabs/pin.tab.component';
 import { PopupMessageHandler } from './popup-message.handler';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import Tab from '@mui/material/Tab';
@@ -35,15 +35,15 @@ import { createRoot } from 'react-dom/client';
 import { environmentConfig } from '../common/environment';
 
 enum PanelEnum {
-  PIN,
+  MAIN,
   ACCOUNT,
   LOGS
 }
 
 const getCurrentPanel = (selectedPanel: PanelEnum): ReactElement | undefined => {
   switch (selectedPanel) {
-    case PanelEnum.PIN:
-      return <PinTabComponent />;
+    case PanelEnum.MAIN:
+      return <MainTabComponent />;
     case PanelEnum.ACCOUNT:
       return <AccountTabComponent />;
     case PanelEnum.LOGS:
@@ -53,7 +53,7 @@ const getCurrentPanel = (selectedPanel: PanelEnum): ReactElement | undefined => 
 };
 
 const ExtensionPopupApp: React.FC = () => {
-  const [selectedPanel, setSelectedPanel] = useState<PanelEnum>(PanelEnum.PIN);
+  const [selectedPanel, setSelectedPanel] = useState<PanelEnum>(PanelEnum.MAIN);
 
   const handleChange = (event: React.SyntheticEvent, newValue: PanelEnum) => {
     setSelectedPanel(newValue);

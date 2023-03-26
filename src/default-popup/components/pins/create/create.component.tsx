@@ -19,7 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import Button from '@mui/material/Button';
-import { CreateListComponent } from './create.list.component';
+import { CreateListComponent } from './create-list.component';
 import IconButton from '@mui/material/IconButton';
 import { LogManager } from '../../../../common/popup/log.manager';
 import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';

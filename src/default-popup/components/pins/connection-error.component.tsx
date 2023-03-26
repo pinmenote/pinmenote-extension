@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 import React, { FunctionComponent } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import Button from '@mui/material/Button';
-import { PinBoardButton } from './pin.board.button';
+import { PinBoardButton } from './pin-board.button';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
 
-export const PinConnectionErrorComponent: FunctionComponent = () => {
+export const ConnectionErrorComponent: FunctionComponent = () => {
   const isExtension = PopupActiveTabStore.isExtension;
   return <div>{isExtension ? <ExtensionMessage /> : <NoUrlMessage />}</div>;
 };

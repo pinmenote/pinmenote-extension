@@ -16,17 +16,15 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { CreateComponent } from '../pins/create/create.component';
+import { CreateComponent } from './create/create.component';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { PinBoardButton } from '../pins/pin.board.button';
-import { PinConnectionErrorComponent } from '../pins/pin.connection.error.component';
-import { PinListOriginComponent } from '../pins/pin.list.origin.component';
+import { PinBoardButton } from './pin-board.button';
+import { PinListViewComponent } from './pin-list-view.component';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
-export const PinTabComponent: FunctionComponent = () => {
-  const [isError, setIsError] = useState<boolean>(PopupActiveTabStore.showErrorText);
+export const PinMainViewComponent: FunctionComponent = () => {
   const [originPins, setOriginPins] = useState<ObjDto<ObjPagePinDto>[]>(PopupActiveTabStore.originPins);
   const [hrefPins, setHrefPins] = useState<ObjDto<ObjPagePinDto>[]>(PopupActiveTabStore.hrefPins);
 
@@ -34,7 +32,6 @@ export const PinTabComponent: FunctionComponent = () => {
     const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
       setHrefPins(PopupActiveTabStore.hrefPins);
       setOriginPins(PopupActiveTabStore.originPins);
-      setIsError(PopupActiveTabStore.showErrorText);
     });
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
@@ -42,21 +39,15 @@ export const PinTabComponent: FunctionComponent = () => {
   });
 
   return (
-    <div style={{ marginTop: 10, height: '100%' }}>
-      {isError ? (
-        <PinConnectionErrorComponent />
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-            <CreateComponent />
-            {/* marginBottom:155 if test code is uncommented */}
-            <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110, marginTop: 10 }}>
-              <PinListOriginComponent pinOrigin={originPins} pinHref={hrefPins} />
-            </div>
-          </div>
-          <PinBoardButton />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+        <CreateComponent />
+        {/* marginBottom:155 if test code is uncommented */}
+        <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110, marginTop: 10 }}>
+          <PinListViewComponent pinOrigin={originPins} pinHref={hrefPins} />
         </div>
-      )}
+      </div>
+      <PinBoardButton />
     </div>
   );
 };

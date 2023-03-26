@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ interface PinExpandProps {
   pin: ObjDto<ObjPagePinDto>;
 }
 
-export const PinExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, visible }) => {
+export const PinElementExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, visible }) => {
   const ref = useRef<HTMLDivElement>(null);
   const valueRef = useRef<HTMLDivElement>(null);
   const img = new Image();
