@@ -22,6 +22,7 @@ import { DrawFillButton } from './draw-buttons/draw-fill.button';
 import { DrawLineButton } from './draw-buttons/draw-line.button';
 import { DrawPencilButton } from './draw-buttons/draw-pencil.button';
 import { DrawRedoButton } from './draw-buttons/draw-redo.button';
+import { DrawTestButton } from './draw-buttons/draw-test.button';
 import { DrawToolDto } from '../../../common/model/obj/obj-draw.dto';
 import { DrawUndoButton } from './draw-buttons/draw-undo.button';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
@@ -59,6 +60,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private readonly undoButton: DrawUndoButton;
   private readonly redoButton: DrawRedoButton;
 
+  private readonly drawTest: DrawTestButton;
+
   constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.pencil = new DrawPencilButton(this);
     this.line = new DrawLineButton(this);
@@ -70,6 +73,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
     this.undoButton = new DrawUndoButton(this);
     this.redoButton = new DrawRedoButton(this);
+    this.drawTest = new DrawTestButton(parent);
   }
 
   setTool(tool: DrawToolDto): void {
@@ -183,6 +187,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
     this.undoButton.cleanup();
     this.redoButton.cleanup();
+
+    this.drawTest.cleanup();
   }
 
   render(): HTMLElement {
@@ -199,6 +205,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
     this.placeComponent(this.undoButton.render(), 169);
     this.placeComponent(this.redoButton.render(), 193);
+
+    // this.placeComponent(this.drawTest.render(), 220);
 
     this.adjustTop();
 

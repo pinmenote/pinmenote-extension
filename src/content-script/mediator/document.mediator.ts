@@ -112,6 +112,8 @@ export class DocumentMediator {
   };
 
   private static handleOverlayClick = async (e: MouseEvent): Promise<void> => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
     if (this.type === ObjTypeDto.PageElementPin) {
       if (!this.pinStart) {
         this.pinStart = { x: e.offsetX, y: e.offsetY };
