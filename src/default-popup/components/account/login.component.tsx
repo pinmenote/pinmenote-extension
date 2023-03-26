@@ -58,7 +58,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
         if (value.ok) {
           loginSuccess(value.res);
         } else {
-          setResponseError((value.res as any).message);
+          setResponseError(value.res as ServerErrorDto);
         }
       }
     );

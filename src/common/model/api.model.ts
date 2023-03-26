@@ -28,3 +28,8 @@ export interface FetchResponse<T> {
   res: T;
   type: ResponseType;
 }
+
+export interface KeyStatusResponse {
+  hasPublicKey: boolean;
+  hasPrivateKey: boolean;
+}

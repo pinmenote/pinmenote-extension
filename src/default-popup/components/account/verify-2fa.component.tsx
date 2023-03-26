@@ -74,7 +74,7 @@ export const Verify2faComponent: FunctionComponent<Verify2faComponentProps> = ({
   const handleLoginClick = async (): Promise<void> => {
     setResponseError(undefined);
     await BrowserApi.sendRuntimeMessage<VerifyTokenDto>({
-      type: BusMessageType.POPUP_LOGIN,
+      type: BusMessageType.POPUP_VERIFY_2FA,
       data: { token: verifyToken, totp, source: 'EXTENSION' }
     });
   };

@@ -27,7 +27,7 @@ export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('ContentFetchCssCommand->execute', this.req.url);
     try {
-      const data = await FetchService.get<string>(this.req.url, ResponseType.TEXT);
+      const data = await FetchService.get<string>(this.req.url, false, ResponseType.TEXT);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({ type: BusMessageType.CONTENT_FETCH_CSS, data });
     } catch (e) {
       fnConsoleLog('ERROR', e);

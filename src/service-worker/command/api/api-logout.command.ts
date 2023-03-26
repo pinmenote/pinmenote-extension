@@ -14,26 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
-import { ApiHelper } from '../../../api/api-helper';
-import { FetchService } from '../../../service/fetch.service';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ServerErrorDto } from '../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { BoolDto, ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
+import { FetchResponse, ResponseType } from '../../../common/model/api.model';
+import { ApiHelper } from '../../api/api-helper';
+import { FetchService } from '../../service/fetch.service';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<ObjDto | ServerErrorDto>>> {
-  constructor(private id: number) {}
-
-  async execute(): Promise<FetchResponse<ObjDto | ServerErrorDto>> {
-    fnConsoleLog('ApiStoreGetObjectCommand->execute');
-    const storeUrl = await ApiHelper.getStoreUrl();
-
-    const url = `${storeUrl}/api/v1/store/obj/${this.id}`;
-
+export class ApiLogoutCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
+  async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {
+    const url = `${ApiHelper.apiUrl}/api/v1/auth/logout`;
+    fnConsoleLog('ApiLogoutCommand->execute', url);
     try {
-      return await FetchService.get(url, true);
+      return await FetchService.post<BoolDto>(url, undefined, true);
     } catch (e) {
+      fnConsoleLog('ERROR', e);
       return {
         ok: false,
         url,

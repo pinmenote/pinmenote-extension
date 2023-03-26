@@ -38,6 +38,7 @@ export class ApiHelper {
     if (!token) return '';
 
     const { data } = jwtDecode<TokenDataDto>(token.access_token);
+
     return data.store;
   }
 }

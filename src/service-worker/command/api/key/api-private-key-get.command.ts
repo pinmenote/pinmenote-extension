@@ -28,7 +28,7 @@ export class ApiPrivateKeyGetCommand implements ICommand<Promise<FetchResponse<{
     const url = `${storeUrl}/api/v1/key/private`;
 
     try {
-      return await FetchService.get<{ key: string }>(url, ResponseType.JSON, true);
+      return await FetchService.get<{ key: string }>(url, true);
     } catch (e) {
       return {
         ok: false,

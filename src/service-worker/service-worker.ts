@@ -25,6 +25,7 @@ import { ContentPinStopCommand } from './command/content/content-pin-stop.comman
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
+import { PopupLoginSuccessCommand } from './command/popup/popup-login-success.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
 import { PopupSyncDataCommand } from './command/popup/popup-sync-data.command';
 import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
@@ -72,6 +73,9 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();
+      break;
+    case BusMessageType.POPUP_LOGIN_SUCCESS:
+      await new PopupLoginSuccessCommand().execute();
       break;
     case BusMessageType.POPUP_VERIFY_2FA:
       await new PopupVerify2faCommand(msg.data).execute();

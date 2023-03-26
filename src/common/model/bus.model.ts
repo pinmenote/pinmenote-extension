@@ -49,6 +49,7 @@ export enum BusMessageType {
   POPUP_INIT = 'popup.init',
   POPUP_LOGIN = 'popup.login',
   POPUP_VERIFY_2FA = 'popup.verify.2fa',
+  POPUP_LOGIN_SUCCESS = 'popup.login.success',
   POPUP_LOGOUT = 'popup.logout',
   POPUP_OPEN = 'popup.open',
   POPUP_PAGE_SNAPSHOT_ADD = 'popup.page.snapshot.add',

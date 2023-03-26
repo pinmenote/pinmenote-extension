@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import React, { FunctionComponent, ReactElement, useState } from 'react';
 import { AccessTokenDto } from '../../../common/model/shared/token.dto';
 import { AccountDetailsComponent } from '../account/account-details.component';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { LogManager } from '../../../common/popup/log.manager';
 import { LoginComponent } from '../account/login.component';
 import { PopupTokenStore } from '../../store/popup-token.store';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
 import { Verify2faComponent } from '../account/verify-2fa.component';
 
@@ -34,6 +33,7 @@ enum LoginEnum {
 const getAccountComponent = (
   state: LoginEnum,
   loginSuccess: (data: AccessTokenDto) => void,
+  logoutSuccess: () => void,
   verifyToken: string
 ): ReactElement | undefined => {
   switch (state) {
@@ -42,7 +42,7 @@ const getAccountComponent = (
     case LoginEnum.VERIFY_2FA:
       return <Verify2faComponent loginSuccess={loginSuccess} verifyToken={verifyToken} />;
     case LoginEnum.ACCOUNT:
-      return <AccountDetailsComponent />;
+      return <AccountDetailsComponent logoutSuccess={logoutSuccess} />;
   }
   return undefined;
 };
@@ -50,16 +50,6 @@ const getAccountComponent = (
 export const AccountTabComponent: FunctionComponent = () => {
   const [loginState, setLoginState] = useState<LoginEnum>(PopupTokenStore.token ? LoginEnum.ACCOUNT : LoginEnum.LOGIN);
   const [verifyToken, setVerifyToken] = useState<string>('');
-
-  useEffect(() => {
-    const logoutKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.POPUP_LOGOUT, () => {
-      LogManager.log('POPUP_LOGOUT');
-      setLoginState(LoginEnum.LOGIN);
-    });
-    return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
-    };
-  });
 
   const loginSuccess = async (data: AccessTokenDto) => {
     if (data.token_type === 'GoogleAuthenticator') {
@@ -69,10 +59,16 @@ export const AccountTabComponent: FunctionComponent = () => {
       await new TokenStorageSetCommand(data).execute();
       setVerifyToken('');
       setLoginState(LoginEnum.ACCOUNT);
+      await PopupTokenStore.init();
+      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_LOGIN_SUCCESS });
     }
   };
 
-  const currentComponent = getAccountComponent(loginState, loginSuccess, verifyToken);
+  const logoutSuccess = () => {
+    setLoginState(LoginEnum.LOGIN);
+  };
+
+  const currentComponent = getAccountComponent(loginState, loginSuccess, logoutSuccess, verifyToken);
   return (
     <div>
       <div style={{ marginTop: 10 }}>{currentComponent}</div>

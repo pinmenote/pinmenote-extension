@@ -34,7 +34,7 @@ export class ApiStoreChangesCommand implements ICommand<Promise<FetchResponse<Ch
     const url = `${storeUrl}/api/v1/store/changes?dt=${this.dt}`;
 
     try {
-      return await FetchService.get<ChangesDto>(url, ResponseType.JSON, true);
+      return await FetchService.get<ChangesDto>(url, true);
     } catch (e) {
       return {
         ok: false,

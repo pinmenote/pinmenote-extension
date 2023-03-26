@@ -21,7 +21,12 @@ import { TokenStorageSetCommand } from '../../common/command/server/token/token-
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class FetchService {
-  static async post<T>(url: string, data?: any, authenticate = false): Promise<FetchResponse<T>> {
+  static async post<T>(
+    url: string,
+    data?: any,
+    authenticate = false,
+    type = ResponseType.JSON
+  ): Promise<FetchResponse<T>> {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 15000);
 
@@ -29,13 +34,20 @@ export class FetchService {
 
     if (authenticate) {
       const headers = this.applyDefaultHeaders(await ApiHelper.getAuthHeaders());
-      return await this.refetch(url, { ...requestInit, headers });
+
+      return await this.refetch(url, { ...requestInit, headers }, type);
     }
     const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
-    return { url, type: ResponseType.JSON, status: req.status, res: await req.json(), ok: req.ok };
+    const res = await this.getResponse(req, type);
+    return { url, type: ResponseType.JSON, status: req.status, res, ok: req.ok };
   }
 
-  static async patch<T>(url: string, data?: any, authenticate = false): Promise<FetchResponse<T>> {
+  static async patch<T>(
+    url: string,
+    data?: any,
+    authenticate = false,
+    type = ResponseType.JSON
+  ): Promise<FetchResponse<T>> {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 15000);
 
@@ -43,13 +55,14 @@ export class FetchService {
 
     if (authenticate) {
       const headers = this.applyDefaultHeaders(await ApiHelper.getAuthHeaders());
-      return await this.refetch(url, { ...requestInit, headers });
+      return await this.refetch(url, { ...requestInit, headers }, type);
     }
     const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
-    return { url, type: ResponseType.JSON, status: req.status, res: await req.json(), ok: req.ok };
+    const res = await this.getResponse(req, type);
+    return { url, type: ResponseType.JSON, status: req.status, res, ok: req.ok };
   }
 
-  static async delete<T>(url: string, authenticate = false): Promise<FetchResponse<T>> {
+  static async delete<T>(url: string, authenticate = false, type = ResponseType.JSON): Promise<FetchResponse<T>> {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 15000);
 
@@ -57,13 +70,14 @@ export class FetchService {
 
     if (authenticate) {
       const headers = await ApiHelper.getAuthHeaders();
-      return await this.refetch(url, { ...requestInit, headers });
+      return await this.refetch(url, { ...requestInit, headers }, type);
     }
     const req = await fetch(url, { ...requestInit, headers: this.applyDefaultHeaders() });
-    return { url, type: ResponseType.JSON, status: req.status, res: await req.json(), ok: req.ok };
+    const res = await this.getResponse(req, type);
+    return { url, type: ResponseType.JSON, status: req.status, res, ok: req.ok };
   }
 
-  static async get<T>(url: string, type = ResponseType.JSON, authenticate = false): Promise<FetchResponse<T>> {
+  static async get<T>(url: string, authenticate = false, type = ResponseType.JSON): Promise<FetchResponse<T>> {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 15000);
 
@@ -71,20 +85,21 @@ export class FetchService {
 
     if (authenticate) {
       const headers = await ApiHelper.getAuthHeaders();
-      return await this.refetch<T>(url, { ...requestInit, headers });
+      return await this.refetch<T>(url, { ...requestInit, headers }, type);
     }
     const req = await fetch(url, requestInit);
-
-    let res;
-    if (type === ResponseType.BLOB) {
-      res = await req.blob();
-    } else if (type === ResponseType.JSON) {
-      res = await req.json();
-    } else {
-      res = await req.text();
-    }
+    const res = await this.getResponse(req, type);
     return { url, ok: req.ok, status: req.status, type, res };
   }
+
+  private static getResponse = async (req: Response, type: ResponseType) => {
+    if (type === ResponseType.BLOB) {
+      return await req.blob();
+    } else if (type === ResponseType.JSON) {
+      return await req.json();
+    }
+    return await req.text();
+  };
 
   private static async refreshToken(): Promise<void> {
     try {
@@ -115,7 +130,7 @@ export class FetchService {
 
       req = await fetch(url, init);
       //eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    } else if (res.headers.get('x-refresh-token') === 'yes') {
+    } else if (req.headers.get('x-refresh-token') === 'yes') {
       // Forced by server
       await this.refreshToken();
     }

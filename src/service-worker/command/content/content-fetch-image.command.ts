@@ -28,7 +28,7 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
     try {
-      const blob = await FetchService.get<Blob>(this.req.url, ResponseType.BLOB);
+      const blob = await FetchService.get<Blob>(this.req.url, false, ResponseType.BLOB);
       const data = await UrlFactory.toDataUri(blob.res);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,

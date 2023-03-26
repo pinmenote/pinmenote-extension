@@ -30,7 +30,7 @@ export class ApiPublicKeyGetCommand implements ICommand<Promise<FetchResponse<{ 
     const url = `${storeUrl}/api/v1/key/public?username=${this.username}`;
 
     try {
-      return await FetchService.get<{ key: string }>(url, ResponseType.JSON, true);
+      return await FetchService.get<{ key: string }>(url, true);
     } catch (e) {
       return {
         ok: false,

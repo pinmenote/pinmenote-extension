@@ -14,24 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoolDto, ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
-import { ApiLogoutCommand } from '../api/api-logout.command';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { FetchResponse } from '../../../common/model/api.model';
+import { ApiKeyStatusGetCommand } from '../api/key/api-key-status-get.command';
+import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class PopupLogoutCommand implements ICommand<void> {
+export class PopupLoginSuccessCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    try {
-      const res = await new ApiLogoutCommand().execute();
-
-      await BrowserApi.sendRuntimeMessage<FetchResponse<BoolDto | ServerErrorDto>>({
-        type: BusMessageType.POPUP_LOGOUT,
-        data: res
-      });
-    } catch (e) {
-      fnConsoleLog('Error', e);
-    }
+    const keyStatus = await new ApiKeyStatusGetCommand().execute();
+    fnConsoleLog('PopupLoginSuccessCommand->execute', keyStatus);
   }
 }
