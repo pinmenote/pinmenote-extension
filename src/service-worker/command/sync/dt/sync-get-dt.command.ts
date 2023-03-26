@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ApiKeyStatusGetCommand } from '../api/key/api-key-status-get.command';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 
-export class PopupLoginSuccessCommand implements ICommand<Promise<void>> {
-  async execute(): Promise<void> {
-    const data = await new ApiKeyStatusGetCommand().execute();
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_LOGIN_SUCCESS, data });
-    fnConsoleLog('PopupLoginSuccessCommand->execute', data);
+export class SyncGetDtCommand implements ICommand<Promise<number>> {
+  async execute(): Promise<number> {
+    const dt = await BrowserStorageWrapper.get<number>(ObjectStoreKeys.SYNC_TIME);
+    if (!dt) return 0;
+    return dt;
   }
 }

@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import React, { FunctionComponent } from 'react';
+import Typography from '@mui/material/Typography';
 
-export class SyncSaveTimeCommand implements ICommand<Promise<void>> {
-  async execute(): Promise<void> {
-    const dt = new Date().toISOString();
-    await BrowserStorageWrapper.set(ObjectStoreKeys.SYNC_TIME, dt);
-  }
-}
+export const PopupFunctionsComponent: FunctionComponent = () => {
+  return (
+    <div>
+      <Typography align="center" fontSize="1.5em" fontWeight="bold">
+        Functions
+      </Typography>
+    </div>
+  );
+};

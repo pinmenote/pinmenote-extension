@@ -16,18 +16,23 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../../common/model/bus.model';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
-import { CreateListComponent } from './create-list.component';
 import IconButton from '@mui/material/IconButton';
-import { LogManager } from '../../../../common/popup/log.manager';
-import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
-import { PopupPinStartRequest } from '../../../../common/model/obj-request.model';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
+import { LogManager } from '../../../common/popup/log.manager';
+import { MainCreateListComponent } from './main-create-list.component';
+import { MainViewEnum } from '../component-model';
+import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
+import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
-export const CreateComponent: FunctionComponent = () => {
+interface CreateComponentProps {
+  changeMainTabCallback: (viewType: MainViewEnum) => void;
+}
+
+export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = ({ changeMainTabCallback }) => {
   const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAddingNote);
   const [isListVisible, setIsListVisible] = useState<boolean>(false);
 
@@ -98,7 +103,10 @@ export const CreateComponent: FunctionComponent = () => {
           zIndex: 1000
         }}
       >
-        <CreateListComponent closeListCallback={() => setIsListVisible(false)} />
+        <MainCreateListComponent
+          changeMainTabCallback={changeMainTabCallback}
+          closeListCallback={() => setIsListVisible(false)}
+        />
       </div>
     </div>
   );

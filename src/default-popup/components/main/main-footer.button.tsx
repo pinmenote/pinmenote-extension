@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ApiKeyStatusGetCommand } from '../api/key/api-key-status-get.command';
+import React, { FunctionComponent } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import Button from '@mui/material/Button';
 
-export class PopupLoginSuccessCommand implements ICommand<Promise<void>> {
-  async execute(): Promise<void> {
-    const data = await new ApiKeyStatusGetCommand().execute();
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_LOGIN_SUCCESS, data });
-    fnConsoleLog('PopupLoginSuccessCommand->execute', data);
-  }
-}
+export const MainFooterButton: FunctionComponent = () => {
+  return (
+    <div style={{ position: 'absolute', bottom: 0, width: 300, paddingTop: 5, backgroundColor: '#ffffff' }}>
+      <Button
+        sx={{ width: '100%' }}
+        style={{ marginBottom: 10 }}
+        variant="outlined"
+        onClick={() => BrowserApi.openOptionsPage()}
+      >
+        Go to pin board
+      </Button>
+    </div>
+  );
+};

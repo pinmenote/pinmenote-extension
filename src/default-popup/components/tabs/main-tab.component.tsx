@@ -16,8 +16,8 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ConnectionErrorComponent } from '../pins/connection-error.component';
-import { PinMainViewComponent } from '../pins/pin-main-view.component';
+import { ConnectionErrorComponent } from '../main/connection-error.component';
+import { MainViewComponent } from '../main/main-view.component';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
@@ -35,7 +35,7 @@ export const MainTabComponent: FunctionComponent = () => {
 
   return (
     <div style={{ marginTop: 10, height: '100%' }}>
-      {isError ? <ConnectionErrorComponent /> : <PinMainViewComponent />}
+      {isError ? <ConnectionErrorComponent /> : <MainViewComponent />}
     </div>
   );
 };

@@ -16,8 +16,8 @@
  */
 import React, { FunctionComponent, useState } from 'react';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../../common/model/bus.model';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
 import CircularProgress from '@mui/material/CircularProgress';
 import FunctionsIcon from '@mui/icons-material/Functions';
 import List from '@mui/material/List';
@@ -26,10 +26,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LockIcon from '@mui/icons-material/Lock';
-import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
-import { PopupPinStartRequest } from '../../../../common/model/obj-request.model';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
+import { MainViewEnum } from '../component-model';
+import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
+import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import WebOutlined from '@mui/icons-material/WebOutlined';
 
 const zeroPad = {
@@ -39,6 +40,7 @@ const zeroPad = {
 
 interface CreateListProps {
   closeListCallback: () => void;
+  changeMainTabCallback: (viewType: MainViewEnum) => void;
 }
 
 enum IsLoadingType {
@@ -46,7 +48,7 @@ enum IsLoadingType {
   PageSave
 }
 
-export const CreateListComponent: FunctionComponent<CreateListProps> = (props) => {
+export const MainCreateListComponent: FunctionComponent<CreateListProps> = (props) => {
   const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
 
   const handleSavePageClick = async () => {
@@ -72,16 +74,19 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
     window.close();
   };
 
-  const handleAddTask = () => {
-    alert('add task');
+  const handleAddTaskNote = () => {
+    props.changeMainTabCallback(MainViewEnum.TASK_NOTE);
+    props.closeListCallback();
   };
 
-  const handleEncrypt = () => {
-    alert('encrypt');
+  const handleEncryptDecrypt = () => {
+    props.changeMainTabCallback(MainViewEnum.ENCRYPT_DECRYPT);
+    props.closeListCallback();
   };
 
   const handleFunctionClick = () => {
-    alert('function');
+    props.changeMainTabCallback(MainViewEnum.FUNCTION);
+    props.closeListCallback();
   };
   return (
     <div>
@@ -109,15 +114,15 @@ export const CreateListComponent: FunctionComponent<CreateListProps> = (props) =
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
-          <ListItemButton onClick={handleAddTask}>
+          <ListItemButton onClick={handleAddTaskNote}>
             <ListItemIcon>
               <AddTaskIcon />
             </ListItemIcon>
-            <ListItemText primary="Add Task" />
+            <ListItemText primary="Add Task / Note" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
-          <ListItemButton onClick={handleEncrypt}>
+          <ListItemButton onClick={handleEncryptDecrypt}>
             <ListItemIcon>
               <LockIcon />
             </ListItemIcon>

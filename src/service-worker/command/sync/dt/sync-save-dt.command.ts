@@ -14,21 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent } from 'react';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import Button from '@mui/material/Button';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 
-export const PinBoardButton: FunctionComponent = () => {
-  return (
-    <div style={{ position: 'absolute', bottom: 0, width: 300, paddingTop: 5, backgroundColor: '#ffffff' }}>
-      <Button
-        sx={{ width: '100%' }}
-        style={{ marginBottom: 10 }}
-        variant="outlined"
-        onClick={() => BrowserApi.openOptionsPage()}
-      >
-        Go to pin board
-      </Button>
-    </div>
-  );
-};
+export class SyncSaveDtCommand implements ICommand<Promise<void>> {
+  async execute(): Promise<void> {
+    await BrowserStorageWrapper.set(ObjectStoreKeys.SYNC_TIME, Date.now());
+  }
+}

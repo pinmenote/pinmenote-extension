@@ -40,6 +40,11 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
     }
+    const loginSuccessKey = TinyEventDispatcher.addListener(BusMessageType.POPUP_LOGIN_SUCCESS, (event, key, value) => {
+      TinyEventDispatcher.removeListener(event, key);
+      // TODO upload keys ???
+      LogManager.log(`${JSON.stringify(value)}`);
+    });
     const logoutKey = TinyEventDispatcher.addListener<FetchResponse<BoolDto | ServerErrorDto>>(
       BusMessageType.POPUP_LOGOUT,
       (event, key, value) => {
@@ -52,6 +57,7 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
       }
     );
     return () => {
+      TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
     };
   });

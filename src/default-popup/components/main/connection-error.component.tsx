@@ -17,7 +17,7 @@
 import React, { FunctionComponent } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import Button from '@mui/material/Button';
-import { PinBoardButton } from './pin-board.button';
+import { MainFooterButton } from './main-footer.button';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
 
@@ -36,7 +36,7 @@ const ExtensionMessage: FunctionComponent = () => {
       >
         <span>Pinception disabled</span>
       </Typography>
-      <PinBoardButton />
+      <MainFooterButton />
     </div>
   );
 };
@@ -63,7 +63,7 @@ const NoUrlMessage: FunctionComponent = () => {
       <Button sx={{ width: '100%', marginTop: 1 }} variant="outlined" onClick={handleRefreshPage}>
         Refresh page
       </Button>
-      <PinBoardButton />
+      <MainFooterButton />
     </div>
   );
 };
