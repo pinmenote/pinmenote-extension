@@ -1,2 +1,2 @@
 #!/bin/bash
-cloc bin src
+cloc bin src/common src/content-script src/css src/default-popup src/options-ui src/service-worker
