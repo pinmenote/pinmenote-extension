@@ -29,10 +29,11 @@ import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 interface CreateComponentProps {
+  currentView: MainViewEnum;
   changeMainTabCallback: (viewType: MainViewEnum) => void;
 }
 
-export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = ({ changeMainTabCallback }) => {
+export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (props) => {
   const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAddingNote);
   const [isListVisible, setIsListVisible] = useState<boolean>(false);
 
@@ -104,7 +105,8 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = ({ c
         }}
       >
         <MainCreateListComponent
-          changeMainTabCallback={changeMainTabCallback}
+          currentView={props.currentView}
+          changeMainTabCallback={props.changeMainTabCallback}
           closeListCallback={() => setIsListVisible(false)}
         />
       </div>

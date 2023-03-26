@@ -30,6 +30,7 @@ import { MainViewEnum } from '../component-model';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import WebOutlined from '@mui/icons-material/WebOutlined';
 
@@ -39,6 +40,7 @@ const zeroPad = {
 };
 
 interface CreateListProps {
+  currentView: MainViewEnum;
   closeListCallback: () => void;
   changeMainTabCallback: (viewType: MainViewEnum) => void;
 }
@@ -88,6 +90,16 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
     props.changeMainTabCallback(MainViewEnum.FUNCTION);
     props.closeListCallback();
   };
+
+  const handlePinClick = () => {
+    props.changeMainTabCallback(MainViewEnum.PIN);
+    props.closeListCallback();
+  };
+
+  const displayStyle = (view: MainViewEnum): string => {
+    return view === props.currentView ? 'none' : 'inline-block';
+  };
+
   return (
     <div>
       <List sx={zeroPad}>
@@ -105,7 +117,15 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
             <ListItemText primary="Save Page" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.PIN) }}>
+          <ListItemButton onClick={handlePinClick}>
+            <ListItemIcon>
+              <PushPinIcon />
+            </ListItemIcon>
+            <ListItemText primary="Show Pins" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.FUNCTION) }}>
           <ListItemButton onClick={handleFunctionClick}>
             <ListItemIcon>
               <FunctionsIcon />
@@ -113,7 +133,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
             <ListItemText primary="Use Function" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.TASK_NOTE) }}>
           <ListItemButton onClick={handleAddTaskNote}>
             <ListItemIcon>
               <AddTaskIcon />
@@ -121,7 +141,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
             <ListItemText primary="Add Task / Note" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.ENCRYPT_DECRYPT) }}>
           <ListItemButton onClick={handleEncryptDecrypt}>
             <ListItemIcon>
               <LockIcon />

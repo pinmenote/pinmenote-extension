@@ -20,6 +20,7 @@ import { MainFooterButton } from './main-footer.button';
 import { MainHeaderComponent } from './main-header.component';
 import { MainViewEnum } from '../component-model';
 import { PinListViewComponent } from '../pins/pin-list-view.component';
+import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
 import { TaskNoteComponent } from '../task-note/task-note.component';
 
 const getViewComponent = (viewType: MainViewEnum): ReactElement | undefined => {
@@ -30,6 +31,8 @@ const getViewComponent = (viewType: MainViewEnum): ReactElement | undefined => {
       return <EncryptDecryptComponent />;
     case MainViewEnum.TASK_NOTE:
       return <TaskNoteComponent />;
+    case MainViewEnum.FUNCTION:
+      return <PopupFunctionsComponent />;
   }
 };
 
@@ -45,8 +48,7 @@ export const MainViewComponent: FunctionComponent = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-        <MainHeaderComponent changeMainTabCallback={changeMainTab} />
-        {/* marginBottom:155 if test code is uncommented */}
+        <MainHeaderComponent currentView={currentView} changeMainTabCallback={changeMainTab} />
         <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110, marginTop: 10 }}>
           {currentComponent}
         </div>
