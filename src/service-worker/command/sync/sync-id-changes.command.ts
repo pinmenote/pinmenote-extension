@@ -1,4 +1,4 @@
-import { ApiStoreChangesCommand } from '../api/api-store-changes.command';
+import { ApiStoreChangesCommand } from '../api/store/api-store-changes.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { SyncGetTimeCommand } from './sync-get-time.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';

@@ -14,21 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoolDto, ICommand } from '../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../api/api-helper';
-import { FetchService } from '../../service/fetch.service';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { BoolDto, ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
+import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
+import { ApiHelper } from '../../../api/api-helper';
+import { FetchService } from '../../../service/fetch.service';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export class ApiStoreRemoveAllCommand implements ICommand<Promise<BoolDto>> {
-  async execute(): Promise<BoolDto> {
+export class ApiStoreRemoveAllCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
+  async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {
+    fnConsoleLog('ApiStoreRemoveAllCommand->execute');
     const storeUrl = await ApiHelper.getStoreUrl();
 
     const url = `${storeUrl}/api/v1/store/obj`;
 
-    const resp = await FetchService.delete<BoolDto>(url, true);
-
-    fnConsoleLog('ApiStoreRemoveAllCommand->execute', resp);
-
-    return resp;
+    try {
+      return await FetchService.delete<BoolDto>(url, true);
+    } catch (e) {
+      return {
+        ok: false,
+        url,
+        status: 500,
+        type: ResponseType.JSON,
+        res: { message: 'Send request problem' }
+      };
+    }
   }
 }

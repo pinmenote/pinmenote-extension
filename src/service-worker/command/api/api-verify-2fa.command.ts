@@ -15,20 +15,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto, VerifyTokenDto } from '../../../common/model/shared/token.dto';
+import { FetchResponse, ResponseType } from '../../../common/model/api.model';
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiHelper } from '../../api/api-helper';
-import { FetchResponse } from '../../../common/model/api.model';
 import { FetchService } from '../../service/fetch.service';
-import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class ApiVerify2faCommand implements ICommand<Promise<FetchResponse<AccessTokenDto>>> {
+export class ApiVerify2faCommand implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>> {
   constructor(private data: VerifyTokenDto) {}
 
-  async execute(): Promise<FetchResponse<AccessTokenDto>> {
-    const data = await FetchService.post<AccessTokenDto>(`${ApiHelper.apiUrl}/api/v1/auth/2fa/verify`, this.data);
-
-    fnConsoleLog('ApiVerify2faCommand->execute', data);
-
-    return data;
+  async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
+    fnConsoleLog('ApiVerify2faCommand->execute');
+    const url = `${ApiHelper.apiUrl}/api/v1/auth/2fa/verify`;
+    try {
+      return await FetchService.post<AccessTokenDto>(url, this.data);
+    } catch (e) {
+      return {
+        ok: false,
+        url,
+        status: 500,
+        type: ResponseType.JSON,
+        res: { message: 'Send request problem' }
+      };
+    }
   }
 }

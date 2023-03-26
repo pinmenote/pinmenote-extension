@@ -14,21 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
-import { FetchResponse, ResponseType } from '../../../common/model/api.model';
-import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../api/api-helper';
-import { FetchService } from '../../service/fetch.service';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { BoolDto, ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
+import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
+import { ApiHelper } from '../../../api/api-helper';
+import { FetchService } from '../../../service/fetch.service';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export class ApiLoginCommand implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>> {
-  constructor(private data: LoginDto) {}
+export class ApiStoreAddObjectCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
+  constructor(private obj: ObjDto) {}
 
-  async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
-    fnConsoleLog('ApiLoginCommand->execute');
-    const url = `${ApiHelper.apiUrl}/api/v1/auth/login`;
+  async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {
+    fnConsoleLog('ApiStoreAddObjectCommand->execute');
+    const storeUrl = await ApiHelper.getStoreUrl();
+
+    const url = `${storeUrl}/api/v1/store/obj/add`;
+
     try {
-      return await FetchService.post<AccessTokenDto>(url, this.data);
+      return await FetchService.post<BoolDto>(url, this.obj, true);
     } catch (e) {
       return {
         ok: false,

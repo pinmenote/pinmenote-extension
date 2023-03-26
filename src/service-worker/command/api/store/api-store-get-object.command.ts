@@ -14,21 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
-import { FetchResponse, ResponseType } from '../../../common/model/api.model';
-import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../api/api-helper';
-import { FetchService } from '../../service/fetch.service';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
+import { ApiHelper } from '../../../api/api-helper';
+import { FetchService } from '../../../service/fetch.service';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ServerErrorDto } from '../../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export class ApiLoginCommand implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>> {
-  constructor(private data: LoginDto) {}
+export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<ObjDto | ServerErrorDto>>> {
+  constructor(private id: number) {}
 
-  async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
-    fnConsoleLog('ApiLoginCommand->execute');
-    const url = `${ApiHelper.apiUrl}/api/v1/auth/login`;
+  async execute(): Promise<FetchResponse<ObjDto | ServerErrorDto>> {
+    fnConsoleLog('ApiStoreGetObjectCommand->execute');
+    const storeUrl = await ApiHelper.getStoreUrl();
+
+    const url = `${storeUrl}/api/v1/store/obj/${this.id}`;
+
     try {
-      return await FetchService.post<AccessTokenDto>(url, this.data);
+      return await FetchService.get(url, ResponseType.JSON, true);
     } catch (e) {
       return {
         ok: false,
