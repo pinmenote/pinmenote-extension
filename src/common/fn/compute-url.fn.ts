@@ -17,6 +17,8 @@
 const EXT_REGEX = new RegExp('\\.[a-zA-Z0-9]+$');
 
 export const fnComputeUrl = (value: string): string => {
+  if (value.startsWith('http')) return value;
+
   let baseurl = window.location.origin + window.location.pathname;
   // cleanup baseurl ending with html/htm
   if (baseurl.match(EXT_REGEX)) {
@@ -35,8 +37,6 @@ export const fnComputeUrl = (value: string): string => {
     // URL constructor is good with subpath resolution so ../../foo ../foo ./foo
     const url = new URL(baseurl + '/' + value);
     return url.href;
-  } else if (!value.startsWith('http')) {
-    return `${baseurl}/${value}`;
   }
-  return value;
+  return `${baseurl}/${value}`;
 };

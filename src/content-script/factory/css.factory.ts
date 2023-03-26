@@ -45,7 +45,7 @@ export class CssFactory {
         const cssFetchData = await this.fetchCss(s.href);
 
         if (cssFetchData.ok) {
-          const imports = await this.fetchImports(cssFetchData.res, s.href);
+          const imports = await this.fetchImports(cssFetchData.res);
           href.push(...imports);
 
           let data = cssFetchData.res.replaceAll(IMPORT_REG, '').trim();
@@ -106,7 +106,7 @@ export class CssFactory {
     return output;
   };
 
-  private static fetchImports = async (css: string, baseUrl?: string): Promise<CssHrefDto[]> => {
+  private static fetchImports = async (css: string): Promise<CssHrefDto[]> => {
     const importList = css.match(IMPORT_REG);
     if (!importList) return [];
 
@@ -115,19 +115,13 @@ export class CssFactory {
     for (const importUrl of importList) {
       if (importUrl.startsWith('http')) continue;
       let url = importUrl.split(' ')[1];
-      url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
-      if (baseUrl) {
-        const tmp = baseUrl.split('/');
-        const startUrl = tmp.slice(0, tmp.length - 1).join('/');
 
-        if (url.startsWith('/') && startUrl.endsWith('/')) {
-          url = startUrl.substring(0, startUrl.length - 1) + url;
-        } else if (url.startsWith('/') || startUrl.endsWith('/')) {
-          url = startUrl + url;
-        } else {
-          url = startUrl + '/' + url;
-        }
-      }
+      url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
+
+      const urlMatch = url.match(URL_REG);
+      if (!urlMatch) continue;
+      url = urlMatch[0].substring(5, urlMatch[0].length - 2);
+
       url = fnComputeUrl(url);
       const result = await this.fetchCss(url);
 
@@ -140,7 +134,7 @@ export class CssFactory {
           data
         });
       } else {
-        fnConsoleLog('CssFactory->fetchImports->ERROR !!!', result);
+        fnConsoleLog('CssFactory->fetchImports->ERROR !!!', result, css);
       }
     }
     return out;
@@ -154,6 +148,10 @@ export class CssFactory {
       let url = urlMatch.substring(5, urlMatch.length - 2);
       // skip data elements
       if (url.startsWith('data:')) continue;
+      // skip multiple urls
+      if (url.split('url(').length > 2) continue;
+      // skip fonts
+      if (url.indexOf('format(') > 0) continue;
 
       url = fnComputeUrl(url);
       const result = await fnFetchImage(url);
@@ -162,7 +160,7 @@ export class CssFactory {
         const newUrl = `url(${result.res})`;
         css = css.replace(urlMatch, newUrl);
       } else {
-        fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result);
+        fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, css);
       }
     }
     return css;
