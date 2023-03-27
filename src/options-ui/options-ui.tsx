@@ -17,28 +17,18 @@
 import '../css/prosemirror.css';
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BoardComponent } from './components/board/board.component';
-import { BoardStore } from './store/board.store';
 import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
 import { LeftSideMenu } from './components/menu/left-side.menu';
 import { OptionsMessageHandler } from './options-message.handler';
 import { SettingsComponent } from './components/settings/settings.component';
 import { createRoot } from 'react-dom/client';
-
-const initPinBoardStore = async () => {
-  fnConsoleLog('initPinBoardStore');
-  await BoardStore.clearSearch();
-  await BoardStore.getObjRange();
-};
+import { fnConsoleError } from '../common/fn/console.fn';
 
 const App: FunctionComponent = () => {
   const [showSettings, setShowSettings] = useState<boolean>(window.location.hash === '#settings');
 
   useEffect(() => {
-    if (!showSettings) {
-      setTimeout(initPinBoardStore, 0);
-    }
     window.addEventListener('hashchange', handleHashChange);
     return () => {
       window.removeEventListener('hashchange', handleHashChange);

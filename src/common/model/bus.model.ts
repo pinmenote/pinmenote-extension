@@ -31,8 +31,6 @@ export enum BusMessageType {
   CNT_SETTINGS = 'cnt.settings',
   // Internal options tab
   OPT_GET_LEFT_MENU_DATA = 'opt.get.left.menu.data',
-  OPT_PIN_SHOW_IMAGE = 'opt.pin.show.image',
-  OPT_REFRESH_BOARD = 'opt.refresh.board',
   OPT_SHOW_HTML = 'opt.show.html',
   // Internal popup
   POP_CONSOLE_LOG = 'pop.console.log',

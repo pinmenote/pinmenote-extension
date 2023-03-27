@@ -14,39 +14,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardAddElementSearch } from './search/board-add-element.search';
 import { BoardInputSearch } from './search/board-input.search';
 import { BoardStore } from '../../store/board.store';
 import Box from '@mui/material/Box';
-import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { PageElementSnapshotElement } from './page-element-snapshot/page-element-snapshot.element';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
 import { PinElement } from './pin/pin.element';
 import Stack from '@mui/material/Stack';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const BoardComponent: FunctionComponent = () => {
-  const [objData, setObjData] = useState<ObjDto<ObjDataDto>[]>(BoardStore.objList);
+  const [objData, setObjData] = useState<ObjDto[]>(BoardStore.objList);
 
   const stackRef = useRef<HTMLDivElement>();
 
   useEffect(() => {
     // Infinite scroll
+    setTimeout(async () => {
+      fnConsoleLog('initPinBoardStore');
+      await BoardStore.clearSearch();
+      await BoardStore.getObjRange(refreshBoardCallback);
+    }, 0);
     stackRef.current?.addEventListener('scroll', handleScroll);
-
-    const refreshKey = TinyEventDispatcher.addListener<undefined>(BusMessageType.OPT_REFRESH_BOARD, () => {
-      setObjData(BoardStore.objList.concat());
-    });
-    return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.OPT_REFRESH_BOARD, refreshKey);
-      stackRef.current?.removeEventListener('scroll', handleScroll);
-    };
   });
+
+  const refreshBoardCallback = () => {
+    setObjData(BoardStore.objList.concat());
+  };
 
   const handleScroll = () => {
     fnConsoleLog('handleScroll');
@@ -62,12 +61,12 @@ export const BoardComponent: FunctionComponent = () => {
     // Search for value from last one
     if (BoardStore.getSearch()) {
       BoardStore.timeout = window.setTimeout(async () => {
-        await BoardStore.sendSearch();
+        await BoardStore.sendSearch(refreshBoardCallback);
       }, 1000);
       return;
     }
     window.setTimeout(async () => {
-      await BoardStore.getObjRange();
+      await BoardStore.getObjRange(refreshBoardCallback);
     }, 250);
   };
 
@@ -75,11 +74,25 @@ export const BoardComponent: FunctionComponent = () => {
   for (let i = 0; i < objData.length; i++) {
     const obj = objData[i];
     if (obj.type === ObjTypeDto.PageElementPin) {
-      boardElements.push(<PinElement pin={obj as ObjDto<ObjPagePinDto>} key={obj.id} />);
+      boardElements.push(
+        <PinElement refreshBoardCallback={refreshBoardCallback} dto={obj as ObjDto<ObjPagePinDto>} key={obj.id} />
+      );
     } else if (obj.type === ObjTypeDto.PageSnapshot) {
-      boardElements.push(<PageSnapshotElement dto={obj as ObjDto<ObjSnapshotDto>} key={obj.id} />);
+      boardElements.push(
+        <PageSnapshotElement
+          refreshBoardCallback={refreshBoardCallback}
+          dto={obj as ObjDto<ObjSnapshotDto>}
+          key={obj.id}
+        />
+      );
     } else if (obj.type === ObjTypeDto.PageElementSnapshot) {
-      boardElements.push(<PageElementSnapshotElement dto={obj as ObjDto<ObjSnapshotDto>} key={obj.id} />);
+      boardElements.push(
+        <PageElementSnapshotElement
+          refreshBoardCallback={refreshBoardCallback}
+          dto={obj as ObjDto<ObjSnapshotDto>}
+          key={obj.id}
+        />
+      );
     } else {
       fnConsoleLog('NOT SUPPORTED !!!', obj);
       boardElements.push(
@@ -93,7 +106,7 @@ export const BoardComponent: FunctionComponent = () => {
   return (
     <div style={{ width: '100%', marginLeft: 20, marginTop: 10 }}>
       <Box style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
-        <BoardInputSearch></BoardInputSearch>
+        <BoardInputSearch refreshBoardCallback={refreshBoardCallback}></BoardInputSearch>
         <BoardAddElementSearch></BoardAddElementSearch>
       </Box>
       <Stack direction="row" flexWrap="wrap" ref={stackRef} style={{ overflow: 'auto', height: 'calc(100vh - 65px)' }}>

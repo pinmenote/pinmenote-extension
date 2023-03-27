@@ -14,36 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto, PinHtmlDataDto } from '../model/obj/obj-pin.dto';
+import { CssDataDto } from '../model/obj/obj-pin.dto';
 
 export class IframeHtmlFactory {
-  static computePinHtml = (content: PinHtmlDataDto, container?: HTMLElement): string => {
-    const iframe = document.createElement('iframe');
-    iframe.style.border = 'none';
-    const { css, href } = content.css;
-
-    const html = `<html>
-        <head>
-            ${href
-              .map((h) => (h.data ? `<style>${h.data}</style>` : `<link rel="stylesheet" href="${h.href}" />`))
-              .join('')}
-            <style>${css}</style>            
-        </head>
-        ${content.html}
-    </html>`;
-    if (!container) return html;
-
-    container.appendChild(iframe);
-
-    if (!iframe.contentWindow) return '';
-
-    const doc = iframe.contentWindow.document;
-    doc.write(html);
-    doc.close();
-
-    return html;
-  };
-
   static computeHtml = (css: CssDataDto, htmlValue: string): string => {
     // https://www.uefa.com workaround -> <noscript> html {opacity: 1}</noscript> -> seriously ????
     const html = `<html style="opacity: 1">

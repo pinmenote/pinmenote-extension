@@ -29,22 +29,23 @@ import { fnUid } from '../../../../common/fn/uid.fn';
 
 interface PageSnapshotElementParams {
   dto: ObjDto<ObjSnapshotDto>;
+  refreshBoardCallback: () => void;
 }
 
-export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> = (params) => {
+export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> = ({ dto, refreshBoardCallback }) => {
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (divRef.current && params.dto.data.screenshot && divRef.current.children.length === 0) {
+    if (divRef.current && !divRef.current?.firstChild && dto.data.screenshot) {
       const img = new Image();
       img.width = window.innerWidth / 3;
-      img.src = params.dto.data.screenshot;
+      img.src = dto.data.screenshot;
       divRef.current.appendChild(img);
     }
   });
 
   const handleDownload = async () => {
-    const html = IframeHtmlFactory.computeHtml(params.dto.data.css, params.dto.data.html) || '';
+    const html = IframeHtmlFactory.computeHtml(dto.data.css, dto.data.html) || '';
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
     const filename = `${fnUid()}.html`;
@@ -56,28 +57,28 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   };
 
   const handleHtml = () => {
-    TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, params.dto.data);
+    TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data);
   };
 
   const handleRemove = async () => {
-    if (await BoardStore.removeObj(params.dto)) {
-      TinyEventDispatcher.dispatch<undefined>(BusMessageType.OPT_REFRESH_BOARD, undefined);
+    if (await BoardStore.removeObj(dto)) {
+      refreshBoardCallback();
     }
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 3, margin: 10 }}>
-      <h1>{params.dto.data.title}</h1>
+      <h1>{dto.data.title}</h1>
       <div>
         <Button onClick={handleHtml}>HTML</Button>
         <Button onClick={handleDownload}>Download</Button>
         <Button onClick={handleRemove}>Remove</Button>
       </div>
-      <Link target="_blank" href={params.dto.data.url.href}>
-        <Typography sx={{ fontSize: '0.9em' }}>{decodeURI(params.dto.data.url.href)}</Typography>
+      <Link target="_blank" href={dto.data.url.href}>
+        <Typography sx={{ fontSize: '0.9em' }}>{decodeURI(dto.data.url.href)}</Typography>
       </Link>
       <div ref={divRef}></div>
-      <p>snapshot {params.dto.createdAt}</p>
+      <p>snapshot {dto.createdAt}</p>
     </div>
   );
 };

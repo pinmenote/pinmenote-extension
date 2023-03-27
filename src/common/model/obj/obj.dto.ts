@@ -18,11 +18,6 @@ import { ObjNoteDto } from './obj-note.dto';
 import { ObjPagePinDto } from './obj-pin.dto';
 import { ObjSnapshotDto } from './obj-snapshot.dto';
 
-export enum ObjBoardViewDto {
-  Screenshot = 'SCREENSHOT',
-  Html = 'HTML'
-}
-
 export const OBJ_DTO_VERSION = 1;
 
 export interface ObjLocalDto {

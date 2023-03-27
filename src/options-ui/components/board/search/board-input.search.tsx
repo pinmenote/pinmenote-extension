@@ -22,7 +22,11 @@ import Input from '@mui/material/Input';
 import SearchIcon from '@mui/icons-material/Search';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export const BoardInputSearch: FunctionComponent = () => {
+interface BoardInputSearchParams {
+  refreshBoardCallback: () => void;
+}
+
+export const BoardInputSearch: FunctionComponent<BoardInputSearchParams> = ({ refreshBoardCallback }) => {
   const [searchValue, setSearchValue] = useState<string>(BoardStore.getSearch() || '');
 
   const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -35,14 +39,14 @@ export const BoardInputSearch: FunctionComponent = () => {
     // setPinData([]);
     if (e.target.value.length <= 2) {
       BoardStore.timeout = window.setTimeout(async () => {
-        await BoardStore.getObjRange();
+        await BoardStore.getObjRange(refreshBoardCallback);
       }, 1000);
       return;
     } else {
       BoardStore.setSearch(e.target.value);
     }
     BoardStore.timeout = window.setTimeout(async () => {
-      await BoardStore.sendSearch();
+      await BoardStore.sendSearch(refreshBoardCallback);
     }, 1000);
   };
 
@@ -50,7 +54,7 @@ export const BoardInputSearch: FunctionComponent = () => {
     fnConsoleLog('handleClearSearch');
     setSearchValue('');
     await BoardStore.clearSearch();
-    await BoardStore.getObjRange();
+    await BoardStore.getObjRange(refreshBoardCallback);
   };
   return (
     <div style={{ width: '50%' }}>

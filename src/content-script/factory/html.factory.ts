@@ -135,7 +135,7 @@ export class HtmlFactory {
     }
 
     if (tagName === 'img') {
-      const value = await this.computeImgValue(ref);
+      const value = await this.computeImgValue(ref as HTMLImageElement);
       html += `src="${value}" `;
     }
 
@@ -223,13 +223,10 @@ export class HtmlFactory {
     };
   };
 
-  private static computeImgValue = async (ref: Element): Promise<string> => {
+  private static computeImgValue = async (ref: HTMLImageElement): Promise<string> => {
     let value = '';
 
-    // we have data already inside image so just add it
-    if (value.startsWith('data:')) {
-      return value;
-    }
+    fnConsoleLog('HtmlFactory->computeImgValue', ref.src);
     // data-src
     if (ref.getAttribute('data-src')) {
       value = ref.getAttribute('data-src') || '';
@@ -251,9 +248,9 @@ export class HtmlFactory {
     }
 
     // srcset
-    if (ref.getAttribute('srcset')) {
+    if (ref.srcset) {
       // TODO check if ok for all cases
-      const srcset = (ref.getAttribute('srcset') || '').split(',');
+      const srcset = ref.srcset.split(',');
       // last value so it's biggest image
       value = srcset[srcset.length - 1].trim().split(' ')[0];
       const url = fnComputeUrl(value);
@@ -265,7 +262,12 @@ export class HtmlFactory {
       }
     }
 
-    value = ref.getAttribute('src') || '';
+    value = ref.src || '';
+    // we have data already inside image so just add it
+    if (value.startsWith('data:')) {
+      return value;
+    }
+
     value = value.replaceAll('"', '&quot;');
 
     const url = fnComputeUrl(value);

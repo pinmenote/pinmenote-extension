@@ -22,9 +22,7 @@ import { PinAddFactory } from '../factory/pin-add.factory';
 import { PinFactory } from '../factory/pin.factory';
 import { PinSnapshotFactory } from '../factory/pin-snapshot.factory';
 import { PopupPinStartRequest } from '../../common/model/obj-request.model';
-import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
-import { pinStyles } from '../components/styles/pin.styles';
 
 export class DocumentMediator {
   private static type?: ObjTypeDto;
@@ -39,16 +37,18 @@ export class DocumentMediator {
     }
     fnConsoleLog('DocumentMediator->startListeners', href);
     this.type = data.type;
-    const canvasList = Array.from(document.getElementsByTagName('canvas'));
+    // TODO use only when over canvas
+    /*const canvasList = Array.from(document.getElementsByTagName('canvas'));
     let canvasFound = false;
     for (let i = 0; i < canvasList.length; i++) {
       if (canvasList[i].width >= window.innerWidth && canvasList[i].height >= window.innerHeight) {
         canvasFound = true;
         break;
       }
-    }
+    }*/
     // Well, canvas web pages...
-    if (canvasFound) {
+    // Only if on canvas
+    /*if (canvasFound) {
       this.overlay = document.createElement('div');
       applyStylesToElement(this.overlay, pinStyles);
       this.overlay.style.top = '0px';
@@ -62,9 +62,10 @@ export class DocumentMediator {
       document.body.appendChild(this.overlay);
       this.overlay.addEventListener('click', this.handleOverlayClick);
       this.overlay.addEventListener('mousemove', this.handleOverlayMove);
-    } else {
-      document.addEventListener('mouseover', this.handleMouseOver);
-    }
+    } else {*/
+
+    //}
+    document.addEventListener('mouseover', this.handleMouseOver);
     document.addEventListener('keydown', this.handleKeyDown);
   }
 

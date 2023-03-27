@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
+import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../common/model/bus.model';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
@@ -26,11 +25,10 @@ import { OptionsObjSearchCommand } from '../../service-worker/command/options/op
 import { PageElementSnapshotRemoveCommand } from '../../common/command/snapshot/page-element-snapshot-remove.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { PinRemoveCommand } from '../../common/command/pin/pin-remove.command';
-import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class BoardStore {
-  static objData: ObjDto<ObjDataDto>[] = [];
+  static objData: ObjDto[] = [];
 
   private static loading = false;
   private static isLastValue = false;
@@ -40,11 +38,11 @@ export class BoardStore {
     listId: -1
   };
 
-  static get objList(): ObjDto<ObjDataDto>[] {
+  static get objList(): ObjDto[] {
     return this.objData;
   }
 
-  static removeObj = async (value: ObjDto<ObjDataDto>): Promise<boolean> => {
+  static removeObj = async (value: ObjDto): Promise<boolean> => {
     for (let i = 0; i < this.objData.length; i++) {
       if (this.objData[i].id == value.id) {
         this.objData.splice(i, 1);
@@ -90,7 +88,7 @@ export class BoardStore {
     return this.search.search;
   }
 
-  static async getObjRange(): Promise<void> {
+  static async getObjRange(refreshBoardCallback: () => void): Promise<void> {
     fnConsoleLog('PinBoardStore->getRange', this.search);
     this.loading = true;
     const result = await new OptionsObjGetRangeCommand(this.search).execute();
@@ -114,19 +112,19 @@ export class BoardStore {
 
       this.objData.push(...result.data);
 
-      TinyEventDispatcher.dispatch(BusMessageType.OPT_REFRESH_BOARD);
+      refreshBoardCallback();
     } else {
       this.isLastValue = true;
     }
     this.loading = false;
   }
 
-  static async sendSearch(): Promise<void> {
+  static async sendSearch(refreshBoardCallback: () => void): Promise<void> {
     fnConsoleLog('PinBoardStore->getSearch', this.search);
     const result = await new OptionsObjSearchCommand(this.search).execute();
     if (result) {
       this.objData.push(...result);
-      TinyEventDispatcher.dispatch(BusMessageType.OPT_REFRESH_BOARD);
+      refreshBoardCallback();
     }
   }
 }
