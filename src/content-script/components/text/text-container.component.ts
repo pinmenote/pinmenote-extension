@@ -15,8 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../common/model/html.model';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { TextEditContainerComponent } from './text-edit-container.component';
 import { applyStylesToElement } from '../../../common/style.utils';
@@ -31,8 +29,8 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement> {
 
   private editContainer: TextEditContainerComponent;
 
-  constructor(private object: ObjDto<ObjPagePinDto>, rect: ObjRectangleDto) {
-    this.editContainer = new TextEditContainerComponent(object, rect);
+  constructor(rect: ObjRectangleDto, addCommentCallback: (value: string) => void) {
+    this.editContainer = new TextEditContainerComponent(rect, addCommentCallback, this.cancelCallback);
   }
 
   render(): HTMLElement {
@@ -54,14 +52,19 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement> {
 
   show(): void {
     this.el.style.display = 'inline-block';
-    this.editContainer.focus();
+    this.editContainer.create();
   }
 
   hide(): void {
     this.el.style.display = 'none';
+    this.editContainer.cleanup();
   }
 
   cleanup(): void {
     this.editContainer.cleanup();
   }
+
+  private cancelCallback = () => {
+    this.hide();
+  };
 }

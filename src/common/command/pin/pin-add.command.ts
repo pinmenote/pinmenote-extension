@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,8 @@ import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { BusMessageType } from '../../model/bus.model';
-import { HashtagFindCommand } from '../obj/hashtag/hashtag-find.command';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
-import { ObjAddHashtagsCommand } from '../obj/hashtag/obj-add-hashtags.command';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
@@ -36,7 +34,6 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
 
     const id = await new ObjNextIdCommand().execute();
     const dt = Date.now();
-    const hashtags = new HashtagFindCommand(this.pin.value).execute();
 
     const dto: ObjDto<ObjPagePinDto> = {
       id,
@@ -51,16 +48,14 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
       encryption: {
         encrypted: false
       },
-      hashtags
+      hashtags: []
     };
-
-    await new ObjAddHashtagsCommand(id, hashtags).execute();
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
 
     await BrowserStorageWrapper.set(key, dto);
 
-    await LinkHrefOriginStore.addHrefOriginId(this.pin.url, id);
+    await LinkHrefOriginStore.addHrefOriginId(this.pin.snapshot.url, id);
 
     await new ObjAddIdCommand(id, dt).execute();
 

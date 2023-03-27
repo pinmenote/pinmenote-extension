@@ -16,41 +16,36 @@
  */
 import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
 import { ObjDrawDto } from './obj-draw.dto';
-import { ObjUrlDto } from './obj.dto';
+import { ObjSnapshotDto } from './obj-snapshot.dto';
+
+export interface ObjCommentDto {
+  username?: string;
+  value: string;
+}
+
+export interface ObjCommentListDto {
+  data: ObjCommentDto[];
+}
 
 export interface ObjPagePinDto {
   xpath: string;
-  url: ObjUrlDto;
-  html: PinHtmlDataDto;
   video: PinVideoDataDto[];
   draw: ObjDrawDto[];
-  value: string;
-  title: string;
-  htmlEdit?: string;
+  comments: ObjCommentListDto;
+  snapshot: ObjSnapshotDto;
+  border: PinBorderDataDto;
+  canvas?: ObjCanvasPinDto;
 }
 
 export interface ObjCanvasPinDto {
   windowSize: ObjSizeDto;
   rect: ObjRectangleDto;
-  screenshot?: string;
-  url: ObjUrlDto;
-  draw: ObjDrawDto[];
-  value: string;
-  title: string;
 }
 
 export interface PinVideoDataDto {
   currentTime: number;
   displayTime: number;
   xpath: string;
-}
-
-export interface PinHtmlDataDto {
-  title: string;
-  screenshot?: string;
-  html: string;
-  css: CssDataDto;
-  border: PinBorderDataDto;
 }
 
 export interface CssDataDto {

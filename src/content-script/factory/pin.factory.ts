@@ -15,41 +15,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCanvasPinDto, ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
-import { HtmlFactory } from './html.factory';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
-import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
-import { UrlFactory } from '../../common/factory/url.factory';
+import { ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 
 export class PinFactory {
-  static objPagePinNew = async (ref: HTMLElement): Promise<ObjPagePinDto> => {
-    const url = UrlFactory.newUrl();
-    const html = await HtmlFactory.computeHtmlData(ref, url);
+  static objPagePinNew = (ref: HTMLElement, snapshot: ObjSnapshotDto): ObjPagePinDto => {
     return {
-      title: document.title,
       xpath: XpathFactory.newXPathString(ref),
-      value: '',
-      url,
-      html,
+      border: {
+        style: ref.style.border,
+        radius: ref.style.borderRadius
+      },
+      comments: {
+        data: []
+      },
+      snapshot,
       video: [],
       draw: []
     };
   };
 
-  static objCanvasPinNew = async (rect: ObjRectangleDto): Promise<ObjCanvasPinDto> => {
-    const url = UrlFactory.newUrl();
-    const screenshot = await ScreenshotFactory.takeScreenshot(rect, url);
+  static objCanvasPinNew = (rect: ObjRectangleDto): ObjCanvasPinDto => {
     return {
       windowSize: {
         width: window.innerWidth,
         height: window.innerHeight
       },
-      rect,
-      screenshot,
-      title: document.title,
-      value: '',
-      url,
-      draw: []
+      rect
     };
   };
 }

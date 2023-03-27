@@ -35,7 +35,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
   constructor(private parent: PinComponent) {}
 
   render(): HTMLElement {
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#ff0000" height="24" viewBox="0 0 24 24" width="24">
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#000000" height="24" viewBox="0 0 24 24" width="24">
     <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
   </svg>`;
 
@@ -64,8 +64,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.parent.ref);
       // const css = await CssFactory.computeCssContent();
 
-      this.parent.object.data.htmlEdit = undefined;
-      this.parent.object.data.html.html = htmlContent.html;
+      this.parent.object.data.snapshot.html = htmlContent.html;
       this.parent.object.data.video = htmlContent.videoTime;
       // this.parent.object.data.html.css = css;
       this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref);
@@ -93,7 +92,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
             this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
           }
 
-          this.parent.object.data.html.screenshot = await ImageResizeFactory.resize(rect, value);
+          this.parent.object.data.snapshot.screenshot = await ImageResizeFactory.resize(rect, value);
 
           await new PinUpdateCommand(this.parent.object).execute();
           this.parent.resize();

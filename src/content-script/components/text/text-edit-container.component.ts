@@ -15,8 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../common/model/html.model';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { TextEditorComponent } from './text-editor.component';
 
@@ -25,19 +23,33 @@ export class TextEditContainerComponent implements HtmlComponent<HTMLElement> {
 
   private textEditor: TextEditorComponent;
   private saveButton: HTMLButtonElement = document.createElement('button');
+  private cancelButton: HTMLButtonElement = document.createElement('button');
 
-  constructor(private object: ObjDto<ObjPagePinDto>, rect: ObjRectangleDto) {
-    this.textEditor = new TextEditorComponent(object, rect);
-    this.saveButton.innerText = 'SAVE';
+  constructor(
+    rect: ObjRectangleDto,
+    private addCommentCallback: (value: string) => void,
+    private cancelCallback: () => void
+  ) {
+    this.textEditor = new TextEditorComponent(rect);
+    this.saveButton.innerText = 'Add';
     this.saveButton.style.color = '#000000';
     this.saveButton.style.backgroundColor = '#ffffff';
+    this.cancelButton.innerText = 'Cancel';
+    this.cancelButton.style.color = '#000000';
+    this.cancelButton.style.backgroundColor = '#ffffff';
   }
 
   render(): HTMLElement {
     const text = this.textEditor.render();
+    this.saveButton.addEventListener('click', this.handleSaveClick);
+    this.cancelButton.addEventListener('click', this.handleCancelClick);
     this.el.appendChild(text);
     this.el.appendChild(this.saveButton);
     return this.el;
+  }
+
+  create(): void {
+    this.textEditor.create();
   }
 
   focus(): void {
@@ -60,4 +72,12 @@ export class TextEditContainerComponent implements HtmlComponent<HTMLElement> {
   cleanup(): void {
     this.textEditor.cleanup();
   }
+
+  private handleSaveClick = () => {
+    this.addCommentCallback(this.textEditor.value);
+  };
+
+  private handleCancelClick = () => {
+    this.cancelCallback();
+  };
 }

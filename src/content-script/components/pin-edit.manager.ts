@@ -77,10 +77,6 @@ export class PinEditManager {
     this.parent.downloadBar.hide();
   };
 
-  updateHtml(): void {
-    if (this.parent.htmlEditComponent.value) this.parent.ref.innerHTML = this.parent.htmlEditComponent.value;
-  }
-
   private changeVisibleBar(nextState: VisibleState) {
     fnConsoleLog('PinComponent->changeVisibleBar', nextState);
     // Draw cleanup
@@ -93,8 +89,6 @@ export class PinEditManager {
     if (this.prevState === VisibleState.PinEditBar) {
       this.parent.editBar.hide();
       this.parent.topBar.editTurnOff();
-      this.parent.editBar.htmlEditTurnOff();
-      this.parent.htmlEditComponent.focusout();
     }
 
     // Download cleanup

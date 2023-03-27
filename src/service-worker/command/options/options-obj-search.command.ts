@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
@@ -22,10 +22,10 @@ import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class OptionsObjSearchCommand implements ICommand<Promise<ObjDto<ObjDataDto>[] | undefined>> {
+export class OptionsObjSearchCommand implements ICommand<Promise<ObjDto[] | undefined>> {
   constructor(private data: ObjRangeRequest) {}
 
-  async execute(): Promise<ObjDto<ObjDataDto>[] | undefined> {
+  async execute(): Promise<ObjDto[] | undefined> {
     try {
       const data = await this.getSearch(ObjectStoreKeys.OBJECT_ID, this.data);
       return data;
@@ -34,16 +34,16 @@ export class OptionsObjSearchCommand implements ICommand<Promise<ObjDto<ObjDataD
     }
   }
 
-  private async getSearch(idKey: string, range: ObjRangeRequest): Promise<ObjDto<ObjDataDto>[]> {
+  private async getSearch(idKey: string, range: ObjRangeRequest): Promise<ObjDto[]> {
     if (!range.search || range.search?.length < 2) return [];
-    const out: ObjDto<ObjDataDto>[] = [];
+    const out: ObjDto[] = [];
     const ids = (await this.getIds()).reverse();
 
     for (let i = 0; i < ids.length; i++) {
       // Skip those that were sent
       if (range.from && ids[i] >= range.from) continue;
       const key = `${idKey}:${ids[i]}`;
-      const obj = await BrowserStorageWrapper.get<ObjDto<ObjDataDto>>(key);
+      const obj = await BrowserStorageWrapper.get<ObjDto>(key);
       if (obj && obj.type === ObjTypeDto.PageElementPin && this.search(range.search, obj as ObjDto<ObjPagePinDto>)) {
         out.push(obj);
       }
@@ -55,9 +55,8 @@ export class OptionsObjSearchCommand implements ICommand<Promise<ObjDto<ObjDataD
   }
 
   private search(searchValue: string, pin: ObjDto<ObjPagePinDto>): boolean {
-    if (pin.data.value.toLowerCase().indexOf(searchValue) > -1) return true;
-    if (pin.data.url.href.indexOf(searchValue) > -1) return true;
-    if (pin.data.title.toLowerCase().indexOf(searchValue) > -1) return true;
+    if (pin.data.snapshot.url.href.indexOf(searchValue) > -1) return true;
+    if (pin.data.snapshot.title.toLowerCase().indexOf(searchValue) > -1) return true;
     return false;
   }
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPointDto, ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
-import { CanvasPinAddCommand } from '../../common/command/canvas/canvas-pin-add.command';
-import { CanvasPinComponentAddCommand } from '../command/canvas/canvas-pin-component-add.command';
+import { ObjPointDto } from '../../common/model/obj/obj-utils.dto';
 import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PinAddFactory } from '../factory/pin-add.factory';
-import { PinFactory } from '../factory/pin.factory';
 import { PinSnapshotFactory } from '../factory/pin-snapshot.factory';
 import { PopupPinStartRequest } from '../../common/model/obj-request.model';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -112,14 +109,14 @@ export class DocumentMediator {
     }
   };
 
-  private static handleOverlayClick = async (e: MouseEvent): Promise<void> => {
+  private static handleOverlayClick = (e: MouseEvent): void => {
     e.preventDefault();
     e.stopImmediatePropagation();
     if (this.type === ObjTypeDto.PageElementPin) {
       if (!this.pinStart) {
         this.pinStart = { x: e.offsetX, y: e.offsetY };
       } else {
-        await this.addCanvasPin(e.offsetX, e.offsetY);
+        // await this.addCanvasPin(e.offsetX, e.offsetY);
         this.stopListeners();
       }
     } else if (this.type === ObjTypeDto.PageElementSnapshot) {
@@ -145,7 +142,7 @@ export class DocumentMediator {
     ctx.stroke();
   };
 
-  private static addCanvasPin = async (offsetX: number, offsetY: number): Promise<void> => {
+  /*private static addCanvasPin = async (offsetX: number, offsetY: number): Promise<void> => {
     if (!this.pinStart) return;
 
     const width = offsetX - this.pinStart.x;
@@ -161,5 +158,5 @@ export class DocumentMediator {
     const obj = await new CanvasPinAddCommand(canvasPin).execute();
 
     new CanvasPinComponentAddCommand(obj, false).execute();
-  };
+  };*/
 }

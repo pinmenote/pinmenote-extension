@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HashtagFindCommand } from './hashtag-find.command';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjHashtagStore } from '../../../store/obj-hashtag.store';
 
 export class ObjAddHashtagsCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private hashtags: string[]) {}
+  constructor(private id: number, private value: string) {}
 
   async execute(): Promise<void> {
-    for (const tag of this.hashtags) {
+    const hashtags = new HashtagFindCommand(this.value).execute();
+    for (const tag of hashtags) {
       await ObjHashtagStore.addHashtag(tag, this.id);
     }
   }

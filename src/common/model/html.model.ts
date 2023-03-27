@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasPinDto, ObjPagePinDto } from './obj/obj-pin.dto';
 import { ObjDto } from './obj/obj.dto';
 import { ObjIframeDataDto } from './obj/obj-iframe.dto';
+import { ObjPagePinDto } from './obj/obj-pin.dto';
 
 export interface HtmlIntermediateData {
   html: string;
@@ -36,7 +36,7 @@ export interface HtmlComponentFocusable {
 }
 
 export interface PageComponent {
-  object: ObjDto<ObjPagePinDto | ObjCanvasPinDto>;
+  object: ObjDto<ObjPagePinDto>;
   focus(goto: boolean): void;
   cleanup(): void;
   resize(): void;

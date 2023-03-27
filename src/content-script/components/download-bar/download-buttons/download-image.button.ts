@@ -50,8 +50,8 @@ export class DownloadImageButton {
 
   private handleClick = () => {
     // Switch to original border
-    this.parent.ref.style.border = this.parent.object.data.html.border.style;
-    this.parent.ref.style.borderRadius = this.parent.object.data.html.border.radius;
+    this.parent.ref.style.border = this.parent.object.data.border.style;
+    this.parent.ref.style.borderRadius = this.parent.object.data.border.radius;
 
     this.parent.edit.hideScreenshot();
 

@@ -16,16 +16,13 @@
  */
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { BoardStore } from '../../../store/board.store';
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import Button from '@mui/material/Button';
-import { IframeHtmlFactory } from '../../../../common/factory/iframe-html.factory';
 import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnUid } from '../../../../common/fn/uid.fn';
 
 interface PageElementSnapshotElementParams {
   dto: ObjDto<ObjSnapshotDto>;
@@ -47,18 +44,6 @@ export const PageElementSnapshotElement: FunctionComponent<PageElementSnapshotEl
     }
   });
 
-  const handleDownload = async () => {
-    const html = IframeHtmlFactory.computeHtml(dto.data.css, dto.data.html) || '';
-    // https://stackoverflow.com/a/54302120 handle utf-8 string download
-    const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
-    const filename = `${fnUid()}.html`;
-    await BrowserApi.downloads.download({
-      url,
-      filename,
-      conflictAction: 'uniquify'
-    });
-  };
-
   const handleHtml = () => {
     TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data);
   };
@@ -74,7 +59,6 @@ export const PageElementSnapshotElement: FunctionComponent<PageElementSnapshotEl
       <h1>{dto.data.title}</h1>
       <div>
         <Button onClick={handleHtml}>HTML</Button>
-        <Button onClick={handleDownload}>Download</Button>
         <Button onClick={handleRemove}>Remove</Button>
       </div>
       <Link target="_blank" href={dto.data.url.href}>

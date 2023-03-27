@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ export class BottomBarComponent implements HtmlComponent<HTMLElement>, HtmlCompo
 
   private videoTime: VideoTimeComponent;
   private addComment: ShowCommentButton;
-  private shouldDisplay = false;
 
   constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
     this.videoTime = new VideoTimeComponent(object.data.video);

@@ -33,7 +33,7 @@ export const PinListComponent: FunctionComponent<PinListProps> = ({ pinList, vis
     const removeKey = TinyEventDispatcher.addListener<ObjDto<ObjPagePinDto>>(
       BusMessageType.POP_PIN_REMOVE,
       (event, key, value) => {
-        if (value.data.url.href === pinList[0].data.url.href) {
+        if (value.data.snapshot.url.href === pinList[0].data.snapshot.url.href) {
           for (let i = 0; i < pinList.length; i++) {
             const pin = pinList[i];
             if (pin.id === value.id) {

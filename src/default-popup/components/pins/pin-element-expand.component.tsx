@@ -17,7 +17,6 @@
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { marked } from 'marked';
 
 interface PinExpandProps {
   visible: boolean;
@@ -26,14 +25,13 @@ interface PinExpandProps {
 
 export const PinElementExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, visible }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const valueRef = useRef<HTMLDivElement>(null);
   const img = new Image();
 
   useEffect(() => {
     img.width = 280;
-    if (pin.data.html.screenshot) img.src = pin.data?.html.screenshot;
+    if (pin.data.snapshot.screenshot) img.src = pin.data.snapshot.screenshot;
     ref.current?.appendChild(img);
-    if (valueRef.current) valueRef.current.innerHTML = marked(pin.data.value);
+
     return () => {
       ref.current?.removeChild(img);
     };
@@ -49,7 +47,6 @@ export const PinElementExpandComponent: FunctionComponent<PinExpandProps> = ({ p
         display: visible ? 'inline-block' : 'none'
       }}
     >
-      <div ref={valueRef}></div>
       <div ref={ref}></div>
     </div>
   );

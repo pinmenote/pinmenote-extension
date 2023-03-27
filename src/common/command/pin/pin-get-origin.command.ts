@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ export class PinGetOriginCommand implements ICommand<Promise<ObjDto<ObjPagePinDt
     for (const id of pinIds) {
       const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
       const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
-      if (this.filterHref && obj.data.url.href === this.data.href) continue;
+      if (this.filterHref && obj.data.snapshot.url.href === this.data.href) continue;
       out.push(obj);
     }
     return out;

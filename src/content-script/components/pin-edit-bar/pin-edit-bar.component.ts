@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
-import { EditBarHtmlButton } from './edit-bar-buttons/edit-bar-html.button';
 import { EditBarParentButton } from './edit-bar-buttons/edit-bar-parent.button';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
@@ -37,11 +36,9 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
   private visible = false;
 
   private parentButton: EditBarParentButton;
-  private htmlButton: EditBarHtmlButton;
 
   constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.parentButton = new EditBarParentButton(parent);
-    this.htmlButton = new EditBarHtmlButton(parent);
   }
 
   render(): HTMLElement {
@@ -50,15 +47,12 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
     this.adjustTop();
 
-    this.el.appendChild(this.htmlButton.render());
-
     this.el.appendChild(this.parentButton.render());
 
     return this.el;
   }
 
   cleanup(): void {
-    this.htmlButton.cleanup();
     this.parentButton.cleanup();
   }
 
@@ -78,10 +72,6 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
   hide(): void {
     this.visible = false;
     this.focusout();
-  }
-
-  htmlEditTurnOff(): void {
-    this.htmlButton.turnoff();
   }
 
   resize(rect: ObjRectangleDto): void {

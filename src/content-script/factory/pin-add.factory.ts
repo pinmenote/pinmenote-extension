@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@ import { DocumentMediator } from '../mediator/document.mediator';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from './pin.factory';
+import { SnapshotCreateCommand } from '../command/snapshot/snapshot-create.command';
+import { UrlFactory } from '../../common/factory/url.factory';
 
 export class PinAddFactory {
   private static currentElement: HTMLElement | null = null;
@@ -57,7 +59,9 @@ export class PinAddFactory {
     const element = this.currentElement;
     DocumentMediator.stopListeners();
     if (element) {
-      const pagePin = await PinFactory.objPagePinNew(element);
+      const url = UrlFactory.newUrl();
+      const snapshot = await new SnapshotCreateCommand(url, element).execute();
+      const pagePin = PinFactory.objPagePinNew(element, snapshot);
       const obj = await new PinAddCommand(pagePin).execute();
       new PinComponentAddCommand(element, obj, true).execute();
     }

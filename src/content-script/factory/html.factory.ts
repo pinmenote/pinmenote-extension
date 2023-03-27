@@ -18,10 +18,6 @@ import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.
 import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { CssFactory } from './css.factory';
-import { ObjUrlDto } from '../../common/model/obj/obj.dto';
-import { PinHtmlDataDto } from '../../common/model/obj/obj-pin.dto';
-import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
@@ -36,27 +32,6 @@ export class HtmlFactory {
     videoTime: [],
     iframe: []
   };
-
-  static async computeHtmlData(ref: HTMLElement, url?: ObjUrlDto): Promise<PinHtmlDataDto> {
-    const htmlContent = await this.computeHtmlIntermediateData(ref);
-    const html = HtmlFactory.computeHtmlParent(ref.parentElement, htmlContent.html);
-
-    fnConsoleLog('START COMPUTE CSS !!!');
-    const css = await CssFactory.computeCssContent();
-    fnConsoleLog('STOP COMPUTE CSS !!!');
-    const rect = XpathFactory.computeRect(ref);
-    const screenshot = await ScreenshotFactory.takeScreenshot(rect, url);
-    return {
-      title: document.title,
-      screenshot,
-      html,
-      css,
-      border: {
-        style: ref.style.border,
-        radius: ref.style.borderRadius
-      }
-    };
-  }
 
   static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
     const imgData = ref.toDataURL(

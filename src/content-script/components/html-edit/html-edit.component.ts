@@ -16,8 +16,6 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { HtmlPrettifyFactory } from '../../factory/html-prettify.factory';
-import { PinComponent } from '../pin.component';
-import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const elStyle = {
@@ -55,14 +53,15 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
   private rollbackButton = document.createElement('button');
 
   public originalHtml: string;
+  private htmlValue = '';
 
-  constructor(private parent: PinComponent) {
+  constructor(private ref: HTMLElement) {
     // TODO fix parent icon click
-    this.originalHtml = parent.ref.innerHTML;
+    this.originalHtml = ref.innerHTML;
   }
 
   get value(): string | undefined {
-    return this.parent.object.data.htmlEdit;
+    return this.htmlValue;
   }
 
   setOriginalHtml(value: string): void {
@@ -70,7 +69,7 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
   }
 
   focusin(): void {
-    this.text.value = HtmlPrettifyFactory.prettify(this.parent.object.data.htmlEdit || this.parent.ref.innerHTML);
+    this.text.value = HtmlPrettifyFactory.prettify(this.htmlValue || this.ref.innerHTML);
     this.el.style.display = 'flex';
   }
 
@@ -105,22 +104,14 @@ export class HtmlEditComponent implements HtmlComponent<HTMLElement>, HtmlCompon
   }
 
   rollback = (): void => {
-    this.parent.ref.innerHTML = this.originalHtml;
+    this.ref.innerHTML = this.originalHtml;
   };
 
-  private handleSaveClick = async () => {
-    this.parent.object.data.htmlEdit = this.text.value;
-    this.parent.edit.updateHtml();
-    this.parent.editBar.htmlEditTurnOff();
-    this.parent.htmlEditComponent.focusout();
-    await new PinUpdateCommand(this.parent.object).execute();
+  private handleSaveClick = () => {
+    this.htmlValue = this.text.value;
   };
 
-  private handleRollbackClick = async () => {
-    this.parent.editBar.htmlEditTurnOff();
-    this.parent.htmlEditComponent.focusout();
-    this.parent.ref.innerHTML = this.originalHtml;
-    this.parent.object.data.htmlEdit = undefined;
-    await new PinUpdateCommand(this.parent.object).execute();
+  private handleRollbackClick = () => {
+    this.ref.innerHTML = this.originalHtml;
   };
 }

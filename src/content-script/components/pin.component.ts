@@ -21,7 +21,7 @@ import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj/obj-draw.dto';
-import { HtmlEditComponent } from './html-edit/html-edit.component';
+import { ObjAddHashtagsCommand } from '../../common/command/obj/hashtag/obj-add-hashtags.command';
 import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
@@ -29,9 +29,11 @@ import { PinEditBarComponent } from './pin-edit-bar/pin-edit-bar.component';
 import { PinEditManager } from './pin-edit.manager';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinPointFactory } from '../factory/pin-point.factory';
+import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
 import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
+import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 
@@ -52,8 +54,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly editBar: PinEditBarComponent;
 
-  readonly htmlEditComponent: HtmlEditComponent;
-
   readonly edit: PinEditManager;
 
   private rect: ObjRectangleDto;
@@ -65,7 +65,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.rect = PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this, object, this.rect);
     this.bottomBar = new BottomBarComponent(this, object, this.rect);
-    this.text = new TextContainerComponent(object, this.rect);
+    this.text = new TextContainerComponent(this.rect, this.addCommentCallback);
 
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
 
@@ -76,20 +76,16 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.editBar = new PinEditBarComponent(this, this.rect);
 
-    this.htmlEditComponent = new HtmlEditComponent(this);
-
     this.edit = new PinEditManager(this);
   }
 
   setNewRef(ref: HTMLElement): void {
     this.mouseManager.stop();
-    this.refValue.style.border = this.object.data.html.border.style;
-    this.refValue.style.borderRadius = this.object.data.html.border.radius;
+    this.refValue.style.border = this.object.data.border.style;
+    this.refValue.style.borderRadius = this.object.data.border.radius;
     this.refValue.removeEventListener('mouseover', this.handleMouseOver);
     this.refValue.removeEventListener('mouseout', this.handleMouseOut);
-    this.refValue.innerHTML = this.htmlEditComponent.originalHtml;
     this.refValue = ref;
-    this.htmlEditComponent.setOriginalHtml(ref.innerHTML);
     this.mouseManager.start();
   }
 
@@ -139,10 +135,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     // Pin Edit
     this.top.appendChild(this.editBar.render());
 
-    // Html Edit
-    this.top.appendChild(this.htmlEditComponent.render());
-    this.edit.updateHtml();
-
     this.refValue.style.border = ContentSettingsStore.borderStyle;
     this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
 
@@ -169,8 +161,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   }
 
   cleanup(): void {
-    this.refValue.style.border = this.object.data.html.border.style;
-    this.refValue.style.borderRadius = this.object.data.html.border.radius;
+    this.refValue.style.border = this.object.data.border.style;
+    this.refValue.style.borderRadius = this.object.data.border.radius;
 
     this.text.cleanup();
     this.topBar.cleanup();
@@ -182,9 +174,17 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawComponent.cleanup();
     this.drawBar.cleanup();
     this.editBar.cleanup();
-
-    this.htmlEditComponent.cleanup();
   }
+
+  private addCommentCallback = async (value: string): Promise<void> => {
+    await new ObjAddHashtagsCommand(this.object.id, value).execute();
+    this.object.data.comments.data.push({ value });
+    try {
+      await new PinUpdateCommand(this.object).execute();
+    } catch (e) {
+      fnConsoleLog('ERROR UPDATE PIN', e);
+    }
+  };
 
   private timeoutId = -1;
 

@@ -18,7 +18,6 @@ import { HtmlComponent } from '../../../../common/model/html.model';
 import { PinComponent } from '../../pin.component';
 import { PinRemoveCommand } from '../../../../common/command/pin/pin-remove.command';
 import { PinStore } from '../../../store/pin.store';
-import { SettingsStore } from '../../../../options-ui/store/settings.store';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -27,8 +26,7 @@ export class ActionRemoveButton implements HtmlComponent<HTMLElement> {
   constructor(private parent: PinComponent) {}
 
   render(): HTMLElement {
-    const fillColor = SettingsStore.settings?.themeColor || '#ff0000';
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${fillColor}" height="24" viewBox="0 0 24 24" width="24">    
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#000000" height="24" viewBox="0 0 24 24" width="24">    
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
   </svg>`;
     this.el.addEventListener('click', this.handleClick);
@@ -41,7 +39,6 @@ export class ActionRemoveButton implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = async () => {
-    this.parent.htmlEditComponent.rollback();
     this.el.removeEventListener('click', this.handleClick);
     await new PinRemoveCommand(this.parent.object).execute();
     PinStore.delByUid(this.parent.object.id);
