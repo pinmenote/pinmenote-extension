@@ -82,37 +82,38 @@ export class DocumentMediator {
   };
 
   private static handleOverlayClick = async (e: MouseEvent): Promise<void> => {
-    if (!this.overlay) return;
     e.preventDefault();
     e.stopImmediatePropagation();
+    try {
+      if (!this.overlay) return;
+      const element = PinAddFactory.element;
 
-    const element = PinAddFactory.element;
-
-    if (PinAddFactory.isCanvas) {
-      if (PinAddFactory.startPoint) {
-        alert('Add canvas and remove return');
-        DocumentMediator.stopListeners();
-        return;
-      } else {
-        PinAddFactory.startPoint = { x: e.offsetX, y: e.offsetY };
-        this.overlayCanvas = document.createElement('canvas');
-        this.overlayCanvas.width = window.innerWidth;
-        this.overlayCanvas.height = window.innerHeight;
-        this.overlay.appendChild(this.overlayCanvas);
-        return;
+      if (PinAddFactory.isCanvas) {
+        if (PinAddFactory.startPoint) {
+          alert('Add canvas and remove return');
+          return;
+        } else {
+          PinAddFactory.startPoint = { x: e.offsetX, y: e.offsetY };
+          this.overlayCanvas = document.createElement('canvas');
+          this.overlayCanvas.width = window.innerWidth;
+          this.overlayCanvas.height = window.innerHeight;
+          this.overlay.appendChild(this.overlayCanvas);
+          return;
+        }
       }
-    }
-    DocumentMediator.stopListeners();
-    if (!element) return;
-    switch (this.type) {
-      case ObjTypeDto.PageElementPin: {
-        await this.addElementPin(element);
-        break;
+      if (!element) return;
+      switch (this.type) {
+        case ObjTypeDto.PageElementPin: {
+          await this.addElementPin(element);
+          break;
+        }
+        case ObjTypeDto.PageElementSnapshot: {
+          await this.addElementSnapshot(element);
+          break;
+        }
       }
-      case ObjTypeDto.PageElementSnapshot: {
-        await this.addElementSnapshot(element);
-        break;
-      }
+    } finally {
+      this.stopListeners();
     }
   };
 
