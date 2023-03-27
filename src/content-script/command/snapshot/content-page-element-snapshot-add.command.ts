@@ -17,15 +17,16 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjCanvasDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { PageElementSnapshotAddCommand } from '../../../common/command/snapshot/page-element-snapshot-add.command';
 import { SnapshotCreateCommand } from './snapshot-create.command';
 
 export class ContentPageElementSnapshotAddCommand implements ICommand<Promise<void>> {
-  constructor(private url: ObjUrlDto, private element: HTMLElement) {}
+  constructor(private url: ObjUrlDto, private element: HTMLElement, private canvas?: ObjCanvasDto) {}
 
   async execute(): Promise<void> {
-    const dto = await new SnapshotCreateCommand(this.url, this.element).execute();
+    const dto = await new SnapshotCreateCommand(this.url, this.element, this.canvas).execute();
     await new PageElementSnapshotAddCommand(dto).execute();
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_ELEMENT_SNAPSHOT_ADD });
   }

@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjCanvasDto, ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 
 export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> {
-  constructor(private url: ObjUrlDto, private element: HTMLElement) {}
+  constructor(private url: ObjUrlDto, private element: HTMLElement, private canvas?: ObjCanvasDto) {}
 
   async execute(): Promise<ObjSnapshotDto> {
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
@@ -40,6 +40,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       screenshot,
       html,
       css,
+      canvas: this.canvas,
       iframe: htmlContent.iframe
     };
   }

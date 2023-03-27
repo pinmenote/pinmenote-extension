@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasPinDto, ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
+import { ObjCanvasDto, ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
+import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
-import { ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 
 export class PinFactory {
@@ -36,7 +36,7 @@ export class PinFactory {
     };
   };
 
-  static objCanvasPinNew = (rect: ObjRectangleDto): ObjCanvasPinDto => {
+  static objCanvasPinNew = (rect: ObjRectangleDto): ObjCanvasDto => {
     return {
       windowSize: {
         width: window.innerWidth,

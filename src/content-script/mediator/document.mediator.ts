@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentPageElementSnapshotAddCommand } from '../command/snapshot/content-page-element-snapshot-add.command';
+import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
@@ -54,8 +55,10 @@ export class DocumentMediator {
   }
 
   static stopListeners(): void {
+    if (this.overlayCanvas) return;
+    fnConsoleLog('DocumentMediator->stopListeners');
     if (this.overlay) {
-      document.body.removeChild(this.overlay);
+      this.overlay.remove();
       this.overlay.removeEventListener('mousemove', this.handleOverlayMove);
       this.overlay.removeEventListener('click', this.handleOverlayClick);
       this.overlay = undefined;
@@ -87,11 +90,17 @@ export class DocumentMediator {
     try {
       if (!this.overlay) return;
       const element = PinAddFactory.element;
+      let canvas;
 
       if (PinAddFactory.isCanvas) {
         if (PinAddFactory.startPoint) {
           alert('Add canvas and remove return');
-          return;
+          const { x, y } = PinAddFactory.startPoint;
+          const width = e.offsetX - x;
+          const height = e.offsetY - y;
+          canvas = PinFactory.objCanvasPinNew({ x, y, width, height });
+          this.overlayCanvas?.remove();
+          this.overlayCanvas = undefined;
         } else {
           PinAddFactory.startPoint = { x: e.offsetX, y: e.offsetY };
           this.overlayCanvas = document.createElement('canvas');
@@ -104,11 +113,11 @@ export class DocumentMediator {
       if (!element) return;
       switch (this.type) {
         case ObjTypeDto.PageElementPin: {
-          await this.addElementPin(element);
+          await this.addElementPin(element, canvas);
           break;
         }
         case ObjTypeDto.PageElementSnapshot: {
-          await this.addElementSnapshot(element);
+          await this.addElementSnapshot(element, canvas);
           break;
         }
       }
@@ -146,30 +155,31 @@ export class DocumentMediator {
     if (!this.overlayCanvas || !PinAddFactory.startPoint) return;
     const ctx = this.overlayCanvas.getContext('2d');
     if (!ctx) return;
-    const width = e.offsetX - PinAddFactory.startPoint.x;
-    const height = e.offsetY - PinAddFactory.startPoint.y;
+    const { x, y } = PinAddFactory.startPoint;
+    const width = e.offsetX - x;
+    const height = e.offsetY - y;
     ctx.beginPath();
     ctx.clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
     ctx.lineWidth = 5;
-    ctx.strokeStyle = '#ff0000';
-    ctx.rect(PinAddFactory.startPoint.x, PinAddFactory.startPoint.y, width, height);
+    ctx.strokeStyle = '#ff0000'; // ContentSettingsStore.newElementStyle.split(' ')[2] ||
+    ctx.rect(x, y, width, height);
     ctx.stroke();
   };
 
-  private static addElementPin = async (element: HTMLElement): Promise<void> => {
+  private static addElementPin = async (element: HTMLElement, canvas?: ObjCanvasDto): Promise<void> => {
     if (element) {
       const url = UrlFactory.newUrl();
-      const snapshot = await new SnapshotCreateCommand(url, element).execute();
+      const snapshot = await new SnapshotCreateCommand(url, element, canvas).execute();
       const pagePin = PinFactory.objPagePinNew(element, snapshot);
       const obj = await new PinAddCommand(pagePin).execute();
       new PinComponentAddCommand(element, obj, true).execute();
     }
   };
 
-  private static addElementSnapshot = async (element: HTMLElement): Promise<void> => {
+  private static addElementSnapshot = async (element: HTMLElement, canvas?: ObjCanvasDto): Promise<void> => {
     if (element) {
       const url = UrlFactory.newUrl();
-      await new ContentPageElementSnapshotAddCommand(url, element).execute();
+      await new ContentPageElementSnapshotAddCommand(url, element, canvas).execute();
     }
   };
 
