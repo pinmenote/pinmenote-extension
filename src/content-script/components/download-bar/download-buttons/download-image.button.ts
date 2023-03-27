@@ -17,6 +17,7 @@
 import { BusDownloadMessage, BusMessageType } from '../../../../common/model/bus.model';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { ContentSettingsStore } from '../../../store/content-settings.store';
+import { ObjRectangleDto } from '../../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../../pin.component';
 import { ScreenshotFactory } from '../../../../common/factory/screenshot.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
@@ -56,7 +57,11 @@ export class DownloadImageButton {
     this.parent.edit.hideScreenshot();
 
     setTimeout(async () => {
-      const screenshot = await ScreenshotFactory.takeScreenshot(this.parent.ref.getBoundingClientRect());
+      let rect: ObjRectangleDto = this.parent.ref.getBoundingClientRect();
+      if (this.parent.object.data.snapshot.canvas) {
+        rect = this.parent.object.data.snapshot.canvas.rect;
+      }
+      const screenshot = await ScreenshotFactory.takeScreenshot(rect);
       await this.downloadScreenshot(screenshot);
 
       this.parent.edit.showScreenshot();

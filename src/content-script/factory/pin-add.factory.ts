@@ -16,6 +16,7 @@
  */
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { ObjPointDto } from '../../common/model/obj/obj-utils.dto';
+import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 
 export class PinAddFactory {
   private static currentElement?: HTMLElement;
@@ -26,6 +27,13 @@ export class PinAddFactory {
 
   static get hasElement(): boolean {
     return !!this.currentElement;
+  }
+
+  static get border(): PinBorderDataDto {
+    return {
+      radius: this.borderRadius,
+      style: this.borderStyle
+    };
   }
 
   static get isCanvas(): boolean {

@@ -20,6 +20,7 @@ import { ActionDownloadButton } from './action-buttons/action-download.button';
 import { ActionDrawButton } from './action-buttons/action-draw.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
+import { ObjCanvasDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
@@ -73,8 +74,10 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   private readonly drawIcon: ActionDrawButton;
 
   private topMargin = '-24px';
+  private canvas?: ObjCanvasDto;
 
   constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
+    this.canvas = object.data.snapshot.canvas;
     this.editIcon = new ActionPinEditButton(parent, object);
     this.removeIcon = new ActionRemoveButton(parent);
     this.copyIcon = new ActionCopyButton(parent);
@@ -115,7 +118,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     applyStylesToElement(removeComponent, removeIconStyles);
 
     const editComponent = this.editIcon.render();
-    this.el.appendChild(editComponent);
+    if (!this.canvas) this.el.appendChild(editComponent);
     applyStylesToElement(editComponent, editIconStyles);
 
     const copyComponent = this.copyIcon.render();

@@ -22,6 +22,7 @@ import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj/obj-draw.dto';
 import { ObjAddHashtagsCommand } from '../../common/command/obj/hashtag/obj-add-hashtags.command';
+import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
@@ -40,6 +41,7 @@ import { pinStyles } from './styles/pin.styles';
 export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly top = document.createElement('div');
   readonly bottom = document.createElement('div');
+  readonly border = document.createElement('div');
 
   private readonly mouseManager: PinMouseManager;
 
@@ -59,10 +61,12 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   private rect: ObjRectangleDto;
 
   private refValue: HTMLElement;
+  private readonly canvas?: ObjCanvasDto;
 
   constructor(ref: HTMLElement, readonly object: ObjDto<ObjPagePinDto>) {
     this.refValue = ref;
-    this.rect = PinPointFactory.calculateRect(this.refValue);
+    this.canvas = object.data.snapshot.canvas;
+    this.rect = this.canvas ? this.canvas.rect : PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this, object, this.rect);
     this.bottomBar = new BottomBarComponent(this, object, this.rect);
     this.text = new TextContainerComponent(this.rect, this.addCommentCallback);
@@ -135,17 +139,33 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     // Pin Edit
     this.top.appendChild(this.editBar.render());
 
-    this.refValue.style.border = ContentSettingsStore.borderStyle;
-    this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
-
     document.body.appendChild(this.top);
     document.body.appendChild(this.bottom);
     this.mouseManager.start();
     this.handleMouseOut();
+
+    // If not canvas
+    if (this.canvas) {
+      this.border.style.minWidth = `${this.rect.width}px`;
+      this.border.style.minHeight = `${this.rect.height - 4}px`;
+      this.border.style.position = 'absolute';
+      this.border.style.pointerEvents = 'none';
+      this.border.style.top = `${this.rect.y}px`;
+      this.border.style.left = `${this.rect.x}px`;
+      this.border.style.border = ContentSettingsStore.newElementStyle;
+      document.body.appendChild(this.border);
+    } else {
+      this.refValue.style.border = ContentSettingsStore.borderStyle;
+      this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
+    }
   }
 
   resize(): void {
-    this.rect = PinPointFactory.calculateRect(this.refValue);
+    if (this.canvas) {
+      this.rect = this.canvas.rect;
+    } else {
+      this.rect = PinPointFactory.calculateRect(this.refValue);
+    }
     this.top.style.top = `${this.rect.y}px`;
     this.top.style.left = `${this.rect.x}px`;
     this.bottom.style.top = `${this.rect.y + this.rect.height}px`;
@@ -169,6 +189,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.bottomBar.cleanup();
     this.top.remove();
     this.bottom.remove();
+    this.border.remove();
     this.mouseManager.stop();
 
     this.drawComponent.cleanup();
@@ -200,11 +221,12 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     if (ContentSettingsStore.borderStyle === ContentSettingsStore.borderNone) {
       this.ref.style.border = ContentSettingsStore.newElementStyle;
     }
-    this.timeoutId = window.setTimeout(this.handleMouseOut, 3000);
+    if (!this.canvas) this.timeoutId = window.setTimeout(this.handleMouseOut, 3000);
   };
 
   private handleMouseOut = () => {
     window.clearTimeout(this.timeoutId);
+    if (this.canvas) return;
     this.timeoutId = window.setTimeout(() => {
       this.topBar.focusout();
       this.bottomBar.focusout();

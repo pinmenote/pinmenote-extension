@@ -15,22 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCanvasDto, ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
-import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
+import { ObjPagePinDto, PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 
 export class PinFactory {
-  static objPagePinNew = (ref: HTMLElement, snapshot: ObjSnapshotDto): ObjPagePinDto => {
+  static objPagePinNew = (ref: HTMLElement, snapshot: ObjSnapshotDto, border: PinBorderDataDto): ObjPagePinDto => {
     return {
       xpath: XpathFactory.newXPathString(ref),
-      border: {
-        style: ref.style.border,
-        radius: ref.style.borderRadius
-      },
+      border,
+      snapshot,
       comments: {
         data: []
       },
-      snapshot,
       video: [],
       draw: []
     };

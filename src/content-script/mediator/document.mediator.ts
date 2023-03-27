@@ -94,7 +94,6 @@ export class DocumentMediator {
 
       if (PinAddFactory.isCanvas) {
         if (PinAddFactory.startPoint) {
-          alert('Add canvas and remove return');
           const { x, y } = PinAddFactory.startPoint;
           const width = e.offsetX - x;
           const height = e.offsetY - y;
@@ -170,7 +169,7 @@ export class DocumentMediator {
     if (element) {
       const url = UrlFactory.newUrl();
       const snapshot = await new SnapshotCreateCommand(url, element, canvas).execute();
-      const pagePin = PinFactory.objPagePinNew(element, snapshot);
+      const pagePin = PinFactory.objPagePinNew(element, snapshot, PinAddFactory.border);
       const obj = await new PinAddCommand(pagePin).execute();
       new PinComponentAddCommand(element, obj, true).execute();
     }

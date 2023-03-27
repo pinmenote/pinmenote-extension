@@ -29,7 +29,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
     const css = await CssFactory.computeCssContent();
 
-    const rect = XpathFactory.computeRect(this.element);
+    const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
 
     const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);

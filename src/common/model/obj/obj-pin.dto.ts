@@ -52,7 +52,7 @@ export interface CssHrefDto {
   data?: string;
 }
 
-interface PinBorderDataDto {
+export interface PinBorderDataDto {
   radius: string;
   style: string;
 }
