@@ -35,11 +35,13 @@ export const BoardComponent: FunctionComponent = () => {
 
   useEffect(() => {
     // Infinite scroll
-    setTimeout(async () => {
-      fnConsoleLog('initPinBoardStore');
-      await BoardStore.clearSearch();
-      await BoardStore.getObjRange(refreshBoardCallback);
-    }, 0);
+    if (objData.length == 0 && !BoardStore.isLast) {
+      setTimeout(async () => {
+        fnConsoleLog('initPinBoardStore');
+        await BoardStore.clearSearch();
+        await BoardStore.getObjRange(refreshBoardCallback);
+      }, 0);
+    }
     stackRef.current?.addEventListener('scroll', handleScroll);
   });
 
