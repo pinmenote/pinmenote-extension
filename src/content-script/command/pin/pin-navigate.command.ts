@@ -31,12 +31,12 @@ export class PinNavigateCommand implements ICommand<Promise<void>> {
     const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto> | undefined>(ObjectStoreKeys.PIN_NAVIGATE);
     if (!obj) return;
     if (obj.type == ObjTypeDto.PageElementPin) {
-      if (obj.data.url.href === url) {
+      if (obj.data.snapshot.url.href === url) {
         await BrowserStorageWrapper.remove(ObjectStoreKeys.PIN_NAVIGATE);
         PinStore.focusPin(obj);
         resolveVideoTimeFn(obj.data.video);
       } else {
-        window.location.href = obj.data.url.href;
+        window.location.href = obj.data.snapshot.url.href;
       }
     } else {
       fnConsoleLog('Navigation not supported', obj);

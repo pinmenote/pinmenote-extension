@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2023 Michal Szczepanski.
+ * Copyright (c) 202 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,55 +15,44 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { DocumentMediator } from '../mediator/document.mediator';
-import { PinAddCommand } from '../../common/command/pin/pin-add.command';
-import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
-import { PinFactory } from './pin.factory';
-import { SnapshotCreateCommand } from '../command/snapshot/snapshot-create.command';
-import { UrlFactory } from '../../common/factory/url.factory';
+import { ObjPointDto } from '../../common/model/obj/obj-utils.dto';
 
 export class PinAddFactory {
-  private static currentElement: HTMLElement | null = null;
+  private static currentElement?: HTMLElement;
   private static borderStyle = '';
   private static borderRadius = '';
+
+  static startPoint?: ObjPointDto;
 
   static get hasElement(): boolean {
     return !!this.currentElement;
   }
 
+  static get isCanvas(): boolean {
+    return this.currentElement instanceof HTMLCanvasElement;
+  }
+
+  static get element(): HTMLElement | undefined {
+    return this.currentElement;
+  }
+
   static clear(): void {
     if (!this.currentElement) return;
-    this.currentElement?.removeEventListener('click', this.handleElementClick);
     this.currentElement.style.border = this.borderStyle;
     this.currentElement.style.borderRadius = this.borderRadius;
     this.borderStyle = '';
     this.borderRadius = '';
-    this.currentElement = null;
+    this.currentElement = undefined;
+    this.startPoint = undefined;
   }
 
   static updateElement(element: HTMLElement): void {
     if (this.currentElement !== element) {
-      this.currentElement?.removeEventListener('click', this.handleElementClick);
       this.currentElement = element;
-      this.currentElement.addEventListener('click', this.handleElementClick);
       this.borderStyle = this.currentElement.style.border;
       this.borderRadius = this.currentElement.style.borderRadius;
       this.currentElement.style.border = ContentSettingsStore.newElementStyle;
       this.currentElement.style.borderRadius = ContentSettingsStore.borderRadius;
     }
   }
-
-  private static handleElementClick = async (event: MouseEvent): Promise<void> => {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const element = this.currentElement;
-    DocumentMediator.stopListeners();
-    if (element) {
-      const url = UrlFactory.newUrl();
-      const snapshot = await new SnapshotCreateCommand(url, element).execute();
-      const pagePin = PinFactory.objPagePinNew(element, snapshot);
-      const obj = await new PinAddCommand(pagePin).execute();
-      new PinComponentAddCommand(element, obj, true).execute();
-    }
-  };
 }

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
 import { ObjDrawDto } from './obj-draw.dto';
 import { ObjSnapshotDto } from './obj-snapshot.dto';
 
@@ -34,12 +33,6 @@ export interface ObjPagePinDto {
   comments: ObjCommentListDto;
   snapshot: ObjSnapshotDto;
   border: PinBorderDataDto;
-  canvas?: ObjCanvasPinDto;
-}
-
-export interface ObjCanvasPinDto {
-  windowSize: ObjSizeDto;
-  rect: ObjRectangleDto;
 }
 
 export interface PinVideoDataDto {
