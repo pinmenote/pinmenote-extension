@@ -58,8 +58,12 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     iframe.height = '100%';
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
-
-    const html = IframeHtmlFactory.computeHtml(value.css, value.html) || '';
+    let html = '';
+    if (value.canvas) {
+      html = `<body><img src="${value.screenshot || ''}" /></body>`;
+    } else {
+      html = IframeHtmlFactory.computeHtml(value.css, value.html) || '';
+    }
 
     const doc = iframe.contentWindow.document;
     doc.write(html);

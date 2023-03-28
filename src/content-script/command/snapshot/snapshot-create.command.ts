@@ -26,12 +26,25 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
   constructor(private url: ObjUrlDto, private element: HTMLElement, private canvas?: ObjCanvasDto) {}
 
   async execute(): Promise<ObjSnapshotDto> {
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
-    const css = await CssFactory.computeCssContent();
-
     const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
+    if (this.canvas) {
+      return {
+        title: document.title,
+        url: this.url,
+        screenshot,
+        html: '',
+        css: {
+          css: '',
+          href: []
+        },
+        iframe: [],
+        canvas: this.canvas
+      };
+    }
 
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
+    const css = await CssFactory.computeCssContent();
     const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
 
     return {
@@ -40,7 +53,6 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       screenshot,
       html,
       css,
-      canvas: this.canvas,
       iframe: htmlContent.iframe
     };
   }
