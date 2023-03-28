@@ -72,6 +72,8 @@ export class DocumentMediator {
 
   private static handleScroll = (): void => {
     if (!this.overlay) return;
+    // We have overlay canvas so pending ping - return
+    if (this.overlayCanvas) return;
     this.overlay.style.top = `${window.scrollY}px`;
     this.overlay.style.left = `${window.scrollX}px`;
   };
@@ -80,6 +82,8 @@ export class DocumentMediator {
     e.preventDefault();
     e.stopImmediatePropagation();
     if (e.key === 'Escape') {
+      this.overlayCanvas?.remove();
+      this.overlayCanvas = undefined;
       this.stopListeners();
     }
   };
@@ -89,10 +93,11 @@ export class DocumentMediator {
     e.stopImmediatePropagation();
     try {
       if (!this.overlay) return;
-      const element = PinAddFactory.element;
-      let canvas;
 
+      // Calculate canvas
+      let canvas;
       if (PinAddFactory.isCanvas) {
+        // We have start point so now we just calculate canvas size
         if (PinAddFactory.startPoint) {
           const { x, y } = PinAddFactory.startPoint;
           const width = e.offsetX - x;
@@ -101,6 +106,7 @@ export class DocumentMediator {
           this.overlayCanvas?.remove();
           this.overlayCanvas = undefined;
         } else {
+          // Add start point and create canvas to draw rectangle
           PinAddFactory.startPoint = { x: e.offsetX, y: e.offsetY };
           this.overlayCanvas = document.createElement('canvas');
           this.overlayCanvas.width = window.innerWidth;
@@ -109,6 +115,8 @@ export class DocumentMediator {
           return;
         }
       }
+
+      const element = PinAddFactory.element;
       if (!element) return;
       switch (this.type) {
         case ObjTypeDto.PageElementPin: {
@@ -126,21 +134,18 @@ export class DocumentMediator {
   };
 
   private static handleOverlayMove = (e: MouseEvent): void => {
-    const elements = document.elementsFromPoint(e.offsetX, e.offsetY);
-
-    // skip cause we're in canvas select mode
+    // We are in canvas drawing mde so draw and return;
     if (PinAddFactory.startPoint) {
       this.resizePinDiv(e);
       return;
     }
 
+    const elements = document.elementsFromPoint(e.offsetX, e.offsetY);
     if (elements[1] instanceof HTMLElement) {
       this.updateFactoryElement(elements[1]);
     } else {
       fnConsoleLog('Unknown element', elements[1]);
     }
-    // this.resizePinDiv(e);
-    //
   };
 
   private static updateFactoryElement = (element: HTMLElement): void => {
@@ -160,7 +165,7 @@ export class DocumentMediator {
     ctx.beginPath();
     ctx.clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
     ctx.lineWidth = 5;
-    ctx.strokeStyle = '#ff0000'; // ContentSettingsStore.newElementStyle.split(' ')[2] ||
+    ctx.strokeStyle = '#ff0000';
     ctx.rect(x, y, width, height);
     ctx.stroke();
   };
@@ -181,22 +186,4 @@ export class DocumentMediator {
       await new ContentPageElementSnapshotAddCommand(url, element, canvas).execute();
     }
   };
-
-  /*private static addCanvasPin = async (offsetX: number, offsetY: number): Promise<void> => {
-    if (!this.pinStart) return;
-
-    const width = offsetX - this.pinStart.x;
-    const height = offsetY - this.pinStart.y;
-    const rect: ObjRectangleDto = {
-      x: this.pinStart.x,
-      y: this.pinStart.y,
-      width,
-      height
-    };
-    const canvasPin = await PinFactory.objCanvasPinNew(rect);
-
-    const obj = await new CanvasPinAddCommand(canvasPin).execute();
-
-    new CanvasPinComponentAddCommand(obj, false).execute();
-  };*/
 }

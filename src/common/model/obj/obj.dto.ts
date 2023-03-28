@@ -38,16 +38,11 @@ export interface ObjEncryptionDto {
 }
 
 export enum ObjTypeDto {
-  CodeSnippet = 'CODE_SNIPPET',
-  Drawing = 'DRAWING',
-  Note = 'NOTE',
   PageElementPin = 'ELEMENT_PIN',
   PageElementSnapshot = 'ELEMENT_SNAPSHOT',
-  PageCanvasPin = 'PAGE_CANVAS_PIN',
-  PageCanvasSnapshot = 'PAGE_CANVAS_SNAPSHOT',
   PageSnapshot = 'PAGE_SNAPSHOT',
   PageNote = 'PAGE_NOTE',
-  Todo = 'TODO'
+  PageTask = 'PAGE_TASK'
 }
 
 export type ObjDataDto = ObjPagePinDto | ObjSnapshotDto | ObjNoteDto;
