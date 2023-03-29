@@ -72,6 +72,7 @@ export class CryptoStore {
   }
 
   static async delPrivateKey(): Promise<void> {
+    this.keyData = undefined;
     await BrowserStorageWrapper.remove(this.PRIVATE_KEY);
   }
 
