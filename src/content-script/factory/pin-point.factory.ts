@@ -19,7 +19,7 @@ import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 export class PinPointFactory {
   static calculateRect(ref: HTMLElement): ObjRectangleDto {
     const rect = ref.getBoundingClientRect();
-    const width = rect.width < 200 ? 200 : rect.width;
+    const width = rect.width < 250 ? 250 : rect.width;
     return {
       x: Math.round(rect.left + window.scrollX),
       y: Math.round(rect.top + window.scrollY),

@@ -89,29 +89,25 @@ export class HtmlFactory {
     // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
       return await this.computeIframe(ref as HTMLIFrameElement, depth);
-    }
-
-    if (tagName === 'canvas') {
+    } else if (tagName === 'canvas') {
       try {
         return this.computeCanvas(ref as HTMLCanvasElement);
       } catch (e) {
         fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
         return this.EMPTY_RESULT;
       }
-    }
-
-    if (tagName === 'video') {
+    } else if (tagName === 'video') {
       // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
       videoTime.push({
         xpath: XpathFactory.newXPathString(ref as HTMLElement),
         currentTime: (ref as HTMLVideoElement).currentTime,
         displayTime: environmentConfig.settings.videoDisplayTime
       });
-    }
-
-    if (tagName === 'img') {
+    } else if (tagName === 'img') {
       const value = await this.computeImgValue(ref as HTMLImageElement);
       html += `src="${value}" `;
+    } else if (tagName === 'textarea') {
+      html += `value="${(ref as HTMLTextAreaElement).value}" `;
     }
 
     const attributes: Attr[] = Array.from(ref.attributes);
