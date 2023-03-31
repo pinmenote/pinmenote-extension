@@ -57,7 +57,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
     TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
       TinyEventDispatcher.removeListener(event, key);
       setIsLoading(IsLoadingType.None);
-      setTimeout(() => props.closeListCallback(), 1000);
+      setTimeout(() => props.closeListCallback(), 100);
     });
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
     setIsLoading(IsLoadingType.PageSave);

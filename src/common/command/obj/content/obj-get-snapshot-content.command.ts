@@ -14,27 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
-import { CssDataDto } from './obj-pin.dto';
-import { ObjIframeDataDto } from './obj-iframe.dto';
-import { ObjUrlDto } from './obj.dto';
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjSnapshotContentDto } from '../../../model/obj/obj-snapshot.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { fnConsoleLog } from '../../../fn/console.fn';
 
-export interface ObjCanvasDto {
-  windowSize: ObjSizeDto;
-  rect: ObjRectangleDto;
-}
+export class ObjGetSnapshotContentCommand implements ICommand<Promise<ObjSnapshotContentDto>> {
+  constructor(private id: number) {}
+  async execute(): Promise<ObjSnapshotContentDto> {
+    fnConsoleLog('ObjGetSnapshotContentCommand->execute', this.id);
+    const key = `${ObjectStoreKeys.CONTENT_ID}:${this.id}`;
 
-export interface ObjSnapshotDto {
-  url: ObjUrlDto;
-  title: string;
-  screenshot?: string;
-  contentId: number;
-}
-
-export interface ObjSnapshotContentDto {
-  id: number;
-  canvas?: ObjCanvasDto;
-  html: string;
-  css: CssDataDto;
-  iframe: ObjIframeDataDto[];
+    return await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
+  }
 }

@@ -196,6 +196,11 @@ export class HtmlFactory {
 
   private static computeImgValue = async (ref: HTMLImageElement): Promise<string> => {
     let value = '';
+    value = ref.src || '';
+    // we have data already inside image so just add it
+    if (value.startsWith('data:')) {
+      return value;
+    }
 
     fnConsoleLog('HtmlFactory->computeImgValue', ref.src);
     // data-src
@@ -231,12 +236,6 @@ export class HtmlFactory {
           return imageData.res;
         }
       }
-    }
-
-    value = ref.src || '';
-    // we have data already inside image so just add it
-    if (value.startsWith('data:')) {
-      return value;
     }
 
     value = value.replaceAll('"', '&quot;');

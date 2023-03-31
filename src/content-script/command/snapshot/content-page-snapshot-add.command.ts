@@ -16,14 +16,12 @@
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { CssFactory } from '../../factory/css.factory';
-import { HtmlFactory } from '../../factory/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { PageSnapshotAddCommand } from '../../../common/command/snapshot/page-snapshot-add.command';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
 
 export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
   constructor(private url: ObjUrlDto, private href?: string) {}
@@ -33,19 +31,15 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
       // fnConsoleLog('SKIP', this.href, this.url.href);
       return;
     }
-    fnConsoleLog('START', this.href);
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body);
-    fnConsoleLog('HTML DONE');
-    const css = await CssFactory.computeCssContent();
-    fnConsoleLog('CSS DONE');
     const screenshot = await ScreenshotFactory.takeScreenshot(undefined, this.url);
+
+    const contentId = await new SnapshotContentSaveCommand(document.body).execute();
+
     const dto: ObjSnapshotDto = {
       title: document.title,
       url: this.url,
       screenshot,
-      html: htmlContent.html,
-      css,
-      iframe: htmlContent.iframe
+      contentId
     };
     await new PageSnapshotAddCommand(dto).execute();
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
