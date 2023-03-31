@@ -226,7 +226,7 @@ export class HtmlFactory {
     // srcset
     if (ref.srcset) {
       // TODO check if ok for all cases
-      const srcset = ref.srcset.split(',');
+      const srcset = ref.srcset.split(', ');
       // last value so it's biggest image
       value = srcset[srcset.length - 1].trim().split(' ')[0];
       const url = fnComputeUrl(value);
