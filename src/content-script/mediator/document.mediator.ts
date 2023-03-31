@@ -93,6 +93,7 @@ export class DocumentMediator {
     e.stopImmediatePropagation();
     try {
       if (!this.overlay) return;
+      PinAddFactory.clearBorder();
 
       // Calculate canvas
       let canvas;
