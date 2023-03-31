@@ -20,10 +20,14 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BoardComponent } from './components/board/board.component';
 import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
 import { LeftSideMenu } from './components/menu/left-side.menu';
+import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
 import { OptionsMessageHandler } from './options-message.handler';
 import { SettingsComponent } from './components/settings/settings.component';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { createRoot } from 'react-dom/client';
 import { fnConsoleError } from '../common/fn/console.fn';
+
+const theme = MuiThemeFactory.createTheme();
 
 const App: FunctionComponent = () => {
   const [showSettings, setShowSettings] = useState<boolean>(window.location.hash === '#settings');
@@ -45,11 +49,13 @@ const App: FunctionComponent = () => {
   const mainComponent = showSettings ? <SettingsComponent /> : <BoardComponent />;
   return (
     <div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LeftSideMenu />
-        <div style={{ width: '100%' }}>{mainComponent}</div>
-      </div>
-      <HtmlPreviewComponent />
+      <ThemeProvider theme={theme}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <LeftSideMenu />
+          <div style={{ width: '100%' }}>{mainComponent}</div>
+        </div>
+        <HtmlPreviewComponent />
+      </ThemeProvider>
     </div>
   );
 };

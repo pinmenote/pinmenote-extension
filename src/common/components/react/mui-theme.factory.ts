@@ -14,6 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export const COLOR_DEFAULT_RED = '#d32f2f';
-export const COLOR_DEFAULT_BLUE = '#d32f2f';
-export const COLOR_DEFAULT_GREY = '#eeeeee';
+import createTheme from '@mui/material/styles/createTheme';
+
+export class MuiThemeFactory {
+  static createTheme() {
+    return createTheme({
+      palette: {
+        primary: {
+          main: '#000000'
+        }
+      }
+    });
+  }
+}

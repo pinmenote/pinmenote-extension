@@ -26,11 +26,13 @@ import { LogManager } from '../common/popup/log.manager';
 import LogoDevIcon from '@mui/icons-material/LogoDev';
 import { LogsTabComponent } from './components/tabs/logs-tab.component';
 import { MainTabComponent } from './components/tabs/main-tab.component';
+import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
 import PersonIcon from '@mui/icons-material/Person';
 import { PopupMessageHandler } from './popup-message.handler';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { createRoot } from 'react-dom/client';
 import { environmentConfig } from '../common/environment';
 
@@ -39,6 +41,8 @@ enum PanelEnum {
   ACCOUNT,
   LOGS
 }
+
+const theme = MuiThemeFactory.createTheme();
 
 const getCurrentPanel = (selectedPanel: PanelEnum): ReactElement | undefined => {
   switch (selectedPanel) {
@@ -78,14 +82,16 @@ const ExtensionPopupApp: React.FC = () => {
         flexDirection: 'column'
       }}
     >
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={selectedPanel} onChange={handleChange}>
-          <Tab icon={<PushPinIcon />} />
-          <Tab icon={<PersonIcon />} />
-          {logsTab}
-        </Tabs>
-      </Box>
-      {panel}
+      <ThemeProvider theme={theme}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={selectedPanel} onChange={handleChange}>
+            <Tab icon={<PushPinIcon />} />
+            <Tab icon={<PersonIcon />} />
+            {logsTab}
+          </Tabs>
+        </Box>
+        {panel}
+      </ThemeProvider>
     </div>
   );
 };
