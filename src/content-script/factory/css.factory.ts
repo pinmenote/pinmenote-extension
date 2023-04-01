@@ -152,6 +152,8 @@ export class CssFactory {
       if (url.split('url(').length > 2) continue;
       // skip fonts
       if (url.indexOf('format(') > 0) continue;
+      // skip svg
+      if (url.endsWith('.svg')) continue;
 
       url = fnComputeUrl(url);
       const result = await fnFetchImage(url);

@@ -108,6 +108,8 @@ export class HtmlFactory {
       html += `src="${value}" `;
     } else if (tagName === 'textarea') {
       html += `value="${(ref as HTMLTextAreaElement).value}" `;
+    } else if (tagName === 'input' && (ref as HTMLInputElement).type !== 'password') {
+      html += `value="${(ref as HTMLInputElement).value}" `;
     }
 
     const attributes: Attr[] = Array.from(ref.attributes);
@@ -115,6 +117,8 @@ export class HtmlFactory {
     for (const attr of attributes) {
       let attrValue = attr.value;
       attrValue = attrValue.replaceAll('"', '&quot;');
+      // value for input, textarea filled outside loop
+      if ((tagName === 'input' || tagName === 'textarea') && attr.name === 'value') continue;
 
       if (attr.name === 'href' && !hrefFilled) {
         // HREF
@@ -275,6 +279,7 @@ export class HtmlFactory {
   };
 
   private static fetchIframe = (ref: HTMLIFrameElement, depth: number): Promise<ObjIframeContentDto> => {
+    fnConsoleLog('HtmlFactory->fetchIframe', ref.src);
     return new Promise<ObjIframeContentDto>((resolve, reject) => {
       if (!ref.contentWindow) return HtmlFactory.EMPTY_RESULT;
       TinyEventDispatcher.addListener<{ id: string }>(BusMessageType.CONTENT_FETCH_IFRAME_PING, (event, key, value) => {
