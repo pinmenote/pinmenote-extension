@@ -16,8 +16,10 @@
  */
 import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
 import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
+import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { CssFactory } from './css.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
@@ -32,6 +34,179 @@ export class HtmlFactory {
     videoTime: [],
     iframe: []
   };
+
+  private static readonly KNOWN_ELEMENTS = [
+    'a',
+    'abbr',
+    'acronym',
+    'address',
+    'applet',
+    'area',
+    'article',
+    'aside',
+    'audio',
+    'a',
+    'b',
+    'base',
+    'basefont',
+    'bdo',
+    'big',
+    'blockquote',
+    'body',
+    'br',
+    'button',
+    'canvas',
+    'caption',
+    'center',
+    'cite',
+    'code',
+    'col',
+    'colgroup',
+    'datalist',
+    'dd',
+    'del',
+    'dfn',
+    'div',
+    'dl',
+    'dt',
+    'em',
+    'embed',
+    'fieldset',
+    'figcaption',
+    'figure',
+    'font',
+    'footer',
+    'form',
+    'frame',
+    'frameset',
+    'header',
+    'head',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'hr',
+    'html',
+    'i',
+    'iframe',
+    'img',
+    'input',
+    'ins',
+    'kbd',
+    'label',
+    'legend',
+    'li',
+    'link',
+    'main',
+    'map',
+    'mark',
+    'meta',
+    'meter',
+    'nav',
+    'noscript',
+    'object',
+    'ol',
+    'optgroup',
+    'option',
+    'p',
+    'param',
+    'pre',
+    'progress',
+    'q',
+    's',
+    'samp',
+    'script',
+    'section',
+    'select',
+    'small',
+    'source',
+    'span',
+    'strike',
+    'strong',
+    'style',
+    'sub',
+    'sup',
+    'table',
+    'tbody',
+    'td',
+    'textarea',
+    'tfoot',
+    'th',
+    'thead',
+    'time',
+    'title',
+    'tr',
+    'u',
+    'ul',
+    'var',
+    'video',
+    'wbr',
+    // SVG - not in HTML
+    'animate',
+    'animatemotion',
+    'animatetransform',
+    'circle',
+    'clipPath',
+    'defs',
+    'desc',
+    'discard',
+    'ellipse',
+    'feblend',
+    'fecolormatrix',
+    'fecomponenttransfer',
+    'fecomposite',
+    'feconvolvematrix',
+    'fediffuselighting',
+    'fedisplacementmap',
+    'fedistantlight',
+    'fedropshadow',
+    'feflood',
+    'fefunca',
+    'fefuncb',
+    'fefuncg',
+    'fefuncr',
+    'fegaussianblur',
+    'feimage',
+    'femerge',
+    'femergenode',
+    'femorphology',
+    'feoffset',
+    'fepointlight',
+    'fespecularlighting',
+    'fespotlight',
+    'fetile',
+    'feturbulence',
+    'filter',
+    'foreignobject',
+    'g',
+    'hatch',
+    'hatchpath',
+    'image',
+    'line',
+    'lineargradient',
+    'marker',
+    'mask',
+    'metadata',
+    'mpath',
+    'path',
+    'pattern',
+    'polygon',
+    'polyline',
+    'radialgradient',
+    'rect',
+    'set',
+    'stop',
+    'svg',
+    'switch',
+    'symbol',
+    'text',
+    'textpath',
+    'tspan',
+    'use',
+    'view'
+  ];
 
   static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
     const imgData = ref.toDataURL(
@@ -55,35 +230,25 @@ export class HtmlFactory {
     };
   };
 
-  static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
-    // Skip iframe->iframe->skip
-    if (depth > 3) return this.EMPTY_RESULT;
-    try {
-      const html = await this.fetchIframe(ref, depth);
-      if (!html.ok) return this.EMPTY_RESULT;
-      fnConsoleLog('IFRAME !!!', ref.id, html);
-      const uid = fnUid();
-      const width = ref.getAttribute('width') || '100%';
-      const height = ref.getAttribute('width') || '100%';
-      const style = ref.getAttribute('style') || '';
-      const clazz = ref.getAttribute('class') || '';
-      return {
-        html: `<iframe width="${width}" height="${height}" style="${style}" class="${clazz}" id="${uid}"></iframe>`,
-        videoTime: [],
-        iframe: [{ uid, html }]
-      };
-    } catch (e) {
-      fnConsoleLog('HtmlFactory->computeIframe->Error', e);
-    }
-    return this.EMPTY_RESULT;
-  };
-
   static computeHtmlIntermediateData = async (ref: Element, depth = 1): Promise<HtmlIntermediateData> => {
     const tagName = ref.tagName.toLowerCase();
+    if (!this.KNOWN_ELEMENTS.includes(tagName)) {
+      const shadow = BrowserApi.shadowRoot(ref);
+      // Go with shadow
+      if (shadow) {
+        let html = `<${tagName} `;
+        html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+        html = html.substring(0, html.length - 1) + '>';
+        html += await this.computeShadowValue(shadow);
+        html += `</${tagName}>`;
+        fnConsoleLog('SHADOW !!!', html);
+        return { html, videoTime: [], iframe: [] };
+      }
+    }
     let html = `<${tagName} `;
     const videoTime: ContentVideoTime[] = [];
     const iframe: ObjIframeDataDto[] = [];
-    if (tagName === 'script') return { html: '', videoTime: [], iframe: [] };
+    if (tagName === 'script' || tagName === 'link') return { html: '', videoTime: [], iframe: [] };
 
     // IFRAME POC
     // TODO add iframe attributes and save as iframe and iframe content save separately
@@ -112,7 +277,121 @@ export class HtmlFactory {
       html += `value="${(ref as HTMLInputElement).value}" `;
     }
 
-    const attributes: Attr[] = Array.from(ref.attributes);
+    html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+    html = html.substring(0, html.length - 1) + '>';
+
+    const nodes = Array.from(ref.childNodes);
+
+    for (const node of nodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nre = new RegExp(String.fromCharCode(160), 'g');
+        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
+        txt = txt.replace('<', '&lt').replace('>', '&gt;');
+        html += txt;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const computed = await this.computeHtmlIntermediateData(node as Element, depth);
+        html += computed.html;
+        videoTime.push(...computed.videoTime);
+        iframe.push(...computed.iframe);
+      } else if (node.nodeType === Node.COMMENT_NODE) {
+        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
+      } else {
+        fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
+      }
+    }
+
+    // Fix object element children
+    if (ref instanceof HTMLObjectElement && ref.contentDocument) {
+      const children = Array.from(ref.contentDocument.childNodes);
+      for (const node of children) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const computed = await this.computeHtmlIntermediateData(node as Element, depth);
+          html += computed.html;
+        }
+      }
+    }
+
+    html += `</${tagName}>`;
+
+    return {
+      html,
+      videoTime,
+      iframe
+    };
+  };
+
+  private static computeShadowValue = async (ref: ShadowRoot): Promise<string> => {
+    const nodes = Array.from(ref.childNodes);
+    let html = '';
+    for (const node of nodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nre = new RegExp(String.fromCharCode(160), 'g');
+        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
+        txt = txt.replace('<', '&lt').replace('>', '&gt;');
+        html += txt;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        html += await this.computeShadowChild(node as Element);
+      } else if (node.nodeType === Node.COMMENT_NODE) {
+        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
+      } else {
+        fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
+      }
+    }
+    return html;
+  };
+
+  private static computeShadowChild = async (ref: Element): Promise<string> => {
+    const tagName = ref.tagName.toLowerCase();
+    if (tagName === 'link') {
+      const uri = ref.getAttribute('href');
+      if (uri) {
+        const url = fnComputeUrl(uri);
+        // fnConsoleLog('computeShadowChild->link', url);
+        const css = await CssFactory.fetchCss(url);
+        if (css.ok) {
+          return `<style>${css.res}</style>`;
+        } else {
+          fnConsoleLog('computeShadowChild->link->error', css);
+        }
+      }
+    }
+    if (!this.KNOWN_ELEMENTS.includes(tagName)) {
+      const shadow = BrowserApi.shadowRoot(ref);
+      if (shadow) {
+        let html = `<${tagName} `;
+        html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+        html = html.substring(0, html.length - 1) + '>';
+        html += await this.computeShadowValue(shadow);
+        html += `</${tagName}>`;
+        return html;
+      }
+    }
+    let html = `<${tagName} `;
+    html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+    html = html.substring(0, html.length - 1) + '>';
+
+    const nodes = Array.from(ref.childNodes);
+    for (const node of nodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nre = new RegExp(String.fromCharCode(160), 'g');
+        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
+        txt = txt.replace('<', '&lt').replace('>', '&gt;');
+        html += txt;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        html += await this.computeShadowChild(node as Element);
+      } else if (node.nodeType === Node.COMMENT_NODE) {
+        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
+      } else {
+        fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
+      }
+    }
+
+    html += `</${tagName}>`;
+    return html;
+  };
+
+  private static computeAttrValues = (tagName: string, attributes: Attr[]): string => {
+    let html = '';
     let hrefFilled = false;
     for (const attr of attributes) {
       let attrValue = attr.value;
@@ -156,46 +435,30 @@ export class HtmlFactory {
         html += `${attr.name} `;
       }
     }
-    html = html.substring(0, html.length - 1) + '>';
+    return html;
+  };
 
-    const nodes = Array.from(ref.childNodes);
-
-    for (const node of nodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const nre = new RegExp(String.fromCharCode(160), 'g');
-        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
-        txt = txt.replace('<', '&lt').replace('>', '&gt;');
-        html += txt;
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const computed = await this.computeHtmlIntermediateData(node as Element, depth);
-        html += computed.html;
-        videoTime.push(...computed.videoTime);
-        iframe.push(...computed.iframe);
-      } else if (node.nodeType === Node.COMMENT_NODE) {
-        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
-      } else {
-        fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
-      }
+  private static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
+    // Skip iframe->iframe->skip
+    if (depth > 3) return this.EMPTY_RESULT;
+    try {
+      const html = await this.fetchIframe(ref, depth);
+      if (!html.ok) return this.EMPTY_RESULT;
+      fnConsoleLog('IFRAME !!!', ref.id, html);
+      const uid = fnUid();
+      const width = ref.getAttribute('width') || '100%';
+      const height = ref.getAttribute('width') || '100%';
+      const style = ref.getAttribute('style') || '';
+      const clazz = ref.getAttribute('class') || '';
+      return {
+        html: `<iframe width="${width}" height="${height}" style="${style}" class="${clazz}" id="${uid}"></iframe>`,
+        videoTime: [],
+        iframe: [{ uid, html }]
+      };
+    } catch (e) {
+      fnConsoleLog('HtmlFactory->computeIframe->Error', e);
     }
-
-    // Fix object element children
-    if (ref instanceof HTMLObjectElement && ref.contentDocument) {
-      const children = Array.from(ref.contentDocument.childNodes);
-      for (const node of children) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          const computed = await this.computeHtmlIntermediateData(node as Element, depth);
-          html += computed.html;
-        }
-      }
-    }
-
-    html += `</${tagName}>`;
-
-    return {
-      html,
-      videoTime,
-      iframe
-    };
+    return this.EMPTY_RESULT;
   };
 
   private static computeImgValue = async (ref: HTMLImageElement): Promise<string> => {
@@ -206,7 +469,7 @@ export class HtmlFactory {
       return value;
     }
 
-    fnConsoleLog('HtmlFactory->computeImgValue', ref.src);
+    // fnConsoleLog('HtmlFactory->computeImgValue', ref.src);
     // data-src
     if (ref.getAttribute('data-src')) {
       value = ref.getAttribute('data-src') || '';
@@ -229,7 +492,7 @@ export class HtmlFactory {
 
     // srcset
     if (ref.srcset) {
-      // TODO check if ok for all cases
+      // TODO check if ok for all cases - pick best image based on second parameter
       const srcset = ref.srcset.split(', ');
       // last value so it's biggest image
       value = srcset[srcset.length - 1].trim().split(' ')[0];

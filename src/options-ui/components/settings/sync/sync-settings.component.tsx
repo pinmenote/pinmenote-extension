@@ -49,7 +49,7 @@ export const SyncSettingsComponent: FunctionComponent = () => {
           quota
         </Typography>
         <Typography fontSize="2em" style={{ marginRight: 10 }}>
-          1000MB
+          10000MB / 10GB
         </Typography>
       </div>
     </div>

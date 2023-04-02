@@ -44,12 +44,6 @@ export class PinAddFactory {
     return this.currentElement;
   }
 
-  static clearBorder(): void {
-    if (!this.currentElement) return;
-    this.currentElement.style.border = this.borderStyle;
-    this.currentElement.style.borderRadius = this.borderRadius;
-  }
-
   static clear(): void {
     if (!this.currentElement) return;
     this.currentElement.style.border = this.borderStyle;

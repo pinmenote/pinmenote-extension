@@ -19,6 +19,7 @@ import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PinAddCommand } from '../../common/command/pin/pin-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
+import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from '../factory/pin.factory';
 import { PopupPinStartRequest } from '../../common/model/obj-request.model';
@@ -58,16 +59,15 @@ export class DocumentMediator {
     if (this.overlayCanvas) return;
     fnConsoleLog('DocumentMediator->stopListeners');
     if (this.overlay) {
-      this.overlay.remove();
       this.overlay.removeEventListener('mousemove', this.handleOverlayMove);
       this.overlay.removeEventListener('click', this.handleOverlayClick);
+      this.overlay.remove();
       this.overlay = undefined;
       this.overlayCanvas = undefined;
     }
     document.removeEventListener('scroll', this.handleScroll);
     document.removeEventListener('keydown', this.handleKeyDown);
     PinAddFactory.clear();
-    this.type = undefined;
   }
 
   private static handleScroll = (): void => {
@@ -93,7 +93,6 @@ export class DocumentMediator {
     e.stopImmediatePropagation();
     try {
       if (!this.overlay) return;
-      PinAddFactory.clearBorder();
 
       // Calculate canvas
       let canvas;
@@ -118,10 +117,14 @@ export class DocumentMediator {
       }
 
       const element = PinAddFactory.element;
+      const border = PinAddFactory.border;
       if (!element) return;
+      element.style.border = border.style;
+      element.style.borderRadius = border.radius;
+      this.stopListeners();
       switch (this.type) {
         case ObjTypeDto.PageElementPin: {
-          await this.addElementPin(element, canvas);
+          await this.addElementPin(element, border, canvas);
           break;
         }
         case ObjTypeDto.PageElementSnapshot: {
@@ -129,6 +132,8 @@ export class DocumentMediator {
           break;
         }
       }
+    } catch (e) {
+      fnConsoleLog('DocumentMediator->error', e);
     } finally {
       this.stopListeners();
     }
@@ -171,11 +176,15 @@ export class DocumentMediator {
     ctx.stroke();
   };
 
-  private static addElementPin = async (element: HTMLElement, canvas?: ObjCanvasDto): Promise<void> => {
+  private static addElementPin = async (
+    element: HTMLElement,
+    border: PinBorderDataDto,
+    canvas?: ObjCanvasDto
+  ): Promise<void> => {
     if (element) {
       const url = UrlFactory.newUrl();
       const snapshot = await new SnapshotCreateCommand(url, element, canvas).execute();
-      const pagePin = PinFactory.objPagePinNew(element, snapshot, PinAddFactory.border);
+      const pagePin = PinFactory.objPagePinNew(element, snapshot, border);
       const obj = await new PinAddCommand(pagePin).execute();
       new PinComponentAddCommand(element, obj, true).execute();
     }

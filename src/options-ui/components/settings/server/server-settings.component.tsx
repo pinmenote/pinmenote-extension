@@ -19,6 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckIcon from '@mui/icons-material/Check';
 import IconButton from '@mui/material/IconButton';
+import { SyncSettingsComponent } from '../sync/sync-settings.component';
 import Typography from '@mui/material/Typography';
 import { UserSettingsComponent } from '../user/user-settings.component';
 
@@ -56,6 +57,9 @@ export const ServerSettingsComponent: FunctionComponent = () => {
           </div>
           <div style={{ marginLeft: 50 }}>
             <UserSettingsComponent></UserSettingsComponent>
+          </div>
+          <div style={{ marginLeft: 50 }}>
+            <SyncSettingsComponent></SyncSettingsComponent>
           </div>
         </div>
       </div>

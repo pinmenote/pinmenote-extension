@@ -168,11 +168,11 @@ export class CssFactory {
     return css;
   };
 
-  private static fetchCss(url: string): Promise<FetchResponse<string>> {
-    fnConsoleLog('CssFactory->fetchCss', url);
+  static fetchCss(url: string): Promise<FetchResponse<string>> {
+    // fnConsoleLog('CssFactory->fetchCss', url);
     return new Promise<FetchResponse<string>>((resolve, reject) => {
       TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
-        fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
+        // fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
         if (value.url === url) {
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
           resolve(value);

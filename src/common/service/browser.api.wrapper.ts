@@ -108,6 +108,20 @@ export class BrowserApi {
     window.close();
   }
 
+  static shadowRoot(el: Element): ShadowRoot | null {
+    try {
+      if (this.isChromeValue) {
+        /* eslint-disable @typescript-eslint/no-unsafe-call */
+        return chrome.dom.openOrClosedShadowRoot(el);
+      }
+      /* eslint-disable @typescript-eslint/no-unsafe-call */
+      return el.openOrClosedShadowRoot();
+    } catch (e) {
+      fnConsoleLog('BrowserApiWrapper->shadowRoot->ERROR', el);
+    }
+    return null;
+  }
+
   static sendTabMessage = <T>(msg: BusMessage<T>): Promise<void> => {
     return new Promise((resolve: (...arg: any) => void, reject: (...arg: any) => void) => {
       /* eslint-disable @typescript-eslint/no-unsafe-call */
