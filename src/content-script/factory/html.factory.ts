@@ -19,7 +19,6 @@ import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.
 import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
-import { ContentSettingsStore } from '../store/content-settings.store';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
@@ -209,10 +208,7 @@ export class HtmlFactory {
   ];
 
   static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
-    const imgData = ref.toDataURL(
-      `image/${ContentSettingsStore.screenshotFormat}`,
-      ContentSettingsStore.screenshotQuality
-    );
+    const imgData = ref.toDataURL('image/png', 80);
     fnConsoleLog('HtmlFactory->computeCanvas');
     let width = ref.getAttribute('width') || '100%';
     let height = ref.getAttribute('height') || '100%';

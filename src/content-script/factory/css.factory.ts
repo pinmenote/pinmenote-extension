@@ -44,10 +44,12 @@ export class CssFactory {
         const cssFetchData = await this.fetchCss(s.href);
 
         if (cssFetchData.ok) {
-          const imports = await this.fetchImports(cssFetchData.res);
+          const imports = await this.fetchImports(cssFetchData.res, s.href);
+
           let data = cssFetchData.res.replaceAll(IMPORT_REG, '').trim();
           data = await this.fetchUrls(data);
           css.push(...imports);
+
           css.push({
             href: s.href,
             media: s.media.mediaText,
@@ -103,7 +105,7 @@ export class CssFactory {
     return css;
   };
 
-  private static fetchImports = async (css: string): Promise<CssStyleDto[]> => {
+  private static fetchImports = async (css: string, rel?: string): Promise<CssStyleDto[]> => {
     const importList = css.match(IMPORT_REG);
     if (!importList) return [];
 
@@ -114,12 +116,19 @@ export class CssFactory {
       let url = importUrl.split(' ')[1];
 
       url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
+      if (url.startsWith('url')) {
+        const urlMatch = url.match(CSS_URL_REG);
+        if (!urlMatch) continue;
+        url = urlMatch[0].substring(5, urlMatch[0].length - 2);
+        url = fnComputeUrl(url);
+      } else if (rel) {
+        const a = rel.split('/');
+        url = fnComputeUrl(url, a.slice(0, a.length - 1).join('/'));
+        fnConsoleLog('CssFactory->fetchImports->REL !!!', url);
+      } else {
+        url = fnComputeUrl(url);
+      }
 
-      const urlMatch = url.match(CSS_URL_REG);
-      if (!urlMatch) continue;
-      url = urlMatch[0].substring(5, urlMatch[0].length - 2);
-
-      url = fnComputeUrl(url);
       const result = await this.fetchCss(url);
 
       if (result.ok) {
