@@ -148,6 +148,8 @@ export class CssFactory {
       let url = urlMatch.substring(5, urlMatch.length - 2);
       // skip data elements
       if (url.startsWith('data:')) continue;
+      // skip url with #
+      if (url.startsWith('#')) continue;
       // skip multiple urls
       if (url.split('url(').length > 2) continue;
       // skip fonts
