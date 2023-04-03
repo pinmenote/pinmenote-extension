@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { CSS_URL_REG, CssFactory } from './css.factory';
 import { ContentVideoTime, HtmlIntermediateData } from '../../common/model/html.model';
 import { ObjIframeContentDto, ObjIframeDataDto } from '../../common/model/obj/obj-iframe.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { CssFactory } from './css.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { environmentConfig } from '../../common/environment';
@@ -237,7 +237,7 @@ export class HtmlFactory {
       // Go with shadow
       if (shadow) {
         let html = `<${tagName} `;
-        html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+        html += await this.computeAttrValues(tagName, Array.from(ref.attributes));
         html = html.substring(0, html.length - 1) + '>';
         html += await this.computeShadowValue(shadow);
         html += `</${tagName}>`;
@@ -277,7 +277,7 @@ export class HtmlFactory {
       html += `value="${(ref as HTMLInputElement).value}" `;
     }
 
-    html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+    html += await this.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
 
     const nodes = Array.from(ref.childNodes);
@@ -359,7 +359,7 @@ export class HtmlFactory {
       const shadow = BrowserApi.shadowRoot(ref);
       if (shadow) {
         let html = `<${tagName} `;
-        html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+        html += await this.computeAttrValues(tagName, Array.from(ref.attributes));
         html = html.substring(0, html.length - 1) + '>';
         html += await this.computeShadowValue(shadow);
         html += `</${tagName}>`;
@@ -367,7 +367,7 @@ export class HtmlFactory {
       }
     }
     let html = `<${tagName} `;
-    html += this.computeAttrValues(tagName, Array.from(ref.attributes));
+    html += await this.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
 
     const nodes = Array.from(ref.childNodes);
@@ -390,7 +390,7 @@ export class HtmlFactory {
     return html;
   };
 
-  private static computeAttrValues = (tagName: string, attributes: Attr[]): string => {
+  private static computeAttrValues = async (tagName: string, attributes: Attr[]): Promise<string> => {
     let html = '';
     let hrefFilled = false;
     for (const attr of attributes) {
@@ -428,6 +428,22 @@ export class HtmlFactory {
           } catch (e) {
             fnConsoleLog('HtmlFactory->computeHtmlIntermediateData->Error', e);
           }
+        }
+      } else if (attr.name === 'style') {
+        // style can have background-image:url('')
+        const urlList = attrValue.match(CSS_URL_REG);
+        if (urlList) {
+          const value = await CssFactory.fetchUrls(attrValue);
+          fnConsoleLog(
+            'HtmlFactory->computeHtmlIntermediateData->image-inside-style',
+            'prev',
+            attrValue,
+            'result',
+            value
+          );
+          html += `${attr.name}="${value}" `;
+        } else {
+          html += `${attr.name}="${attrValue}" `;
         }
       } else if (attrValue) {
         html += `${attr.name}="${attrValue}" `;

@@ -26,7 +26,7 @@ import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
-const URL_REG = new RegExp('url\\(["\'].*["\']\\)', 'g');
+export const CSS_URL_REG = new RegExp('url\\(["\'].*["\']\\)', 'g');
 const IMPORT_REG = new RegExp(
   '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
   'gi'
@@ -118,7 +118,7 @@ export class CssFactory {
 
       url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
 
-      const urlMatch = url.match(URL_REG);
+      const urlMatch = url.match(CSS_URL_REG);
       if (!urlMatch) continue;
       url = urlMatch[0].substring(5, urlMatch[0].length - 2);
 
@@ -140,8 +140,8 @@ export class CssFactory {
     return out;
   };
 
-  private static fetchUrls = async (css: string): Promise<string> => {
-    const urlList = css.match(URL_REG);
+  static fetchUrls = async (css: string): Promise<string> => {
+    const urlList = css.match(CSS_URL_REG);
     if (!urlList) return css;
 
     for (const urlMatch of urlList) {
