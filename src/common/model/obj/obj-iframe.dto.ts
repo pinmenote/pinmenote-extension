@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto } from './obj-pin.dto';
+
+import { CssStyleListDto } from './obj-pin.dto';
 
 export interface ObjIframeContentDto {
   id: string;
   ok: boolean;
   url: string;
   html: string;
-  css: CssDataDto;
+  css: CssStyleListDto;
 }
 
 export interface ObjIframeDataDto {

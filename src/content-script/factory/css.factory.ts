@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto, CssHrefDto } from '../../common/model/obj/obj-pin.dto';
+import { CssStyleDto, CssStyleListDto } from '../../common/model/obj/obj-pin.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
@@ -33,9 +33,8 @@ const IMPORT_REG = new RegExp(
 );
 
 export class CssFactory {
-  static computeCssContent = async (): Promise<CssDataDto> => {
-    let css = '';
-    const href: CssHrefDto[] = [];
+  static computeCssContent = async (): Promise<CssStyleListDto> => {
+    const css: CssStyleDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
     fnConsoleLog('CssFactory->computeCssContent');
 
@@ -46,67 +45,65 @@ export class CssFactory {
 
         if (cssFetchData.ok) {
           const imports = await this.fetchImports(cssFetchData.res);
-          href.push(...imports);
-
           let data = cssFetchData.res.replaceAll(IMPORT_REG, '').trim();
           data = await this.fetchUrls(data);
-
-          href.push({
+          css.push(...imports);
+          css.push({
             href: s.href,
             media: s.media.mediaText,
             data
           });
         } else {
-          href.push({
+          css.push({
             href: s.href,
             media: s.media.mediaText,
             data: undefined
           });
         }
       } else {
-        css += await this.computeSelectorRules(Array.from(s.cssRules) as ComputeCssRule[], href);
+        const selectors = await this.computeSelectorRules(s);
+        css.push(...selectors);
       }
     }
-    const imports = await this.fetchImports(css);
-    href.push(...imports);
-
-    css = css.replaceAll(IMPORT_REG, '').trim();
-    css = await this.fetchUrls(css);
     return {
-      href,
       css
     };
   };
 
-  private static computeSelectorRules = async (cssRules: ComputeCssRule[], hrefList: CssHrefDto[]): Promise<string> => {
-    let output = '';
+  private static computeSelectorRules = async (stylesheet: CSSStyleSheet): Promise<CssStyleDto[]> => {
+    const css: CssStyleDto[] = [];
+    const cssRules = Array.from(stylesheet.cssRules) as ComputeCssRule[];
     for (const r of cssRules) {
-      if (r.href) {
-        const href = fnComputeUrl(r.href);
-        const cssFetchData = await this.fetchCss(href);
-        hrefList.push({
-          href,
-          media: r.parentStyleSheet ? r.parentStyleSheet.media.mediaText : r.styleSheet.media.mediaText,
-          data: cssFetchData.ok ? cssFetchData.res : undefined
-        });
-      } else if (r.media) {
+      if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
-        output += `@media ${r.conditionText} {
-  ${r.cssText}
-}
-`;
+        let data = r.cssText;
+        const imports = await this.fetchImports(data);
+        data = data.replaceAll(IMPORT_REG, '').trim();
+        css.push(...imports);
+        css.push({
+          media: r.media.mediaText || stylesheet.media.mediaText,
+          data: `@media ${r.conditionText} {
+  ${data}
+}`
+        });
       } else if (r.selectorText) {
-        output += `${r.cssText}
-`;
+        let data = r.cssText;
+        const imports = await this.fetchImports(data);
+        data = data.replaceAll(IMPORT_REG, '').trim();
+        css.push(...imports);
+        css.push({
+          data,
+          media: stylesheet.media.mediaText
+        });
       } else {
         // TODO parse other rules ex CSSKeyFrameRules
         // fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
     }
-    return output;
+    return css;
   };
 
-  private static fetchImports = async (css: string): Promise<CssHrefDto[]> => {
+  private static fetchImports = async (css: string): Promise<CssStyleDto[]> => {
     const importList = css.match(IMPORT_REG);
     if (!importList) return [];
 

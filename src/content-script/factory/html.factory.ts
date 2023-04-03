@@ -148,7 +148,7 @@ export class HtmlFactory {
     'animatemotion',
     'animatetransform',
     'circle',
-    'clipPath',
+    'clippath',
     'defs',
     'desc',
     'discard',

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
-import { CssDataDto } from './obj-pin.dto';
+import { CssStyleListDto } from './obj-pin.dto';
 import { ObjIframeDataDto } from './obj-iframe.dto';
 import { ObjUrlDto } from './obj.dto';
 
@@ -35,6 +35,6 @@ export interface ObjSnapshotContentDto {
   id: number;
   canvas?: ObjCanvasDto;
   html: string;
-  css: CssDataDto;
+  css: CssStyleListDto;
   iframe: ObjIframeDataDto[];
 }

@@ -41,15 +41,14 @@ export interface PinVideoDataDto {
   xpath: string;
 }
 
-export interface CssDataDto {
-  css: string;
-  href: CssHrefDto[];
+export interface CssStyleListDto {
+  css: CssStyleDto[];
 }
 
-export interface CssHrefDto {
-  href: string;
-  media: string;
+export interface CssStyleDto {
+  href?: string;
   data?: string;
+  media?: string;
 }
 
 export interface PinBorderDataDto {

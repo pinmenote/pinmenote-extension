@@ -14,25 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssDataDto } from '../model/obj/obj-pin.dto';
+import { CssStyleListDto } from '../model/obj/obj-pin.dto';
 
 export class IframeHtmlFactory {
-  static computeHtml = (css: CssDataDto, htmlValue: string): string => {
+  static computeHtml = (cssList: CssStyleListDto, htmlValue: string): string => {
+    let style = '';
+    for (const css of cssList.css) {
+      if (css.data) {
+        style += '<style';
+        css.media ? (style += ` media="${css.media}">`) : (style += '>');
+        style += css.data + '</style>';
+      } else if (css.href) {
+        style += `<link rel="stylesheet" href="${css.href}" />`;
+      }
+    }
     // https://www.uefa.com workaround -> <noscript> html {opacity: 1}</noscript> -> seriously ????
     const html = `<html style="opacity: 1">
         <head>            
-            ${css.href
-              .map((h) => {
-                if (h.data) {
-                  let out = '<style';
-                  h.media ? (out += ` media="${h.media}">`) : (out += '>');
-                  out += `${h.data}</style>`;
-                  return out;
-                }
-                return `<link rel="stylesheet" href="${h.href}" />`;
-              })
-              .join('')}
-            <style>${css.css}</style>            
+           ${style}        
         </head>
         ${htmlValue}
     </html>`;
