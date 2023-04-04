@@ -17,6 +17,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { NoteNewComponent } from './note-new.component';
 import { TaskNewComponent } from './task-new.component';
+import { TopMenuComponent } from '../common/top-menu.component';
 
 export const TaskNoteComponent: FunctionComponent = () => {
   const [selected, setSelected] = useState<string>('task');
@@ -29,37 +30,12 @@ export const TaskNoteComponent: FunctionComponent = () => {
   };
   return (
     <div>
-      <div
-        style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
-      >
-        <div
-          style={{
-            userSelect: 'none',
-            cursor: 'pointer',
-            width: 150,
-            fontSize: '1.5em',
-            textAlign: 'center',
-            fontWeight: selected === 'task' ? 'bold' : ''
-          }}
-          onClick={handleTaskClick}
-        >
-          Task
-        </div>
-        <div style={{ fontSize: '2em', userSelect: 'none' }}>|</div>
-        <div
-          style={{
-            userSelect: 'none',
-            cursor: 'pointer',
-            width: 150,
-            fontSize: '1.5em',
-            textAlign: 'center',
-            fontWeight: selected === 'note' ? 'bold' : ''
-          }}
-          onClick={handleNoteClick}
-        >
-          Note
-        </div>
-      </div>
+      <TopMenuComponent
+        firstClickCallback={handleTaskClick}
+        secondClickCallback={handleNoteClick}
+        firstLabel="Task"
+        secondLabel="Note"
+      />
       <div style={{ display: selected === 'task' ? 'inline-block' : 'none' }}>
         <TaskNewComponent />
       </div>

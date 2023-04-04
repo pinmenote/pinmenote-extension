@@ -42,6 +42,7 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
       contentId
     };
     await new PageSnapshotAddCommand(dto).execute();
+
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
   }
 }

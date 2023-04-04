@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html.factory';
@@ -46,6 +47,9 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
       const css = await CssFactory.computeCssContent();
       fnConsoleLog('CSS DONE');
       const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
+
+      AutoTagMediator.analyse(this.element);
+
       fnConsoleLog('END');
 
       await BrowserStorageWrapper.set(key, {

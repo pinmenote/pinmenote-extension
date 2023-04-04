@@ -16,7 +16,7 @@
  */
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
-import { CIRCLE_PRELOADER_SVG } from './preloader';
+import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PageElementSnapshotAddCommand } from '../../common/command/snapshot/page-element-snapshot-add.command';
