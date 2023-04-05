@@ -27,8 +27,9 @@ export class ObjRangeIdCommand implements ICommand<Promise<ObjIdRangeResponse>> 
     const ids = await this.getIds(listId, this.from, this.limit);
 
     // Add more
-    if (ids.length < this.limit && listId > 1) {
+    while (ids.length < this.limit && listId > 1) {
       listId -= 1;
+      fnConsoleLog('Add more', listId);
       const add = await this.getIds(listId, ids[ids.length - 1], this.limit - ids.length);
       ids.push(...add);
     }
@@ -47,7 +48,7 @@ export class ObjRangeIdCommand implements ICommand<Promise<ObjIdRangeResponse>> 
     if (this.reverse) ids = ids.reverse();
 
     let index = ids.indexOf(from);
-    fnConsoleLog('ObjRangeIdCommand->getIds', 'index', index, 'from', from, 'ids', ids);
+    // fnConsoleLog('ObjRangeIdCommand->getIds', 'index', index, 'from', from, 'ids', ids);
 
     if (index === -1) index = 0;
 

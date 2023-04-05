@@ -28,19 +28,18 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
   async execute(): Promise<ObjRangeResponse | undefined> {
     try {
       const { from, listId, limit } = this.data;
-      const response = await this.getRange(ObjectStoreKeys.OBJECT_ID, from, listId, limit);
-      return response;
+      return await this.getRange(from, listId, limit);
     } catch (e) {
       fnConsoleLog('Error', this.data, e);
     }
   }
 
-  private async getRange(idKey: string, from: number, listId: number, limit: number): Promise<ObjRangeResponse> {
+  private async getRange(from: number, listId: number, limit: number): Promise<ObjRangeResponse> {
     const out = [];
     const data = await new ObjRangeIdCommand(listId, from, limit, true).execute();
 
     for (let i = 0; i < data.ids.length; i++) {
-      const key = `${idKey}:${data.ids[i]}`;
+      const key = `${ObjectStoreKeys.OBJECT_ID}:${data.ids[i]}`;
       const obj = await BrowserStorageWrapper.get<ObjDto<ObjDataDto>>(key);
       out.push(obj);
     }
