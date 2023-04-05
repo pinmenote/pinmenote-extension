@@ -163,7 +163,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
 
   const handleDownload = async () => {
     if (!content) return;
-    const html = IframeHtmlFactory.computeHtml(content.snapshot.css, content.snapshot.html) || '';
+    const html =
+      IframeHtmlFactory.computeHtml(content.snapshot.css, content.snapshot.html, content.snapshot.htmlAttr) || '';
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
     const filename = `${fnUid()}.html`;

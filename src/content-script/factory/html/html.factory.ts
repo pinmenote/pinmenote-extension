@@ -70,7 +70,7 @@ export class HtmlFactory {
     const tagName = ref.tagName.toLowerCase();
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !skipTagCache.has(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);
-      fnConsoleLog('NOT KNOWN ELEMENT', tagName, 'SHADOW', shadow);
+      // fnConsoleLog('NOT KNOWN ELEMENT', tagName, 'SHADOW', shadow);
       // Go with shadow
       if (shadow) {
         return ShadowFactory.computeShadow(tagName, ref, shadow);
@@ -90,6 +90,7 @@ export class HtmlFactory {
     } else if (tagName === 'canvas') {
       try {
         return this.computeCanvas(ref as HTMLCanvasElement);
+        // return HtmlAttrFactory.EMPTY_RESULT;
       } catch (e) {
         fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
         return HtmlAttrFactory.EMPTY_RESULT;
