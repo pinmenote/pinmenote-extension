@@ -65,6 +65,7 @@ export class HtmlFactory {
     const tagName = ref.tagName.toLowerCase();
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);
+      fnConsoleLog('NOT KNOWN ELEMENT', tagName, 'SHADOW', shadow);
       // Go with shadow
       if (shadow) {
         return ShadowFactory.computeShadow(tagName, ref, shadow);

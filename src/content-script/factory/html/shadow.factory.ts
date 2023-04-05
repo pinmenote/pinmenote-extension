@@ -26,12 +26,12 @@ import { fnUid } from '../../../common/fn/uid.fn';
 
 export class ShadowFactory {
   static computeShadow = async (tagName: string, ref: Element, shadow: ShadowRoot): Promise<HtmlIntermediateData> => {
+    fnConsoleLog('COMPUTE SHADOW !!!');
     const uid = fnUid();
     let html = `<${tagName} data-pin-id="${uid}" `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
     html += `</${tagName}>`;
-    fnConsoleLog('SHADOW !!!', html);
     const shadowHtml = await this.computeShadowHtml(shadow);
     return {
       html,

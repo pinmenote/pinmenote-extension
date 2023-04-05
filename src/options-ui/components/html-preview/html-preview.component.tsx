@@ -52,11 +52,13 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
 
   const [content, setContent] = useState<ObjSnapshotData | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPreLoading, setIsPreLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const htmlKey = TinyEventDispatcher.addListener<ObjSnapshotDto>(
       BusMessageType.OPT_SHOW_HTML,
       async (event, key, value) => {
+        setIsPreLoading(true);
         setIsLoading(true);
         const c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
         setContent(c);
@@ -91,12 +93,15 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
 
     const doc = iframe.contentWindow.document;
     await asyncRenderIframe(html, doc);
+    setIsPreLoading(false);
 
-    for (const content of c.snapshot.content) {
-      fnConsoleLog('RENDER CONTENT : ', content.id, content.type);
-      const elList = doc.querySelectorAll(`[data-pin-id="${content.id}"]`);
-      const el = elList[0];
-      if (el) await asyncEmbedContent(content, el);
+    if (c.snapshot.content) {
+      fnConsoleLog('RENDER CONTENT', c.snapshot.content.length);
+      for (const content of c.snapshot.content) {
+        const elList = doc.querySelectorAll(`[data-pin-id="${content.id}"]`);
+        const el = elList[0];
+        if (el) await asyncEmbedContent(content, el);
+      }
     }
     setIsLoading(false);
   };
@@ -115,7 +120,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
 
   const asyncRenderIframe = async (html: string, doc: Document): Promise<void> => {
     return new Promise((resolve) => {
-      fnSleep(1)
+      fnSleep(250)
         .then(() => {
           doc.write(html);
           doc.close();
@@ -139,10 +144,14 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
               iframeDoc.write(iframeHtml);
               iframeDoc.close();
             }
+            fnConsoleLog('RENDER IFRAME', iframe.ok, iframe.url);
           } else if (dto.type === ObjContentTypeDto.IMG) {
+            fnConsoleLog('RENDER IMAGE');
             (el as HTMLImageElement).src = dto.content as string;
           } else if (dto.type === ObjContentTypeDto.SHADOW) {
-            el.innerHTML = (dto.content as ObjShadowContentDto).html;
+            const content = dto.content as ObjShadowContentDto;
+            fnConsoleLog('RENDER SHADOW', content.mode);
+            el.innerHTML = content.html;
           }
           resolve();
         })
@@ -168,8 +177,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   const handleClose = () => {
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
-    if (!htmlRef.current.firstChild) return;
-    htmlRef.current.removeChild(htmlRef.current.firstChild);
+    if (htmlRef.current.childNodes.length === 1) return;
+    if (htmlRef.current.lastChild) htmlRef.current.removeChild(htmlRef.current.lastChild);
     containerRef.current.style.display = 'none';
   };
   return (
@@ -204,7 +213,19 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
           </IconButton>
         </div>
       </div>
-      <div style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }} ref={htmlRef}></div>
+      <div style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }} ref={htmlRef}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: isPreLoading ? 'flex' : 'none',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <CircularProgress />
+        </div>
+      </div>
     </div>
   );
 };
