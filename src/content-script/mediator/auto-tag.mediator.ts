@@ -42,6 +42,7 @@ export class AutoTagMediator {
   private static captureKeywordData(): void {
     fnConsoleLog('KEYWORDS START !!!');
     const keywords = Array.from(new Set([...Array.from(this.captureMeta()), ...Array.from(this.captureLdJson())]));
+
     for (const keyword of keywords) {
       fnConsoleLog('KEYWORD : ', keyword);
       GramNlp.addGram(keyword);
@@ -58,25 +59,24 @@ export class AutoTagMediator {
       }
     }
     fnConsoleLog('WORDS !!!', words);
-    const vectors = [];
-    for (const word of words) {
-      const vec = WordToVectorNlp.word2vec(word, GramNlp.gramNum);
-      vectors.push(vec);
+    try {
+      const vectors = [];
+      for (const word of words) {
+        const vec = WordToVectorNlp.word2vec(word, GramNlp.gramNum);
+        vectors.push(vec);
+      }
+      const wordsRollback = [];
+      for (const vector of vectors) {
+        wordsRollback.push(WordToVectorNlp.vec2word(vector, GramNlp.numGram));
+      }
+      fnConsoleLog('WORDS ROLLBACK !!!', wordsRollback);
+    } catch (e) {
+      fnConsoleLog('ERROR VECTOR', e);
     }
-    const firstVector = vectors[0];
-    const lastVector = vectors[vectors.length - 1];
-    fnConsoleLog('VECTORS !!!', vectors);
-    fnConsoleLog('FIRST !!!', WordToVectorNlp.vec2word(firstVector, GramNlp.numGram));
-    fnConsoleLog('LAST !!!', WordToVectorNlp.vec2word(lastVector, GramNlp.numGram));
-    const wordsRollback = [];
-    for (const vector of vectors) {
-      wordsRollback.push(WordToVectorNlp.vec2word(vector, GramNlp.numGram));
-    }
-    fnConsoleLog('WORDS ROLLBACK !!!', wordsRollback);
   }
 
   private static captureMeta(): Set<string> {
-    const metaList = Array.from(document.querySelectorAll('meta[property]'));
+    const metaList = Array.from(document.querySelectorAll('meta[property], meta[name]'));
     const out = new Set<string>();
     for (const meta of metaList) {
       const property = meta.getAttribute('property');

@@ -15,12 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ConstraintsNlp } from './constraints.nlp';
+import { fnConsoleLog } from '../../fn/console.fn';
 
 export class WordToVectorNlp {
   static vec2word(vec: number[], num2Gram: { [key: number]: string }): string {
     let out = '';
     for (let i = 0; i < vec.length; i++) {
-      out += num2Gram[vec[i]].charAt(0);
+      if (!num2Gram[vec[i]]) {
+        fnConsoleLog('PROBLEM->vec2word !!!', vec);
+      } else {
+        out += num2Gram[vec[i]].charAt(0);
+      }
     }
     out += num2Gram[vec[vec.length - 1]].charAt(1);
     return out;
@@ -35,6 +40,9 @@ export class WordToVectorNlp {
       if (ConstraintsNlp.KEY_MAP[key]) key = ConstraintsNlp.KEY_MAP[key];
       gram2 += key;
       if (gram2.length === 2) {
+        if (!gram2num[gram2]) {
+          fnConsoleLog('PROBLEM->word2vec !!!', gram2);
+        }
         out.push(gram2num[gram2]);
         gram2 = gram2.charAt(1);
       }
