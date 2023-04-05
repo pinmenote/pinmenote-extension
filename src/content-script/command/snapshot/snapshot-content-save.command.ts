@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjCanvasDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjCanvasDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjNextContentIdCommand } from '../../../common/command/obj/content/obj-next-content-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -44,6 +44,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
       fnConsoleLog('START', key);
       const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
       const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
+      const htmlAttr = HtmlFactory.computeHtmlAttr();
       fnConsoleLog('HTML DONE');
       const css = await CssFactory.computeCssContent();
       fnConsoleLog('CSS DONE');
@@ -52,9 +53,10 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
 
       fnConsoleLog('END');
 
-      await BrowserStorageWrapper.set(key, {
+      await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {
         id,
         html,
+        htmlAttr,
         css,
         iframe: htmlContent.iframe
       });

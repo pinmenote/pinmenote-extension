@@ -15,11 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { ContentSettingsStore } from '../../../store/content-settings.store';
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { HtmlFactory } from '../../../factory/html.factory';
 import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
+import { ObjSnapshotContentDto } from '../../../../common/model/obj/obj-snapshot.dto';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { PinComponent } from '../../pin.component';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
@@ -62,11 +65,14 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       await fnSleep(100);
 
       const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.parent.ref);
-      // const css = await CssFactory.computeCssContent();
 
-      this.parent.object.data.snapshot.html = htmlContent.html;
+      // snapshot content
+      const key = `${ObjectStoreKeys.CONTENT_ID}:${this.parent.object.data.snapshot.contentId}`;
+      const snapshot = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
+      snapshot.html = htmlContent.html;
+      await BrowserStorageWrapper.set(key, snapshot);
+
       this.parent.object.data.video = htmlContent.videoTime;
-      // this.parent.object.data.html.css = css;
       this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref);
       const rect = XpathFactory.computeRect(this.parent.ref);
 

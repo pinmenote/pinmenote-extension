@@ -66,7 +66,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     if (c.canvas) {
       html = `<body><img src="${s.screenshot || ''}" alt="screenshot" /></body>`;
     } else {
-      html = IframeHtmlFactory.computeHtml(c.css, c.html) || '';
+      html = IframeHtmlFactory.computeHtml(c.css, c.html, c.htmlAttr) || '';
     }
 
     const doc = iframe.contentWindow.document;
@@ -82,7 +82,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
           const iframeEl = el as HTMLIFrameElement;
           const iframeDoc = iframeEl.contentWindow?.document;
           if (iframeDoc) {
-            const iframeHtml = IframeHtmlFactory.computeHtml(iframe.html.css, iframe.html.html);
+            const iframeHtml = IframeHtmlFactory.computeHtml(iframe.html.css, iframe.html.html, iframe.html.htmlAttr);
             iframeDoc.write(iframeHtml);
             iframeDoc.close();
           }

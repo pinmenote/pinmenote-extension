@@ -35,6 +35,7 @@ export interface ObjSnapshotContentDto {
   id: number;
   canvas?: ObjCanvasDto;
   html: string;
+  htmlAttr: string;
   css: CssStyleListDto;
   iframe: ObjIframeDataDto[];
 }

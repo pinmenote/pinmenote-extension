@@ -22,6 +22,7 @@ export interface ObjIframeContentDto {
   ok: boolean;
   url: string;
   html: string;
+  htmlAttr: string;
   css: CssStyleListDto;
 }
 

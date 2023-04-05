@@ -35,6 +35,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       id: this.data.id,
       url: this.href,
       html: htmlContent.html,
+      htmlAttr: HtmlFactory.computeHtmlAttr(),
       css
     };
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_FETCH_IFRAME_RESULT, data: dto });

@@ -54,6 +54,12 @@ export class HtmlFactory {
     };
   };
 
+  static computeHtmlAttr = (): string => {
+    return Array.from(document.getElementsByTagName('html')[0].attributes)
+      .map((a) => (a.nodeValue ? `${a.nodeName}=${a.nodeValue}` : `${a.nodeName}`))
+      .join(' ');
+  };
+
   static computeHtmlIntermediateData = async (ref: Element, depth = 1): Promise<HtmlIntermediateData> => {
     const tagName = ref.tagName.toLowerCase();
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {

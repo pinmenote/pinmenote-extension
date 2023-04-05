@@ -17,7 +17,7 @@
 import { CssStyleListDto } from '../model/obj/obj-pin.dto';
 
 export class IframeHtmlFactory {
-  static computeHtml = (cssList: CssStyleListDto, htmlValue: string): string => {
+  static computeHtml = (cssList: CssStyleListDto, htmlValue: string, htmlAttr?: string): string => {
     let style = '';
     for (const css of cssList.css) {
       if (css.data) {
@@ -29,7 +29,7 @@ export class IframeHtmlFactory {
       }
     }
     // https://www.uefa.com workaround -> <noscript> html {opacity: 1}</noscript> -> seriously ????
-    const html = `<html style="opacity: 1">
+    const html = `<html style="opacity: 1" ${htmlAttr ? htmlAttr : ''}>
         <head>            
            ${style}        
         </head>
