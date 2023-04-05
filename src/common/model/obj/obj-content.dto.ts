@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 import { CssStyleListDto } from './obj-pin.dto';
 
 export interface ObjIframeContentDto {
@@ -26,7 +25,21 @@ export interface ObjIframeContentDto {
   css: CssStyleListDto;
 }
 
-export interface ObjIframeDataDto {
-  uid: string;
-  html: ObjIframeContentDto;
+export interface ObjShadowContentDto {
+  html: string;
+  mode: 'open' | 'closed';
+}
+
+export enum ObjContentTypeDto {
+  IFRAME = 1,
+  IMG,
+  SHADOW
+}
+
+type ObjContent = ObjIframeContentDto | ObjShadowContentDto | string;
+
+export interface ObjContentDto {
+  type: ObjContentTypeDto;
+  id: string;
+  content: ObjContent;
 }

@@ -16,7 +16,7 @@
  */
 import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
 import { CssStyleListDto } from './obj-pin.dto';
-import { ObjIframeDataDto } from './obj-iframe.dto';
+import { ObjContentDto } from './obj-content.dto';
 import { ObjUrlDto } from './obj.dto';
 
 export interface ObjCanvasDto {
@@ -37,5 +37,5 @@ export interface ObjSnapshotContentDto {
   html: string;
   htmlAttr: string;
   css: CssStyleListDto;
-  iframe: ObjIframeDataDto[];
+  content: ObjContentDto[];
 }

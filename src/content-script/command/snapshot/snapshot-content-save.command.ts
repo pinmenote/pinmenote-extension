@@ -18,7 +18,7 @@ import { ObjCanvasDto, ObjSnapshotContentDto } from '../../../common/model/obj/o
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CssFactory } from '../../factory/css.factory';
-import { HtmlFactory } from '../../factory/html.factory';
+import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextContentIdCommand } from '../../../common/command/obj/content/obj-next-content-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
@@ -58,7 +58,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
         html,
         htmlAttr,
         css,
-        iframe: htmlContent.iframe
+        content: htmlContent.content
       });
     }
 

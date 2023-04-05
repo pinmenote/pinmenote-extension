@@ -18,9 +18,9 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../../factory/css.factory';
 import { FetchIframeRequest } from '../../../common/model/obj-request.model';
-import { HtmlFactory } from '../../factory/html.factory';
+import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjIframeContentDto } from '../../../common/model/obj/obj-iframe.dto';
+import { ObjIframeContentDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {

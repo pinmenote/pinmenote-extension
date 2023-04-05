@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjContentDto } from './obj/obj-content.dto';
 import { ObjDto } from './obj/obj.dto';
-import { ObjIframeDataDto } from './obj/obj-iframe.dto';
 import { ObjPagePinDto } from './obj/obj-pin.dto';
 
 export interface HtmlIntermediateData {
   html: string;
   videoTime: ContentVideoTime[];
-  iframe: ObjIframeDataDto[];
+  content: ObjContentDto[];
 }
 
 export interface ContentVideoTime {

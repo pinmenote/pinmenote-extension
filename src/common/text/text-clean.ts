@@ -25,7 +25,7 @@ export class TextClean {
     const out: string[] = [];
     for (let word of wordList) {
       // Special characters
-      word = word.replaceAll(/[()\d-\][\\./:\-–\t\n\r,"„%\u8195]+/g, '');
+      word = word.replaceAll(/[()\d-\][\\.'/:\-–\t\n\r,"„%\u8195]+/g, '');
       // Words containing roman numbers only
       word = word.replaceAll(/[IVXDCM]+\b/g, '');
       if (word === '') continue;

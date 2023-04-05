@@ -14,34 +14,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjSnapshotContentDto, ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import {
+  ObjContentDto,
+  ObjContentTypeDto,
+  ObjIframeContentDto,
+  ObjShadowContentDto
+} from '../../../common/model/obj/obj-content.dto';
+import {
+  ObjGetSnapshotContentCommand,
+  ObjSnapshotData
+} from '../../../common/command/obj/content/obj-get-snapshot-content.command';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
-import { ObjGetSnapshotContentCommand } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
+import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnSleep } from '../../../common/fn/sleep.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
+
+const fnByteToMb = (value?: number): number => {
+  if (!value) return 0;
+  return Math.floor(value / 10000) / 100;
+};
 
 export const HtmlPreviewComponent: FunctionComponent = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const htmlRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const urlRef = useRef<HTMLParagraphElement>(null);
+  const urlRef = useRef<HTMLDivElement>(null);
+  const sizeRef = useRef<HTMLDivElement>(null);
 
-  const [content, setContent] = useState<ObjSnapshotContentDto | undefined>();
+  const [content, setContent] = useState<ObjSnapshotData | undefined>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const htmlKey = TinyEventDispatcher.addListener<ObjSnapshotDto>(
       BusMessageType.OPT_SHOW_HTML,
       async (event, key, value) => {
+        setIsLoading(true);
         const c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
         setContent(c);
-        renderSnapshot(value, c);
+        await renderSnapshot(value, c);
       }
     );
 
@@ -50,8 +69,9 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     };
   });
 
-  const renderSnapshot = (s: ObjSnapshotDto, c: ObjSnapshotContentDto): void => {
+  const renderSnapshot = async (s: ObjSnapshotDto, c: ObjSnapshotData): Promise<void> => {
     fnConsoleLog('SHOW HTML !!!', s, c);
+    renderHeader(s, c.size);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
     if (!c) return;
@@ -63,42 +83,78 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
     let html;
-    if (c.canvas) {
+    if (c.snapshot.canvas) {
       html = `<body><img src="${s.screenshot || ''}" alt="screenshot" /></body>`;
     } else {
-      html = IframeHtmlFactory.computeHtml(c.css, c.html, c.htmlAttr) || '';
+      html = IframeHtmlFactory.computeHtml(c.snapshot.css, c.snapshot.html, c.snapshot.htmlAttr) || '';
     }
 
     const doc = iframe.contentWindow.document;
-    doc.write(html);
-    doc.close();
+    await asyncRenderIframe(html, doc);
 
-    // TODO remove condition before release
-    if (c.iframe) {
-      for (const iframe of c.iframe) {
-        fnConsoleLog('IFRAME RENDER : ', iframe.uid);
-        const el = doc.getElementById(iframe.uid);
-        if (el) {
-          const iframeEl = el as HTMLIFrameElement;
-          const iframeDoc = iframeEl.contentWindow?.document;
-          if (iframeDoc) {
-            const iframeHtml = IframeHtmlFactory.computeHtml(iframe.html.css, iframe.html.html, iframe.html.htmlAttr);
-            iframeDoc.write(iframeHtml);
-            iframeDoc.close();
-          }
-        }
-      }
+    for (const content of c.snapshot.content) {
+      fnConsoleLog('RENDER CONTENT : ', content.id, content.type);
+      const elList = doc.querySelectorAll(`[data-pin-id="${content.id}"]`);
+      const el = elList[0];
+      if (el) await asyncEmbedContent(content, el);
     }
+    setIsLoading(false);
+  };
 
-    if (!titleRef.current) return;
-    titleRef.current.innerText = s.title;
-    if (!urlRef.current) return;
-    urlRef.current.innerHTML = `<a href="${s.url.href}">${s.url.href}</a>`;
+  const renderHeader = (s: ObjSnapshotDto, size: number): void => {
+    if (sizeRef.current) {
+      sizeRef.current.innerHTML = `${fnByteToMb(size)} MB`;
+    }
+    if (titleRef.current) {
+      titleRef.current.innerText = s.title;
+    }
+    if (urlRef.current) {
+      urlRef.current.innerHTML = `<a href="${s.url.href}">${s.url.href}</a>`;
+    }
+  };
+
+  const asyncRenderIframe = async (html: string, doc: Document): Promise<void> => {
+    return new Promise((resolve) => {
+      fnSleep(1)
+        .then(() => {
+          doc.write(html);
+          doc.close();
+          resolve();
+        })
+        .catch(() => {
+          /* IGNORE */
+        });
+    });
+  };
+
+  const asyncEmbedContent = async (dto: ObjContentDto, el: Element): Promise<void> => {
+    return new Promise((resolve) => {
+      fnSleep(10)
+        .then(() => {
+          if (dto.type === ObjContentTypeDto.IFRAME) {
+            const iframe: ObjIframeContentDto = dto.content as ObjIframeContentDto;
+            const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
+            if (iframeDoc) {
+              const iframeHtml = IframeHtmlFactory.computeHtml(iframe.css, iframe.html, iframe.htmlAttr);
+              iframeDoc.write(iframeHtml);
+              iframeDoc.close();
+            }
+          } else if (dto.type === ObjContentTypeDto.IMG) {
+            (el as HTMLImageElement).src = dto.content as string;
+          } else if (dto.type === ObjContentTypeDto.SHADOW) {
+            el.innerHTML = (dto.content as ObjShadowContentDto).html;
+          }
+          resolve();
+        })
+        .catch(() => {
+          /* IGNORE */
+        });
+    });
   };
 
   const handleDownload = async () => {
     if (!content) return;
-    const html = IframeHtmlFactory.computeHtml(content.css, content.html) || '';
+    const html = IframeHtmlFactory.computeHtml(content.snapshot.css, content.snapshot.html) || '';
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
     const filename = `${fnUid()}.html`;
@@ -135,7 +191,11 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
           <h2 style={{ marginTop: '5px', marginBottom: '5px' }} ref={titleRef}></h2>
           <div ref={urlRef}></div>
         </div>
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: isLoading ? 'flex' : 'none' }}>
+            <CircularProgress />
+          </div>
+          <div style={{ fontSize: '2em', marginLeft: '10px' }} ref={sizeRef}></div>
           <IconButton onClick={handleDownload}>
             <DownloadIcon />
           </IconButton>

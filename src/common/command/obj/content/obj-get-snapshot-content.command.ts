@@ -20,12 +20,19 @@ import { ObjSnapshotContentDto } from '../../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnConsoleLog } from '../../../fn/console.fn';
 
-export class ObjGetSnapshotContentCommand implements ICommand<Promise<ObjSnapshotContentDto>> {
-  constructor(private id: number) {}
-  async execute(): Promise<ObjSnapshotContentDto> {
-    fnConsoleLog('ObjGetSnapshotContentCommand->execute', this.id);
-    const key = `${ObjectStoreKeys.CONTENT_ID}:${this.id}`;
+export interface ObjSnapshotData {
+  size: number;
+  snapshot: ObjSnapshotContentDto;
+}
 
-    return await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
+export class ObjGetSnapshotContentCommand implements ICommand<Promise<ObjSnapshotData>> {
+  constructor(private id: number) {}
+  async execute(): Promise<ObjSnapshotData> {
+    const key = `${ObjectStoreKeys.CONTENT_ID}:${this.id}`;
+    const size = await BrowserStorageWrapper.getBytesInUse(key);
+    fnConsoleLog('ObjGetSnapshotContentCommand->execute', this.id, size);
+
+    const snapshot = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
+    return { snapshot, size };
   }
 }

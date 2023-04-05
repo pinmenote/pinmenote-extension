@@ -19,7 +19,7 @@ import { BrowserStorageWrapper } from '../../../../common/service/browser.storag
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { ContentSettingsStore } from '../../../store/content-settings.store';
 import { HtmlComponent } from '../../../../common/model/html.model';
-import { HtmlFactory } from '../../../factory/html.factory';
+import { HtmlFactory } from '../../../factory/html/html.factory';
 import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
 import { ObjSnapshotContentDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
@@ -70,6 +70,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       const key = `${ObjectStoreKeys.CONTENT_ID}:${this.parent.object.data.snapshot.contentId}`;
       const snapshot = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
       snapshot.html = htmlContent.html;
+      snapshot.content = htmlContent.content;
       await BrowserStorageWrapper.set(key, snapshot);
 
       this.parent.object.data.video = htmlContent.videoTime;
