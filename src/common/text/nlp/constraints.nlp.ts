@@ -17,6 +17,10 @@
 export class ConstraintsNlp {
   static readonly PUNCT_CHARS = [
     ' ',
+    '-',
+    '/',
+    '\\',
+    ':',
     '!',
     '.',
     ',',

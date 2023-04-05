@@ -31,8 +31,11 @@ export class AutoTagMediator {
     'news_keywords'
   ];
 
-  static analyse(element: HTMLElement): void {
+  static precompute(): void {
     this.captureKeywordData();
+  }
+
+  static analyse(element: HTMLElement): void {
     fnConsoleLog('AutoTagMediator->analyse->TODO', element.innerText);
   }
 

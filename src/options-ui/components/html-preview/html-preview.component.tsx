@@ -31,6 +31,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const htmlRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const urlRef = useRef<HTMLParagraphElement>(null);
 
   const [content, setContent] = useState<ObjSnapshotContentDto | undefined>();
 
@@ -91,6 +92,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
 
     if (!titleRef.current) return;
     titleRef.current.innerText = s.title;
+    if (!urlRef.current) return;
+    urlRef.current.innerHTML = `<a href="${s.url.href}">${s.url.href}</a>`;
   };
 
   const handleDownload = async () => {
@@ -128,7 +131,10 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       }}
     >
       <div style={{ backgroundColor: '#ffffff', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-        <h1 style={{ marginLeft: '10px' }} ref={titleRef}></h1>
+        <div style={{ marginLeft: '10px', marginBottom: '5px' }}>
+          <h2 style={{ marginTop: '5px', marginBottom: '5px' }} ref={titleRef}></h2>
+          <div ref={urlRef}></div>
+        </div>
         <div>
           <IconButton onClick={handleDownload}>
             <DownloadIcon />

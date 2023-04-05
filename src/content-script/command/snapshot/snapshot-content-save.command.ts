@@ -43,12 +43,12 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
     } else {
       fnConsoleLog('START', key);
       const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
+      const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
       fnConsoleLog('HTML DONE');
       const css = await CssFactory.computeCssContent();
       fnConsoleLog('CSS DONE');
-      const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
-
-      AutoTagMediator.analyse(this.element);
+      AutoTagMediator.precompute();
+      fnConsoleLog('SOCIAL TAGS DONE');
 
       fnConsoleLog('END');
 

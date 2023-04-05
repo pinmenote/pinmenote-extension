@@ -4,6 +4,7 @@ import { fnConsoleLog } from '../../fn/console.fn';
 export class GramNlp {
   private static gram2Map: { [key: string]: number } = {};
   private static numToGram2: { [key: number]: string } = {};
+  private static gram2NextMap: { [key: number]: number[] } = {};
   private static gram2Counter = 1;
 
   static get gramNum() {
@@ -23,7 +24,6 @@ export class GramNlp {
       if (ConstraintsNlp.KEY_MAP[key]) key = ConstraintsNlp.KEY_MAP[key];
       // skip punct characters
       if (ConstraintsNlp.PUNCT_CHARS.includes(key)) {
-        gram2 = '';
         continue;
       }
       gram2 += key;
@@ -39,5 +39,14 @@ export class GramNlp {
     }
 
     fnConsoleLog('GRAM 2 !!!', Object.keys(this.gram2Map).length, this.gram2Counter, this.gram2Map);
+  }
+
+  private static pushNextMap(currentGram: number, prevGram?: number): void {
+    if (!prevGram) return;
+    if (!this.gram2NextMap[prevGram]) {
+      this.gram2NextMap[prevGram] = [currentGram];
+    } else {
+      this.gram2NextMap[prevGram].push(currentGram);
+    }
   }
 }
