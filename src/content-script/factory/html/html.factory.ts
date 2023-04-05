@@ -57,18 +57,25 @@ export class HtmlFactory {
 
   static computeHtmlAttr = (): string => {
     return Array.from(document.getElementsByTagName('html')[0].attributes)
-      .map((a) => (a.nodeValue ? `${a.nodeName}=${a.nodeValue}` : `${a.nodeName}`))
+      .map((a) => (a.nodeValue ? `${a.nodeName}="${a.nodeValue}"` : `${a.nodeName}`))
       .join(' ');
   };
 
-  static computeHtmlIntermediateData = async (ref: Element, depth = 1): Promise<HtmlIntermediateData> => {
+  static computeHtmlIntermediateData = async (
+    ref: Element,
+    depth = 1,
+    skipTagCache?: Set<string>
+  ): Promise<HtmlIntermediateData> => {
+    if (!skipTagCache) skipTagCache = new Set<string>();
     const tagName = ref.tagName.toLowerCase();
-    if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {
+    if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !skipTagCache.has(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);
       fnConsoleLog('NOT KNOWN ELEMENT', tagName, 'SHADOW', shadow);
       // Go with shadow
       if (shadow) {
         return ShadowFactory.computeShadow(tagName, ref, shadow);
+      } else {
+        skipTagCache.add(tagName);
       }
     }
     let html = `<${tagName} `;
@@ -121,7 +128,7 @@ export class HtmlFactory {
         txt = txt.replace('<', '&lt').replace('>', '&gt;');
         html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const computed = await this.computeHtmlIntermediateData(node as Element, depth);
+        const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache);
         html += computed.html;
         videoTime.push(...computed.videoTime);
         content.push(...computed.content);
@@ -137,7 +144,7 @@ export class HtmlFactory {
       const children = Array.from(ref.contentDocument.childNodes);
       for (const node of children) {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          const computed = await this.computeHtmlIntermediateData(node as Element, depth);
+          const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache);
           html += computed.html;
         }
       }

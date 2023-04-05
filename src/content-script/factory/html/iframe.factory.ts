@@ -27,16 +27,23 @@ export class IframeFactory {
     // Skip iframe->iframe->skip
     if (depth > 3) return HtmlAttrFactory.EMPTY_RESULT;
     try {
+      fnConsoleLog('IFRAME !!!');
       const uid = fnUid();
       const html = await this.fetchIframe(uid, ref, depth);
       if (!html.ok) return HtmlAttrFactory.EMPTY_RESULT;
-      fnConsoleLog('IFRAME !!!', ref.id, html);
       const width = ref.getAttribute('width') || '100%';
       const height = ref.getAttribute('width') || '100%';
-      const style = ref.getAttribute('style') || '';
-      const clazz = ref.getAttribute('class') || '';
+      const iframeAttr = Array.from(ref.attributes)
+        .map((a) => {
+          if (['width', 'height'].includes(a.nodeName)) return '';
+          if (a.nodeValue) {
+            return `${a.nodeName}="${a.nodeValue}"`;
+          }
+          return a.nodeName;
+        })
+        .join(' ');
       return {
-        html: `<iframe width="${width}" height="${height}" style="${style}" class="${clazz}" data-pin-id="${uid}"></iframe>`,
+        html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-id="${uid}"></iframe>`,
         videoTime: [],
         content: [{ id: uid, type: ObjContentTypeDto.IFRAME, content: html }]
       };
@@ -72,7 +79,7 @@ export class IframeFactory {
       const iframeTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${uid} ${ref.src}`);
-      }, 1000);
+      }, 500);
     });
   };
 }

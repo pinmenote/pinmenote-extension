@@ -36,7 +36,7 @@ export class CssFactory {
   static computeCssContent = async (): Promise<CssStyleListDto> => {
     const css: CssStyleDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
-    fnConsoleLog('CssFactory->computeCssContent');
+    fnConsoleLog('CssFactory->computeCssContent', styleSheets.length);
 
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
@@ -74,6 +74,7 @@ export class CssFactory {
 
   private static computeSelectorRules = async (stylesheet: CSSStyleSheet): Promise<CssStyleDto[]> => {
     const css: CssStyleDto[] = [];
+    let out = '';
     const cssRules = Array.from(stylesheet.cssRules) as ComputeCssRule[];
     for (const r of cssRules) {
       if (r.media) {
@@ -82,26 +83,28 @@ export class CssFactory {
         const imports = await this.fetchImports(data);
         data = data.replaceAll(IMPORT_REG, '').trim();
         css.push(...imports);
-        css.push({
-          media: r.media.mediaText || stylesheet.media.mediaText,
-          data: `@media ${r.conditionText} {
+        out += `@media ${r.conditionText} {
   ${data}
-}`
-        });
+}
+`;
       } else if (r.selectorText) {
         let data = r.cssText;
         const imports = await this.fetchImports(data);
         data = data.replaceAll(IMPORT_REG, '').trim();
         css.push(...imports);
-        css.push({
-          data,
-          media: stylesheet.media.mediaText
-        });
+        out +=
+          data +
+          `
+`;
       } else {
         // TODO parse other rules ex CSSKeyFrameRules
         // fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
     }
+    css.push({
+      data: out,
+      media: stylesheet.media.mediaText
+    });
     return css;
   };
 

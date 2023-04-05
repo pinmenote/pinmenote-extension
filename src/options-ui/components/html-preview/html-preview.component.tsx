@@ -72,7 +72,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   });
 
   const renderSnapshot = async (s: ObjSnapshotDto, c: ObjSnapshotData): Promise<void> => {
-    fnConsoleLog('SHOW HTML !!!', s, c);
+    fnConsoleLog('SHOW HTML !!!', s, c, c.snapshot.css.css.length);
     renderHeader(s, c.size);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
