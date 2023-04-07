@@ -39,12 +39,7 @@ export class DocumentMediator {
 
   private static preloader = document.createElement('div');
 
-  static startListeners(data: PopupPinStartRequest, href?: string): void {
-    if (href !== data.url.href) {
-      // fnConsoleLog('SKIP', href);
-      return;
-    }
-    fnConsoleLog('DocumentMediator->startListeners', href);
+  static startListeners(data: PopupPinStartRequest): void {
     this.type = data.type;
     this.overlay = document.createElement('div');
     applyStylesToElement(this.overlay, pinStyles);
@@ -153,7 +148,9 @@ export class DocumentMediator {
     }
 
     const elements = document.elementsFromPoint(e.offsetX, e.offsetY);
-    if (elements[1] instanceof HTMLElement) {
+    if (elements[1] instanceof HTMLIFrameElement) {
+      fnConsoleLog('IFRAME PASS HERE');
+    } else if (elements[1] instanceof HTMLElement) {
       this.updateFactoryElement(elements[1]);
     } else {
       fnConsoleLog('Unknown element', elements[1]);

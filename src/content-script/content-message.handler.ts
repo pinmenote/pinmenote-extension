@@ -24,6 +24,7 @@ import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class ContentMessageHandler {
   private static href?: string;
@@ -57,7 +58,12 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PIN_START:
-        DocumentMediator.startListeners(msg.data, this.href);
+        if (this.href !== msg.data.url.href) {
+          // fnConsoleLog('SKIP', href);
+          return;
+        }
+        fnConsoleLog('DocumentMediator->startListeners', this.href);
+        DocumentMediator.startListeners(msg.data);
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_STOP:
       case BusMessageType.CONTENT_PIN_STOP:

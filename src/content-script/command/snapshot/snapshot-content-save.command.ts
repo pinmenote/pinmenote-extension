@@ -14,53 +14,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextContentIdCommand } from '../../../common/command/obj/content/obj-next-content-id.command';
+import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
-  constructor(private element: HTMLElement, private canvas?: ObjCanvasDto) {}
+  constructor(private element: HTMLElement) {}
   async execute(): Promise<number> {
     const id = await new ObjNextContentIdCommand().execute();
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
-    if (this.canvas) {
-      await BrowserStorageWrapper.set(key, {
-        id,
-        html: '',
-        css: {
-          css: '',
-          href: []
-        },
-        iframe: []
-      });
-    } else {
-      fnConsoleLog('START', key);
-      const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
-      const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
-      const htmlAttr = HtmlFactory.computeHtmlAttr();
-      fnConsoleLog('HTML DONE');
-      const css = await CssFactory.computeCssContent();
-      fnConsoleLog('CSS DONE');
-      AutoTagMediator.precompute();
-      fnConsoleLog('SOCIAL TAGS DONE');
+    fnConsoleLog('START', key);
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
+    const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
+    const htmlAttr = HtmlFactory.computeHtmlAttr();
+    fnConsoleLog('HTML DONE');
+    const css = await CssFactory.computeCssContent();
+    fnConsoleLog('CSS DONE');
+    AutoTagMediator.precompute();
+    fnConsoleLog('SOCIAL TAGS DONE');
 
-      fnConsoleLog('END');
+    fnConsoleLog('END');
 
-      await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {
-        id,
-        html,
-        htmlAttr,
-        css,
-        content: htmlContent.content
-      });
-    }
+    await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {
+      id,
+      html,
+      htmlAttr,
+      css,
+      content: htmlContent.content
+    });
 
     return id;
   }

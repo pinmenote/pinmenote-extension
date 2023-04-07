@@ -29,11 +29,11 @@ export interface ObjSnapshotDto {
   title: string;
   screenshot?: string;
   contentId: number;
+  canvas?: ObjCanvasDto;
 }
 
 export interface ObjSnapshotContentDto {
   id: number;
-  canvas?: ObjCanvasDto;
   html: string;
   htmlAttr: string;
   css: CssStyleListDto;

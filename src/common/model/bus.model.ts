@@ -74,3 +74,10 @@ export enum BusMessageType {
   CONTENT_THEME = 'content.theme'
   // Options
 }
+
+export enum IFrameMessage {
+  FETCH = 'fetch',
+  PING = 'ping',
+  START_LISTENERS = 'start-listeners',
+  STOP_LISTENERS = 'stop-listeners'
+}
