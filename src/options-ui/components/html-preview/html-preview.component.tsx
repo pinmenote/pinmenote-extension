@@ -100,9 +100,14 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       for (const content of c.snapshot.content) {
         const elList = doc.querySelectorAll(`[data-pin-id="${content.id}"]`);
         const el = elList[0];
-        if (el) await asyncEmbedContent(content, el);
+        try {
+          if (el) await asyncEmbedContent(content, el);
+        } catch (e) {
+          fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, content);
+        }
       }
     }
+    fnConsoleLog('DONE');
     setIsLoading(false);
   };
 
@@ -133,7 +138,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   };
 
   const asyncEmbedContent = async (dto: ObjContentDto, el: Element): Promise<void> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       fnSleep(10)
         .then(() => {
           if (dto.type === ObjContentTypeDto.IFRAME) {
@@ -143,6 +148,22 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
               const iframeHtml = IframeHtmlFactory.computeHtml(iframe.css, iframe.html, iframe.htmlAttr);
               iframeDoc.write(iframeHtml);
               iframeDoc.close();
+              for (const content of iframe.content) {
+                const elList = iframeDoc.querySelectorAll(`[data-pin-id="${content.id}"]`);
+                const iel = elList[0];
+                try {
+                  if (iel)
+                    asyncEmbedContent(content, iel)
+                      .then(() => {
+                        /* IGNORE */
+                      })
+                      .catch(() => {
+                        /* IGNORE */
+                      });
+                } catch (e) {
+                  fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, content);
+                }
+              }
             }
             fnConsoleLog('RENDER IFRAME', iframe.ok, iframe.url);
           } else if (dto.type === ObjContentTypeDto.IMG) {
@@ -155,8 +176,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
           }
           resolve();
         })
-        .catch(() => {
-          /* IGNORE */
+        .catch((e) => {
+          reject(e);
         });
     });
   };

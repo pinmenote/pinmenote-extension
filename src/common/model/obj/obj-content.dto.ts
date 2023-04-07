@@ -23,6 +23,7 @@ export interface ObjIframeContentDto {
   html: string;
   htmlAttr: string;
   css: CssStyleListDto;
+  content: ObjContentDto[];
 }
 
 export interface ObjShadowContentDto {
