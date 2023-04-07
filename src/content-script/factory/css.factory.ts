@@ -83,9 +83,9 @@ export class CssFactory {
         const imports = await this.fetchImports(data);
         data = data.replaceAll(IMPORT_REG, '').trim();
         css.push(...imports);
-        out += `@media ${r.conditionText} {
-  ${data}
-}
+        out += out +=
+          data +
+          `
 `;
       } else if (r.selectorText) {
         let data = r.cssText;
@@ -117,6 +117,7 @@ export class CssFactory {
     for (const importUrl of importList) {
       if (importUrl.startsWith('http')) continue;
       let url = importUrl.split(' ')[1];
+      let baseUrl = undefined;
 
       url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
       if (url.startsWith('url')) {
@@ -126,7 +127,10 @@ export class CssFactory {
         url = fnComputeUrl(url);
       } else if (rel) {
         const a = rel.split('/');
-        url = fnComputeUrl(url, a.slice(0, a.length - 1).join('/'));
+        url = url.split('"')[1];
+        baseUrl = a.slice(0, a.length - 1).join('/');
+        const u = new URL(baseUrl + '/' + url);
+        url = u.href;
         fnConsoleLog('CssFactory->fetchImports->REL !!!', url);
       } else {
         url = fnComputeUrl(url);
@@ -135,21 +139,26 @@ export class CssFactory {
       const result = await this.fetchCss(url);
 
       if (result.ok) {
+        // !important recurrence of getting imports inside imports here
+        let data = result.res;
+        const imports = await this.fetchImports(result.res);
+        data = data.replaceAll(IMPORT_REG, '').trim();
+        out.push(...imports);
         // Now fetch urls to save offline
-        const data = await this.fetchUrls(result.res);
+        const urlData = await this.fetchUrls(data, baseUrl);
         out.push({
           href: result.url,
           media: '',
-          data
+          data: urlData
         });
       } else {
-        fnConsoleLog('CssFactory->fetchImports->ERROR !!!', result, css);
+        fnConsoleLog('CssFactory->fetchImports->ERROR !!!', importUrl, url);
       }
     }
     return out;
   };
 
-  static fetchUrls = async (css: string): Promise<string> => {
+  static fetchUrls = async (css: string, baseurl?: string): Promise<string> => {
     const urlList = css.match(CSS_URL_REG);
     if (!urlList) return css;
 
@@ -166,14 +175,18 @@ export class CssFactory {
       // skip svg
       if (url.endsWith('.svg')) continue;
 
-      url = fnComputeUrl(url);
+      if (baseurl && !url.startsWith('http')) {
+        url = new URL(baseurl + '/' + url).href;
+      } else {
+        url = fnComputeUrl(url);
+      }
       const result = await fnFetchImage(url);
 
       if (result.ok) {
         const newUrl = `url(${result.res})`;
         css = css.replace(urlMatch, newUrl);
       } else {
-        fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, css);
+        fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, css, baseurl);
       }
     }
     return css;

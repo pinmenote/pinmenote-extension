@@ -16,10 +16,10 @@
  */
 const EXT_REGEX = new RegExp('\\.[a-zA-Z0-9]+$');
 
-export const fnComputeUrl = (value: string, baseurl?: string): string => {
+export const fnComputeUrl = (value: string): string => {
   if (value.startsWith('http')) return value;
 
-  baseurl = baseurl || window.location.origin + window.location.pathname;
+  let baseurl = window.location.origin + window.location.pathname;
   // cleanup baseurl ending with html/htm
   if (baseurl.match(EXT_REGEX)) {
     const a = window.location.pathname.split('/');
