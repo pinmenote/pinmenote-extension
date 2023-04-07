@@ -60,9 +60,13 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       async (event, key, value) => {
         setIsPreLoading(true);
         setIsLoading(true);
-        const c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
-        setContent(c);
-        await renderSnapshot(value, c);
+        if (value.canvas) {
+          renderCanvas(value);
+        } else {
+          const c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
+          setContent(c);
+          await renderSnapshot(value, c);
+        }
       }
     );
 
@@ -70,6 +74,27 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       TinyEventDispatcher.removeListener(BusMessageType.OPT_SHOW_HTML, htmlKey);
     };
   });
+
+  const renderCanvas = (s: ObjSnapshotDto) => {
+    renderHeader(s, 0);
+
+    if (!htmlRef.current) return;
+    if (!containerRef.current) return;
+    containerRef.current.style.display = 'flex';
+    const iframe = document.createElement('iframe');
+    iframe.width = '100%';
+    iframe.height = '100%';
+    htmlRef.current.appendChild(iframe);
+    if (!iframe.contentWindow) return;
+
+    const html = `<body><img src="${s.screenshot || ''}" alt="screenshot" /></body>`;
+    const doc = iframe.contentWindow.document;
+    doc.write(html);
+    doc.close();
+
+    setIsPreLoading(false);
+    setIsLoading(false);
+  };
 
   const renderSnapshot = async (s: ObjSnapshotDto, c: ObjSnapshotData): Promise<void> => {
     fnConsoleLog('SHOW HTML !!!', s, c, c.snapshot.css.css.length);
@@ -84,12 +109,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     iframe.height = '100%';
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
-    let html;
-    if (c.snapshot.canvas) {
-      html = `<body><img src="${s.screenshot || ''}" alt="screenshot" /></body>`;
-    } else {
-      html = IframeHtmlFactory.computeHtml(c.snapshot.css, c.snapshot.html, c.snapshot.htmlAttr) || '';
-    }
+
+    const html = IframeHtmlFactory.computeHtml(c.snapshot.css, c.snapshot.html, c.snapshot.htmlAttr) || '';
 
     const doc = iframe.contentWindow.document;
     await asyncRenderIframe(html, doc);
