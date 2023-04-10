@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
-import { DecryptComponent } from './decrypt.component';
-import { EncryptComponent } from './encrypt.component';
+import { DecryptComponent } from './decrypt/decrypt.component';
+import { EncryptComponent } from './encrypt/encrypt.component';
 import { TopMenuComponent } from '../common/top-menu.component';
 
 export const EncryptDecryptComponent: FunctionComponent = () => {

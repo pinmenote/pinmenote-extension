@@ -23,7 +23,7 @@ interface EncryptedContentComponentProps {
   message: string;
 }
 
-export const EncryptedContentComponent: FunctionComponent<EncryptedContentComponentProps> = (props) => {
+export const EncryptedValueComponent: FunctionComponent<EncryptedContentComponentProps> = (props) => {
   const handleBack = () => {
     props.backToMessageCallback();
   };

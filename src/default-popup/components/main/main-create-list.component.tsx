@@ -125,7 +125,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
             <ListItemText primary="Show Pins" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.FUNCTION) }}>
+        <ListItem sx={zeroPad} style={{ display: 'none' }}>
           <ListItemButton onClick={handleFunctionClick}>
             <ListItemIcon>
               <FunctionsIcon />

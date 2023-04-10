@@ -15,15 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import { CryptoEncryptCommand } from '../../../common/command/crypto/crypto-encrypt.command';
-import { CryptoStore } from '../../../common/store/crypto.store';
-import { EncryptMessage } from './encrypt-decrypt.component.model';
+import { CryptoEncryptCommand } from '../../../../common/command/crypto/crypto-encrypt.command';
+import { CryptoStore } from '../../../../common/store/crypto.store';
+import { EncryptMessage } from '../encrypt-decrypt.component.model';
 import { EncryptMessageComponent } from './encrypt-message.component';
-import { EncryptedContentComponent } from './encrypted-content.component';
+import { EncryptedValueComponent } from './encrypted-value.component';
 
 enum ComponentState {
   ENCRYPT_MESSAGE = 'ENCRYPT_MESSAGE',
-  ENCRYPTED_CONTENT = 'ENCRYPTED_CONTENT'
+  ENCRYPTED_VALUE = 'ENCRYPTED_VALUE'
 }
 
 export const EncryptComponent = () => {
@@ -34,7 +34,7 @@ export const EncryptComponent = () => {
   const handleEncrypt = async (message: EncryptMessage) => {
     setMessage(message);
     await encryptMessage(message);
-    setState(ComponentState.ENCRYPTED_CONTENT);
+    setState(ComponentState.ENCRYPTED_VALUE);
   };
 
   const handleBackToMessage = () => {
@@ -58,8 +58,8 @@ export const EncryptComponent = () => {
       <div style={{ display: state == ComponentState.ENCRYPT_MESSAGE ? 'inline-block' : 'none' }}>
         <EncryptMessageComponent message={message} encryptCallback={handleEncrypt} />
       </div>
-      <div style={{ display: state == ComponentState.ENCRYPTED_CONTENT ? 'inline-block' : 'none' }}>
-        <EncryptedContentComponent backToMessageCallback={handleBackToMessage} message={encryptedMessage} />
+      <div style={{ display: state == ComponentState.ENCRYPTED_VALUE ? 'inline-block' : 'none' }}>
+        <EncryptedValueComponent backToMessageCallback={handleBackToMessage} message={encryptedMessage} />
       </div>
     </div>
   );

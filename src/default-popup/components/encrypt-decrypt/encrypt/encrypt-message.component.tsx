@@ -17,8 +17,8 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { CryptoStore } from '../../../common/store/crypto.store';
-import { EncryptMessage } from './encrypt-decrypt.component.model';
+import { CryptoStore } from '../../../../common/store/crypto.store';
+import { EncryptMessage } from '../encrypt-decrypt.component.model';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 
 interface EncryptMessageComponentProps {
