@@ -14,13 +14,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
+import { CryptoEncryptCommand } from '../../../common/command/crypto/crypto-encrypt.command';
+import { CryptoStore } from '../../../common/store/crypto.store';
+import { EncryptMessage } from './encrypt-decrypt.component.model';
+import { EncryptMessageComponent } from './encrypt-message.component';
+import { EncryptedContentComponent } from './encrypted-content.component';
+
+enum ComponentState {
+  ENCRYPT_MESSAGE = 'ENCRYPT_MESSAGE',
+  ENCRYPTED_CONTENT = 'ENCRYPTED_CONTENT'
+}
 
 export const EncryptComponent = () => {
+  const [message, setMessage] = useState<EncryptMessage>({ username: '', message: '' });
+  const [encryptedMessage, setEncryptedMessage] = useState<string>('');
+  const [state, setState] = useState<ComponentState>(ComponentState.ENCRYPT_MESSAGE);
+
+  const handleEncrypt = async (message: EncryptMessage) => {
+    setMessage(message);
+    await encryptMessage(message);
+    setState(ComponentState.ENCRYPTED_CONTENT);
+  };
+
+  const handleBackToMessage = () => {
+    setState(ComponentState.ENCRYPT_MESSAGE);
+  };
+
+  const encryptMessage = async (data: EncryptMessage) => {
+    const { username, message } = data;
+    const key = await CryptoStore.getUserPublicKey(username);
+    if (!key) {
+      const msg = `Unable to load key for ${username}`;
+      if (msg !== encryptedMessage) setEncryptedMessage(msg);
+    } else {
+      const msg = await new CryptoEncryptCommand(message, key).execute();
+      if (msg !== encryptedMessage) setEncryptedMessage(msg);
+    }
+  };
+
   return (
     <div>
-      <h1>Encrypt</h1>
-      {/*<Autocomplete renderInput={} options={} />*/}
+      <div style={{ display: state == ComponentState.ENCRYPT_MESSAGE ? 'inline-block' : 'none' }}>
+        <EncryptMessageComponent message={message} encryptCallback={handleEncrypt} />
+      </div>
+      <div style={{ display: state == ComponentState.ENCRYPTED_CONTENT ? 'inline-block' : 'none' }}>
+        <EncryptedContentComponent backToMessageCallback={handleBackToMessage} message={encryptedMessage} />
+      </div>
     </div>
   );
 };
