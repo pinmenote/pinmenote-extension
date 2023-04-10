@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
-import { NoteNewComponent } from './note-new.component';
-import { TaskNewComponent } from './task-new.component';
+import { NoteNewComponent } from './note/note-new.component';
+import { TaskNewComponent } from './task/task-new.component';
 import { TopMenuComponent } from '../common/top-menu.component';
 
 export const TaskNoteComponent: FunctionComponent = () => {

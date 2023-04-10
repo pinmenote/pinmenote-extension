@@ -41,10 +41,11 @@ export class CssFactory {
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
       if (s.href) {
-        const cssFetchData = await this.fetchCss(s.href);
+        const url = new URL(s.href);
+        const cssFetchData = await this.fetchCss(url.href);
 
         if (cssFetchData.ok) {
-          const imports = await this.fetchImports(cssFetchData.res, s.href);
+          const imports = await this.fetchImports(cssFetchData.res, url.href);
 
           let data = cssFetchData.res.replaceAll(IMPORT_REG, '').trim();
           data = await this.fetchUrls(data);
@@ -83,7 +84,7 @@ export class CssFactory {
         const imports = await this.fetchImports(data);
         data = data.replaceAll(IMPORT_REG, '').trim();
         css.push(...imports);
-        out += out +=
+        out +=
           data +
           `
 `;
@@ -186,7 +187,7 @@ export class CssFactory {
         const newUrl = `url(${result.res})`;
         css = css.replace(urlMatch, newUrl);
       } else {
-        fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, css, baseurl);
+        fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, baseurl);
       }
     }
     return css;

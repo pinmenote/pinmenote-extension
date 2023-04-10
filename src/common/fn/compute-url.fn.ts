@@ -38,5 +38,5 @@ export const fnComputeUrl = (value: string): string => {
     const url = new URL(baseurl + '/' + value);
     return url.href;
   }
-  return `${baseurl}/${value}`;
+  return new URL(`${baseurl}/${value}`).href;
 };
