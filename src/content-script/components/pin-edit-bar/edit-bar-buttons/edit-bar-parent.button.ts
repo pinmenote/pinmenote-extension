@@ -70,10 +70,10 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       const key = `${ObjectStoreKeys.CONTENT_ID}:${this.parent.object.data.snapshot.contentId}`;
       const snapshot = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
       snapshot.html = htmlContent.html;
+      snapshot.video = htmlContent.video;
       snapshot.content = htmlContent.content;
       await BrowserStorageWrapper.set(key, snapshot);
 
-      this.parent.object.data.video = htmlContent.videoTime;
       this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref);
       const rect = XpathFactory.computeRect(this.parent.ref);
 

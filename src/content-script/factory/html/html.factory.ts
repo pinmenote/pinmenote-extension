@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime, HtmlIntermediateData } from '../../../common/model/html.model';
 import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
+import { HtmlIntermediateData } from '../../../common/model/html.model';
 import { IframeFactory } from './iframe.factory';
+import { ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ShadowFactory } from './shadow.factory';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { environmentConfig } from '../../../common/environment';
@@ -44,7 +45,7 @@ export class HtmlFactory {
     const uid = fnUid();
     return {
       html: `<img data-pin-id="${uid}" width="${width}" height="${height}" style="${style}" class="${clazz}" />`,
-      videoTime: [],
+      video: [],
       content: [
         {
           id: uid,
@@ -79,7 +80,7 @@ export class HtmlFactory {
       }
     }
     let html = `<${tagName} `;
-    const videoTime: ContentVideoTime[] = [];
+    const video: ObjVideoDataDto[] = [];
     const content: ObjContentDto[] = [];
     if (tagName === 'script' || tagName === 'link') return HtmlAttrFactory.EMPTY_RESULT;
 
@@ -97,7 +98,7 @@ export class HtmlFactory {
       }
     } else if (tagName === 'video') {
       // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
-      videoTime.push({
+      video.push({
         xpath: XpathFactory.newXPathString(ref as HTMLElement),
         currentTime: (ref as HTMLVideoElement).currentTime,
         displayTime: environmentConfig.settings.videoDisplayTime
@@ -131,7 +132,7 @@ export class HtmlFactory {
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache);
         html += computed.html;
-        videoTime.push(...computed.videoTime);
+        video.push(...computed.video);
         content.push(...computed.content);
       } else if (node.nodeType === Node.COMMENT_NODE) {
         // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
@@ -155,7 +156,7 @@ export class HtmlFactory {
 
     return {
       html,
-      videoTime,
+      video,
       content
     };
   };

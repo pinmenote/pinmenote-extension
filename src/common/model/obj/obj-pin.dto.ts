@@ -28,17 +28,10 @@ export interface ObjCommentListDto {
 
 export interface ObjPagePinDto {
   xpath: string;
-  video: PinVideoDataDto[];
   draw: ObjDrawDto[];
   comments: ObjCommentListDto;
   snapshot: ObjSnapshotDto;
   border: PinBorderDataDto;
-}
-
-export interface PinVideoDataDto {
-  currentTime: number;
-  displayTime: number;
-  xpath: string;
 }
 
 export interface CssStyleListDto {

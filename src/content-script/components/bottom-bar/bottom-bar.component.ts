@@ -38,7 +38,7 @@ export class BottomBarComponent implements HtmlComponent<HTMLElement>, HtmlCompo
   private addComment: ShowCommentButton;
 
   constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
-    this.videoTime = new VideoTimeComponent(object.data.video);
+    this.videoTime = new VideoTimeComponent(object.data.snapshot);
     this.addComment = new ShowCommentButton(parent);
   }
 

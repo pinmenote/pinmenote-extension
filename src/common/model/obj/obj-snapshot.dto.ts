@@ -32,10 +32,17 @@ export interface ObjSnapshotDto {
   canvas?: ObjCanvasDto;
 }
 
+export interface ObjVideoDataDto {
+  currentTime: number;
+  displayTime: number;
+  xpath: string;
+}
+
 export interface ObjSnapshotContentDto {
   id: number;
   html: string;
   htmlAttr: string;
   css: CssStyleListDto;
   content: ObjContentDto[];
+  video?: ObjVideoDataDto[];
 }

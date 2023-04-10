@@ -47,6 +47,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
       html,
       htmlAttr,
       css,
+      video: htmlContent.video,
       content: htmlContent.content
     });
 

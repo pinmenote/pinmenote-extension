@@ -17,17 +17,12 @@
 import { ObjContentDto } from './obj/obj-content.dto';
 import { ObjDto } from './obj/obj.dto';
 import { ObjPagePinDto } from './obj/obj-pin.dto';
+import { ObjVideoDataDto } from './obj/obj-snapshot.dto';
 
 export interface HtmlIntermediateData {
   html: string;
-  videoTime: ContentVideoTime[];
+  video: ObjVideoDataDto[];
   content: ObjContentDto[];
-}
-
-export interface ContentVideoTime {
-  currentTime: number;
-  displayTime: number;
-  xpath: string;
 }
 
 export interface HtmlComponentFocusable {

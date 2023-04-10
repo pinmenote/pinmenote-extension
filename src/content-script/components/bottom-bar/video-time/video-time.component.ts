@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentVideoTime } from '../../../../common/model/html.model';
+import { ObjSnapshotContentDto, ObjSnapshotDto, ObjVideoDataDto } from '../../../../common/model/obj/obj-snapshot.dto';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { XpathFactory } from '../../../../common/factory/xpath.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnVideoSecondsTime } from '../../../../common/fn/date.fn';
@@ -35,33 +37,44 @@ const titleStyle = {
 
 export class VideoTimeComponent {
   private el = document.createElement('div');
-  private video?: ContentVideoTime;
+  private video?: ObjVideoDataDto;
 
-  constructor(private videoTime: ContentVideoTime[]) {}
+  constructor(private snapshot: ObjSnapshotDto) {
+    this.fetchSnapshot();
+  }
+
+  private fetchSnapshot() {
+    const key = `${ObjectStoreKeys.CONTENT_ID}:${this.snapshot.contentId}`;
+    BrowserStorageWrapper.get<ObjSnapshotContentDto>(key)
+      .then((content) => {
+        if (!content.video || content.video.length === 0) return;
+        this.video = content.video[0];
+        this.renderVideo();
+      })
+      .catch(() => {
+        /* IGNORE */
+      });
+  }
+
+  renderVideo = () => {
+    if (!this.video) return;
+    this.el.innerHTML = '';
+    const title = document.createElement('div');
+    applyStylesToElement(title, titleStyle);
+    title.innerText = 'video';
+    this.el.appendChild(title);
+    const from = document.createElement('div');
+    from.innerText = fnVideoSecondsTime(this.video.currentTime);
+
+    this.el.appendChild(from);
+
+    const between = document.createElement('div');
+    between.innerText = '-';
+    this.el.appendChild(between);
+  };
 
   render(): HTMLDivElement {
     applyStylesToElement(this.el, elStyles);
-    if (this.videoTime.length > 0) {
-      const title = document.createElement('div');
-      applyStylesToElement(title, titleStyle);
-      title.innerText = 'video';
-      this.el.appendChild(title);
-
-      this.video = this.videoTime[0];
-      const from = document.createElement('div');
-      from.innerText = fnVideoSecondsTime(this.video.currentTime);
-
-      this.el.appendChild(from);
-
-      const between = document.createElement('div');
-      between.innerText = '-';
-      this.el.appendChild(between);
-      /*
-            const to = document.createElement('div');
-            to.innerText = fnVideoSecondsTime(this.video.currentTime+this.video.displayTime);
-
-            this.el.appendChild(to);*/
-    }
 
     this.el.addEventListener('click', this.handleNavigateClick);
 

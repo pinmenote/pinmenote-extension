@@ -21,7 +21,7 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export class HtmlAttrFactory {
   static readonly EMPTY_RESULT = {
     html: '',
-    videoTime: [],
+    video: [],
     content: []
   };
   static computeAttrValues = async (tagName: string, attributes: Attr[]): Promise<string> => {
