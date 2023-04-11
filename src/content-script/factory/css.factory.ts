@@ -27,7 +27,7 @@ import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
 export const CSS_URL_REG = new RegExp('url\\(["\'].*["\']\\)', 'g');
-const IMPORT_REG = new RegExp(
+export const CSS_IMPORT_REG = new RegExp(
   '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
   'gi'
 );
@@ -47,7 +47,7 @@ export class CssFactory {
         if (cssFetchData.ok) {
           const imports = await this.fetchImports(cssFetchData.res, url.href);
 
-          let data = cssFetchData.res.replaceAll(IMPORT_REG, '').trim();
+          let data = cssFetchData.res.replaceAll(CSS_IMPORT_REG, '').trim();
           data = await this.fetchUrls(data);
           css.push(...imports);
 
@@ -82,7 +82,7 @@ export class CssFactory {
         // TODO - optimize that ( ok for now ) - look at old source from repo
         let data = r.cssText;
         const imports = await this.fetchImports(data);
-        data = data.replaceAll(IMPORT_REG, '').trim();
+        data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out +=
           data +
@@ -91,7 +91,7 @@ export class CssFactory {
       } else if (r.selectorText) {
         let data = r.cssText;
         const imports = await this.fetchImports(data);
-        data = data.replaceAll(IMPORT_REG, '').trim();
+        data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out +=
           data +
@@ -109,8 +109,8 @@ export class CssFactory {
     return css;
   };
 
-  private static fetchImports = async (css: string, rel?: string): Promise<CssStyleDto[]> => {
-    const importList = css.match(IMPORT_REG);
+  static fetchImports = async (css: string, rel?: string): Promise<CssStyleDto[]> => {
+    const importList = css.match(CSS_IMPORT_REG);
     if (!importList) return [];
 
     const out = [];
@@ -143,7 +143,7 @@ export class CssFactory {
         // !important recurrence of getting imports inside imports here
         let data = result.res;
         const imports = await this.fetchImports(result.res);
-        data = data.replaceAll(IMPORT_REG, '').trim();
+        data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         out.push(...imports);
         // Now fetch urls to save offline
         const urlData = await this.fetchUrls(data, baseUrl);

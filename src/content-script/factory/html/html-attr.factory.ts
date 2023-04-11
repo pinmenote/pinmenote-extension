@@ -24,6 +24,16 @@ export class HtmlAttrFactory {
     video: [],
     content: []
   };
+
+  static computeShadowAttributes = (attributes: Attr[]): string[][] => {
+    const out = [];
+    for (const attr of attributes) {
+      if (!attr.value) continue;
+      out.push([attr.name, attr.value]);
+    }
+    return out;
+  };
+
   static computeAttrValues = async (tagName: string, attributes: Attr[]): Promise<string> => {
     let html = '';
     let hrefFilled = false;

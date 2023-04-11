@@ -18,6 +18,7 @@ import {
   ObjContentDto,
   ObjContentTypeDto,
   ObjIframeContentDto,
+  ObjShadowChildDto,
   ObjShadowContentDto
 } from '../../../common/model/obj/obj-content.dto';
 import {
@@ -192,8 +193,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
             (el as HTMLImageElement).src = dto.content as string;
           } else if (dto.type === ObjContentTypeDto.SHADOW) {
             const content = dto.content as ObjShadowContentDto;
-            fnConsoleLog('RENDER SHADOW', content.mode);
-            el.innerHTML = content.html;
+            renderShadow(el, content);
+            // el.innerHTML = content.html;
           }
           resolve();
         })
@@ -201,6 +202,59 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
           reject(e);
         });
     });
+  };
+
+  const renderShadow = (el: Element, content: ObjShadowContentDto) => {
+    const shadowRoot = el.attachShadow({ mode: content.mode });
+    renderShadowChildren(shadowRoot, content.children);
+  };
+
+  const renderShadowChildren = (ref: Element | ShadowRoot, children: ObjShadowChildDto[]) => {
+    for (const child of children) {
+      if (child.text) {
+        ref.appendChild(document.createTextNode(child.text));
+      } else if (child.mode) {
+        const el = renderShadowChild(child);
+        ref.appendChild(el);
+      } else {
+        if (child.tagName === 'style' && child.html) {
+          const el = document.createElement(child.tagName as any, {});
+          el.innerHTML = child.html;
+          ref.appendChild(el);
+        } else if (child.tagName === 'svg') {
+          const el = document.createElement(child.tagName as any);
+          el.innerHTML = child.html || '';
+          fillAttr(el, child.attr);
+          ref.appendChild(el);
+        } else {
+          const el = document.createElement(child.tagName as any);
+          fillAttr(el, child.attr);
+          if (child.children) {
+            renderShadowChildren(el, child.children);
+          } else if (child.html) {
+            el.innerHTML = child.html;
+          }
+          ref.appendChild(el);
+        }
+      }
+    }
+  };
+
+  const renderShadowChild = (child: ObjShadowChildDto) => {
+    const el = document.createElement(child.tagName as any);
+    fillAttr(el, child.attr);
+    //eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const shadow = el.attachShadow({ mode: child.mode });
+    renderShadowChildren(shadow, child.children);
+    return el;
+  };
+
+  const fillAttr = (el: Element, attrs?: string[][]) => {
+    if (!attrs) return;
+    for (const attr of attrs) {
+      //eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      el.setAttribute(attr[0], attr[1]);
+    }
   };
 
   const handleDownload = async () => {
