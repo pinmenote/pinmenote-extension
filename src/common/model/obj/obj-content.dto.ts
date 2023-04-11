@@ -26,18 +26,8 @@ export interface ObjIframeContentDto {
   content: ObjContentDto[];
 }
 
-export interface ObjShadowChildDto {
-  tagName?: string;
-  text?: string;
-  html?: string;
-  attr?: string[][];
-  mode?: 'open' | 'closed';
-  children: ObjShadowChildDto[];
-}
-
 export interface ObjShadowContentDto {
-  mode: 'open' | 'closed';
-  children: ObjShadowChildDto[];
+  html: string;
 }
 
 export enum ObjContentTypeDto {

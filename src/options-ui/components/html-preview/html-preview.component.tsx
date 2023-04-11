@@ -18,7 +18,6 @@ import {
   ObjContentDto,
   ObjContentTypeDto,
   ObjIframeContentDto,
-  ObjShadowChildDto,
   ObjShadowContentDto
 } from '../../../common/model/obj/obj-content.dto';
 import {
@@ -205,55 +204,21 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   };
 
   const renderShadow = (el: Element, content: ObjShadowContentDto) => {
-    const shadowRoot = el.attachShadow({ mode: content.mode });
-    renderShadowChildren(shadowRoot, content.children);
+    el.innerHTML = content.html;
+    renderTemplate(el);
   };
 
-  const renderShadowChildren = (ref: Element | ShadowRoot, children: ObjShadowChildDto[]) => {
-    for (const child of children) {
-      if (child.text) {
-        ref.appendChild(document.createTextNode(child.text));
-      } else if (child.mode) {
-        const el = renderShadowChild(child);
-        ref.appendChild(el);
-      } else {
-        if (child.tagName === 'style' && child.html) {
-          const el = document.createElement(child.tagName as any, {});
-          el.innerHTML = child.html;
-          ref.appendChild(el);
-        } else if (child.tagName === 'svg') {
-          const el = document.createElement(child.tagName as any);
-          el.innerHTML = child.html || '';
-          fillAttr(el, child.attr);
-          ref.appendChild(el);
-        } else {
-          const el = document.createElement(child.tagName as any);
-          fillAttr(el, child.attr);
-          if (child.children) {
-            renderShadowChildren(el, child.children);
-          } else if (child.html) {
-            el.innerHTML = child.html;
-          }
-          ref.appendChild(el);
+  const renderTemplate = (el: Element) => {
+    const templates = Array.from(el.querySelectorAll('template'));
+    for (const template of templates) {
+      const mode = template.getAttribute('mode');
+      if (template.parentElement) {
+        const shadow = template.parentElement.attachShadow({ mode: mode as ShadowRootMode });
+        shadow.appendChild(template.content.cloneNode(true));
+        for (const child of Array.from(shadow.children)) {
+          renderTemplate(child);
         }
       }
-    }
-  };
-
-  const renderShadowChild = (child: ObjShadowChildDto) => {
-    const el = document.createElement(child.tagName as any);
-    fillAttr(el, child.attr);
-    //eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const shadow = el.attachShadow({ mode: child.mode });
-    renderShadowChildren(shadow, child.children);
-    return el;
-  };
-
-  const fillAttr = (el: Element, attrs?: string[][]) => {
-    if (!attrs) return;
-    for (const attr of attrs) {
-      //eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      el.setAttribute(attr[0], attr[1]);
     }
   };
 
