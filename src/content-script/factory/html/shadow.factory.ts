@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { CSS_IMPORT_REG, CssFactory } from '../css.factory';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
+import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../../common/model/html.model';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
@@ -74,16 +75,17 @@ export class ShadowFactory {
       const uri = ref.getAttribute('href');
       if (uri) {
         const url = fnComputeUrl(uri);
-        // fnConsoleLog('computeShadowChild->link', url);
         const css = await CssFactory.fetchCss(url);
         if (css.ok) {
-          return `<style>${css.res}</style>`;
+          return this.computeCssData(css.res);
         } else {
           fnConsoleLog('computeShadowChild->link->error', css);
+          return '';
         }
       }
-    }
-    if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {
+    } else if (tagName === 'style') {
+      return this.computeCssData(ref.innerHTML);
+    } else if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);
       if (shadow) {
         let html = `<${tagName} `;
@@ -96,6 +98,10 @@ export class ShadowFactory {
     }
     let html = `<${tagName} `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
+    if (tagName === 'img') {
+      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement);
+      html += `src="${value}" `;
+    }
     html = html.substring(0, html.length - 1) + '>';
 
     const nodes = Array.from(ref.childNodes);
@@ -116,5 +122,19 @@ export class ShadowFactory {
 
     html += `</${tagName}>`;
     return html;
+  };
+
+  private static computeCssData = async (cssData: string): Promise<string> => {
+    const imports = await CssFactory.fetchImports(cssData);
+    cssData = cssData.replaceAll(CSS_IMPORT_REG, '').trim();
+    cssData = await CssFactory.fetchUrls(cssData);
+    cssData = `<style>${cssData}</style>`;
+    for (const imp of imports) {
+      if (!imp.data) continue;
+      cssData =
+        `<style>${imp.data}</style>
+` + cssData;
+    }
+    return cssData;
   };
 }

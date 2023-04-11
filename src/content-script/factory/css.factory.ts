@@ -119,14 +119,13 @@ export class CssFactory {
       if (importUrl.startsWith('http')) continue;
       let url = importUrl.split(' ')[1];
       let baseUrl = undefined;
-
-      url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
       if (url.startsWith('url')) {
         const urlMatch = url.match(CSS_URL_REG);
         if (!urlMatch) continue;
         url = urlMatch[0].substring(5, urlMatch[0].length - 2);
         url = fnComputeUrl(url);
       } else if (rel) {
+        url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
         const a = rel.split('/');
         url = url.split('"')[1];
         baseUrl = a.slice(0, a.length - 1).join('/');
@@ -134,6 +133,7 @@ export class CssFactory {
         url = u.href;
         fnConsoleLog('CssFactory->fetchImports->REL !!!', url);
       } else {
+        url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
         url = fnComputeUrl(url);
       }
 

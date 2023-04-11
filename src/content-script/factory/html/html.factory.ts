@@ -18,15 +18,14 @@ import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
+import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../../common/model/html.model';
 import { IframeFactory } from './iframe.factory';
 import { ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ShadowFactory } from './shadow.factory';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { environmentConfig } from '../../../common/environment';
-import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnFetchImage } from '../../../common/fn/fetch-image.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 
 export class HtmlFactory {
@@ -104,7 +103,7 @@ export class HtmlFactory {
         displayTime: environmentConfig.settings.videoDisplayTime
       });
     } else if (tagName === 'img') {
-      const value = await this.computeImgValue(ref as HTMLImageElement);
+      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement);
       const uid = fnUid();
       content.push({
         id: uid,
@@ -159,60 +158,6 @@ export class HtmlFactory {
       video,
       content
     };
-  };
-
-  private static computeImgValue = async (ref: HTMLImageElement): Promise<string> => {
-    let value = ref.src || '';
-    // we have data already inside image so just add it
-    if (value.startsWith('data:')) {
-      return value;
-    }
-
-    // fnConsoleLog('HtmlFactory->computeImgValue', ref.src);
-    // data-src
-    if (ref.getAttribute('data-src')) {
-      value = ref.getAttribute('data-src') || '';
-      const url = fnComputeUrl(value);
-      const imageData = await fnFetchImage(url);
-      if (imageData.ok) {
-        return imageData.res;
-      }
-    }
-
-    // data-pin-media - maybe merge with data-src
-    if (ref.getAttribute('data-pin-media')) {
-      value = ref.getAttribute('data-pin-media') || '';
-      const url = fnComputeUrl(value);
-      const imageData = await fnFetchImage(url);
-      if (imageData.ok) {
-        return imageData.res;
-      }
-    }
-
-    // srcset
-    if (ref.srcset) {
-      // TODO check if ok for all cases - pick best image based on second parameter
-      const srcset = ref.srcset.split(', ');
-      // last value so it's biggest image
-      value = srcset[srcset.length - 1].trim().split(' ')[0];
-      const url = fnComputeUrl(value);
-      if (url.startsWith('http')) {
-        const imageData = await fnFetchImage(url);
-        if (imageData.ok) {
-          return imageData.res;
-        }
-      }
-    }
-
-    value = value.replaceAll('"', '&quot;');
-
-    const url = fnComputeUrl(value);
-
-    const imageData = await fnFetchImage(url);
-    if (imageData.ok) {
-      return imageData.res;
-    }
-    return url;
   };
 
   static computeHtmlParent = (parent: Element | null, content: string): string => {

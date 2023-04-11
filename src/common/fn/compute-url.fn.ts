@@ -18,6 +18,7 @@ const EXT_REGEX = new RegExp('\\.[a-zA-Z0-9]+$');
 
 export const fnComputeUrl = (value: string): string => {
   if (value.startsWith('http')) return value;
+  if (value.startsWith('data:')) return value;
 
   let baseurl = window.location.origin + window.location.pathname;
   // cleanup baseurl ending with html/htm
