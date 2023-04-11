@@ -124,10 +124,12 @@ export class CssFactory {
         if (!urlMatch) continue;
         url = urlMatch[0].substring(5, urlMatch[0].length - 2);
         url = fnComputeUrl(url);
-      } else if (rel) {
+      } else {
         url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
+      }
+
+      if (rel) {
         const a = rel.split('/');
-        url = url.split('"')[1];
         baseUrl = a.slice(0, a.length - 1).join('/');
         const u = new URL(baseUrl + '/' + url);
         url = u.href;
@@ -177,7 +179,11 @@ export class CssFactory {
       if (url.endsWith('.svg')) continue;
 
       if (baseurl && !url.startsWith('http')) {
-        url = new URL(baseurl + '/' + url).href;
+        if (url.startsWith('/')) {
+          url = new URL(baseurl).origin + url;
+        } else {
+          url = new URL(baseurl + '/' + url).href;
+        }
       } else {
         url = fnComputeUrl(url);
       }

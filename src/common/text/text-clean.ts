@@ -25,7 +25,7 @@ export class TextClean {
     const out: string[] = [];
     for (let word of wordList) {
       // Special characters
-      word = word.replaceAll(/[()-.'/:\-–\t\n\r,"„%\u8195]+/g, '');
+      word = word.replaceAll(/[()!-.'/:\-–\t\n\r,"„%\u8195]+/g, '');
       if (word === '') continue;
       if (word.length <= 2) continue;
       out.push(word.toLowerCase());
