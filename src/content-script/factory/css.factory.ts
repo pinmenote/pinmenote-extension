@@ -131,11 +131,13 @@ export class CssFactory {
       if (rel) {
         const a = rel.split('/');
         baseUrl = a.slice(0, a.length - 1).join('/');
-        const u = new URL(baseUrl + '/' + url);
-        url = u.href;
+        if (url.startsWith('/')) {
+          url = new URL(baseUrl).origin + url;
+        } else {
+          url = new URL(baseUrl + '/' + url).href;
+        }
         fnConsoleLog('CssFactory->fetchImports->REL !!!', url);
       } else {
-        url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
         url = fnComputeUrl(url);
       }
 
