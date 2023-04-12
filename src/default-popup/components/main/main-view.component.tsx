@@ -15,43 +15,62 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, ReactElement, useState } from 'react';
-import { EncryptDecryptComponent } from '../encrypt-decrypt/encrypt-decrypt.component';
+import { CalendarComponent } from '../calendar/calendar.component';
+import { DecryptComponent } from '../decrypt/decrypt.component';
+import { EncryptComponent } from '../encrypt/encrypt.component';
+import { MainCreateListComponent } from './main-create-list.component';
 import { MainFooterButton } from './main-footer.button';
 import { MainHeaderComponent } from './main-header.component';
 import { MainViewEnum } from '../component-model';
+import { NoteComponent } from '../note/note.component';
 import { PinListViewComponent } from '../pins/pin-list-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
-import { TaskNoteComponent } from '../task-note/task-note.component';
+import { TaskComponent } from '../task/task.component';
 
-const getViewComponent = (viewType: MainViewEnum): ReactElement | undefined => {
+const getViewComponent = (
+  viewType: MainViewEnum,
+  closeListCallback: (viewType: MainViewEnum) => void
+): ReactElement | undefined => {
   switch (viewType) {
+    case MainViewEnum.CREATE_LIST:
+      return <MainCreateListComponent closeListCallback={closeListCallback} />;
     case MainViewEnum.PIN:
       return <PinListViewComponent />;
-    case MainViewEnum.ENCRYPT_DECRYPT:
-      return <EncryptDecryptComponent />;
-    case MainViewEnum.TASK_NOTE:
-      return <TaskNoteComponent />;
+    case MainViewEnum.ENCRYPT:
+      return <EncryptComponent />;
+    case MainViewEnum.DECRYPT:
+      return <DecryptComponent />;
+    case MainViewEnum.CALENDAR:
+      return <CalendarComponent />;
+    case MainViewEnum.TASK:
+      return <TaskComponent />;
+    case MainViewEnum.NOTE:
+      return <NoteComponent />;
     case MainViewEnum.FUNCTION:
       return <PopupFunctionsComponent />;
   }
 };
 
 export const MainViewComponent: FunctionComponent = () => {
+  const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PIN);
   const [currentView, setCurrentView] = useState<MainViewEnum>(MainViewEnum.PIN);
 
   const changeMainTab = (viewType: MainViewEnum) => {
+    setPreviousView(currentView);
     setCurrentView(viewType);
   };
 
-  const currentComponent = getViewComponent(currentView);
+  const currentComponent = getViewComponent(currentView, changeMainTab);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-        <MainHeaderComponent currentView={currentView} changeMainTabCallback={changeMainTab} />
-        <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110, marginTop: 10 }}>
-          {currentComponent}
-        </div>
+        <MainHeaderComponent
+          currentView={currentView}
+          previousView={previousView}
+          changeMainTabCallback={changeMainTab}
+        />
+        <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110 }}>{currentComponent}</div>
       </div>
       <MainFooterButton />
     </div>

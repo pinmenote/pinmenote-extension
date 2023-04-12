@@ -18,6 +18,7 @@ import React, { FunctionComponent, useState } from 'react';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CircularProgress from '@mui/material/CircularProgress';
 import FunctionsIcon from '@mui/icons-material/Functions';
 import List from '@mui/material/List';
@@ -26,7 +27,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { MainViewEnum } from '../component-model';
+import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
@@ -40,9 +43,7 @@ const zeroPad = {
 };
 
 interface CreateListProps {
-  currentView: MainViewEnum;
-  closeListCallback: () => void;
-  changeMainTabCallback: (viewType: MainViewEnum) => void;
+  closeListCallback: (viewType: MainViewEnum) => void;
 }
 
 enum IsLoadingType {
@@ -57,7 +58,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
     TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
       TinyEventDispatcher.removeListener(event, key);
       setIsLoading(IsLoadingType.None);
-      setTimeout(() => props.closeListCallback(), 100);
+      setTimeout(() => props.closeListCallback(MainViewEnum.PIN), 100);
     });
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
     setIsLoading(IsLoadingType.PageSave);
@@ -72,32 +73,8 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
         type: ObjTypeDto.PageElementSnapshot
       }
     });
-    props.closeListCallback();
+    props.closeListCallback(MainViewEnum.PIN);
     window.close();
-  };
-
-  const handleAddTaskNote = () => {
-    props.changeMainTabCallback(MainViewEnum.TASK_NOTE);
-    props.closeListCallback();
-  };
-
-  const handleEncryptDecrypt = () => {
-    props.changeMainTabCallback(MainViewEnum.ENCRYPT_DECRYPT);
-    props.closeListCallback();
-  };
-
-  const handleFunctionClick = () => {
-    props.changeMainTabCallback(MainViewEnum.FUNCTION);
-    props.closeListCallback();
-  };
-
-  const handlePinClick = () => {
-    props.changeMainTabCallback(MainViewEnum.PIN);
-    props.closeListCallback();
-  };
-
-  const displayStyle = (view: MainViewEnum): string => {
-    return view === props.currentView ? 'none' : 'inline-block';
   };
 
   return (
@@ -117,8 +94,8 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
             <ListItemText primary="Save Page" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.PIN) }}>
-          <ListItemButton onClick={handlePinClick}>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.PIN)}>
             <ListItemIcon>
               <PushPinIcon />
             </ListItemIcon>
@@ -126,27 +103,51 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>
-          <ListItemButton onClick={handleFunctionClick}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.FUNCTION)}>
             <ListItemIcon>
               <FunctionsIcon />
             </ListItemIcon>
             <ListItemText primary="Use Function" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.TASK_NOTE) }}>
-          <ListItemButton onClick={handleAddTaskNote}>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.CALENDAR)}>
+            <ListItemIcon>
+              <CalendarMonthIcon />
+            </ListItemIcon>
+            <ListItemText primary="Calendar" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.TASK)}>
             <ListItemIcon>
               <AddTaskIcon />
             </ListItemIcon>
-            <ListItemText primary="Add Task / Note" />
+            <ListItemText primary="Task" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad} style={{ display: displayStyle(MainViewEnum.ENCRYPT_DECRYPT) }}>
-          <ListItemButton onClick={handleEncryptDecrypt}>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.NOTE)}>
+            <ListItemIcon>
+              <NoteOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Note" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.ENCRYPT)}>
             <ListItemIcon>
               <LockIcon />
             </ListItemIcon>
-            <ListItemText primary="Encrypt / Decrypt" />
+            <ListItemText primary="Encrypt" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.DECRYPT)}>
+            <ListItemIcon>
+              <LockOpenIcon />
+            </ListItemIcon>
+            <ListItemText primary="Decrypt" />
           </ListItemButton>
         </ListItem>
       </List>

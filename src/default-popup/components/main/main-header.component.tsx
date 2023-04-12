@@ -21,7 +21,6 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { LogManager } from '../../../common/popup/log.manager';
-import { MainCreateListComponent } from './main-create-list.component';
 import { MainViewEnum } from '../component-model';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
@@ -30,12 +29,12 @@ import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatch
 
 interface CreateComponentProps {
   currentView: MainViewEnum;
+  previousView: MainViewEnum;
   changeMainTabCallback: (viewType: MainViewEnum) => void;
 }
 
 export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (props) => {
   const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAddingNote);
-  const [isListVisible, setIsListVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
@@ -84,7 +83,12 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (pro
   );
 
   const handleAddElementClick = () => {
-    setIsListVisible(!isListVisible);
+    LogManager.log(`handleAddElementClick ${props.currentView}`);
+    if (props.currentView === MainViewEnum.CREATE_LIST) {
+      props.changeMainTabCallback(props.previousView);
+    } else {
+      props.changeMainTabCallback(MainViewEnum.CREATE_LIST);
+    }
   };
 
   return (
@@ -93,23 +97,6 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (pro
       <IconButton title="Add Element" onClick={handleAddElementClick}>
         <AddIcon />
       </IconButton>
-      <div
-        style={{
-          display: isListVisible ? 'inline-block' : 'none',
-          position: 'absolute',
-          top: 110,
-          right: 10,
-          backgroundColor: '#ffffff',
-          border: '1px solid #eeeeee',
-          zIndex: 1000
-        }}
-      >
-        <MainCreateListComponent
-          currentView={props.currentView}
-          changeMainTabCallback={props.changeMainTabCallback}
-          closeListCallback={() => setIsListVisible(false)}
-        />
-      </div>
     </div>
   );
 };

@@ -17,9 +17,10 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { CryptoStore } from '../../../../common/store/crypto.store';
-import { EncryptMessage } from '../encrypt-decrypt.component.model';
+import { CryptoStore } from '../../../common/store/crypto.store';
+import { EncryptMessage } from '../component-model';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
+import Typography from '@mui/material/Typography';
 
 interface EncryptMessageComponentProps {
   encryptCallback: (message: EncryptMessage) => void;
@@ -57,7 +58,8 @@ export const EncryptMessageComponent: FunctionComponent<EncryptMessageComponentP
   };
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <div>
+      <Typography fontSize="2em">Encrypt</Typography>
       <div style={{ display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center' }}>
         <Autocomplete
           size="small"

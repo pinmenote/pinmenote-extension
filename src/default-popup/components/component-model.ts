@@ -15,8 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 export enum MainViewEnum {
-  PIN = 1,
-  TASK_NOTE,
-  ENCRYPT_DECRYPT,
+  CREATE_LIST = 1,
+  PIN,
+  TASK,
+  NOTE,
+  ENCRYPT,
+  DECRYPT,
+  CALENDAR,
   FUNCTION
+}
+
+export interface EncryptMessage {
+  message: string;
+  username: string;
 }

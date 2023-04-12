@@ -79,7 +79,8 @@ const ExtensionPopupApp: React.FC = () => {
         minHeight: 600,
         maxHeight: 600,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflow: 'hidden'
       }}
     >
       <ThemeProvider theme={theme}>

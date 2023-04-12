@@ -14,7 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export interface EncryptMessage {
-  message: string;
-  username: string;
+import React, { FunctionComponent } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import IconButton from '@mui/material/IconButton';
+
+interface CalendarEventListComponentProps {
+  addEventCallback: () => void;
 }
+
+export const CalendarEventListComponent: FunctionComponent<CalendarEventListComponentProps> = (props) => {
+  return (
+    <div>
+      <IconButton onClick={() => props.addEventCallback()}>
+        <AddIcon />
+      </IconButton>
+    </div>
+  );
+};

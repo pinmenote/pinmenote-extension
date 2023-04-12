@@ -16,6 +16,6 @@
  */
 import React, { FunctionComponent } from 'react';
 
-export const TaskNewComponent: FunctionComponent = () => {
+export const TaskComponent: FunctionComponent = () => {
   return <div>Task</div>;
 };

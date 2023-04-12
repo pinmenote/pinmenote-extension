@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import { CryptoEncryptCommand } from '../../../../common/command/crypto/crypto-encrypt.command';
-import { CryptoStore } from '../../../../common/store/crypto.store';
-import { EncryptMessage } from '../encrypt-decrypt.component.model';
+import { CryptoEncryptCommand } from '../../../common/command/crypto/crypto-encrypt.command';
+import { CryptoStore } from '../../../common/store/crypto.store';
+import { EncryptMessage } from '../component-model';
 import { EncryptMessageComponent } from './encrypt-message.component';
 import { EncryptedValueComponent } from './encrypted-value.component';
 

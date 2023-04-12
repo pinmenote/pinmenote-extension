@@ -17,7 +17,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import { CryptoDecryptCommand } from '../../../../common/command/crypto/crypto-decrypt.command';
+import { CryptoDecryptCommand } from '../../../common/command/crypto/crypto-decrypt.command';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 
@@ -50,7 +50,7 @@ export const DecryptMessageComponent: FunctionComponent<DecryptMessageComponentP
 
   return (
     <div>
-      <h1>Decrypt message</h1>
+      <Typography fontSize="2em">Decrypt</Typography>
       <div>
         <TextareaAutosize
           value={message}

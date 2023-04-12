@@ -2,7 +2,7 @@ pinmenote-extension
 ---
 
 ### Description
-Browser extension
+Browser extension nobody wants and nobody needs
 
 - offline first with p2p in mind
 
