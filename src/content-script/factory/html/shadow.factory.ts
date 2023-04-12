@@ -61,7 +61,7 @@ export class ShadowFactory {
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         html += await this.computeShadowChild(node as Element);
       } else if (node.nodeType === Node.COMMENT_NODE) {
-        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
+        html += '<!---->';
       } else {
         fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
       }
@@ -114,7 +114,7 @@ export class ShadowFactory {
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         html += await this.computeShadowChild(node as Element);
       } else if (node.nodeType === Node.COMMENT_NODE) {
-        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
+        html += '<!---->';
       } else {
         fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
       }

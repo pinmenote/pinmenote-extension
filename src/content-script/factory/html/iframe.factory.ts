@@ -44,7 +44,7 @@ export class IframeFactory {
         .join(' ');
       return {
         html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-id="${uid}"></iframe>`,
-        videoTime: [],
+        video: [],
         content: [{ id: uid, type: ObjContentTypeDto.IFRAME, content: html }]
       };
     } catch (e) {

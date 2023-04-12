@@ -134,7 +134,7 @@ export class HtmlFactory {
         video.push(...computed.video);
         content.push(...computed.content);
       } else if (node.nodeType === Node.COMMENT_NODE) {
-        // fnConsoleLog('fnComputeHtmlContent->skipping->COMMENT_NODE', node);
+        html += '<!---->';
       } else {
         fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
       }

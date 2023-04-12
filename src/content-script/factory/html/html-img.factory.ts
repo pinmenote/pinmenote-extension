@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnFetchImage } from '../../../common/fn/fetch-image.fn';
 
 export class HtmlImgFactory {
@@ -66,6 +67,7 @@ export class HtmlImgFactory {
     const url = fnComputeUrl(value);
 
     const imageData = await fnFetchImage(url);
+    fnConsoleLog('HtmlImgFactory->computeImgValue', url);
     if (imageData.ok) {
       return imageData.res;
     }
