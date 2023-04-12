@@ -25,7 +25,9 @@ export class ObjectStoreKeys {
   static readonly OBJECT_LIST = 'o:list';
 
   // DATE INDEX
-  static readonly OBJECT_DT = 'o:dt';
+  static readonly CREATED_DT = 'o:dt:c';
+  static readonly UPDATED_DT = 'o:dt:u';
+  static readonly REMOVED_DT = 'o:dt:r';
 
   // LINK
   static readonly OBJECT_LINK = 'o:link';

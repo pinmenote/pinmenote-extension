@@ -19,12 +19,12 @@ import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnYearMonthFormat } from '../../../fn/date.format.fn';
 
-export class ObjRemoveDtIndexCommand implements ICommand<Promise<void>> {
+export class ObjRemoveCreatedDateIndexCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private dt: Date) {}
 
   async execute(): Promise<void> {
     const yearMonth = fnYearMonthFormat(this.dt);
-    const key = `${ObjectStoreKeys.OBJECT_DT}:${yearMonth}`;
+    const key = `${ObjectStoreKeys.CREATED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);
     const idIndex = ids.indexOf(this.id);
