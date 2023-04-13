@@ -70,6 +70,7 @@ export class IframeFactory {
           if (value.id === uid) {
             fnConsoleLog('HtmlFactory->fetchIframe->result', uid, value.url, value);
             clearTimeout(iframeTimeout);
+            clearInterval(iframeFetchTimeout);
             TinyEventDispatcher.removeListener(event, eventKey);
             resolve(value);
           }
@@ -80,6 +81,11 @@ export class IframeFactory {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${uid} ${ref.src}`);
       }, 500);
+      // TODO handle this more gracefully - like ping iframe for status
+      const iframeFetchTimeout = setTimeout(() => {
+        TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
+        reject(`Iframe timeout ${uid} ${ref.src}`);
+      }, 20000);
     });
   };
 }

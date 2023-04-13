@@ -78,6 +78,7 @@ export enum BusMessageType {
 export enum IFrameMessage {
   FETCH = 'fetch',
   PING = 'ping',
+  ALIVE = 'alive',
   START_LISTENERS = 'start-listeners',
   STOP_LISTENERS = 'stop-listeners'
 }
