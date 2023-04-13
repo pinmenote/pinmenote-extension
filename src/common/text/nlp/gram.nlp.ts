@@ -23,7 +23,7 @@ export class GramNlp {
       // convert keys
       if (ConstraintsNlp.KEY_MAP[key]) key = ConstraintsNlp.KEY_MAP[key];
       // skip punct characters
-      if (ConstraintsNlp.PUNCT_CHARS.includes(key)) {
+      if (ConstraintsNlp.PUNCT_CHARS.has(key)) {
         continue;
       }
       gram2 += key;

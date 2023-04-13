@@ -30,6 +30,7 @@ import { SnapshotCreateCommand } from '../command/snapshot/snapshot-create.comma
 import { UrlFactory } from '../../common/factory/url.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnSleep } from '../../common/fn/sleep.fn';
 import { pinStyles } from '../components/styles/pin.styles';
 
 export class DocumentMediator {
@@ -194,7 +195,9 @@ export class DocumentMediator {
 
   private static addElementSnapshot = async (element: HTMLElement, canvas?: ObjCanvasDto): Promise<void> => {
     if (element) {
+      PinAddFactory.clearStyles();
       this.showPreloader();
+      await fnSleep(500);
       const url = UrlFactory.newUrl();
       const dto = await new SnapshotCreateCommand(url, element, canvas).execute();
       await new PageElementSnapshotAddCommand(dto).execute();

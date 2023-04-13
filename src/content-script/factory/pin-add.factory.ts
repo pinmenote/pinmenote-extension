@@ -22,6 +22,7 @@ export class PinAddFactory {
   private static currentElement?: HTMLElement;
   private static borderStyle = '';
   private static borderRadius = '';
+  private static backgroundColor = '';
 
   static startPoint?: ObjPointDto;
 
@@ -44,12 +45,21 @@ export class PinAddFactory {
     return this.currentElement;
   }
 
+  static clearStyles(): void {
+    if (!this.currentElement) return;
+    this.currentElement.style.backgroundColor = this.backgroundColor;
+    this.currentElement.style.border = this.borderStyle;
+    this.currentElement.style.borderRadius = this.borderRadius;
+  }
+
   static clear(): void {
     if (!this.currentElement) return;
     this.currentElement.style.border = this.borderStyle;
     this.currentElement.style.borderRadius = this.borderRadius;
+    this.currentElement.style.backgroundColor = this.backgroundColor;
     this.borderStyle = '';
     this.borderRadius = '';
+    this.backgroundColor = '';
     this.currentElement = undefined;
     this.startPoint = undefined;
   }
@@ -59,8 +69,10 @@ export class PinAddFactory {
       this.currentElement = element;
       this.borderStyle = this.currentElement.style.border;
       this.borderRadius = this.currentElement.style.borderRadius;
+      this.backgroundColor = this.currentElement.style.backgroundColor;
       this.currentElement.style.border = ContentSettingsStore.newElementStyle;
       this.currentElement.style.borderRadius = ContentSettingsStore.borderRadius;
+      this.currentElement.style.backgroundColor = '#ffd9da';
     }
   }
 }

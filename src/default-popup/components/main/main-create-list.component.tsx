@@ -85,7 +85,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
             <ListItemIcon>
               <SaveElementIcon />
             </ListItemIcon>
-            <ListItemText primary="Save Element" />
+            <ListItemText primary="Save Page Fragment" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
