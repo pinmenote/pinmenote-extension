@@ -89,7 +89,7 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
           variant="outlined"
           onClick={() => BrowserApi.openOptionsPage('#settings')}
         >
-          Advanced options
+          Settings
         </Button>
       </div>
     </div>

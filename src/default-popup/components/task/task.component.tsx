@@ -15,7 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent } from 'react';
+import { TaskListComponent } from './task-list.component';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
+
+enum CurrentView {
+  TASK_LIST = 1,
+  TASK_ADD,
+  TASK_EDIT
+}
 
 export const TaskComponent: FunctionComponent = () => {
-  return <div>Task</div>;
+  const handleAddTask = () => {
+    fnConsoleLog('Add task');
+  };
+  return (
+    <div>
+      <TaskListComponent addCallback={handleAddTask} />
+    </div>
+  );
 };

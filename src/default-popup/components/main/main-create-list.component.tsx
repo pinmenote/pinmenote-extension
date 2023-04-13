@@ -78,7 +78,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
   };
 
   return (
-    <div>
+    <div style={{ marginTop: 10 }}>
       <List sx={zeroPad}>
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={handleSaveElementClick}>

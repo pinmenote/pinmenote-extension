@@ -107,6 +107,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     const iframe = document.createElement('iframe');
     iframe.width = '100%';
     iframe.height = '100%';
+    iframe.style.overflow = 'hidden';
+
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
 

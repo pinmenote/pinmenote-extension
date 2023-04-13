@@ -29,14 +29,15 @@ export class IframeHtmlFactory {
       }
     }
     // https://www.uefa.com workaround -> <noscript> html {opacity: 1}</noscript> -> seriously ????
-    const html = `<html style="opacity: 1" ${htmlAttr ? htmlAttr : ''}>
-        <head>
-           <meta charset="utf-8">
-           <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-           ${style}        
-        </head>
-        ${htmlValue}
-    </html>`;
+    const html = `<!doctype html>
+<html style="opacity: 1" ${htmlAttr ? htmlAttr : ''}>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    ${style}        
+  </head>
+  ${htmlValue}
+</html>`;
     return html;
   };
 }
