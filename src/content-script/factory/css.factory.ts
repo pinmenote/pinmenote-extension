@@ -196,6 +196,7 @@ export class CssFactory {
         css = css.replace(urlMatch, newUrl);
       } else {
         fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, baseurl);
+        break;
       }
     }
     return css;

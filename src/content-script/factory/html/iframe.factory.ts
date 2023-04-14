@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { IFrameMessageFactory, IFrameMessageType } from './iframe-message.model';
 import { ObjContentTypeDto, ObjIframeContentDto } from '../../../common/model/obj/obj-content.dto';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { HtmlAttrFactory } from './html-attr.factory';
@@ -57,17 +58,24 @@ export class IframeFactory {
     fnConsoleLog('HtmlFactory->fetchIframe', ref.src);
     return new Promise<ObjIframeContentDto>((resolve, reject) => {
       if (!ref.contentWindow) return HtmlAttrFactory.EMPTY_RESULT;
-      TinyEventDispatcher.addListener<{ id: string }>(BusMessageType.CONTENT_FETCH_IFRAME_PING, (event, key, value) => {
-        fnConsoleLog('HtmlFactory->fetchIframe->ping->clear', value.id, uid);
-        if (value.id === uid) {
-          TinyEventDispatcher.removeListener(event, key);
-          clearTimeout(iframeTimeout);
+      TinyEventDispatcher.addListener<{ uid: string; depth: number }>(
+        BusMessageType.CONTENT_FETCH_IFRAME_PING,
+        (event, key, value) => {
+          fnConsoleLog('HtmlFactory->fetchIframe->ping->clear', value.uid, uid);
+          if (value.uid === uid && value.depth === depth) {
+            TinyEventDispatcher.removeListener(event, key);
+            clearTimeout(iframeTimeout);
+            ref.contentWindow?.postMessage(
+              IFrameMessageFactory.create({ type: IFrameMessageType.FETCH, data: { depth, uid } }),
+              '*'
+            );
+          }
         }
-      });
+      );
       const eventKey = TinyEventDispatcher.addListener<ObjIframeContentDto>(
         BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
         (event, key, value) => {
-          if (value.id === uid) {
+          if (value.uid === uid) {
             fnConsoleLog('HtmlFactory->fetchIframe->result', uid, value.url, value);
             clearTimeout(iframeTimeout);
             clearInterval(iframeFetchTimeout);
@@ -76,11 +84,15 @@ export class IframeFactory {
           }
         }
       );
-      ref.contentWindow.postMessage(`{"foo":"bar", "depth":${depth}, "id":"${uid}"}`, '*');
+      ref.contentWindow.postMessage(
+        IFrameMessageFactory.create({ type: IFrameMessageType.PING, data: { depth, uid } }),
+        '*'
+      );
+      // ref.contentWindow.postMessage(`{"foo":"bar", "depth":${depth}, "id":"${uid}"}`, '*');
       const iframeTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${uid} ${ref.src}`);
-      }, 500);
+      }, 1000);
       // TODO handle this more gracefully - like ping iframe for status
       const iframeFetchTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);

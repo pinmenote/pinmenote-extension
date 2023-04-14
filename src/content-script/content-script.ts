@@ -24,6 +24,7 @@ import '@fontsource/roboto/700.css';
 import '../css/prosemirror.css';
 
 import { ContentExtensionData, ExtensionThemeDto } from '../common/model/settings.model';
+import { IFrameMessageFactory, IFrameMessageType } from './factory/html/iframe-message.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
@@ -47,18 +48,16 @@ class PinMeScript {
     this.href = UrlFactory.normalizeHref(window.location.href);
     window.addEventListener('message', async (e) => {
       // TODO RECEIVE
-      try {
-        const msg = JSON.parse(e.data);
-        if (msg.foo === 'bar') {
-          //eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          window.top?.postMessage(`{"bar":"foo", "id":"${msg.id}"}`, '*');
-          await new ContentFetchIframeCommand(msg, this.href).execute();
-        } else if (msg.bar === 'foo') {
-          fnConsoleLog('PinMeScript->constructor->ping->from-iframe', msg);
-          TinyEventDispatcher.dispatch(BusMessageType.CONTENT_FETCH_IFRAME_PING, msg);
-        }
-      } catch (e) {
-        /* IGNORE */
+      const msg = IFrameMessageFactory.parse(e.data);
+      if (!msg) return;
+      if (msg.type === IFrameMessageType.PING) {
+        //eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        window.top?.postMessage(IFrameMessageFactory.create({ type: IFrameMessageType.PONG, data: msg.data }));
+      } else if (msg.type === IFrameMessageType.PONG) {
+        fnConsoleLog('PinMeScript->constructor->ping->from-iframe', msg);
+        TinyEventDispatcher.dispatch(BusMessageType.CONTENT_FETCH_IFRAME_PING, msg.data);
+      } else if (msg.type === IFrameMessageType.FETCH) {
+        await new ContentFetchIframeCommand(msg.data, this.href).execute();
       }
     });
     ContentMessageHandler.start(this.href);

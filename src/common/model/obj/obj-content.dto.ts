@@ -17,7 +17,7 @@
 import { CssStyleListDto } from './obj-pin.dto';
 
 export interface ObjIframeContentDto {
-  id: string;
+  uid: string;
   ok: boolean;
   url: string;
   html: string;

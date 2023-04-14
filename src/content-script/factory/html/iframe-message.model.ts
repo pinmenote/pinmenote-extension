@@ -14,44 +14,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export interface ObjIdRangeResponse {
-  ids: number[];
-  listId: number;
+export enum IFrameMessageType {
+  FETCH = 'fetch',
+  PING = 'ping',
+  PONG = 'png',
+  ALIVE = 'alive',
+  START_LISTENERS = 'start-listeners',
+  STOP_LISTENERS = 'stop-listeners'
 }
 
-export interface ObjRangeRequest {
-  from: number;
-  listId: number;
-  limit: number;
-  search?: string;
+export interface IFrameMessage {
+  type: IFrameMessageType;
+  data: any;
 }
 
-export interface ObjRangeResponse {
-  listId: number;
-  data: ObjDto<ObjDataDto>[];
-}
+export class IFrameMessageFactory {
+  static create(message: IFrameMessage) {
+    fnConsoleLog('IFrameMessageFactory->create', message);
+    return JSON.stringify(message);
+  }
 
-export interface PopupPinStartRequest {
-  url: ObjUrlDto;
-  type: ObjTypeDto;
-}
-
-export interface FetchCssRequest {
-  url: string;
-}
-
-export interface FetchImageRequest {
-  url: string;
-}
-
-export interface FetchIframeRequest {
-  uid: string;
-  depth: number;
-}
-
-export interface ExtensionPopupInitData {
-  href?: string;
-  isAddingNote: boolean;
+  static parse(msg: string): IFrameMessage | undefined {
+    try {
+      return JSON.parse(msg);
+    } catch (e) {
+      /* IGNORE */
+      fnConsoleLog('IFrameMessageFactory->parse->error', e, msg);
+    }
+    return undefined;
+  }
 }

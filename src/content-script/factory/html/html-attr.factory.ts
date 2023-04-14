@@ -78,13 +78,13 @@ export class HtmlAttrFactory {
         const urlList = attrValue.match(CSS_URL_REG);
         if (urlList) {
           const value = await CssFactory.fetchUrls(attrValue);
-          fnConsoleLog(
-            'HtmlFactory->computeHtmlIntermediateData->image-inside-style',
+          /*fnConsoleLog(
+            'HtmlAttrFactory->computeHtmlIntermediateData->image-inside-style',
             'prev',
             attrValue,
             'result',
             value
-          );
+          );*/
           html += `${attr.name}="${value}" `;
         } else {
           html += `${attr.name}="${attrValue}" `;
