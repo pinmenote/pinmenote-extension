@@ -37,11 +37,11 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (pro
   const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAddingNote);
 
   useEffect(() => {
-    const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
+    const addKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_ADDING, () => {
       setIsAdding(PopupActiveTabStore.isAddingNote);
     });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
+      TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_ADDING, addKey);
     };
   });
 

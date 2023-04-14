@@ -14,43 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchIframeRequest } from '../../../common/model/obj-request.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export interface ObjIdRangeResponse {
-  ids: number[];
-  listId: number;
-}
-
-export interface ObjRangeRequest {
-  from: number;
-  listId: number;
-  limit: number;
-  search?: string;
-}
-
-export interface ObjRangeResponse {
-  listId: number;
-  data: ObjDto<ObjDataDto>[];
-}
-
-export interface PopupPinStartRequest {
-  url: ObjUrlDto;
-  type: ObjTypeDto;
-}
-
-export interface FetchCssRequest {
-  url: string;
-}
-
-export interface FetchImageRequest {
-  url: string;
-}
-
-export interface FetchIframeRequest {
-  uid: string;
-  depth: number;
-}
-
-export interface ExtensionPopupInitData {
-  isAddingNote: boolean;
+export class ContentIframePongCommand implements ICommand<Promise<void>> {
+  constructor(private data: FetchIframeRequest) {}
+  async execute(): Promise<void> {
+    fnConsoleLog('ContentFetchIframeResultCommand->execute', this.data);
+    await BrowserApi.sendTabMessage<FetchIframeRequest>({
+      type: BusMessageType.CONTENT_IFRAME_PONG,
+      data: this.data
+    });
+  }
 }

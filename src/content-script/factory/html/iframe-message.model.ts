@@ -19,10 +19,10 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export enum IFrameMessageType {
   FETCH = 'fetch',
   PING = 'ping',
-  PONG = 'png',
+  PONG = 'pong',
   ALIVE = 'alive',
   START_LISTENERS = 'start-listeners',
-  STOP_LISTENERS = 'stop-listeners'
+  RESTART_LISTENERS = 'restart-listeners' // to parent
 }
 
 export interface IFrameMessage {
@@ -31,18 +31,30 @@ export interface IFrameMessage {
 }
 
 export class IFrameMessageFactory {
-  static create(message: IFrameMessage) {
-    fnConsoleLog('IFrameMessageFactory->create', message);
-    return JSON.stringify(message);
-  }
-
   static parse(msg: string): IFrameMessage | undefined {
     try {
+      if (!msg) return undefined;
+      fnConsoleLog('IFrameMessageFactory->parse', msg);
       return JSON.parse(msg);
     } catch (e) {
       /* IGNORE */
       fnConsoleLog('IFrameMessageFactory->parse->error', e, msg);
     }
     return undefined;
+  }
+
+  static postParent(msg: IFrameMessage) {
+    if (!window.top) return;
+    window.top.postMessage(this.create(msg));
+  }
+
+  static postIFrame(iframe: HTMLIFrameElement, msg: IFrameMessage) {
+    if (!iframe.contentWindow) return;
+    iframe.contentWindow.postMessage(this.create(msg), '*');
+  }
+
+  private static create(message: IFrameMessage) {
+    fnConsoleLog('IFrameMessageFactory->create', message);
+    return JSON.stringify(message);
   }
 }

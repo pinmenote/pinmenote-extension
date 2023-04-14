@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@ import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { UrlFactory } from '../common/factory/url.factory';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class OptionsMessageHandler {
@@ -40,9 +39,9 @@ export class OptionsMessageHandler {
   };
 
   private static handlePopupOpen = async (): Promise<void> => {
-    const url = UrlFactory.newUrl();
-    const data: ExtensionPopupInitData = { href: url.href, isAddingNote: false };
-    fnConsoleLog(`handlePopupOpen->${JSON.stringify(data)}`);
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_INIT, data });
+    await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({
+      type: BusMessageType.POPUP_INIT,
+      data: { isAddingNote: false }
+    });
   };
 }

@@ -20,7 +20,7 @@ import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../../common/model/html.model';
-import { IframeFactory } from './iframe.factory';
+import { IFrameFactory } from './iframe.factory';
 import { ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ShadowFactory } from './shadow.factory';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
@@ -86,7 +86,7 @@ export class HtmlFactory {
     // IFRAME POC
     // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
-      return await IframeFactory.computeIframe(ref as HTMLIFrameElement, depth);
+      return await IFrameFactory.computeIframe(ref as HTMLIFrameElement, depth);
     } else if (tagName === 'canvas') {
       try {
         return this.computeCanvas(ref as HTMLCanvasElement);

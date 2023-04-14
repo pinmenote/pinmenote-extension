@@ -20,6 +20,7 @@ import { ContentDownloadDataCommand } from './command/content/content-download-d
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
 import { ContentFetchIframeResultCommand } from './command/content/content-fetch-iframe-result.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
+import { ContentIframePongCommand } from './command/content/content-iframe-pong.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
@@ -70,6 +71,9 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_FETCH_IFRAME_RESULT:
       await new ContentFetchIframeResultCommand(msg.data).execute();
+      break;
+    case BusMessageType.CONTENT_IFRAME_PONG:
+      await new ContentIframePongCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();

@@ -17,13 +17,14 @@
 import { IFrameMessageFactory, IFrameMessageType } from './iframe-message.model';
 import { ObjContentTypeDto, ObjIframeContentDto } from '../../../common/model/obj/obj-content.dto';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchIframeRequest } from '../../../common/model/obj-request.model';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlIntermediateData } from '../../../common/model/html.model';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 
-export class IframeFactory {
+export class IFrameFactory {
   static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
     // Skip iframe->iframe->skip
     if (depth > 3) return HtmlAttrFactory.EMPTY_RESULT;
@@ -58,20 +59,14 @@ export class IframeFactory {
     fnConsoleLog('HtmlFactory->fetchIframe', ref.src);
     return new Promise<ObjIframeContentDto>((resolve, reject) => {
       if (!ref.contentWindow) return HtmlAttrFactory.EMPTY_RESULT;
-      TinyEventDispatcher.addListener<{ uid: string; depth: number }>(
-        BusMessageType.CONTENT_FETCH_IFRAME_PING,
-        (event, key, value) => {
-          fnConsoleLog('HtmlFactory->fetchIframe->ping->clear', value.uid, uid);
-          if (value.uid === uid && value.depth === depth) {
-            TinyEventDispatcher.removeListener(event, key);
-            clearTimeout(iframeTimeout);
-            ref.contentWindow?.postMessage(
-              IFrameMessageFactory.create({ type: IFrameMessageType.FETCH, data: { depth, uid } }),
-              '*'
-            );
-          }
+      TinyEventDispatcher.addListener<FetchIframeRequest>(BusMessageType.CONTENT_IFRAME_PONG, (event, key, value) => {
+        fnConsoleLog('HtmlFactory->fetchIframe->ping->clear', value.uid, uid);
+        if (value.uid === uid && value.depth === depth) {
+          TinyEventDispatcher.removeListener(event, key);
+          clearTimeout(iframeTimeout);
+          IFrameMessageFactory.postIFrame(ref, { type: IFrameMessageType.FETCH, data: { depth, uid } });
         }
-      );
+      });
       const eventKey = TinyEventDispatcher.addListener<ObjIframeContentDto>(
         BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
         (event, key, value) => {
@@ -84,15 +79,11 @@ export class IframeFactory {
           }
         }
       );
-      ref.contentWindow.postMessage(
-        IFrameMessageFactory.create({ type: IFrameMessageType.PING, data: { depth, uid } }),
-        '*'
-      );
-      // ref.contentWindow.postMessage(`{"foo":"bar", "depth":${depth}, "id":"${uid}"}`, '*');
+      IFrameMessageFactory.postIFrame(ref, { type: IFrameMessageType.PING, data: { depth, uid } });
       const iframeTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
         reject(`Iframe timeout ${uid} ${ref.src}`);
-      }, 1000);
+      }, 500);
       // TODO handle this more gracefully - like ping iframe for status
       const iframeFetchTimeout = setTimeout(() => {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);

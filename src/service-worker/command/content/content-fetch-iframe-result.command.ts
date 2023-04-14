@@ -17,7 +17,7 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjIframeContentDto } from '../../../common/model/obj/obj-iframe.dto';
+import { ObjIframeContentDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchIframeResultCommand implements ICommand<Promise<void>> {

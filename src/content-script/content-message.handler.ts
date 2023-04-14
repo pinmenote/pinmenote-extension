@@ -63,7 +63,7 @@ export class ContentMessageHandler {
           return;
         }
         fnConsoleLog('DocumentMediator->startListeners', this.href);
-        DocumentMediator.startListeners(msg.data);
+        DocumentMediator.startListeners(msg.data.type);
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_STOP:
       case BusMessageType.CONTENT_PIN_STOP:
@@ -87,9 +87,9 @@ export class ContentMessageHandler {
 
   private static handlePopupOpen = async (): Promise<void> => {
     const data: ExtensionPopupInitData = {
-      href: this.href,
       isAddingNote: PinAddFactory.hasElement
     };
+    fnConsoleLog('ContentMessageHandler->handlePopupOpen', data);
     await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };
 }

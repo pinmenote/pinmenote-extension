@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { IFrameMessageFactory, IFrameMessageType } from '../factory/html/iframe-message.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
@@ -25,7 +26,6 @@ import { PinAddFactory } from '../factory/pin-add.factory';
 import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from '../factory/pin.factory';
-import { PopupPinStartRequest } from '../../common/model/obj-request.model';
 import { SnapshotCreateCommand } from '../command/snapshot/snapshot-create.command';
 import { UrlFactory } from '../../common/factory/url.factory';
 import { applyStylesToElement } from '../../common/style.utils';
@@ -33,15 +33,43 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnSleep } from '../../common/fn/sleep.fn';
 import { pinStyles } from '../components/styles/pin.styles';
 
+export interface StartListenersParams {
+  stopCallback?: () => void;
+  restart?: boolean;
+}
+
 export class DocumentMediator {
   private static type?: ObjTypeDto;
+  private static params?: StartListenersParams;
   private static overlay?: HTMLDivElement;
   private static overlayCanvas?: HTMLCanvasElement;
 
   private static preloader = document.createElement('div');
 
-  static startListeners(data: PopupPinStartRequest): void {
-    this.type = data.type;
+  static startListeners(type: ObjTypeDto, params?: StartListenersParams): void {
+    this.type = type;
+    this.params = params;
+    fnConsoleLog(
+      'DocumentMediator->startListeners->activeElement',
+      document.activeElement,
+      'lock',
+      document.pointerLockElement
+    );
+    if (this.isIFrameActive && !params?.restart) {
+      IFrameMessageFactory.postIFrame(document.activeElement as HTMLIFrameElement, {
+        type: IFrameMessageType.START_LISTENERS,
+        data: { type: this.type }
+      });
+    } else {
+      this.startOverlay();
+    }
+  }
+
+  private static get isIFrameActive(): boolean {
+    return document.activeElement?.tagName.toLowerCase() === 'iframe';
+  }
+
+  private static startOverlay = (): void => {
     this.overlay = document.createElement('div');
     applyStylesToElement(this.overlay, pinStyles);
     this.overlay.style.top = `${window.scrollY}px`;
@@ -53,8 +81,8 @@ export class DocumentMediator {
     this.overlay.addEventListener('mousemove', this.handleOverlayMove);
     this.overlay.addEventListener('click', this.handleOverlayClick);
     document.addEventListener('scroll', this.handleScroll);
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
+    window.addEventListener('keydown', this.handleKeyDown);
+  };
 
   static stopListeners(): void {
     if (this.overlayCanvas) return;
@@ -64,11 +92,11 @@ export class DocumentMediator {
       this.overlay.removeEventListener('click', this.handleOverlayClick);
       this.overlay.remove();
       this.overlay = undefined;
-      this.overlayCanvas = undefined;
     }
     document.removeEventListener('scroll', this.handleScroll);
-    document.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keydown', this.handleKeyDown);
     PinAddFactory.clear();
+    if (this.params?.stopCallback) this.params.stopCallback();
   }
 
   private static handleScroll = (): void => {
@@ -82,6 +110,7 @@ export class DocumentMediator {
   private static handleKeyDown = (e: KeyboardEvent): void => {
     e.preventDefault();
     e.stopImmediatePropagation();
+    // TODO fix for iframe pass - use event from parent
     if (e.key === 'Escape') {
       this.overlayCanvas?.remove();
       this.overlayCanvas = undefined;
@@ -143,6 +172,8 @@ export class DocumentMediator {
 
   private static handleOverlayMove = (e: MouseEvent): void => {
     // We are in canvas drawing mde so draw and return;
+    e.stopImmediatePropagation();
+    e.preventDefault();
     if (PinAddFactory.startPoint) {
       this.resizePinDiv(e);
       return;
@@ -150,9 +181,16 @@ export class DocumentMediator {
 
     const elements = document.elementsFromPoint(e.offsetX, e.offsetY);
     if (elements[1] instanceof HTMLIFrameElement) {
-      fnConsoleLog('IFRAME PASS HERE');
+      fnConsoleLog('IFRAME PASS');
+      IFrameMessageFactory.postIFrame(elements[1], {
+        type: IFrameMessageType.START_LISTENERS,
+        data: { type: this.type }
+      });
+      this.stopListeners();
     } else if (elements[1] instanceof HTMLElement) {
       this.updateFactoryElement(elements[1]);
+    } else if (elements[1] instanceof SVGElement) {
+      // svg !!!
     } else {
       fnConsoleLog('Unknown element', elements[1]);
     }
@@ -217,6 +255,11 @@ export class DocumentMediator {
   };
 
   private static hidePreloader = (): void => {
-    document.body.removeChild(this.preloader);
+    try {
+      document.body.removeChild(this.preloader);
+    } catch (e) {
+      // TODO fix for overlayCanvas pins
+      /* IGNORE */
+    }
   };
 }

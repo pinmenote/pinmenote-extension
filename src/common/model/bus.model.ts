@@ -36,6 +36,7 @@ export enum BusMessageType {
   POP_CONSOLE_LOG = 'pop.console.log',
   POP_PIN_REMOVE = 'pop.pin.remove',
   POP_UPDATE_URL = 'pop.update.url',
+  POP_UPDATE_ADDING = 'pop.update.adding',
   // Ack
   CONTENT_ACK = 'content.ack',
   POPUP_ACK = 'popup.ack',
@@ -64,7 +65,8 @@ export enum BusMessageType {
   CONTENT_FETCH_CSS = 'content.fetch.css',
   CONTENT_FETCH_IMAGE = 'content.fetch.image',
   CONTENT_FETCH_IFRAME_RESULT = 'content.fetch.iframe.result',
-  CONTENT_FETCH_IFRAME_PING = 'content.fetch.iframe.ping',
+  CONTENT_IFRAME_PONG = 'content.iframe.pong',
+  CONTENT_IFRAME_RESTART_LISTENERS = 'content.iframe.restart.listeners',
   CONTENT_PING_URL = 'content.ping.url',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',

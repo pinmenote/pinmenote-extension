@@ -90,10 +90,9 @@ export class PopupActiveTabStore {
   };
 
   static updateState = (initData?: ExtensionPopupInitData) => {
-    if (initData?.href !== this.urlValue?.href) {
-      LogManager.log(`SKIPPING ${initData?.href || ''}`);
-      return;
+    if (initData?.isAddingNote) {
+      this.isAddingNoteValue = true;
+      TinyEventDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_ADDING);
     }
-    this.isAddingNoteValue = initData?.isAddingNote || false;
   };
 }
