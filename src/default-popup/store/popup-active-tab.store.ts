@@ -91,6 +91,8 @@ export class PopupActiveTabStore {
 
   static updateState = (initData?: ExtensionPopupInitData) => {
     if (initData?.isAddingNote) {
+      // TODO fix this - use parent always
+      // Any true is valid because we can be inside iframe
       this.isAddingNoteValue = true;
       TinyEventDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_ADDING);
     }

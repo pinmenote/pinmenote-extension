@@ -28,7 +28,6 @@ export class PinFactory {
       comments: {
         data: []
       },
-      video: [],
       draw: []
     };
   };

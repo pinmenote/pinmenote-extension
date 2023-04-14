@@ -38,7 +38,7 @@ export class PinAddFactory {
   }
 
   static get isCanvas(): boolean {
-    return this.currentElement instanceof HTMLCanvasElement;
+    return this.currentElement instanceof HTMLCanvasElement || this.currentElement instanceof HTMLImageElement;
   }
 
   static get element(): HTMLElement | undefined {

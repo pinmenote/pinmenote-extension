@@ -36,6 +36,7 @@ import { pinStyles } from '../components/styles/pin.styles';
 export interface StartListenersParams {
   stopCallback?: () => void;
   restart?: boolean;
+  baseUrl?: string;
 }
 
 export class DocumentMediator {
