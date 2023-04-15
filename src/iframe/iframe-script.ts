@@ -39,7 +39,7 @@ export class IframeScript {
 
     ContentMessageHandler.start(this.href);
 
-    fnConsoleLog('IframeScript->constructor', this.href);
+    fnConsoleLog('IframeScript->constructor', this.href, window.top);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
@@ -115,7 +115,9 @@ export class IframeScript {
 }
 
 try {
-  new IframeScript(fnUid(), 250);
+  if (window.top) {
+    new IframeScript(fnUid(), 250);
+  }
 } catch (e: unknown) {
   fnConsoleError('PinMeScript->PROBLEM !!!', e);
 }
