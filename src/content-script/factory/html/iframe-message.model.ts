@@ -17,6 +17,7 @@
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export enum IFrameMessageType {
+  LOADED = 'loaded',
   FETCH = 'fetch',
   PING = 'ping',
   PONG = 'pong',
@@ -31,9 +32,10 @@ export interface IFrameMessage {
 }
 
 export class IFrameMessageFactory {
-  static parse(msg: string): IFrameMessage | undefined {
+  static parse(msg: any): IFrameMessage | undefined {
     try {
       if (!msg) return undefined;
+      if (msg instanceof Object) return msg;
       fnConsoleLog('IFrameMessageFactory->parse', msg);
       return JSON.parse(msg);
     } catch (e) {

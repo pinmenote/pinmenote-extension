@@ -34,6 +34,11 @@
     "matches": ["<all_urls>"],
     "js": ["content-script/content-script.ts"],
     "run_at": "document_start"
+  },{
+    "matches": ["<all_urls>"],
+    "all_frames": true,
+    "js": ["iframe/iframe-script.ts"],
+    "run_at": "document_idle"
   }],
   "options_ui": {
     "page": "options-ui/options-ui.html"

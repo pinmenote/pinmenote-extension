@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,10 @@ import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../common/model/bus.model';
-import { ContentFetchIframeCommand } from './command/snapshot/content-fetch-iframe.command';
 import { ContentMessageHandler } from './content-message.handler';
 import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
-import { ObjTypeDto } from '../common/model/obj/obj.dto';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
@@ -44,7 +42,6 @@ import { fnUid } from '../common/fn/uid.fn';
 class PinMeScript {
   private href: string;
   private timeoutId = 0;
-  private type?: ObjTypeDto;
 
   constructor(private readonly id: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
@@ -78,48 +75,18 @@ class PinMeScript {
     });
   };
 
-  private handleIframeMessage = async (e: MessageEvent<any>): Promise<void> => {
+  private handleIframeMessage = (e: MessageEvent<any>): void => {
     const msg = IFrameMessageFactory.parse(e.data);
     if (!msg) return;
-    if (msg.type === IFrameMessageType.PING) {
-      // Send to parent only using service worker because parent messages not always get to parent
-      // TODO relay only on browserApi
-      fnConsoleLog('PinMeScript->constructor->iframe->ping', msg);
-      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_IFRAME_PONG, data: msg.data });
-    } else if (msg.type === IFrameMessageType.PONG) {
+    if (msg.type === IFrameMessageType.PONG) {
       fnConsoleLog('PinMeScript->constructor->iframe->pong', msg);
       TinyEventDispatcher.dispatch(BusMessageType.CONTENT_IFRAME_PONG, msg.data);
-    } else if (msg.type === IFrameMessageType.FETCH) {
-      fnConsoleLog('PinMeScript->constructor->iframe->fetch', msg);
-      await new ContentFetchIframeCommand(msg.data, this.href).execute();
-    } else if (msg.type === IFrameMessageType.START_LISTENERS) {
-      fnConsoleLog('PinMeScript->constructor->iframe->start-listeners', msg);
-      this.type = msg.data.type;
-      // TODO pass correct url -> so we save correct href and origin
-      // fix screenshot -> pass iframe position inside origin window
-      DocumentMediator.startListeners(msg.data.type, {
-        stopCallback: () => {
-          document.removeEventListener('mouseout', this.handleMouseOut);
-        }
-      });
-      // TODO fix racing
-      setTimeout(() => {
-        document.addEventListener('mouseout', this.handleMouseOut);
-      }, 200);
     } else if (msg.type === IFrameMessageType.RESTART_LISTENERS) {
       fnConsoleLog('PinMeScript->constructor->iframe->restart-listeners', msg);
       DocumentMediator.startListeners(msg.data.type, {
         restart: true
       });
     }
-  };
-
-  private handleMouseOut = () => {
-    fnConsoleLog('PinMeScript->handleMouseOut', this.id, this.type);
-    document.removeEventListener('mouseout', this.handleMouseOut);
-    DocumentMediator.stopListeners();
-    IFrameMessageFactory.postParent({ type: IFrameMessageType.RESTART_LISTENERS, data: { type: this.type } });
-    this.type = undefined;
   };
 
   private handleVisibilityChange = async (): Promise<void> => {

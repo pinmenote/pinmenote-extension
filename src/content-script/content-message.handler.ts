@@ -40,7 +40,11 @@ export class ContentMessageHandler {
   }
 
   static cleanup(): void {
-    BrowserApi.runtime.onMessage.removeListener(this.handleMessage);
+    try {
+      BrowserApi.runtime.onMessage.removeListener(this.handleMessage);
+    } catch (e) {
+      fnConsoleLog('ContentMessageHandler->cleanup->error', e);
+    }
   }
 
   private static handleMessage = async (
