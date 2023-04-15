@@ -211,8 +211,8 @@ export class DocumentMediator {
     const { x, y } = PinAddFactory.startPoint;
     const width = e.offsetX - x;
     const height = e.offsetY - y;
-    ctx.beginPath();
     ctx.clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
+    ctx.beginPath();
     ctx.lineWidth = 5;
     ctx.strokeStyle = '#ff0000';
     ctx.rect(x, y, width, height);
@@ -235,13 +235,31 @@ export class DocumentMediator {
   private static addElementSnapshot = async (element: HTMLElement, canvas?: ObjCanvasDto): Promise<void> => {
     if (element) {
       PinAddFactory.clearStyles();
+
+      await this.sleepUntilClearStyles();
       this.showPreloader();
-      await fnSleep(500);
+
       const url = UrlFactory.newUrl();
       const dto = await new SnapshotCreateCommand(url, element, canvas).execute();
       await new PageElementSnapshotAddCommand(dto).execute();
       await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_ELEMENT_SNAPSHOT_ADD });
     }
+  };
+
+  private static sleepUntilClearStyles = async (): Promise<void> => {
+    if (this.overlayCanvas) {
+      const ctx = this.overlayCanvas.getContext('2d');
+      ctx?.clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
+      await fnSleep(100);
+    }
+    let i = 0;
+    while (PinAddFactory.hasStyles()) {
+      // max 3 seconds
+      if (i >= 30) return;
+      await fnSleep(100);
+      i += 1;
+    }
+    await fnSleep(100);
   };
 
   private static showPreloader = (): void => {

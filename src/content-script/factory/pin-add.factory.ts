@@ -19,16 +19,13 @@ import { ObjPointDto } from '../../common/model/obj/obj-utils.dto';
 import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 
 export class PinAddFactory {
-  private static currentElement?: HTMLElement;
+  static readonly bgColor = '#ffd9da';
+  static currentElement?: HTMLElement;
   private static borderStyle = '';
   private static borderRadius = '';
   private static backgroundColor = '';
 
   static startPoint?: ObjPointDto;
-
-  static get hasElement(): boolean {
-    return !!this.currentElement;
-  }
 
   static get border(): PinBorderDataDto {
     return {
@@ -52,6 +49,14 @@ export class PinAddFactory {
     this.currentElement.style.borderRadius = this.borderRadius;
   }
 
+  static hasStyles(): boolean {
+    if (!this.currentElement) return false;
+    return (
+      this.currentElement.style.backgroundColor === this.bgColor &&
+      this.currentElement.style.border === ContentSettingsStore.newElementStyle
+    );
+  }
+
   static clear(): void {
     if (!this.currentElement) return;
     this.currentElement.style.border = this.borderStyle;
@@ -72,7 +77,7 @@ export class PinAddFactory {
       this.backgroundColor = this.currentElement.style.backgroundColor;
       this.currentElement.style.border = ContentSettingsStore.newElementStyle;
       this.currentElement.style.borderRadius = ContentSettingsStore.borderRadius;
-      this.currentElement.style.backgroundColor = '#ffd9da';
+      this.currentElement.style.backgroundColor = this.bgColor;
     }
   }
 }
