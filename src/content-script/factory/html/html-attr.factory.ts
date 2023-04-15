@@ -58,6 +58,9 @@ export class HtmlAttrFactory {
         if (tagName === 'img') continue;
         const url = fnComputeUrl(attrValue);
         html += `src="${url}" `;
+      } else if (attr.name === 'background') {
+        const url = fnComputeUrl(attrValue);
+        html += `background="${url}" `;
       } else if (attr.name === 'data-iframe') {
         if (tagName === 'a' && !hrefFilled) {
           try {
