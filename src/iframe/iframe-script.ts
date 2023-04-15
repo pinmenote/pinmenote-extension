@@ -28,6 +28,10 @@ import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
 import { fnUid } from '../common/fn/uid.fn';
 
+/**
+ * IframeScript runs at document_idle -> all_frames
+ * this prevents crashing extension on some web pages with infinite iframe loop (thank you fb)
+ */
 export class IframeScript {
   private href: string;
   private timeoutId = 0;
@@ -73,7 +77,7 @@ export class IframeScript {
     const msg = IFrameMessageFactory.parse(e.data);
     if (!msg) return;
     if (msg.type === IFrameMessageType.PING) {
-      // Send to parent only using service worker because parent messages not always get to parent
+      // Send to parent only using service worker because parent messages not always get to parent (thank you m$)
       // TODO relay only on browserApi
       fnConsoleLog('PinMeScript->constructor->iframe->ping', msg);
       await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_IFRAME_PONG, data: msg.data });
