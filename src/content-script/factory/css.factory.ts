@@ -123,12 +123,12 @@ export class CssFactory {
         const urlMatch = url.match(CSS_URL_REG);
         if (!urlMatch) continue;
         url = urlMatch[0].substring(5, urlMatch[0].length - 2);
-        url = fnComputeUrl(url);
       } else {
         url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
       }
 
-      if (rel) {
+      if (rel && !url.startsWith('http')) {
+        fnConsoleLog('CssFactory->fetchImports->REL 111 !!!', url, rel);
         const a = rel.split('/');
         baseUrl = a.slice(0, a.length - 1).join('/');
         if (url.startsWith('/')) {
@@ -136,7 +136,7 @@ export class CssFactory {
         } else {
           url = new URL(baseUrl + '/' + url).href;
         }
-        fnConsoleLog('CssFactory->fetchImports->REL !!!', url);
+        fnConsoleLog('CssFactory->fetchImports->REL 222 !!!', url);
       } else {
         url = fnComputeUrl(url);
       }
