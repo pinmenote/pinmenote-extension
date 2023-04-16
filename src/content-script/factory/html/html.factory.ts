@@ -102,6 +102,8 @@ export class HtmlFactory {
         currentTime: (ref as HTMLVideoElement).currentTime,
         displayTime: environmentConfig.settings.videoDisplayTime
       });
+    } else if (tagName === 'picture') {
+      return await this.computePicture(ref as HTMLPictureElement);
     } else if (tagName === 'img') {
       const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement);
       const uid = fnUid();
@@ -156,6 +158,36 @@ export class HtmlFactory {
     return {
       html,
       video,
+      content
+    };
+  };
+
+  static computePicture = async (ref: HTMLPictureElement, forShadow = false): Promise<HtmlIntermediateData> => {
+    if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
+    const content: ObjContentDto[] = [];
+    let html = `<picture `;
+    html += await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes));
+    html = html.substring(0, html.length - 1) + '>';
+    const child = ref.firstElementChild;
+    const childTag = child.tagName.toLowerCase();
+    const value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement);
+    const uid = fnUid();
+    if (forShadow) {
+      html += `<img src="${value}" `;
+    } else {
+      html += `<img data-pin-id=${uid} `;
+      content.push({
+        id: uid,
+        type: ObjContentTypeDto.IMG,
+        content: value
+      });
+    }
+    html += await HtmlAttrFactory.computeAttrValues(childTag, Array.from(child.attributes));
+    html = html.substring(0, html.length - 1) + '/>';
+    html += '</picture>';
+    return {
+      html,
+      video: [],
       content
     };
   };

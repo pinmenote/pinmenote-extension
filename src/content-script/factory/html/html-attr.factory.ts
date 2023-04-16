@@ -51,11 +51,14 @@ export class HtmlAttrFactory {
         hrefFilled = true;
       } else if (attr.name === 'target') {
         // Skip - we handle it inside href
-      } else if (attr.name === 'srcset' && tagName === 'img') {
+      } else if (
+        (attr.name === 'srcset' || attr.name === 'data-srcset') &&
+        (tagName === 'img' || tagName === 'source')
+      ) {
         // skip image
       } else if (attr.name === 'src') {
         //  skip image
-        if (tagName === 'img') continue;
+        if (tagName === 'img' || tagName === 'source') continue;
         const url = fnComputeUrl(attrValue);
         html += `src="${url}" `;
       } else if (attr.name === 'background') {

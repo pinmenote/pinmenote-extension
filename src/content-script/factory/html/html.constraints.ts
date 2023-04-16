@@ -92,6 +92,7 @@ export class HtmlConstraints {
     'option',
     'p',
     'param',
+    'picture',
     'pre',
     'progress',
     'q',

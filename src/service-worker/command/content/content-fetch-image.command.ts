@@ -30,9 +30,14 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
     try {
       const blob = await FetchService.get<Blob>(this.req.url, false, ResponseType.BLOB);
       const data = await UrlFactory.toDataUri(blob.res);
+      let ok = blob.ok;
+      if (data.startsWith('data:text/html')) {
+        fnConsoleLog('ContentFetchImageCommand->problem', this.req.url);
+        ok = false;
+      }
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,
-        data: { ...blob, res: data }
+        data: { ...blob, res: data, ok }
       });
     } catch (e) {
       fnConsoleLog('ERROR', e);
