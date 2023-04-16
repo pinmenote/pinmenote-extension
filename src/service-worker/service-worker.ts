@@ -18,9 +18,8 @@ import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
-import { ContentFetchIframeResultCommand } from './command/content/content-fetch-iframe-result.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
-import { ContentIframePongCommand } from './command/content/content-iframe-pong.command';
+import { ContentIframeMessageCommand } from './command/content/content-iframe-message.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
@@ -69,11 +68,8 @@ const handleMessage = async (
     case BusMessageType.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data).execute();
       break;
-    case BusMessageType.CONTENT_FETCH_IFRAME_RESULT:
-      await new ContentFetchIframeResultCommand(msg.data).execute();
-      break;
-    case BusMessageType.CONTENT_IFRAME_PONG:
-      await new ContentIframePongCommand(msg.data).execute();
+    case BusMessageType.CONTENT_IFRAME_MESSAGE:
+      await new ContentIframeMessageCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();

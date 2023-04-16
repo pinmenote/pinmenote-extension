@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { IFrameMessageFactory, IFrameMessageType } from '../factory/html/iframe-message.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
+import { IFrameMessageFactory } from '../factory/html/iframe-message.factory';
+import { IFrameMessageType } from '../../common/model/iframe-message.model';
+import { IframeMediator } from './iframe.mediator';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PageElementSnapshotAddCommand } from '../../common/command/snapshot/page-element-snapshot-add.command';
@@ -57,9 +59,11 @@ export class DocumentMediator {
       document.pointerLockElement
     );
     if (this.isIFrameActive && !params?.restart) {
+      const uid = IframeMediator.addIframe(document.activeElement as HTMLIFrameElement);
       IFrameMessageFactory.postIFrame(document.activeElement as HTMLIFrameElement, {
         type: IFrameMessageType.START_LISTENERS,
-        data: { type: this.type }
+        data: { type: this.type },
+        uid
       });
     } else {
       this.startOverlay();
@@ -183,9 +187,11 @@ export class DocumentMediator {
     const elements = document.elementsFromPoint(e.offsetX, e.offsetY);
     if (elements[1] instanceof HTMLIFrameElement) {
       fnConsoleLog('IFRAME PASS');
+      const uid = IframeMediator.addIframe(document.activeElement as HTMLIFrameElement);
       IFrameMessageFactory.postIFrame(elements[1], {
         type: IFrameMessageType.START_LISTENERS,
-        data: { type: this.type }
+        data: { type: this.type },
+        uid
       });
       this.stopListeners();
     } else if (elements[1] instanceof HTMLElement) {

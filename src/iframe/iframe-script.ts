@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { IFrameMessageFactory, IFrameMessageType } from '../content-script/factory/html/iframe-message.model';
+import { IFrameMessage, IFrameMessageType } from '../common/model/iframe-message.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
@@ -23,6 +23,7 @@ import { ContentFetchIframeCommand } from '../content-script/command/snapshot/co
 import { ContentMessageHandler } from '../content-script/content-message.handler';
 import { ContentSettingsStore } from '../content-script/store/content-settings.store';
 import { DocumentMediator } from '../content-script/mediator/document.mediator';
+import { IFrameMessageFactory } from '../content-script/factory/html/iframe-message.factory';
 import { ObjTypeDto } from '../common/model/obj/obj.dto';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
@@ -36,6 +37,7 @@ export class IframeScript {
   private href: string;
   private timeoutId = 0;
   private type?: ObjTypeDto;
+  private uid?: string;
 
   constructor(private readonly id: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
@@ -58,7 +60,7 @@ export class IframeScript {
   };
 
   private handleVisibilityChange = async (): Promise<void> => {
-    fnConsoleLog('PinMeScript->handleVisibilityChange', this.id);
+    fnConsoleLog('IframeScript->handleVisibilityChange', this.id);
     await this.invalidateContentScript();
   };
 
@@ -67,7 +69,7 @@ export class IframeScript {
       await BrowserStorageWrapper.get('foo');
       return true;
     } catch (e) {
-      fnConsoleLog('PinMeScript->Error', this.id, e);
+      fnConsoleLog('IframeScript->Error', this.id, e);
       this.cleanup();
     }
     return false;
@@ -79,14 +81,15 @@ export class IframeScript {
     if (msg.type === IFrameMessageType.PING) {
       // Send to parent only using service worker because parent messages not always get to parent (thank you m$)
       // TODO relay only on browserApi
-      fnConsoleLog('PinMeScript->constructor->iframe->ping', msg);
-      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_IFRAME_PONG, data: msg.data });
+      fnConsoleLog('IframeScript->constructor->iframe->ping', msg);
+      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_IFRAME_MESSAGE, data: msg });
     } else if (msg.type === IFrameMessageType.FETCH) {
-      fnConsoleLog('PinMeScript->constructor->iframe->fetch', msg);
-      await new ContentFetchIframeCommand(msg.data, this.href).execute();
+      fnConsoleLog('IframeScript->constructor->iframe->fetch', msg);
+      await new ContentFetchIframeCommand(msg, this.href).execute();
     } else if (msg.type === IFrameMessageType.START_LISTENERS) {
-      fnConsoleLog('PinMeScript->constructor->iframe->start-listeners', msg);
+      fnConsoleLog('IframeScript->constructor->iframe->start-listeners', msg);
       this.type = msg.data.type;
+      this.uid = msg.uid;
       // TODO pass correct url -> so we save correct href and origin
       // fix screenshot -> pass iframe position inside origin window
       DocumentMediator.startListeners(msg.data.type, {
@@ -101,16 +104,26 @@ export class IframeScript {
     }
   };
 
-  private handleMouseOut = () => {
-    fnConsoleLog('PinMeScript->handleMouseOut', this.id, this.type);
+  private handleMouseOut = async () => {
+    fnConsoleLog('PinMeScript->handleMouseOut', this.id, this.type, this.uid);
     document.removeEventListener('mouseout', this.handleMouseOut);
     DocumentMediator.stopListeners();
-    IFrameMessageFactory.postParent({ type: IFrameMessageType.RESTART_LISTENERS, data: { type: this.type } });
+    if (!this.type || !this.uid) return;
+    await BrowserApi.sendRuntimeMessage<IFrameMessage>({
+      type: BusMessageType.CONTENT_IFRAME_MESSAGE,
+      data: {
+        uid: this.uid,
+        type: IFrameMessageType.RESTART_LISTENERS,
+        data: { type: this.type }
+      }
+    });
     this.type = undefined;
   };
 
   private cleanup(): void {
     window.removeEventListener('message', this.handleIframeMessage);
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    document.removeEventListener('mouseout', this.handleMouseOut);
     TinyEventDispatcher.cleanup();
     DocumentMediator.stopListeners();
     ContentMessageHandler.cleanup();

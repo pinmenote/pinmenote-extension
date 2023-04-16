@@ -14,30 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { IFrameMessageFactory, IFrameMessageType } from './iframe-message.model';
-import { ObjContentTypeDto, ObjIframeContentDto } from '../../../common/model/obj/obj-content.dto';
-import { BusMessageType } from '../../../common/model/bus.model';
-import { FetchIframeRequest } from '../../../common/model/obj-request.model';
+import { IFrameMessage, IFrameMessageType } from '../../../common/model/iframe-message.model';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlIntermediateData } from '../../../common/model/html.model';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { IFrameMessageFactory } from './iframe-message.factory';
+import { IframeMediator } from '../../mediator/iframe.mediator';
+import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
 
 export class IFrameFactory {
   static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
     // Skip iframe->iframe->skip
     if (depth > 3) return HtmlAttrFactory.EMPTY_RESULT;
     try {
-      fnConsoleLog('IFRAME !!!');
-      const uid = fnUid();
-      const html = await this.fetchIframe(uid, ref, depth);
-      if (!html.ok) return HtmlAttrFactory.EMPTY_RESULT;
+      const msg = await this.fetchIframe(ref, depth);
+      if (!msg.data.ok) return HtmlAttrFactory.EMPTY_RESULT;
       const width = ref.getAttribute('width') || '100%';
       const height = ref.getAttribute('width') || '100%';
       const iframeAttr = Array.from(ref.attributes)
         .map((a) => {
-          if (['width', 'height'].includes(a.nodeName)) return '';
+          if (['width', 'height', 'src'].includes(a.nodeName)) return '';
           if (a.nodeValue) {
             return `${a.nodeName}="${a.nodeValue}"`;
           }
@@ -45,50 +41,40 @@ export class IFrameFactory {
         })
         .join(' ');
       return {
-        html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-id="${uid}"></iframe>`,
+        html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-id="${msg.uid}"></iframe>`,
         video: [],
-        content: [{ id: uid, type: ObjContentTypeDto.IFRAME, content: html }]
+        content: [{ id: msg.uid, type: ObjContentTypeDto.IFRAME, content: msg.data }]
       };
     } catch (e) {
-      fnConsoleLog('HtmlFactory->computeIframe->Error', e);
+      fnConsoleLog('IFrameFactory->computeIframe->Error', e);
     }
     return HtmlAttrFactory.EMPTY_RESULT;
   };
 
-  private static fetchIframe = (uid: string, ref: HTMLIFrameElement, depth: number): Promise<ObjIframeContentDto> => {
-    fnConsoleLog('HtmlFactory->fetchIframe', ref.src);
-    return new Promise<ObjIframeContentDto>((resolve, reject) => {
+  private static fetchIframe = (ref: HTMLIFrameElement, depth: number): Promise<IFrameMessage> => {
+    fnConsoleLog('IFrameFactory->fetchIframe', ref.src);
+    return new Promise<IFrameMessage>((resolve, reject) => {
       if (!ref.contentWindow) return HtmlAttrFactory.EMPTY_RESULT;
-      TinyEventDispatcher.addListener<FetchIframeRequest>(BusMessageType.CONTENT_IFRAME_PONG, (event, key, value) => {
-        fnConsoleLog('HtmlFactory->fetchIframe->ping->clear', value.uid, uid);
-        if (value.uid === uid && value.depth === depth) {
-          TinyEventDispatcher.removeListener(event, key);
+      const uid = IframeMediator.addIframe(ref, (msg: IFrameMessage) => {
+        fnConsoleLog('IFrameFactory->fetchIframe->callback', msg.type);
+        if (msg.uid === uid && msg.type === IFrameMessageType.PING) {
           clearTimeout(iframeTimeout);
-          IFrameMessageFactory.postIFrame(ref, { type: IFrameMessageType.FETCH, data: { depth, uid } });
+          IFrameMessageFactory.postIFrame(ref, { type: IFrameMessageType.FETCH, data: { depth }, uid });
+        } else if (msg.uid === uid && msg.type === IFrameMessageType.FETCH) {
+          clearInterval(iframeFetchTimeout);
+          resolve(msg);
         }
       });
-      const eventKey = TinyEventDispatcher.addListener<ObjIframeContentDto>(
-        BusMessageType.CONTENT_FETCH_IFRAME_RESULT,
-        (event, key, value) => {
-          if (value.uid === uid) {
-            fnConsoleLog('HtmlFactory->fetchIframe->result', uid, value.url, value);
-            clearTimeout(iframeTimeout);
-            clearInterval(iframeFetchTimeout);
-            TinyEventDispatcher.removeListener(event, eventKey);
-            resolve(value);
-          }
-        }
-      );
-      IFrameMessageFactory.postIFrame(ref, { type: IFrameMessageType.PING, data: { depth, uid } });
-      const iframeTimeout = setTimeout(() => {
-        TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
-        reject(`Iframe timeout ${uid} ${ref.src}`);
-      }, 500);
+
+      IFrameMessageFactory.postIFrame(ref, { type: IFrameMessageType.PING, uid, keep: true });
+
       // TODO handle this more gracefully - like ping iframe for status
       const iframeFetchTimeout = setTimeout(() => {
-        TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IFRAME_RESULT, eventKey);
-        reject(`Iframe timeout ${uid} ${ref.src}`);
+        reject(`Iframe iframeFetchTimeout ${uid} ${ref.src}`);
       }, 20000);
+      const iframeTimeout = setTimeout(() => {
+        reject(`Iframe iframeTimeout ${uid} ${ref.src}`);
+      }, 500);
     });
   };
 }

@@ -46,11 +46,6 @@ export interface FetchImageRequest {
   url: string;
 }
 
-export interface FetchIframeRequest {
-  uid: string;
-  depth: number;
-}
-
 export interface ExtensionPopupInitData {
   isAddingNote: boolean;
 }

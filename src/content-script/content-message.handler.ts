@@ -19,6 +19,7 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentPageSnapshotAddCommand } from './command/snapshot/content-page-snapshot-add.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
+import { IframeMediator } from './mediator/iframe.mediator';
 import { PinAddFactory } from './factory/pin-add.factory';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinStore } from './store/pin.store';
@@ -82,6 +83,9 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.CONTENT_PIN_VISIBLE:
         new PinVisibleCommand(msg.data).execute();
+        break;
+      case BusMessageType.CONTENT_IFRAME_MESSAGE:
+        IframeMediator.resolveIframeMessage(msg.data);
         break;
       default:
         TinyEventDispatcher.dispatch(msg.type, msg.data);

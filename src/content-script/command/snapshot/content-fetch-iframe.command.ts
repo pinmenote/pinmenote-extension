@@ -17,28 +17,41 @@
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../../factory/css.factory';
-import { FetchIframeRequest } from '../../../common/model/obj-request.model';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { IFrameMessage } from '../../../common/model/iframe-message.model';
 import { ObjIframeContentDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
-  constructor(private data: FetchIframeRequest, private href: string) {}
+  constructor(private msg: IFrameMessage, private href: string) {}
 
   async execute(): Promise<void> {
-    fnConsoleLog('ContentFetchIframeCommand->execute', this.data);
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(document.body, this.data.depth + 1);
+    fnConsoleLog('ContentFetchIframeCommand->execute', this.msg);
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(
+      document.body,
+      (this.msg.data.depth as number) + 1
+    );
+    fnConsoleLog('ContentFetchIframeCommand->html->done');
     const css = await CssFactory.computeCssContent();
+    fnConsoleLog('ContentFetchIframeCommand->css->done');
     const dto: ObjIframeContentDto = {
       ok: true,
-      uid: this.data.uid,
+      uid: this.msg.uid,
       url: this.href,
       html: htmlContent.html,
       htmlAttr: HtmlFactory.computeHtmlAttr(),
       css,
       content: htmlContent.content
     };
-    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_FETCH_IFRAME_RESULT, data: dto });
+    await BrowserApi.sendRuntimeMessage<IFrameMessage>({
+      type: BusMessageType.CONTENT_IFRAME_MESSAGE,
+      data: {
+        type: this.msg.type,
+        uid: this.msg.uid,
+        keep: this.msg.keep,
+        data: dto
+      }
+    });
   }
 }

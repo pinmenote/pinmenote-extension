@@ -24,7 +24,6 @@ import '@fontsource/roboto/700.css';
 import '../css/prosemirror.css';
 
 import { ContentExtensionData, ExtensionThemeDto } from '../common/model/settings.model';
-import { IFrameMessageFactory, IFrameMessageType } from './factory/html/iframe-message.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
@@ -45,7 +44,6 @@ class PinMeScript {
 
   constructor(private readonly id: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
-    window.addEventListener('message', this.handleIframeMessage);
     ContentMessageHandler.start(this.href);
 
     fnConsoleLog('PinMeScript->constructor', this.href, 'referrer', document.referrer);
@@ -73,20 +71,6 @@ class PinMeScript {
         theme
       }
     });
-  };
-
-  private handleIframeMessage = (e: MessageEvent<any>): void => {
-    const msg = IFrameMessageFactory.parse(e.data);
-    if (!msg) return;
-    if (msg.type === IFrameMessageType.PONG) {
-      fnConsoleLog('PinMeScript->constructor->iframe->pong', msg);
-      TinyEventDispatcher.dispatch(BusMessageType.CONTENT_IFRAME_PONG, msg.data);
-    } else if (msg.type === IFrameMessageType.RESTART_LISTENERS) {
-      fnConsoleLog('PinMeScript->constructor->iframe->restart-listeners', msg);
-      DocumentMediator.startListeners(msg.data.type, {
-        restart: true
-      });
-    }
   };
 
   private handleVisibilityChange = async (): Promise<void> => {
@@ -124,7 +108,6 @@ class PinMeScript {
   };
 
   private cleanup(): void {
-    window.removeEventListener('message', this.handleIframeMessage);
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     TinyEventDispatcher.cleanup();
     DocumentMediator.stopListeners();
