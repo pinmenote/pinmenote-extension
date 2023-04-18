@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
-import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../common/components/colors';
+import { COLOR_DEFAULT_BORDER, COLOR_DEFAULT_RED, DEFAULT_BORDER_RADIUS } from '../../../common/components/colors';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
@@ -33,7 +33,7 @@ const inputContainerStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   padding: 5,
-  borderRadius: 5,
+  borderRadius: DEFAULT_BORDER_RADIUS,
   margin: '5px 10px 5px 10px'
 };
 
@@ -84,7 +84,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
   };
 
   // Advanced options
-  const borderStyle = responseError ? `1px solid ${COLOR_DEFAULT_RED}` : `1px solid ${COLOR_DEFAULT_GREY}`;
+  const borderStyle = responseError ? `1px solid ${COLOR_DEFAULT_RED}` : COLOR_DEFAULT_BORDER;
   const advancedDescription = `Don't have account ?`;
 
   return (

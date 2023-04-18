@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export const COLOR_DEFAULT_RED = '#d32f2f';
-export const COLOR_DEFAULT_BLUE = '#d32f2f';
-export const COLOR_DEFAULT_GREY = '#eeeeee';
-export const COLOR_DEFAULT_BORDER = '1px solid rgba(0,0,0,0.5)';
-export const DEFAULT_BORDER_RADIUS = 5;
+export enum CalendarDateType {
+  START = 1,
+  END
+}
+
+export interface CalendarEvent {
+  startDate?: Date;
+  endDate?: Date;
+  repeat: string;
+  title: string;
+  description: string;
+}

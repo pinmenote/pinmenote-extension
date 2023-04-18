@@ -21,20 +21,20 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 
-interface CalendarAddHourComponentProps {
-  addCallback: (hours: number) => void;
+interface CalendarAddMinuteComponentProps {
+  addCallback: (minute: number) => void;
 }
 
-const formatHour = (h: number) => {
-  return h > 9 ? `${h}:00` : `0${h}:00`;
+const formatMinute = (m: number) => {
+  return m > 9 ? `00:${m}` : `00:0${m}`;
 };
 
-export const CalendarAddHourComponent: FunctionComponent<CalendarAddHourComponentProps> = (props) => {
+export const CalendarAddMinuteComponent: FunctionComponent<CalendarAddMinuteComponentProps> = (props) => {
   const ref = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-    const dt = formatHour(new Date().getHours());
+    const dt = formatMinute(new Date().getMinutes());
     const listChildren = Array.from(ref.current.children);
     for (const li of listChildren) {
       if (li instanceof HTMLElement && li.innerText === dt) {
@@ -47,17 +47,17 @@ export const CalendarAddHourComponent: FunctionComponent<CalendarAddHourComponen
     }
   });
 
-  const handleAdd = (hours: number) => {
-    props.addCallback(hours);
+  const handleAdd = (minutes: number) => {
+    props.addCallback(minutes);
   };
 
   const items = [];
 
-  for (let i = 1; i <= 24; i++) {
+  for (let i = 0; i <= 59; i++) {
     items.push(
       <ListItem key={`hour-${i}`}>
         <ListItemButton style={{ border: '1px dashed #000000', borderRadius: '5px' }} onClick={() => handleAdd(i)}>
-          <ListItemText primary={formatHour(i)} />
+          <ListItemText primary={formatMinute(i)} />
         </ListItemButton>
       </ListItem>
     );
@@ -67,7 +67,7 @@ export const CalendarAddHourComponent: FunctionComponent<CalendarAddHourComponen
       <div
         style={{ position: 'absolute', top: 104, background: '#ffffff', zIndex: 1000, minHeight: 30, width: '100%' }}
       >
-        <Typography style={{ marginTop: 6 }}>Select Hour</Typography>
+        <Typography style={{ marginTop: 6 }}>Select Minute</Typography>
       </div>
       <div style={{ marginTop: 20 }}>
         <List ref={ref}>{items}</List>

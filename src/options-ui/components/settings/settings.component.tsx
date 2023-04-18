@@ -18,6 +18,7 @@ import React, { CSSProperties, FunctionComponent } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ContentSettingsComponent } from './content/content-settings.component';
 import { CryptoSettingsComponent } from './crypto/crypto-settings.component';
+import { DEFAULT_BORDER_RADIUS } from '../../../common/components/colors';
 import IconButton from '@mui/material/IconButton';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import { ServerSettingsComponent } from './server/server-settings.component';
@@ -26,7 +27,7 @@ import Typography from '@mui/material/Typography';
 const containerStyle: CSSProperties = {
   margin: 10,
   width: '70vw',
-  borderRadius: 5,
+  borderRadius: DEFAULT_BORDER_RADIUS,
   border: '2px dashed #000',
   padding: 20
 };

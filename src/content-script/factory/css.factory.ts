@@ -128,7 +128,6 @@ export class CssFactory {
       }
 
       if (rel && !url.startsWith('http')) {
-        fnConsoleLog('CssFactory->fetchImports->REL 111 !!!', url, rel);
         const a = rel.split('/');
         baseUrl = a.slice(0, a.length - 1).join('/');
         if (url.startsWith('/')) {
@@ -136,7 +135,7 @@ export class CssFactory {
         } else {
           url = new URL(baseUrl + '/' + url).href;
         }
-        fnConsoleLog('CssFactory->fetchImports->REL 222 !!!', url);
+        fnConsoleLog('CssFactory->fetchImports->REL !!!', url);
       } else {
         url = fnComputeUrl(url);
       }

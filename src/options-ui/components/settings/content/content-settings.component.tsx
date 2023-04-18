@@ -16,6 +16,7 @@
  */
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { DEFAULT_BORDER_RADIUS } from '../../../../common/components/colors';
 import Input from '@mui/material/Input';
 import { SettingsConfig } from '../../../../common/environment';
 import { SettingsKeys } from '../../../../common/keys/settings.keys';
@@ -35,7 +36,7 @@ export const ContentSettingsComponent: FunctionComponent = () => {
   useEffect(() => {
     setTimeout(async () => {
       await SettingsStore.fetchData();
-      setBorderRadius(SettingsStore.settings?.borderRadius || '5px');
+      setBorderRadius(SettingsStore.settings?.borderRadius || `${DEFAULT_BORDER_RADIUS}px`);
       setBorderStyle(SettingsStore.settings?.borderStyle || '2px solid #ff0000');
     }, 0);
   });

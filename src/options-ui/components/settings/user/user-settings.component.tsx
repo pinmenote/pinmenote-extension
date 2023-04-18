@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { CSSProperties, FunctionComponent } from 'react';
+import { DEFAULT_BORDER_RADIUS } from '../../../../common/components/colors';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -28,7 +29,7 @@ const elementStyle: CSSProperties = {
   width: 500,
   padding: 10,
   marginBottom: 20,
-  borderRadius: 5
+  borderRadius: DEFAULT_BORDER_RADIUS
 };
 
 const elementEditStyle: CSSProperties = {
@@ -40,7 +41,7 @@ const elementEditStyle: CSSProperties = {
   width: 500,
   padding: 10,
   marginBottom: 20,
-  borderRadius: 5
+  borderRadius: DEFAULT_BORDER_RADIUS
 };
 
 export const UserSettingsComponent: FunctionComponent = () => {
