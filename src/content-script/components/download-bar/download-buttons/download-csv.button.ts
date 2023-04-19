@@ -64,12 +64,13 @@ export class DownloadCsvButton {
   }
 
   private handleClick = async (): Promise<void> => {
+    if (this.parent.ref.tagName === 'TABLE') {
+      return await this.downloadTable(this.parent.ref as HTMLTableElement);
+    }
     const tableElements = this.parent.ref.getElementsByTagName('table');
     if (tableElements.length > 0) {
       const table: HTMLTableElement = tableElements[0];
       await this.downloadTable(table);
-    } else if (this.parent.ref.tagName === 'TABLE') {
-      await this.downloadTable(this.parent.ref as HTMLTableElement);
     } else if (document.getElementsByClassName(this.parent.ref.className).length > 1) {
       await this.downloadSameClass(this.parent.ref);
     } else {
