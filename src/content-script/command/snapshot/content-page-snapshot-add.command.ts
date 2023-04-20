@@ -33,13 +33,15 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
     }
     const screenshot = await ScreenshotFactory.takeScreenshot(undefined, this.url);
 
-    const contentId = await new SnapshotContentSaveCommand(document.body).execute();
+    const res = await new SnapshotContentSaveCommand(document.body).execute();
 
     const dto: ObjSnapshotDto = {
       title: document.title,
       url: this.url,
       screenshot,
-      contentId
+      contentId: res.id,
+      words: res.words,
+      hashtags: []
     };
     await new PageSnapshotAddCommand(dto).execute();
 

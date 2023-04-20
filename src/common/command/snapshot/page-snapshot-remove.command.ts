@@ -31,6 +31,6 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
 
     await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
 
-    await new ObjRemoveSnapshotContentCommand(this.obj.data).execute();
+    await new ObjRemoveSnapshotContentCommand(this.obj.data, this.obj.id).execute();
   }
 }

@@ -18,8 +18,8 @@ import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useSta
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { DEFAULT_BORDER_RADIUS } from '../../../../common/components/colors';
 import Input from '@mui/material/Input';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SettingsConfig } from '../../../../common/environment';
-import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../../store/settings.store';
 import Typography from '@mui/material/Typography';
 
@@ -45,14 +45,14 @@ export const ContentSettingsComponent: FunctionComponent = () => {
     if (!SettingsStore.settings) return;
     setBorderRadius(e.target.value);
     SettingsStore.settings.borderRadius = e.target.value;
-    await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
   const handleBorderStyleChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
     setBorderStyle(e.target.value);
     SettingsStore.settings.borderStyle = e.target.value;
-    await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
   return (

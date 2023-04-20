@@ -68,10 +68,11 @@ export class HtmlFactory {
     skipUrlCache?: Set<string>
   ): Promise<HtmlIntermediateData> => {
     if (!skipTagCache) skipTagCache = new Set<string>();
+
     const tagName = ref.tagName.toLowerCase();
+
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !skipTagCache.has(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);
-      // fnConsoleLog('NOT KNOWN ELEMENT', tagName, 'SHADOW', shadow);
       // Go with shadow
       if (shadow) {
         return ShadowFactory.computeShadow(tagName, ref, shadow, skipUrlCache);
@@ -79,6 +80,7 @@ export class HtmlFactory {
         skipTagCache.add(tagName);
       }
     }
+
     let html = `<${tagName} `;
     const video: ObjVideoDataDto[] = [];
     const content: ObjContentDto[] = [];
@@ -168,11 +170,26 @@ export class HtmlFactory {
     skipUrlCache?: Set<string>
   ): Promise<HtmlIntermediateData> => {
     if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
+
+    const children = Array.from(ref.children);
+    const images = children.filter((c) => c.tagName.toLowerCase() === 'img');
+    const sources = children.filter((c) => c.tagName.toLowerCase() === 'source');
+    const isSource = sources.length > 0;
+
     const content: ObjContentDto[] = [];
     let html = `<picture `;
-    html += await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes));
-    html = html.substring(0, html.length - 1) + '>';
-    const child = ref.firstElementChild;
+    const attrs = Array.from(ref.attributes);
+    if (isSource && attrs.filter((attr) => attr.nodeName === 'style').length === 0) {
+      const rect = ref.getBoundingClientRect();
+      html += ` style="width:${rect.width}px;height:${rect.height}px" `;
+    }
+    html += await HtmlAttrFactory.computeAttrValues('picture', attrs);
+    html = html.substring(0, html.length - 1);
+
+    // Source must be converted to img - we lose size information that's why we need to put style with those attributes
+    html += '>';
+
+    const child = sources.length > 0 ? sources[0] : images[0];
     const childTag = child.tagName.toLowerCase();
     const value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement, skipUrlCache);
     const uid = fnUid();

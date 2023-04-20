@@ -33,10 +33,14 @@ export class ObjectStoreKeys {
   static readonly OBJECT_LINK = 'o:link';
 
   // INDEX
-  static readonly SEARCH_INDEX = 'i';
+  static readonly SEARCH_INDEX = 's:i';
+  static readonly SEARCH_WORD = 's:w';
 
   static readonly ACCESS_TOKEN = 'accessToken';
 
   // SYNC
   static readonly SYNC_TIME = 'sync';
+
+  // SETTINGS
+  static readonly CONTENT_SETTINGS_KEY = 'content-settings';
 }

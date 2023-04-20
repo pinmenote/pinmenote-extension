@@ -34,7 +34,7 @@ import { fnUid } from '../common/fn/uid.fn';
  * this prevents crashing extension on some web pages with infinite iframe loop (thank you fb)
  */
 export class IframeScript {
-  private href: string;
+  private readonly href: string;
   private timeoutId = 0;
   private type?: ObjTypeDto;
   private uid?: string;
@@ -44,8 +44,6 @@ export class IframeScript {
     window.addEventListener('message', this.handleIframeMessage);
 
     ContentMessageHandler.start(this.href);
-
-    fnConsoleLog('IframeScript->constructor', this.href, window.top);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 

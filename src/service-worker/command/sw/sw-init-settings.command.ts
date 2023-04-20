@@ -18,15 +18,15 @@ import { SettingsConfig, environmentConfig } from '../../../common/environment';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CryptoGenerateKeyPairCommand } from '../../../common/command/crypto/crypto-generate-key-pair.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { SettingsKeys } from '../../../common/keys/settings.keys';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class SwInitSettingsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
+    const settings = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
     if (!settings) {
       fnConsoleLog('Settings Initialize');
-      await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, environmentConfig.settings);
+      await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, environmentConfig.settings);
       await new CryptoGenerateKeyPairCommand().execute();
     } else if (settings.version !== environmentConfig.settings.version) {
       fnConsoleLog('Settings Migrate placeholder');

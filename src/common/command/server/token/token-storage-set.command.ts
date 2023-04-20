@@ -23,7 +23,7 @@ import { environmentConfig } from '../../../environment';
 export class TokenStorageSetCommand implements ICommand<Promise<void>> {
   constructor(private value: AccessTokenDto) {}
   async execute(): Promise<void> {
-    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.url.api}`;
+    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.defaultServer}`;
     await BrowserStorageWrapper.set(key, this.value);
   }
 }

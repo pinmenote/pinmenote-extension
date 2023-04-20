@@ -16,7 +16,7 @@
  */
 import { SettingsConfig, environmentConfig } from '../../common/environment';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
-import { SettingsKeys } from '../../common/keys/settings.keys';
+import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 
 export class ContentSettingsStore {
   private static settings: SettingsConfig;
@@ -43,6 +43,6 @@ export class ContentSettingsStore {
   }
 
   static initSettings = async (): Promise<void> => {
-    this.settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
+    this.settings = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
   };
 }

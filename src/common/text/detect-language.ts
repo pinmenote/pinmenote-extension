@@ -15,13 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import * as LanguageDetect from 'languagedetect';
+import { fnConsoleLog } from '../fn/console.fn';
 
 export class DetectLanguage {
   private static lang = new LanguageDetect();
 
   static detect(sample: string): string {
     this.lang.setLanguageType('iso2');
-    const languages = this.lang.detect(sample);
+    const samp = sample.length < 1000 ? sample : sample.substring(0, 1000);
+    const languages = this.lang.detect(samp);
+    fnConsoleLog('DetectLanguage', languages[0]);
     return languages[0][0];
   }
 }

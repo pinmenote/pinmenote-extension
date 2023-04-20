@@ -206,7 +206,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   };
 
   const renderShadow = (el: Element, content: ObjShadowContentDto) => {
-    el.innerHTML = content.html;
+    el.innerHTML = content.html + el.innerHTML;
     renderTemplate(el);
   };
 

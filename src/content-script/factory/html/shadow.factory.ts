@@ -33,11 +33,28 @@ export class ShadowFactory {
     shadow: ShadowRoot,
     skipUrlCache?: Set<string>
   ): Promise<HtmlIntermediateData> => {
-    fnConsoleLog('COMPUTE SHADOW !!!');
+    fnConsoleLog('COMPUTE SHADOW !!!', tagName, ref);
     const uid = fnUid();
     let html = `<${tagName} data-pin-id="${uid}" `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
+
+    const nodes = Array.from(ref.childNodes);
+    for (const node of nodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nre = new RegExp(String.fromCharCode(160), 'g');
+        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
+        txt = txt.replace('<', '&lt').replace('>', '&gt;');
+        html += txt;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        html += await this.computeShadowChild(node as Element);
+      } else if (node.nodeType === Node.COMMENT_NODE) {
+        html += '<!---->';
+      } else {
+        fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
+      }
+    }
+
     html += `</${tagName}>`;
     const shadowHtml = await this.computeShadowHtml(shadow, skipUrlCache);
     return {
@@ -77,6 +94,11 @@ export class ShadowFactory {
 
   private static computeShadowChild = async (ref: Element, skipUrlCache?: Set<string>): Promise<string> => {
     const tagName = ref.tagName.toLowerCase();
+
+    let htmlPrefilled = false;
+
+    let html = `<${tagName} `;
+
     if (tagName === 'link') {
       const uri = ref.getAttribute('href');
       if (uri) {
@@ -96,22 +118,23 @@ export class ShadowFactory {
       return pic.html;
     } else if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);
+
       if (shadow) {
-        let html = `<${tagName} `;
         html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
         html = html.substring(0, html.length - 1) + '>';
         html += await this.computeShadowHtml(shadow, skipUrlCache);
-        html += `</${tagName}>`;
-        return html;
+        htmlPrefilled = true;
       }
     }
-    let html = `<${tagName} `;
-    html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
-    if (tagName === 'img') {
-      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement, skipUrlCache);
-      html += `src="${value}" `;
+
+    if (!htmlPrefilled) {
+      html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
+      if (tagName === 'img') {
+        const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement, skipUrlCache);
+        html += `src="${value}" `;
+      }
+      html = html.substring(0, html.length - 1) + '>';
     }
-    html = html.substring(0, html.length - 1) + '>';
 
     const nodes = Array.from(ref.childNodes);
     for (const node of nodes) {

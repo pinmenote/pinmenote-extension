@@ -27,6 +27,8 @@ export interface ObjCanvasDto {
 export interface ObjSnapshotDto {
   url: ObjUrlDto;
   title: string;
+  words: string[];
+  hashtags: string[];
   screenshot?: string;
   contentId: number;
   canvas?: ObjCanvasDto;

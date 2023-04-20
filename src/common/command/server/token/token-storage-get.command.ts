@@ -22,7 +22,7 @@ import { environmentConfig } from '../../../environment';
 
 export class TokenStorageGetCommand implements ICommand<Promise<AccessTokenDto | undefined>> {
   async execute(): Promise<AccessTokenDto | undefined> {
-    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.url.api}`;
+    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.defaultServer}`;
     return await BrowserStorageWrapper.get<AccessTokenDto | undefined>(key);
   }
 }

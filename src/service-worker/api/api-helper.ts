@@ -30,7 +30,7 @@ export class ApiHelper {
   }
 
   static get apiUrl(): string {
-    return environmentConfig.url.api;
+    return environmentConfig.defaultServer;
   }
 
   static async getStoreUrl(): Promise<string> {

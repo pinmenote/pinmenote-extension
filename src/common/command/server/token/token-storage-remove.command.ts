@@ -21,7 +21,7 @@ import { environmentConfig } from '../../../environment';
 
 export class TokenStorageRemoveCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.url.api}`;
+    const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.defaultServer}`;
     await BrowserStorageWrapper.remove(key);
   }
 }

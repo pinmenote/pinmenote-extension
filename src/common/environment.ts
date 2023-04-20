@@ -28,15 +28,9 @@ export interface SettingsConfig {
   videoDisplayTime: number;
 }
 
-export interface UrlConfig {
-  short: string;
-  web: string;
-  api: string;
-}
-
 interface EnvironmentConfig {
   showAckMessage: boolean;
-  url: UrlConfig;
+  defaultServer: string;
   isProduction: boolean;
   settings: SettingsConfig;
   objListLimit: number;
@@ -44,11 +38,7 @@ interface EnvironmentConfig {
 
 export const environmentConfig: EnvironmentConfig = {
   showAckMessage: false,
-  url: {
-    api: process.env.API_URL || 'https://pinmenote.com',
-    web: process.env.WEB_URL || 'https://pinmenote.com',
-    short: process.env.SHORT_URL || 'https://pmn.cl'
-  },
+  defaultServer: process.env.WEB_URL || 'https://pinmenote.com',
   isProduction: process.env.IS_PRODUCTION === 'true',
   settings: {
     version: parseInt(process.env.VERSION || '1'),

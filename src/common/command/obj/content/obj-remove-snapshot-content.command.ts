@@ -16,13 +16,19 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
+import { ObjRemoveHashtagsCommand } from '../hashtag/obj-remove-hashtags.command';
 import { ObjSnapshotDto } from '../../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { WordNlp } from '../../../text/nlp/word.nlp';
 
 export class ObjRemoveSnapshotContentCommand implements ICommand<Promise<void>> {
-  constructor(private snapshot: ObjSnapshotDto) {}
+  constructor(private snapshot: ObjSnapshotDto, private id: number) {}
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.CONTENT_ID}:${this.snapshot.contentId}`;
+
+    await WordNlp.removeFlat(this.snapshot.words, this.id);
+
+    await new ObjRemoveHashtagsCommand(this.id, this.snapshot.hashtags).execute();
 
     await BrowserStorageWrapper.remove(key);
   }

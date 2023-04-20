@@ -55,6 +55,5 @@ export interface ObjDto<T = ObjDataDto> {
   createdAt: number;
   local: ObjLocalDto;
   encryption: ObjEncryptionDto;
-  hashtags: string[];
   data: T;
 }

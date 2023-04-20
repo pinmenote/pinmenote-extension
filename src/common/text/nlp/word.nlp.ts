@@ -53,13 +53,53 @@ export class WordNlp {
       }
       await this.saveStorage(flatPart, id);
       flatPart = '';
+      await this.saveWord(word);
     }
     fnConsoleLog('indexed', Array.from(this.flatSet), 'count', this.flatSet.size, 'in', Date.now() - a);
+  };
+
+  static removeFlat = async (words: string[], id: number): Promise<void> => {
+    const a = Date.now();
+    let ch = '';
+    let flatPart = '';
+    for (const word of words) {
+      for (let i = 0; i < word.length; i++) {
+        ch = word.charAt(i).toLowerCase();
+        flatPart += ch;
+        if (flatPart.length % 2 === 0) {
+          await this.removeStorage(flatPart, id);
+        }
+      }
+      await this.removeStorage(flatPart, id);
+      flatPart = '';
+    }
+    fnConsoleLog('removed', Array.from(this.flatSet), 'count', this.flatSet.size, 'in', Date.now() - a);
+  };
+
+  private static removeStorage = async (value: string, id: number) => {
+    if (this.flatSet.has(value)) return;
+    this.flatSet.add(value);
+
+    const key = `${ObjectStoreKeys.SEARCH_INDEX}:${value}`;
+    const arr = await BrowserStorageWrapper.get<number[]>(key);
+    if (!arr) return;
+
+    const idx = arr.indexOf(id);
+    if (idx === -1) return;
+
+    arr.splice(idx, 1);
+    if (arr.length === 0) {
+      await BrowserStorageWrapper.remove(key);
+      await this.removeWord(value);
+    } else {
+      await BrowserStorageWrapper.set<number[]>(key, arr);
+    }
   };
 
   private static saveStorage = async (value: string, id: number) => {
     // skip existing
     if (this.flatSet.has(value)) return;
+    this.flatSet.add(value);
 
     const key = `${ObjectStoreKeys.SEARCH_INDEX}:${value}`;
     let arr = await BrowserStorageWrapper.get<number[]>(key);
@@ -69,6 +109,36 @@ export class WordNlp {
       arr = [id];
     }
     await BrowserStorageWrapper.set<number[]>(key, arr);
-    this.flatSet.add(value);
+  };
+
+  private static saveWord = async (word: string) => {
+    if (word.length < 3) return;
+    const start = word.substring(0, 2);
+    const key = `${ObjectStoreKeys.SEARCH_WORD}:${start}`;
+    let arr = await BrowserStorageWrapper.get<string[]>(key);
+    if (arr) {
+      const idx = arr.indexOf(word);
+      if (idx === -1) arr.push(word);
+    } else {
+      arr = [word];
+    }
+    await BrowserStorageWrapper.set<string[]>(key, arr);
+  };
+
+  private static removeWord = async (word: string) => {
+    const start = word.substring(0, 2);
+    const key = `${ObjectStoreKeys.SEARCH_WORD}:${start}`;
+    const arr = await BrowserStorageWrapper.get<string[]>(key);
+    if (!arr) return;
+
+    const idx = arr.indexOf(word);
+    if (idx === -1) return;
+
+    arr.splice(idx, 1);
+    if (arr.length === 0) {
+      await BrowserStorageWrapper.remove(key);
+    } else {
+      await BrowserStorageWrapper.set<string[]>(key, arr);
+    }
   };
 }

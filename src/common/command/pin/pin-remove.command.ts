@@ -19,7 +19,6 @@ import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
-import { ObjRemoveHashtagsCommand } from '../obj/hashtag/obj-remove-hashtags.command';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjRemoveSnapshotContentCommand } from '../obj/content/obj-remove-snapshot-content.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
@@ -34,8 +33,6 @@ export class PinRemoveCommand implements ICommand<void> {
 
     await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
 
-    await new ObjRemoveHashtagsCommand(this.obj.id, this.obj.hashtags).execute();
-
-    await new ObjRemoveSnapshotContentCommand(this.obj.data.snapshot).execute();
+    await new ObjRemoveSnapshotContentCommand(this.obj.data.snapshot, this.obj.id).execute();
   }
 }

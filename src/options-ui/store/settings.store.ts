@@ -15,13 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { SettingsConfig } from '../../common/environment';
-import { SettingsKeys } from '../../common/keys/settings.keys';
 
 export class SettingsStore {
   static settings?: SettingsConfig;
 
   static fetchData = async (): Promise<void> => {
-    this.settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
+    this.settings = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
   };
 }

@@ -38,7 +38,7 @@ const inputContainerStyle = {
 };
 
 function getWebsiteUrl(uri: string): string {
-  return `${environmentConfig.url.web}${uri}`;
+  return `${environmentConfig.defaultServer}${uri}`;
 }
 
 interface Verify2faComponentProps {

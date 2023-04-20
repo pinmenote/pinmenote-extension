@@ -18,8 +18,8 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SettingsConfig } from '../../../common/environment';
-import { SettingsKeys } from '../../../common/keys/settings.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentTakeScreenshotCommand implements ICommand<void> {
@@ -27,7 +27,7 @@ export class ContentTakeScreenshotCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
       fnConsoleLog('ContentTakeScreenshotCommand->execute', this.url);
-      const settings = await BrowserStorageWrapper.get<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY);
+      const settings = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
       const data = await BrowserApi.tabs.captureVisibleTab({
         format: settings.screenshotFormat,
         quality: settings.screenshotQuality

@@ -19,9 +19,9 @@ import { ScreenshotFormat, SettingsConfig } from '../../../../common/environment
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import Select from '@mui/material/Select';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { SettingsKeys } from '../../../../common/keys/settings.keys';
 import { SettingsStore } from '../../../store/settings.store';
 import Typography from '@mui/material/Typography';
 
@@ -49,7 +49,7 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
     setScreenshotQuality(value);
     if (value > 0 && value <= 100) {
       SettingsStore.settings.screenshotQuality = value;
-      await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+      await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     }
   };
 
@@ -57,7 +57,7 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
     if (!SettingsStore.settings) return;
     setScreenshotFormat(e.target.value);
     SettingsStore.settings.screenshotFormat = e.target.value as ScreenshotFormat;
-    await BrowserStorageWrapper.set<SettingsConfig>(SettingsKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
   return (

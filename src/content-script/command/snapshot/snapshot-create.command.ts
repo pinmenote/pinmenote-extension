@@ -28,12 +28,17 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
     let contentId = -1;
+    let words: string[] = [];
     if (!this.canvas) {
-      contentId = await new SnapshotContentSaveCommand(this.element).execute();
+      const res = await new SnapshotContentSaveCommand(this.element).execute();
+      contentId = res.id;
+      words = res.words;
     }
     return {
       title: document.title,
       url: this.url,
+      words,
+      hashtags: [],
       canvas: this.canvas,
       screenshot,
       contentId
