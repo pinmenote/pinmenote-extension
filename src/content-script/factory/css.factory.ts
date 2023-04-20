@@ -33,7 +33,7 @@ export const CSS_IMPORT_REG = new RegExp(
 );
 
 export class CssFactory {
-  static computeCssContent = async (): Promise<CssStyleListDto> => {
+  static computeCssContent = async (skipUrlCache?: Set<string>): Promise<CssStyleListDto> => {
     const css: CssStyleDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
     fnConsoleLog('CssFactory->computeCssContent', styleSheets.length);
@@ -41,14 +41,17 @@ export class CssFactory {
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
       if (s.href) {
+        // skip
+        if (skipUrlCache?.has(s.href)) continue;
+
         const url = new URL(s.href);
         const cssFetchData = await this.fetchCss(url.href);
 
         if (cssFetchData.ok) {
-          const imports = await this.fetchImports(cssFetchData.res, url.href);
+          const imports = await this.fetchImports(cssFetchData.res, url.href, skipUrlCache);
 
           let data = cssFetchData.res.replaceAll(CSS_IMPORT_REG, '').trim();
-          data = await this.fetchUrls(data);
+          data = await this.fetchUrls(data, url.href, skipUrlCache);
           css.push(...imports);
 
           css.push({
@@ -57,6 +60,7 @@ export class CssFactory {
             data
           });
         } else {
+          skipUrlCache?.add(s.href);
           css.push({
             href: s.href,
             media: s.media.mediaText,
@@ -73,7 +77,10 @@ export class CssFactory {
     };
   };
 
-  private static computeSelectorRules = async (stylesheet: CSSStyleSheet): Promise<CssStyleDto[]> => {
+  private static computeSelectorRules = async (
+    stylesheet: CSSStyleSheet,
+    skipUrlCache?: Set<string>
+  ): Promise<CssStyleDto[]> => {
     const css: CssStyleDto[] = [];
     let out = '';
     const cssRules = Array.from(stylesheet.cssRules) as ComputeCssRule[];
@@ -81,7 +88,7 @@ export class CssFactory {
       if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
         let data = r.cssText;
-        const imports = await this.fetchImports(data);
+        const imports = await this.fetchImports(data, undefined, skipUrlCache);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out +=
@@ -90,7 +97,7 @@ export class CssFactory {
 `;
       } else if (r.selectorText) {
         let data = r.cssText;
-        const imports = await this.fetchImports(data);
+        const imports = await this.fetchImports(data, undefined, skipUrlCache);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out +=
@@ -109,7 +116,7 @@ export class CssFactory {
     return css;
   };
 
-  static fetchImports = async (css: string, rel?: string): Promise<CssStyleDto[]> => {
+  static fetchImports = async (css: string, rel?: string, skipUrlCache?: Set<string>): Promise<CssStyleDto[]> => {
     const importList = css.match(CSS_IMPORT_REG);
     if (!importList) return [];
 
@@ -140,6 +147,9 @@ export class CssFactory {
         url = fnComputeUrl(url);
       }
 
+      // skip
+      if (skipUrlCache?.has(url)) return out;
+
       const result = await this.fetchCss(url);
 
       if (result.ok) {
@@ -156,13 +166,14 @@ export class CssFactory {
           data: urlData
         });
       } else {
+        skipUrlCache?.add(url);
         fnConsoleLog('CssFactory->fetchImports->ERROR !!!', importUrl, url);
       }
     }
     return out;
   };
 
-  static fetchUrls = async (css: string, baseurl?: string): Promise<string> => {
+  static fetchUrls = async (css: string, baseurl?: string, skipUrlCache?: Set<string>): Promise<string> => {
     const urlList = css.match(CSS_URL_REG);
     if (!urlList) return css;
 
@@ -188,6 +199,9 @@ export class CssFactory {
       } else {
         url = fnComputeUrl(url);
       }
+
+      if (skipUrlCache?.has(url)) continue;
+
       const result = await fnFetchImage(url);
 
       if (result.ok) {
@@ -195,6 +209,7 @@ export class CssFactory {
         css = css.replace(urlMatch, newUrl);
       } else {
         fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, baseurl);
+        skipUrlCache?.add(url);
         break;
       }
     }

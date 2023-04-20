@@ -64,7 +64,8 @@ export class HtmlFactory {
   static computeHtmlIntermediateData = async (
     ref: Element,
     depth = 1,
-    skipTagCache?: Set<string>
+    skipTagCache?: Set<string>,
+    skipUrlCache?: Set<string>
   ): Promise<HtmlIntermediateData> => {
     if (!skipTagCache) skipTagCache = new Set<string>();
     const tagName = ref.tagName.toLowerCase();
@@ -73,7 +74,7 @@ export class HtmlFactory {
       // fnConsoleLog('NOT KNOWN ELEMENT', tagName, 'SHADOW', shadow);
       // Go with shadow
       if (shadow) {
-        return ShadowFactory.computeShadow(tagName, ref, shadow);
+        return ShadowFactory.computeShadow(tagName, ref, shadow, skipUrlCache);
       } else {
         skipTagCache.add(tagName);
       }
@@ -90,7 +91,6 @@ export class HtmlFactory {
     } else if (tagName === 'canvas') {
       try {
         return this.computeCanvas(ref as HTMLCanvasElement);
-        // return HtmlAttrFactory.EMPTY_RESULT;
       } catch (e) {
         fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
         return HtmlAttrFactory.EMPTY_RESULT;
@@ -103,9 +103,9 @@ export class HtmlFactory {
         displayTime: environmentConfig.settings.videoDisplayTime
       });
     } else if (tagName === 'picture') {
-      return await this.computePicture(ref as HTMLPictureElement);
+      return await this.computePicture(ref as HTMLPictureElement, false, skipUrlCache);
     } else if (tagName === 'img') {
-      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement);
+      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement, skipUrlCache);
       const uid = fnUid();
       content.push({
         id: uid,
@@ -131,7 +131,7 @@ export class HtmlFactory {
         txt = txt.replace('<', '&lt').replace('>', '&gt;');
         html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache);
+        const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache, skipUrlCache);
         html += computed.html;
         video.push(...computed.video);
         content.push(...computed.content);
@@ -147,7 +147,7 @@ export class HtmlFactory {
       const children = Array.from(ref.contentDocument.childNodes);
       for (const node of children) {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache);
+          const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache, skipUrlCache);
           html += computed.html;
         }
       }
@@ -162,7 +162,11 @@ export class HtmlFactory {
     };
   };
 
-  static computePicture = async (ref: HTMLPictureElement, forShadow = false): Promise<HtmlIntermediateData> => {
+  static computePicture = async (
+    ref: HTMLPictureElement,
+    forShadow: boolean,
+    skipUrlCache?: Set<string>
+  ): Promise<HtmlIntermediateData> => {
     if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
     const content: ObjContentDto[] = [];
     let html = `<picture `;
@@ -170,7 +174,7 @@ export class HtmlFactory {
     html = html.substring(0, html.length - 1) + '>';
     const child = ref.firstElementChild;
     const childTag = child.tagName.toLowerCase();
-    const value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement);
+    const value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement, skipUrlCache);
     const uid = fnUid();
     if (forShadow) {
       html += `<img src="${value}" `;

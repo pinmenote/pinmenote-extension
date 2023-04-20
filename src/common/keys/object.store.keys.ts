@@ -32,6 +32,9 @@ export class ObjectStoreKeys {
   // LINK
   static readonly OBJECT_LINK = 'o:link';
 
+  // INDEX
+  static readonly SEARCH_INDEX = 'i';
+
   static readonly ACCESS_TOKEN = 'accessToken';
 
   // SYNC

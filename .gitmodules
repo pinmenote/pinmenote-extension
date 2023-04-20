@@ -1,3 +1,6 @@
 [submodule "src/vendor/mathml-to-latex"]
 	path = src/vendor/mathml-to-latex
 	url = git@github.com:vane/mathml-to-latex.git
+[submodule "src/vendor/stopwords-iso"]
+	path = src/vendor/stopwords-iso
+	url = https://github.com/vane/stopwords-iso

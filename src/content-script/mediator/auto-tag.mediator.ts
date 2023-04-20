@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { GramNlp } from '../../common/text/nlp/gram.nlp';
-import { TextClean } from '../../common/text/text-clean';
-import { TextSentence } from '../../common/text/text-sentence';
-import { TextWord } from '../../common/text/text-word';
-import { WordToVectorNlp } from '../../common/text/nlp/word-to-vector.nlp';
+import { DetectLanguage } from '../../common/text/detect-language';
+import { StopWordRemove } from '../../common/text/stop-word/stop-word-remove';
+import { WordNlp } from '../../common/text/nlp/word.nlp';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class AutoTagMediator {
@@ -31,48 +29,38 @@ export class AutoTagMediator {
     'news_keywords'
   ];
 
-  static precompute(): void {
-    this.captureKeywordData();
-  }
-
-  static analyse(element: HTMLElement): void {
-    fnConsoleLog('AutoTagMediator->analyse->TODO', element.innerText);
-  }
-
-  private static captureKeywordData(): void {
-    fnConsoleLog('KEYWORDS START !!!');
-    const keywords = Array.from(new Set([...Array.from(this.captureMeta()), ...Array.from(this.captureLdJson())]));
-
-    for (const keyword of keywords) {
-      fnConsoleLog('KEYWORD : ', keyword);
-      GramNlp.addGram(keyword);
+  static computeTags = (element: HTMLElement): string[] => {
+    let keywords: string[];
+    if (element instanceof HTMLBodyElement) {
+      keywords = this.captureKeywordData();
+    } else {
+      keywords = [...element.innerText.split(' '), document.title];
     }
-    // Old way
-    const words = [];
+    const tagList = this.calculateTags(keywords);
+    fnConsoleLog('CLEAN WORD LIST', tagList);
+    return tagList;
+  };
+
+  private static calculateTags(keywords: string[]): string[] {
+    const language = DetectLanguage.detect(document.body.innerText);
+    fnConsoleLog('LANGUAGE', language);
+    let tagList = [];
     for (const keyword of keywords) {
-      const clean = TextClean.allTextClean(keyword);
-      const sentences = TextSentence.split(clean);
-      for (const sentence of sentences) {
-        let wordList = TextWord.split(sentence);
-        wordList = TextClean.wordClean(wordList);
-        words.push(...wordList);
-      }
-    }
-    fnConsoleLog('WORDS !!!', words);
-    try {
-      const vectors = [];
+      const words = WordNlp.toWordList(keyword);
       for (const word of words) {
-        const vec = WordToVectorNlp.word2vec(word, GramNlp.gramNum);
-        vectors.push(vec);
+        if (word.length <= 1) continue;
+        tagList.push(word);
       }
-      const wordsRollback = [];
-      for (const vector of vectors) {
-        wordsRollback.push(WordToVectorNlp.vec2word(vector, GramNlp.numGram));
-      }
-      fnConsoleLog('WORDS ROLLBACK !!!', wordsRollback);
-    } catch (e) {
-      fnConsoleLog('ERROR VECTOR', e);
     }
+    tagList = Array.from(new Set(tagList));
+    tagList = StopWordRemove.execute(language, tagList);
+    return tagList;
+  }
+
+  private static captureKeywordData(): string[] {
+    return Array.from(
+      new Set([...Array.from(this.captureMeta()), ...Array.from(this.captureLdJson()), document.title])
+    );
   }
 
   private static captureMeta(): Set<string> {

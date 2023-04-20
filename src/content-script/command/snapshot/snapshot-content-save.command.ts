@@ -22,6 +22,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextContentIdCommand } from '../../../common/command/obj/content/obj-next-content-id.command';
 import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { WordNlp } from '../../../common/text/nlp/word.nlp';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
@@ -31,15 +32,17 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<number>> {
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
     fnConsoleLog('START', key);
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element);
+    const urlCache = new Set<string>();
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element, 1, new Set<string>(), urlCache);
     const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
     const htmlAttr = HtmlFactory.computeHtmlAttr();
     fnConsoleLog('HTML DONE');
-    const css = await CssFactory.computeCssContent();
+    const css = await CssFactory.computeCssContent(urlCache);
     fnConsoleLog('CSS DONE');
-    AutoTagMediator.precompute();
+    const tagList = AutoTagMediator.computeTags(this.element);
     fnConsoleLog('SOCIAL TAGS DONE');
-
+    await WordNlp.indexFlat(tagList, id);
+    fnConsoleLog('SKIPPED', urlCache);
     fnConsoleLog('END');
 
     await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {

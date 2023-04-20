@@ -17,6 +17,9 @@
 export class ConstraintsNlp {
   static readonly PUNCT_CHARS = new Set([
     ' ',
+    '\n',
+    '\t',
+    '\r',
     '0',
     '1',
     '2',

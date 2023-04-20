@@ -14,8 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export class TextWord {
-  static split(input: string): string[] {
-    return input.split(' ');
+import * as LanguageDetect from 'languagedetect';
+
+export class DetectLanguage {
+  private static lang = new LanguageDetect();
+
+  static detect(sample: string): string {
+    this.lang.setLanguageType('iso2');
+    const languages = this.lang.detect(sample);
+    return languages[0][0];
   }
 }

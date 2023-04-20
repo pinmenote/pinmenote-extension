@@ -27,14 +27,19 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 
 export class ShadowFactory {
-  static computeShadow = async (tagName: string, ref: Element, shadow: ShadowRoot): Promise<HtmlIntermediateData> => {
+  static computeShadow = async (
+    tagName: string,
+    ref: Element,
+    shadow: ShadowRoot,
+    skipUrlCache?: Set<string>
+  ): Promise<HtmlIntermediateData> => {
     fnConsoleLog('COMPUTE SHADOW !!!');
     const uid = fnUid();
     let html = `<${tagName} data-pin-id="${uid}" `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
     html += `</${tagName}>`;
-    const shadowHtml = await this.computeShadowHtml(shadow);
+    const shadowHtml = await this.computeShadowHtml(shadow, skipUrlCache);
     return {
       html,
       video: [],
@@ -50,7 +55,7 @@ export class ShadowFactory {
     };
   };
 
-  private static computeShadowHtml = async (ref: ShadowRoot): Promise<string> => {
+  private static computeShadowHtml = async (ref: ShadowRoot, skipUrlCache?: Set<string>): Promise<string> => {
     const nodes = Array.from(ref.childNodes);
     let html = '';
     for (const node of nodes) {
@@ -60,7 +65,7 @@ export class ShadowFactory {
         txt = txt.replace('<', '&lt').replace('>', '&gt;');
         html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        html += await this.computeShadowChild(node as Element);
+        html += await this.computeShadowChild(node as Element, skipUrlCache);
       } else if (node.nodeType === Node.COMMENT_NODE) {
         html += '<!---->';
       } else {
@@ -70,7 +75,7 @@ export class ShadowFactory {
     return `<template mode="${ref.mode}">${html}</template>`;
   };
 
-  private static computeShadowChild = async (ref: Element): Promise<string> => {
+  private static computeShadowChild = async (ref: Element, skipUrlCache?: Set<string>): Promise<string> => {
     const tagName = ref.tagName.toLowerCase();
     if (tagName === 'link') {
       const uri = ref.getAttribute('href');
@@ -87,7 +92,7 @@ export class ShadowFactory {
     } else if (tagName === 'style') {
       return this.computeCssData(ref.innerHTML);
     } else if (tagName === 'picture') {
-      const pic = await HtmlFactory.computePicture(ref as HTMLPictureElement, true);
+      const pic = await HtmlFactory.computePicture(ref as HTMLPictureElement, true, skipUrlCache);
       return pic.html;
     } else if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);
@@ -95,7 +100,7 @@ export class ShadowFactory {
         let html = `<${tagName} `;
         html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
         html = html.substring(0, html.length - 1) + '>';
-        html += await this.computeShadowHtml(shadow);
+        html += await this.computeShadowHtml(shadow, skipUrlCache);
         html += `</${tagName}>`;
         return html;
       }
@@ -103,7 +108,7 @@ export class ShadowFactory {
     let html = `<${tagName} `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
     if (tagName === 'img') {
-      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement);
+      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement, skipUrlCache);
       html += `src="${value}" `;
     }
     html = html.substring(0, html.length - 1) + '>';

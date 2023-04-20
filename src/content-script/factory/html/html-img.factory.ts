@@ -15,11 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnFetchImage } from '../../../common/fn/fetch-image.fn';
 
 export class HtmlImgFactory {
-  static computeImgValue = async (ref: HTMLImageElement | HTMLSourceElement): Promise<string> => {
+  static computeImgValue = async (
+    ref: HTMLImageElement | HTMLSourceElement,
+    skipUrlCache?: Set<string>
+  ): Promise<string> => {
     let value = ref.src || '';
     // we have data already inside image so just add it
     if (value.startsWith('data:')) {
@@ -56,16 +58,21 @@ export class HtmlImgFactory {
       const srcset = ref.getAttribute('data-srcset') || '';
       return await this.computeSrcSet(srcset.split(', '));
     }
+    if (ref.getAttribute('lazy-source') && value === '') {
+      value = ref.getAttribute('lazy-source') || '';
+    }
 
     value = value.replaceAll('"', '&quot;');
 
     const url = fnComputeUrl(value);
 
+    if (skipUrlCache?.has(url)) return url;
+
     const imageData = await fnFetchImage(url);
     if (imageData.ok) {
       return imageData.res;
     } else {
-      fnConsoleLog('HtmlImgFactory->computeImgValue', url, imageData, ref);
+      skipUrlCache?.add(url);
     }
     return url;
   };
