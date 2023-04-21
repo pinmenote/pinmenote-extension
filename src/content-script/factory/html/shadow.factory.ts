@@ -39,21 +39,7 @@ export class ShadowFactory {
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
 
-    const nodes = Array.from(ref.childNodes);
-    for (const node of nodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const nre = new RegExp(String.fromCharCode(160), 'g');
-        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
-        txt = txt.replace('<', '&lt').replace('>', '&gt;');
-        html += txt;
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        html += await this.computeShadowChild(node as Element);
-      } else if (node.nodeType === Node.COMMENT_NODE) {
-        html += '<!---->';
-      } else {
-        fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
-      }
-    }
+    html += await this.computeChildren(Array.from(ref.childNodes), skipUrlCache);
 
     html += `</${tagName}>`;
     const shadowHtml = await this.computeShadowHtml(shadow, skipUrlCache);
@@ -72,8 +58,7 @@ export class ShadowFactory {
     };
   };
 
-  private static computeShadowHtml = async (ref: ShadowRoot, skipUrlCache?: Set<string>): Promise<string> => {
-    const nodes = Array.from(ref.childNodes);
+  private static computeChildren = async (nodes: ChildNode[], skipUrlCache?: Set<string>): Promise<string> => {
     let html = '';
     for (const node of nodes) {
       if (node.nodeType === Node.TEXT_NODE) {
@@ -89,7 +74,12 @@ export class ShadowFactory {
         fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
       }
     }
-    return `<template mode="${ref.mode}">${html}</template>`;
+    return html;
+  };
+
+  private static computeShadowHtml = async (ref: ShadowRoot, skipUrlCache?: Set<string>): Promise<string> => {
+    const html = await this.computeChildren(Array.from(ref.childNodes), skipUrlCache);
+    return `<template data-mode="${ref.mode}">${html}</template>`;
   };
 
   private static computeShadowChild = async (ref: Element, skipUrlCache?: Set<string>): Promise<string> => {
@@ -136,22 +126,7 @@ export class ShadowFactory {
       html = html.substring(0, html.length - 1) + '>';
     }
 
-    const nodes = Array.from(ref.childNodes);
-    for (const node of nodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const nre = new RegExp(String.fromCharCode(160), 'g');
-        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
-        txt = txt.replace('<', '&lt').replace('>', '&gt;');
-        html += txt;
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        html += await this.computeShadowChild(node as Element);
-      } else if (node.nodeType === Node.COMMENT_NODE) {
-        html += '<!---->';
-      } else {
-        fnConsoleLog('PROBLEM fnComputeHtmlContent !!!', node.nodeType);
-      }
-    }
-
+    html += this.computeChildren(Array.from(ref.childNodes), skipUrlCache);
     html += `</${tagName}>`;
     return html;
   };
