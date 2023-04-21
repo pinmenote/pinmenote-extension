@@ -126,7 +126,7 @@ export class ShadowFactory {
       html = html.substring(0, html.length - 1) + '>';
     }
 
-    html += this.computeChildren(Array.from(ref.childNodes), skipUrlCache);
+    html += await this.computeChildren(Array.from(ref.childNodes), skipUrlCache);
     html += `</${tagName}>`;
     return html;
   };
