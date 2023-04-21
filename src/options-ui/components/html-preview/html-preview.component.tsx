@@ -162,7 +162,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
 
   const asyncEmbedContent = async (dto: ObjContentDto, el: Element): Promise<void> => {
     return new Promise((resolve, reject) => {
-      fnSleep(10)
+      fnSleep(5)
         .then(() => {
           if (dto.type === ObjContentTypeDto.IFRAME) {
             const iframe: ObjIframeContentDto = dto.content as ObjIframeContentDto;
