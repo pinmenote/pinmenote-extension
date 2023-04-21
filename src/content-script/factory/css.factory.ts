@@ -26,7 +26,7 @@ import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
 
-export const CSS_URL_REG = new RegExp('url\\(["\'].*["\']\\)', 'g');
+export const CSS_URL_REG = new RegExp('url\\(.*\\)', 'g');
 export const CSS_IMPORT_REG = new RegExp(
   '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
   'gi'
@@ -178,7 +178,9 @@ export class CssFactory {
     if (!urlList) return css;
 
     for (const urlMatch of urlList) {
-      let url = urlMatch.substring(5, urlMatch.length - 2);
+      let url = urlMatch.substring(4, urlMatch.length - 1);
+      if (url.startsWith('"') || url.startsWith("'")) url = url.substring(1, url.length - 1);
+      if (url.endsWith(';')) url = url.substring(0, url.length - 1);
       // skip data elements
       if (url.startsWith('data:')) continue;
       // skip url with #

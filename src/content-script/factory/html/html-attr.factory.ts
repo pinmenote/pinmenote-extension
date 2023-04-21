@@ -82,15 +82,10 @@ export class HtmlAttrFactory {
       } else if (attr.name === 'style') {
         // style can have background-image:url('')
         const urlList = attrValue.match(CSS_URL_REG);
+        attrValue = attrValue.replaceAll('&quot;', '"');
         if (urlList) {
           const value = await CssFactory.fetchUrls(attrValue);
-          /*fnConsoleLog(
-            'HtmlAttrFactory->computeHtmlIntermediateData->image-inside-style',
-            'prev',
-            attrValue,
-            'result',
-            value
-          );*/
+          // fnConsoleLog('HtmlAttrFactory->style', 'prev', attrValue, 'result', value );
           html += `${attr.name}="${value}" `;
         } else {
           html += `${attr.name}="${attrValue}" `;
