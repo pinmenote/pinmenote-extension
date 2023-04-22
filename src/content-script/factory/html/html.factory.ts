@@ -203,7 +203,7 @@ export class HtmlFactory {
       const rect = images[0].getBoundingClientRect();
       let w = parseInt(images[0].getAttribute('width') || '0');
       let h = parseInt(images[0].getAttribute('height') || '0');
-      if (rect.width > w) {
+      if (rect.height > h) {
         w = rect.width;
         h = rect.height;
       }
