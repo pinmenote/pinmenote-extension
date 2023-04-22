@@ -172,9 +172,8 @@ export class HtmlFactory {
     if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
 
     const children = Array.from(ref.children);
-    const images = children.filter((c) => c.tagName.toLowerCase() === 'img');
+    const img = children.filter((c) => c.tagName.toLowerCase() === 'img').pop();
     const sources = children.filter((c) => c.tagName.toLowerCase() === 'source');
-    const isSource = sources.length > 0;
 
     const content: ObjContentDto[] = [];
     let html = `<picture `;
@@ -183,9 +182,19 @@ export class HtmlFactory {
 
     // Source must be converted to img - we lose size information that's why we need to put style with those attributes
     html += '>';
-
-    const child = sources.length > 0 ? sources[0] : images[0];
-    const value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement, skipUrlCache);
+    let child = sources.shift();
+    while (child) {
+      if (child.getAttribute('src') || child.getAttribute('srcset')) {
+        break;
+      }
+      child = sources.shift();
+    }
+    let value = '';
+    if (child) {
+      value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement, skipUrlCache);
+    } else {
+      value = await HtmlImgFactory.computeImgValue(img as HTMLImageElement, skipUrlCache);
+    }
     const uid = fnUid();
     if (forShadow) {
       html += `<img src="${value}" `;
@@ -197,12 +206,15 @@ export class HtmlFactory {
         content: value
       });
     }
-    const imgAttr = Array.from(child.attributes);
-    html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
-    if (isSource && images[0]) {
-      const rect = images[0].getBoundingClientRect();
-      let w = parseInt(images[0].getAttribute('width') || '0');
-      let h = parseInt(images[0].getAttribute('height') || '0');
+    if (!child) {
+      const imgAttr = Array.from(img.attributes);
+      html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
+    } else {
+      const imgAttr = Array.from(child.attributes);
+      html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
+      const rect = img.getBoundingClientRect();
+      let w = parseInt(img.getAttribute('width') || '0');
+      let h = parseInt(img.getAttribute('height') || '0');
       if (rect.height > h) {
         w = rect.width;
         h = rect.height;
