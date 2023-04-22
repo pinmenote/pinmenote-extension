@@ -178,19 +178,13 @@ export class HtmlFactory {
 
     const content: ObjContentDto[] = [];
     let html = `<picture `;
-    const attrs = Array.from(ref.attributes);
-    if (isSource && attrs.filter((attr) => attr.nodeName === 'style').length === 0) {
-      const rect = ref.getBoundingClientRect();
-      html += ` style="width:${rect.width}px;height:${rect.height}px" `;
-    }
-    html += await HtmlAttrFactory.computeAttrValues('picture', attrs);
+    html += await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes));
     html = html.substring(0, html.length - 1);
 
     // Source must be converted to img - we lose size information that's why we need to put style with those attributes
     html += '>';
 
     const child = sources.length > 0 ? sources[0] : images[0];
-    const childTag = child.tagName.toLowerCase();
     const value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement, skipUrlCache);
     const uid = fnUid();
     if (forShadow) {
@@ -203,7 +197,18 @@ export class HtmlFactory {
         content: value
       });
     }
-    html += await HtmlAttrFactory.computeAttrValues(childTag, Array.from(child.attributes));
+    const imgAttr = Array.from(child.attributes);
+    html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
+    if (isSource && images[0]) {
+      const rect = images[0].getBoundingClientRect();
+      let w = parseInt(images[0].getAttribute('width') || '0');
+      let h = parseInt(images[0].getAttribute('height') || '0');
+      if (rect.width > w) {
+        w = rect.width;
+        h = rect.height;
+      }
+      html += `width="${w}" height="${h}" `;
+    }
     html = html.substring(0, html.length - 1) + '/>';
     html += '</picture>';
     return {
