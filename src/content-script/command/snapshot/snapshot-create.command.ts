@@ -19,6 +19,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
+import { SnapshotSaveImageCommand } from './snapshot-save-image.command';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 
 export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> {
@@ -32,6 +33,9 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       const res = await new SnapshotContentSaveCommand(this.element).execute();
       contentId = res.id;
       words = res.words;
+    } else if (this.element instanceof HTMLImageElement) {
+      // TODO save image
+      contentId = await new SnapshotSaveImageCommand(this.element).execute();
     }
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
     return {

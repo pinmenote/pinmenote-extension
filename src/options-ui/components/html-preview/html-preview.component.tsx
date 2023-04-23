@@ -60,11 +60,14 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       async (event, key, value) => {
         setIsPreLoading(true);
         setIsLoading(true);
-        if (value.canvas) {
-          renderCanvas(value);
-        } else {
-          const c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
+        let c: ObjSnapshotData | undefined = undefined;
+        if (value.contentId > 0) {
+          c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
           setContent(c);
+        }
+        if (value.canvas) {
+          renderCanvas(value, c);
+        } else {
           await renderSnapshot(value, c);
         }
       }
@@ -75,8 +78,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     };
   });
 
-  const renderCanvas = (s: ObjSnapshotDto) => {
-    renderHeader(s, 0);
+  const renderCanvas = (s: ObjSnapshotDto, c?: ObjSnapshotData) => {
+    renderHeader(s, c?.size);
 
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
@@ -86,8 +89,14 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     iframe.height = '100%';
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
+    let html = `<body>`;
+    if (c) {
+      html += `${c.snapshot.html}`;
+    } else {
+      html += `<img src="${s.screenshot || ''}" alt="screenshot" />`;
+    }
 
-    const html = `<body><img src="${s.screenshot || ''}" alt="screenshot" /></body>`;
+    html += `</body>`;
     const doc = iframe.contentWindow.document;
     doc.write(html);
     doc.close();
@@ -96,9 +105,9 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     setIsLoading(false);
   };
 
-  const renderSnapshot = async (s: ObjSnapshotDto, c: ObjSnapshotData): Promise<void> => {
-    fnConsoleLog('SHOW HTML !!!', s, c, c.snapshot.css.css.length);
-    renderHeader(s, c.size);
+  const renderSnapshot = async (s: ObjSnapshotDto, c?: ObjSnapshotData): Promise<void> => {
+    fnConsoleLog('SHOW HTML !!!', s, c, c?.snapshot.css.css.length);
+    renderHeader(s, c?.size);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
     if (!c) return;
@@ -134,7 +143,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     setIsLoading(false);
   };
 
-  const renderHeader = (s: ObjSnapshotDto, size: number): void => {
+  const renderHeader = (s: ObjSnapshotDto, size?: number): void => {
     if (sizeRef.current) {
       sizeRef.current.innerHTML = `${fnByteToMb(size)} MB`;
     }

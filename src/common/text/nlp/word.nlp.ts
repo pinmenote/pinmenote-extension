@@ -48,7 +48,7 @@ export class WordNlp {
         ch = word.charAt(i).toLowerCase();
         flatPart += ch;
         if (flatPart.length % 2 === 0) {
-          await this.saveStorage(flatPart, id);
+          break;
         }
       }
       await this.saveStorage(flatPart, id);
@@ -56,6 +56,7 @@ export class WordNlp {
       await this.saveWord(word);
     }
     fnConsoleLog('indexed', Array.from(this.flatSet), 'count', this.flatSet.size, 'in', Date.now() - a);
+    this.flatSet.clear();
   };
 
   static removeFlat = async (words: string[], id: number): Promise<void> => {
@@ -67,7 +68,7 @@ export class WordNlp {
         ch = word.charAt(i).toLowerCase();
         flatPart += ch;
         if (flatPart.length % 2 === 0) {
-          await this.removeStorage(flatPart, id);
+          break;
         }
       }
       await this.removeStorage(flatPart, id);
