@@ -28,10 +28,13 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
 
   async execute(): Promise<void> {
     fnConsoleLog('ContentFetchIframeCommand->execute', this.msg);
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(
-      document.body,
-      (this.msg.data.depth as number) + 1
-    );
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+      ref: document.body,
+      depth: (this.msg.data.depth as number) + 1,
+      skipUrlCache: new Set<string>(),
+      skipTagCache: new Set<string>(),
+      isPartial: false
+    });
     fnConsoleLog('ContentFetchIframeCommand->html->done');
     const css = await CssFactory.computeCssContent();
     fnConsoleLog('ContentFetchIframeCommand->css->done');

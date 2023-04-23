@@ -30,15 +30,21 @@ interface SnapshotResult {
 }
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
-  constructor(private element: HTMLElement) {}
+  constructor(private element: HTMLElement, private isPartial = true) {}
   async execute(): Promise<SnapshotResult> {
     const id = await new ObjNextContentIdCommand().execute();
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
     fnConsoleLog('START', key);
     const urlCache = new Set<string>();
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.element, 1, new Set<string>(), urlCache);
-    const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html);
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+      ref: this.element,
+      depth: 1,
+      skipTagCache: new Set<string>(),
+      skipUrlCache: urlCache,
+      isPartial: this.isPartial
+    });
+    const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html, this.isPartial);
     const htmlAttr = HtmlFactory.computeHtmlAttr();
     fnConsoleLog('HTML DONE');
     const css = await CssFactory.computeCssContent(urlCache);

@@ -64,7 +64,13 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
       this.parent.setNewRef(this.parent.ref.parentElement);
       await fnSleep(100);
 
-      const htmlContent = await HtmlFactory.computeHtmlIntermediateData(this.parent.ref);
+      const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+        ref: this.parent.ref,
+        depth: 1,
+        skipTagCache: new Set<string>(),
+        skipUrlCache: new Set<string>(),
+        isPartial: true
+      });
 
       // snapshot content
       const key = `${ObjectStoreKeys.CONTENT_ID}:${this.parent.object.data.snapshot.contentId}`;

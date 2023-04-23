@@ -31,7 +31,7 @@ export class ShadowFactory {
     tagName: string,
     ref: Element,
     shadow: ShadowRoot,
-    skipUrlCache?: Set<string>
+    skipUrlCache: Set<string>
   ): Promise<HtmlIntermediateData> => {
     fnConsoleLog('COMPUTE SHADOW !!!', tagName, ref);
     const uid = fnUid();

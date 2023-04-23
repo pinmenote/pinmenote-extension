@@ -18,6 +18,8 @@ import { CSS_URL_REG, CssFactory } from '../css.factory';
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
+const TRANSLATE_REG = new RegExp('(transform: translateY\\()([0-9.px]+)(\\);)', 'g');
+
 export class HtmlAttrFactory {
   static readonly EMPTY_RESULT = {
     html: '',
@@ -85,7 +87,6 @@ export class HtmlAttrFactory {
         attrValue = attrValue.replaceAll('&quot;', '"');
         if (urlList) {
           const value = await CssFactory.fetchUrls(attrValue);
-          // fnConsoleLog('HtmlAttrFactory->style', 'prev', attrValue, 'result', value );
           html += `${attr.name}="${value}" `;
         } else {
           html += `${attr.name}="${attrValue}" `;
@@ -98,4 +99,9 @@ export class HtmlAttrFactory {
     }
     return html;
   };
+
+  static cutPartialStyles(value: string): string {
+    value = value.replace(TRANSLATE_REG, '');
+    return value;
+  }
 }

@@ -28,6 +28,14 @@ import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 
+export interface HtmlComputeParams {
+  ref: Element;
+  depth: number;
+  skipTagCache: Set<string>;
+  skipUrlCache: Set<string>;
+  isPartial: boolean;
+}
+
 export class HtmlFactory {
   static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
     const imgData = ref.toDataURL('image/png', 80);
@@ -61,38 +69,33 @@ export class HtmlFactory {
       .join(' ');
   };
 
-  static computeHtmlIntermediateData = async (
-    ref: Element,
-    depth = 1,
-    skipTagCache?: Set<string>,
-    skipUrlCache?: Set<string>
-  ): Promise<HtmlIntermediateData> => {
-    if (!skipTagCache) skipTagCache = new Set<string>();
+  static computeHtmlIntermediateData = async (params: HtmlComputeParams): Promise<HtmlIntermediateData> => {
+    const tagName = params.ref.tagName.toLowerCase();
 
-    const tagName = ref.tagName.toLowerCase();
-
-    if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !skipTagCache.has(tagName)) {
-      const shadow = BrowserApi.shadowRoot(ref);
+    if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !params.skipTagCache.has(tagName)) {
+      const shadow = BrowserApi.shadowRoot(params.ref);
       // Go with shadow
       if (shadow) {
-        return ShadowFactory.computeShadow(tagName, ref, shadow, skipUrlCache);
+        return ShadowFactory.computeShadow(tagName, params.ref, shadow, params.skipUrlCache);
       } else {
-        skipTagCache.add(tagName);
+        params.skipTagCache.add(tagName);
       }
     }
 
-    let html = `<${tagName} `;
     const video: ObjVideoDataDto[] = [];
     const content: ObjContentDto[] = [];
+
+    let html = `<${tagName} `;
+
     if (tagName === 'script' || tagName === 'link') return HtmlAttrFactory.EMPTY_RESULT;
 
     // IFRAME POC
     // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
-      return await IFrameFactory.computeIframe(ref as HTMLIFrameElement, depth);
+      return await IFrameFactory.computeIframe(params.ref as HTMLIFrameElement, params.depth);
     } else if (tagName === 'canvas') {
       try {
-        return this.computeCanvas(ref as HTMLCanvasElement);
+        return this.computeCanvas(params.ref as HTMLCanvasElement);
       } catch (e) {
         fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
         return HtmlAttrFactory.EMPTY_RESULT;
@@ -100,14 +103,14 @@ export class HtmlFactory {
     } else if (tagName === 'video') {
       // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
       video.push({
-        xpath: XpathFactory.newXPathString(ref as HTMLElement),
-        currentTime: (ref as HTMLVideoElement).currentTime,
+        xpath: XpathFactory.newXPathString(params.ref as HTMLElement),
+        currentTime: (params.ref as HTMLVideoElement).currentTime,
         displayTime: environmentConfig.settings.videoDisplayTime
       });
     } else if (tagName === 'picture') {
-      return await this.computePicture(ref as HTMLPictureElement, false, skipUrlCache);
+      return await this.computePicture(params.ref as HTMLPictureElement, false, params.skipUrlCache);
     } else if (tagName === 'img') {
-      const value = await HtmlImgFactory.computeImgValue(ref as HTMLImageElement, skipUrlCache);
+      const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params.skipUrlCache);
       const uid = fnUid();
       content.push({
         id: uid,
@@ -116,15 +119,15 @@ export class HtmlFactory {
       });
       html += `data-pin-id=${uid} `;
     } else if (tagName === 'textarea') {
-      html += `value="${(ref as HTMLTextAreaElement).value}" `;
-    } else if (tagName === 'input' && (ref as HTMLInputElement).type !== 'password') {
-      html += `value="${(ref as HTMLInputElement).value}" `;
+      html += `value="${(params.ref as HTMLTextAreaElement).value}" `;
+    } else if (tagName === 'input' && (params.ref as HTMLInputElement).type !== 'password') {
+      html += `value="${(params.ref as HTMLInputElement).value}" `;
     }
 
-    html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
+    html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
 
-    const nodes = Array.from(ref.childNodes);
+    const nodes = Array.from(params.ref.childNodes);
 
     for (const node of nodes) {
       if (node.nodeType === Node.TEXT_NODE) {
@@ -133,7 +136,13 @@ export class HtmlFactory {
         txt = txt.replace('<', '&lt').replace('>', '&gt;');
         html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache, skipUrlCache);
+        const computed = await this.computeHtmlIntermediateData({
+          ref: node as Element,
+          depth: params.depth,
+          skipTagCache: params.skipTagCache,
+          skipUrlCache: params.skipUrlCache,
+          isPartial: params.isPartial
+        });
         html += computed.html;
         video.push(...computed.video);
         content.push(...computed.content);
@@ -145,11 +154,17 @@ export class HtmlFactory {
     }
 
     // Fix object element children
-    if (ref instanceof HTMLObjectElement && ref.contentDocument) {
-      const children = Array.from(ref.contentDocument.childNodes);
+    if (params.ref instanceof HTMLObjectElement && params.ref.contentDocument) {
+      const children = Array.from(params.ref.contentDocument.childNodes);
       for (const node of children) {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          const computed = await this.computeHtmlIntermediateData(node as Element, depth, skipTagCache, skipUrlCache);
+          const computed = await this.computeHtmlIntermediateData({
+            ref: node as Element,
+            depth: params.depth,
+            skipTagCache: params.skipTagCache,
+            skipUrlCache: params.skipUrlCache,
+            isPartial: params.isPartial
+          });
           html += computed.html;
         }
       }
@@ -212,14 +227,16 @@ export class HtmlFactory {
     } else {
       const imgAttr = Array.from(child.attributes);
       html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
-      const rect = img.getBoundingClientRect();
-      let w = parseInt(img.getAttribute('width') || '0');
-      let h = parseInt(img.getAttribute('height') || '0');
-      if (rect.height > h) {
-        w = rect.width;
-        h = rect.height;
+      if (img) {
+        const rect = img.getBoundingClientRect();
+        let w = parseInt(img.getAttribute('width') || '0');
+        let h = parseInt(img.getAttribute('height') || '0');
+        if (rect.height > h) {
+          w = rect.width;
+          h = rect.height;
+        }
+        html += `width="${w}" height="${h}" `;
       }
-      html += `width="${w}" height="${h}" `;
     }
     html = html.substring(0, html.length - 1) + '/>';
     html += '</picture>';
@@ -230,7 +247,7 @@ export class HtmlFactory {
     };
   };
 
-  static computeHtmlParent = (parent: Element | null, content: string): string => {
+  static computeHtmlParent = (parent: Element | null, content: string, isPartial = false): string => {
     let data = content;
     while (parent && parent.tagName.toLowerCase() !== 'html') {
       const tagName = parent.tagName.toLowerCase();
@@ -241,6 +258,9 @@ export class HtmlFactory {
       for (const attr of attributes) {
         let attrValue = attr.value;
         attrValue = attrValue.replaceAll('"', '&quot;');
+        if (attr.name === 'style' && isPartial) {
+          attrValue = HtmlAttrFactory.cutPartialStyles(attrValue);
+        }
         if (attrValue) {
           value += `${attr.name}="${attrValue}" `;
         } else {
