@@ -50,7 +50,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const css = await CssFactory.computeCssContent(urlCache);
     fnConsoleLog('CSS DONE');
     const words = AutoTagMediator.computeTags(this.element);
-    fnConsoleLog('SOCIAL TAGS DONE');
+    fnConsoleLog('TAGS DONE');
     fnConsoleLog('SKIPPED', urlCache);
     fnConsoleLog('END');
 

@@ -230,6 +230,9 @@ export class DocumentMediator {
     border: PinBorderDataDto,
     canvas?: ObjCanvasDto
   ): Promise<void> => {
+    PinAddFactory.clearStyles();
+
+    await this.sleepUntilClearStyles();
     this.showPreloader();
     const url = UrlFactory.newUrl();
     const snapshot = await new SnapshotCreateCommand(url, element, canvas).execute();
