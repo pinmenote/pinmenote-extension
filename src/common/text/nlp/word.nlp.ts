@@ -41,18 +41,8 @@ export class WordNlp {
 
   static indexFlat = async (words: string[], id: number): Promise<void> => {
     const a = Date.now();
-    let ch = '';
-    let flatPart = '';
     for (const word of words) {
-      for (let i = 0; i < word.length; i++) {
-        ch = word.charAt(i).toLowerCase();
-        flatPart += ch;
-        if (flatPart.length % 2 === 0) {
-          break;
-        }
-      }
-      await this.saveStorage(flatPart, id);
-      flatPart = '';
+      await this.saveStorage(word, id);
       await this.saveWord(word);
     }
     fnConsoleLog('indexed', Array.from(this.flatSet), 'count', this.flatSet.size, 'in', Date.now() - a);
@@ -61,18 +51,8 @@ export class WordNlp {
 
   static removeFlat = async (words: string[], id: number): Promise<void> => {
     const a = Date.now();
-    let ch = '';
-    let flatPart = '';
     for (const word of words) {
-      for (let i = 0; i < word.length; i++) {
-        ch = word.charAt(i).toLowerCase();
-        flatPart += ch;
-        if (flatPart.length % 2 === 0) {
-          break;
-        }
-      }
-      await this.removeStorage(flatPart, id);
-      flatPart = '';
+      await this.removeStorage(word, id);
     }
     fnConsoleLog('removed', Array.from(this.flatSet), 'count', this.flatSet.size, 'in', Date.now() - a);
   };
