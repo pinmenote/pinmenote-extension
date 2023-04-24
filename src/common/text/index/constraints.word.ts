@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export class ConstraintsNlp {
+export class ConstraintsWord {
   static readonly PUNCT_CHARS = new Set([
     ' ',
     '\n',

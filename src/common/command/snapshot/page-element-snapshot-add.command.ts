@@ -21,7 +21,7 @@ import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { WordNlp } from '../../text/nlp/word.nlp';
+import { WordIndex } from '../../text/index/word.index';
 
 export class PageElementSnapshotAddCommand implements ICommand<Promise<void>> {
   constructor(private dto: ObjSnapshotDto) {}
@@ -45,7 +45,7 @@ export class PageElementSnapshotAddCommand implements ICommand<Promise<void>> {
       }
     };
 
-    await WordNlp.indexFlat(this.dto.words, id);
+    await WordIndex.indexFlat(this.dto.words, id);
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
     await BrowserStorageWrapper.set(key, dto);

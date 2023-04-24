@@ -15,21 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ConstraintsNlp } from './constraints.nlp';
+import { ConstraintsWord } from './constraints.word';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { fnConsoleLog } from '../../fn/console.fn';
 
-export class WordNlp {
-  private static flatSet = new Set<string>();
-
+export class WordIndex {
   static toWordList(sentence: string): string[] {
     const words: string[] = [];
     let word = '';
     let key = '';
     for (let i = 0; i < sentence.length; i++) {
       key = sentence.charAt(i).toLowerCase();
-      if (ConstraintsNlp.KEY_MAP[key]) key = ConstraintsNlp.KEY_MAP[key];
-      if (ConstraintsNlp.PUNCT_CHARS.has(key)) {
+      if (ConstraintsWord.KEY_MAP[key]) key = ConstraintsWord.KEY_MAP[key];
+      if (ConstraintsWord.PUNCT_CHARS.has(key)) {
         if (word.trim().length > 0) words.push(word.trim());
         word = '';
         continue;
@@ -40,27 +37,19 @@ export class WordNlp {
   }
 
   static indexFlat = async (words: string[], id: number): Promise<void> => {
-    const a = Date.now();
     for (const word of words) {
       await this.saveStorage(word, id);
       await this.saveWord(word);
     }
-    fnConsoleLog('indexed', Array.from(this.flatSet), 'count', this.flatSet.size, 'in', Date.now() - a);
-    this.flatSet.clear();
   };
 
   static removeFlat = async (words: string[], id: number): Promise<void> => {
-    const a = Date.now();
     for (const word of words) {
       await this.removeStorage(word, id);
     }
-    fnConsoleLog('removed', Array.from(this.flatSet), 'count', this.flatSet.size, 'in', Date.now() - a);
   };
 
   private static removeStorage = async (value: string, id: number) => {
-    if (this.flatSet.has(value)) return;
-    this.flatSet.add(value);
-
     const key = `${ObjectStoreKeys.SEARCH_INDEX}:${value}`;
     const arr = await BrowserStorageWrapper.get<number[]>(key);
     if (!arr) return;
@@ -78,10 +67,6 @@ export class WordNlp {
   };
 
   private static saveStorage = async (value: string, id: number) => {
-    // skip existing
-    if (this.flatSet.has(value)) return;
-    this.flatSet.add(value);
-
     const key = `${ObjectStoreKeys.SEARCH_INDEX}:${value}`;
     let arr = await BrowserStorageWrapper.get<number[]>(key);
     if (arr) {

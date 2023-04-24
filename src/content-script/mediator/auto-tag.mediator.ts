@@ -16,7 +16,7 @@
  */
 import { DetectLanguage } from '../../common/text/detect-language';
 import { StopWordRemove } from '../../common/text/stop-word/stop-word-remove';
-import { WordNlp } from '../../common/text/nlp/word.nlp';
+import { WordIndex } from '../../common/text/index/word.index';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class AutoTagMediator {
@@ -46,7 +46,7 @@ export class AutoTagMediator {
     fnConsoleLog('LANGUAGE', language);
     let tagList = [];
     for (const keyword of keywords) {
-      const words = WordNlp.toWordList(keyword);
+      const words = WordIndex.toWordList(keyword);
       for (const word of words) {
         if (word.length <= 1) continue;
         tagList.push(word);

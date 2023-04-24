@@ -24,7 +24,7 @@ import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { WordNlp } from '../../text/nlp/word.nlp';
+import { WordIndex } from '../../text/index/word.index';
 import { fnConsoleLog } from '../../fn/console.fn';
 
 export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
@@ -51,7 +51,7 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
       }
     };
 
-    await WordNlp.indexFlat(this.pin.snapshot.words, id);
+    await WordIndex.indexFlat(this.pin.snapshot.words, id);
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
 
