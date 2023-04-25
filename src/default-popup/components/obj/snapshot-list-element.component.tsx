@@ -15,49 +15,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { PinListExpandComponent } from './pin-list-expand.component';
-import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
+import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { SnapshotListExpandComponent } from './snapshot-list-expand.component';
 import Typography from '@mui/material/Typography';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-interface PinListElementProps {
-  obj: ObjDto<ObjPagePinDto>;
-  visibility: boolean;
-  removeCallback: (pin: ObjDto<ObjPagePinDto>) => void;
+interface SnapshotListElementProps {
+  obj: ObjDto<ObjSnapshotDto>;
+  removeCallback: (pin: ObjDto<ObjSnapshotDto>) => void;
 }
 
-export const PinListElement: FunctionComponent<PinListElementProps> = (props) => {
+export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isVisible, setIsVisible] = useState(props.obj.local?.visible);
-  const handlePinGo = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
-    data.local.visible = true;
-    await new PinUpdateCommand(data).execute();
-    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, data);
 
-    await BrowserApi.sendTabMessage<void>({ type: BusMessageType.CONTENT_PIN_NAVIGATE });
-
-    window.close();
-  };
-
-  const handlePinVisible = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
-    data.local.visible = !data.local.visible;
-    await new PinUpdateCommand(data).execute();
-    setIsVisible(data.local.visible);
-  };
-
-  const handlePinRemove = (data: ObjDto<ObjPagePinDto>): void => {
+  const handleObjRemove = (data: ObjDto<ObjSnapshotDto>): void => {
     props.removeCallback(data);
   };
 
@@ -70,15 +45,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
   ) : (
     <NavigateNextIcon sx={{ fontSize: '12px' }} />
   );
-
-  const visibleIcon = props.visibility ? (
-    <IconButton size="small" onClick={() => handlePinVisible(props.obj)}>
-      {isVisible ? <VisibilityIcon sx={{ fontSize: '12px' }} /> : <VisibilityOffIcon sx={{ fontSize: '12px' }} />}
-    </IconButton>
-  ) : (
-    ''
-  );
-  const value = props.obj.data.snapshot.title;
+  const value = props.obj.data.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (
@@ -108,16 +75,12 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
             justifyContent: 'flex-end'
           }}
         >
-          {visibleIcon}
-          <IconButton title="Go to pin" size="small" onClick={() => handlePinGo(props.obj)}>
-            <ArrowForwardIcon sx={{ fontSize: '12px' }} />
-          </IconButton>
-          <IconButton title="Remove pin" size="small" onClick={() => handlePinRemove(props.obj)}>
+          <IconButton title="Remove obj" size="small" onClick={() => handleObjRemove(props.obj)}>
             <CloseIcon sx={{ fontSize: '12px' }} />
           </IconButton>
         </div>
       </div>
-      <PinListExpandComponent visible={isExpanded} pin={props.obj}></PinListExpandComponent>
+      <SnapshotListExpandComponent visible={isExpanded} obj={props.obj} />
     </div>
   );
 };

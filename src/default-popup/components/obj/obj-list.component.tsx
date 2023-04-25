@@ -20,8 +20,10 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { PageSnapshotRemoveCommand } from '../../../common/command/snapshot/page-snapshot-remove.command';
 import { PinListElement } from './pin-list-element.component';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
+import { SnapshotListElement } from './snapshot-list-element.component';
 
 interface PinListProps {
   objList: ObjDto<ObjPageDataDto>[];
@@ -31,12 +33,21 @@ interface PinListProps {
 export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, visibility }) => {
   const [reRender, setReRender] = useState(false);
 
-  const handleRemove = async (data: ObjDto<ObjPagePinDto>) => {
+  const handlePinRemove = async (data: ObjDto<ObjPagePinDto>) => {
     await new PinRemoveCommand(data).execute();
     await BrowserApi.sendTabMessage<number>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: data.id });
+    handleRemove(data.id);
+  };
+
+  const handleSnapshotRemove = async (data: ObjDto<ObjSnapshotDto>) => {
+    await new PageSnapshotRemoveCommand(data).execute();
+    handleRemove(data.id);
+  };
+
+  const handleRemove = (id: number) => {
     for (let i = 0; i < objList.length; i++) {
-      const pin = objList[i];
-      if (pin.id === data.id) {
+      const obj = objList[i];
+      if (obj.id === id) {
         objList.splice(i, 1);
         setReRender(!reRender);
         break;
@@ -50,15 +61,16 @@ export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, vis
     if (obj.type === ObjTypeDto.PageElementPin) {
       objs.push(
         <PinListElement
-          visibility={visibility}
           key={obj.id}
-          pin={obj as ObjDto<ObjPagePinDto>}
-          removeCallback={handleRemove}
+          visibility={visibility}
+          obj={obj as ObjDto<ObjPagePinDto>}
+          removeCallback={handlePinRemove}
         />
       );
-    } else if (obj.type === ObjTypeDto.PageElementSnapshot) {
-      const o = obj.data as ObjSnapshotDto;
-      objs.push(<div>{o.title}</div>);
+    } else if (obj.type === ObjTypeDto.PageElementSnapshot || obj.type === ObjTypeDto.PageSnapshot) {
+      objs.push(
+        <SnapshotListElement key={obj.id} obj={obj as ObjDto<ObjSnapshotDto>} removeCallback={handleSnapshotRemove} />
+      );
     }
   }
   return (
