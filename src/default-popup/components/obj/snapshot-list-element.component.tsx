@@ -14,15 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
 import { SnapshotListExpandComponent } from './snapshot-list-expand.component';
 import Typography from '@mui/material/Typography';
+import { WebOutlined } from '@mui/icons-material';
 
 interface SnapshotListElementProps {
   obj: ObjDto<ObjSnapshotDto>;
@@ -59,6 +61,9 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div style={{ color: '#777777' }}>
+            {props.obj.type === ObjTypeDto.PageElementSnapshot ? <SaveElementIcon /> : <WebOutlined />}
+          </div>
           <IconButton size="small" onClick={handlePopover}>
             {expandIcon}
           </IconButton>

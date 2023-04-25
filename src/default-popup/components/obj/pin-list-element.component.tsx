@@ -17,7 +17,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -25,9 +24,10 @@ import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinListExpandComponent } from './pin-list-expand.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -44,10 +44,12 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
   const handlePinGo = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
     data.local.visible = true;
     await new PinUpdateCommand(data).execute();
-    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, data);
 
-    await BrowserApi.sendTabMessage<void>({ type: BusMessageType.CONTENT_PIN_NAVIGATE });
-
+    if (PopupActiveTabStore.url?.href !== data.data.snapshot.url.href) {
+      await BrowserApi.setActiveTabUrl(data.data.snapshot.url.href);
+    } else {
+      await BrowserApi.sendTabMessage<ObjDto<ObjPagePinDto>>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
+    }
     window.close();
   };
 
@@ -92,6 +94,9 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div style={{ color: '#777777' }}>
+            <PushPinIcon />
+          </div>
           <IconButton size="small" onClick={handlePopover}>
             {expandIcon}
           </IconButton>

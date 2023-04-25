@@ -15,9 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 export class ObjectStoreKeys {
-  // PIN STATE
-  static readonly PIN_NAVIGATE = 'pin:navigate';
-
   // ID
   static readonly OBJECT_ID = 'o:id';
   static readonly CONTENT_ID = 'o:c:id';

@@ -76,7 +76,7 @@ export class ContentMessageHandler {
         DocumentMediator.stopListeners();
         break;
       case BusMessageType.CONTENT_PIN_NAVIGATE:
-        await new PinNavigateCommand().execute();
+        new PinNavigateCommand(msg.data).execute();
         break;
       case BusMessageType.CONTENT_PIN_REMOVE:
         PinStore.delByUid(msg.data);

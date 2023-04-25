@@ -63,6 +63,11 @@ export class BrowserApi {
     return tabs[0];
   };
 
+  static setActiveTabUrl = async (url: string): Promise<void> => {
+    const tab = await this.activeTab();
+    await this.browserApi.tabs.update(tab.id, { url });
+  };
+
   static get localStore(): BrowserLocalStore {
     return this.browserApi.storage.local;
   }

@@ -34,6 +34,7 @@ import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import WebOutlined from '@mui/icons-material/WebOutlined';
 
@@ -152,18 +153,5 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
         </ListItem>
       </List>
     </div>
-  );
-};
-
-const SaveElementIcon = () => {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="#777777" height="24" viewBox="0 0 24 24" width="24">
-      <g>
-        <path
-          d="M20,4H4C2.9,4,2.01,4.9,2.01,6L2,18c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6C22,4.9,21.1,4,20,4z
-                  M20,18l-3.5,0V9H20V18z"
-        />
-      </g>
-    </svg>
   );
 };

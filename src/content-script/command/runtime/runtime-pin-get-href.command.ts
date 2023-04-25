@@ -17,18 +17,16 @@
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { PinAddXpathCommand } from '../pin/pin-add-xpath.command';
 import { PinGetHrefCommand } from '../../../common/command/pin/pin-get-href.command';
-import { PinNavigateCommand } from '../pin/pin-navigate.command';
 import { PinStore } from '../../store/pin.store';
 import { UrlFactory } from '../../../common/factory/url.factory';
 
 export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const data = await new PinGetHrefCommand(UrlFactory.newUrl()).execute();
+    const url = UrlFactory.newUrl();
+    const data = await new PinGetHrefCommand(url).execute();
     PinStore.clear();
     for (const pin of data) {
       new PinAddXpathCommand(pin).execute();
     }
-    // Navigate possible if url was different
-    await new PinNavigateCommand().execute();
   }
 }

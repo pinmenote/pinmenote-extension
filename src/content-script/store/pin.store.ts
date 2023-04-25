@@ -62,6 +62,7 @@ export class PinStore {
 
   public static focusPin(obj: ObjDto<ObjPagePinDto>): void {
     const comp = this.getByUid(obj.id);
+    fnConsoleLog('PinStore->focusPin', comp);
     if (!comp) return;
     comp.focus(true);
   }

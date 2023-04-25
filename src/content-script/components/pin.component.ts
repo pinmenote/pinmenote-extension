@@ -37,6 +37,7 @@ import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
+import { scrollToElementFn } from '../fn/scroll-to-element.fn';
 
 export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly top = document.createElement('div');
@@ -98,7 +99,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   }
 
   focus(): void {
-    this.text.focus();
+    scrollToElementFn(this.refValue, this.refValue.getBoundingClientRect().height / 2);
+    this.handleMouseOver();
   }
 
   render(): void {
