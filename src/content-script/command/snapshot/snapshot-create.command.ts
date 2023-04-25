@@ -38,7 +38,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       contentId = await new SnapshotSaveImageCommand(this.element).execute();
     }
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
-    const title = this.element.innerText.split('.')[0] || document.title;
+    const title = this.element.innerText.substring(0, 100) || document.title;
     return {
       title,
       url: this.url,

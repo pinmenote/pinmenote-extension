@@ -16,6 +16,7 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
 import { EditBarParentButton } from './edit-bar-buttons/edit-bar-parent.button';
+import { EditBarSnapshotButton } from './edit-bar-buttons/edit-bar-snapshot.button';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
 import { applyStylesToElement } from '../../../common/style.utils';
@@ -36,9 +37,11 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
   private visible = false;
 
   private parentButton: EditBarParentButton;
+  private snapshotButton: EditBarSnapshotButton;
 
   constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
     this.parentButton = new EditBarParentButton(parent);
+    this.snapshotButton = new EditBarSnapshotButton(parent);
   }
 
   render(): HTMLElement {
@@ -47,6 +50,7 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
     this.adjustTop();
 
+    this.el.appendChild(this.snapshotButton.render());
     this.el.appendChild(this.parentButton.render());
 
     return this.el;
@@ -54,6 +58,7 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
 
   cleanup(): void {
     this.parentButton.cleanup();
+    this.snapshotButton.cleanup();
   }
 
   focusin(): void {
