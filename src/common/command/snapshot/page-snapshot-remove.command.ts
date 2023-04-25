@@ -16,6 +16,7 @@
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
+import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjRemoveSnapshotContentCommand } from '../obj/content/obj-remove-snapshot-content.command';
@@ -30,6 +31,8 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
     await BrowserStorageWrapper.remove(key);
 
     await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
+
+    await LinkHrefOriginStore.delHrefOriginId(this.obj.data.url, this.obj.id);
 
     await new ObjRemoveSnapshotContentCommand(this.obj.data, this.obj.id).execute();
   }
