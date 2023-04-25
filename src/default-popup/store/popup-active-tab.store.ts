@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ExtensionPopupInitData } from '../../common/model/obj-request.model';
 import { LogManager } from '../../common/popup/log.manager';
-import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
-import { PinGetHrefCommand } from '../../common/command/pin/pin-get-href.command';
-import { PinGetOriginCommand } from '../../common/command/pin/pin-get-origin.command';
+import { ObjGetHrefCommand } from '../../common/command/obj/url/obj-get-href.command';
+import { ObjGetOriginCommand } from '../../common/command/obj/url/obj-get-origin.command';
+import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
 
@@ -29,29 +28,14 @@ export class PopupActiveTabStore {
   private static urlValue?: ObjUrlDto;
   private static isError = false;
   private static extensionUrl = false;
-  private static isAddingNoteValue = false;
 
-  private static originPinsValue: ObjDto<ObjPagePinDto>[] = [];
-  private static hrefPinsValue: ObjDto<ObjPagePinDto>[] = [];
+  private static isAddingValue = false;
 
-  static get originPins(): ObjDto<ObjPagePinDto>[] {
-    return this.originPinsValue;
-  }
+  private static hrefData: any[] = [];
+  private static originData: any[] = [];
 
-  static set originPins(value: ObjDto<ObjPagePinDto>[]) {
-    this.originPinsValue = value;
-  }
-
-  static get hrefPins(): ObjDto<ObjPagePinDto>[] {
-    return this.hrefPinsValue;
-  }
-
-  static set hrefPins(value: ObjDto<ObjPagePinDto>[]) {
-    this.hrefPinsValue = value;
-  }
-
-  static get isAddingNote(): boolean {
-    return this.isAddingNoteValue;
+  static get isAdding(): boolean {
+    return this.isAddingValue;
   }
 
   static get url(): ObjUrlDto | undefined {
@@ -71,14 +55,14 @@ export class PopupActiveTabStore {
     if (tab.url) {
       const url = new URL(tab.url);
       this.urlValue = {
-        href: UrlFactory.normalizeHref(tab.url),
+        href: UrlFactory.normalizeHref(url.href),
         origin: UrlFactory.normalizeOrigin(url.origin),
         pathname: url.pathname,
         search: url.search
       };
       LogManager.log(`updateState URL : ${JSON.stringify(this.urlValue)}`);
-      PopupActiveTabStore.hrefPins = await new PinGetHrefCommand(this.urlValue).execute();
-      PopupActiveTabStore.originPins = await new PinGetOriginCommand(this.urlValue).execute();
+      this.hrefData = await new ObjGetHrefCommand(this.urlValue).execute();
+      this.originData = await new ObjGetOriginCommand(this.urlValue).execute();
       if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
         this.extensionUrl = true;
         this.isError = true;
@@ -90,11 +74,10 @@ export class PopupActiveTabStore {
   };
 
   static updateState = (initData?: ExtensionPopupInitData) => {
-    if (initData?.isAddingNote) {
-      // TODO fix this - use parent always
-      // Any true is valid because we can be inside iframe
-      this.isAddingNoteValue = true;
-      TinyEventDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_ADDING);
+    LogManager.log(`PopupActiveTabStore->INIT - ${JSON.stringify(initData || {})}`);
+    if (initData?.isAdding) {
+      this.isAddingValue = true;
+      TinyEventDispatcher.dispatch<void>(BusMessageType.POP_IS_ADDING);
     }
   };
 }

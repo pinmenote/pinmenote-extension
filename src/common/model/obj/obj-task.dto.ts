@@ -14,12 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjUrlDto } from './obj.dto';
 
-export enum ExtensionThemeDto {
-  LIGHT = 'light',
-  DARK = 'dark'
-}
-
-export interface ContentExtensionData {
-  theme: string;
+export interface ObjTaskDto {
+  title: string;
+  description: string;
+  url?: ObjUrlDto;
 }

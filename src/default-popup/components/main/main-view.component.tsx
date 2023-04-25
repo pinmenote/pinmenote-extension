@@ -18,12 +18,12 @@ import React, { FunctionComponent, ReactElement, useState } from 'react';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { DecryptComponent } from '../decrypt/decrypt.component';
 import { EncryptComponent } from '../encrypt/encrypt.component';
-import { MainCreateListComponent } from './main-create-list.component';
 import { MainFooterButton } from './main-footer.button';
 import { MainHeaderComponent } from './main-header.component';
+import { MainMenuListComponent } from './main-menu-list.component';
 import { MainViewEnum } from '../component-model';
 import { NoteComponent } from '../note/note.component';
-import { PinListViewComponent } from '../pins/pin-list-view.component';
+import { ObjListViewComponent } from '../obj/obj-list-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
 import { TaskComponent } from '../task/task.component';
 
@@ -33,9 +33,9 @@ const getViewComponent = (
 ): ReactElement | undefined => {
   switch (viewType) {
     case MainViewEnum.CREATE_LIST:
-      return <MainCreateListComponent closeListCallback={closeListCallback} />;
-    case MainViewEnum.PIN:
-      return <PinListViewComponent />;
+      return <MainMenuListComponent closeListCallback={closeListCallback} />;
+    case MainViewEnum.PAGE_OBJECTS:
+      return <ObjListViewComponent />;
     case MainViewEnum.ENCRYPT:
       return <EncryptComponent />;
     case MainViewEnum.DECRYPT:
@@ -52,8 +52,8 @@ const getViewComponent = (
 };
 
 export const MainViewComponent: FunctionComponent = () => {
-  const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PIN);
-  const [currentView, setCurrentView] = useState<MainViewEnum>(MainViewEnum.PIN);
+  const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
+  const [currentView, setCurrentView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
 
   const changeMainTab = (viewType: MainViewEnum) => {
     setPreviousView(currentView);

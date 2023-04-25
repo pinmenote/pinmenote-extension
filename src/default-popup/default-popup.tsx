@@ -19,7 +19,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { AccountTabComponent } from './components/tabs/account-tab.component';
 import Box from '@mui/material/Box';
 import { LogManager } from '../common/popup/log.manager';
@@ -58,6 +58,14 @@ const getCurrentPanel = (selectedPanel: PanelEnum): ReactElement | undefined => 
 
 const ExtensionPopupApp: React.FC = () => {
   const [selectedPanel, setSelectedPanel] = useState<PanelEnum>(PanelEnum.MAIN);
+
+  useEffect(() => {
+    LogManager.log('ExtensionPopupApp->init !!!');
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    (async () => {
+      await PopupMessageHandler.init();
+    })();
+  }, []);
 
   const handleChange = (event: React.SyntheticEvent, newValue: PanelEnum) => {
     setSelectedPanel(newValue);
@@ -100,15 +108,4 @@ const el = document.getElementById('root');
 if (el) {
   const root = createRoot(el);
   root.render(<ExtensionPopupApp />);
-}
-try {
-  PopupMessageHandler.init()
-    .then((ack: any) => {
-      LogManager.log(`FIREFOX SENDS EMPTY ACK :/!!! ${JSON.stringify(ack)}`);
-    })
-    .catch((e) => {
-      LogManager.log(`Error ${JSON.stringify(e)}`);
-    });
-} catch (e) {
-  LogManager.log(`Error ${JSON.stringify(e)}`);
 }

@@ -17,6 +17,7 @@
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
+import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
@@ -49,6 +50,8 @@ export class PageElementSnapshotAddCommand implements ICommand<Promise<void>> {
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
     await BrowserStorageWrapper.set(key, dto);
+
+    await LinkHrefOriginStore.addHrefOriginId(this.dto.url, id);
 
     await new ObjAddIdCommand(id, dt).execute();
   }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,19 @@ import { ObjUrlDto } from '../model/obj/obj.dto';
 
 export class LinkHrefOriginStore {
   private static PIN_HREF = 'pin:href';
-  private static PIN_ORIGIN = 'pin:origin';
+  private static OBJ_HREF = 'obj:href';
+  private static OBJ_ORIGIN = 'obj:origin';
 
   static async addHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
     const hrefIds = await this.hrefIds(url.href);
     hrefIds.push(id);
-    await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, hrefIds);
+    await BrowserStorageWrapper.set(`${this.OBJ_HREF}:${url.href}`, hrefIds);
+
     // Update origin
     const originIds = await this.originIds(url.origin);
     originIds.push(id);
-    await BrowserStorageWrapper.set(`${this.PIN_ORIGIN}:${url.origin}`, originIds);
+    await BrowserStorageWrapper.set(`${this.OBJ_ORIGIN}:${url.origin}`, originIds);
   }
 
   static async delHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
@@ -37,28 +39,50 @@ export class LinkHrefOriginStore {
     const hrefIds = await this.hrefIds(url.href);
     const newHref = hrefIds.filter((i) => i !== id);
     if (newHref.length === 0) {
-      await BrowserStorageWrapper.remove(`${this.PIN_HREF}:${url.href}`);
+      await BrowserStorageWrapper.remove(`${this.OBJ_HREF}:${url.href}`);
     } else {
-      await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, newHref);
+      await BrowserStorageWrapper.set(`${this.OBJ_HREF}:${url.href}`, newHref);
     }
     // Update origin
     const originIds = await this.originIds(url.origin);
     const newOrigin = originIds.filter((i) => i !== id);
     if (newOrigin.length === 0) {
-      await BrowserStorageWrapper.remove(`${this.PIN_ORIGIN}:${url.origin}`);
+      await BrowserStorageWrapper.remove(`${this.OBJ_ORIGIN}:${url.origin}`);
     } else {
-      await BrowserStorageWrapper.set(`${this.PIN_ORIGIN}:${url.origin}`, newOrigin);
+      await BrowserStorageWrapper.set(`${this.OBJ_ORIGIN}:${url.origin}`, newOrigin);
     }
   }
 
   static async hrefIds(url: string): Promise<number[]> {
-    const key = `${this.PIN_HREF}:${url}`;
+    const key = `${this.OBJ_HREF}:${url}`;
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
   }
 
   static async originIds(url: string): Promise<number[]> {
-    const key = `${this.PIN_ORIGIN}:${url}`;
+    const key = `${this.OBJ_ORIGIN}:${url}`;
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    return value || [];
+  }
+
+  static async pinAdd(url: ObjUrlDto, id: number): Promise<void> {
+    const hrefIds = await this.pinIds(url.href);
+    hrefIds.push(id);
+    await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, hrefIds);
+  }
+
+  static async pinDel(url: ObjUrlDto, id: number): Promise<void> {
+    const hrefIds = await this.pinIds(url.href);
+    const newHref = hrefIds.filter((i) => i !== id);
+    if (newHref.length === 0) {
+      await BrowserStorageWrapper.remove(`${this.PIN_HREF}:${url.href}`);
+    } else {
+      await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, newHref);
+    }
+  }
+
+  static async pinIds(url: string): Promise<number[]> {
+    const key = `${this.PIN_HREF}:${url}`;
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
   }

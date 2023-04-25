@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,18 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
 
 export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>[]>> {
-  constructor(private data: ObjUrlDto, private filterVisible = false) {}
+  constructor(private data: ObjUrlDto) {}
 
   async execute(): Promise<ObjDto<ObjPagePinDto>[]> {
-    const pinIds = (await LinkHrefOriginStore.hrefIds(this.data.href)).reverse();
-    fnConsoleLog('WorkerPinManager->pinGetHref', this.data.href, 'ids->', pinIds);
-    // await this.test();
+    const pinIds = (await LinkHrefOriginStore.pinIds(this.data.href)).reverse();
+    fnConsoleLog('PinGetHrefCommand->execute', this.data.href, 'ids->', pinIds);
     const out: ObjDto<ObjPagePinDto>[] = [];
+
     for (const id of pinIds) {
       const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
       const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
       // TODO revisit visible flag in pin.manager.ts in content scripts
-      if (this.filterVisible && !obj.local?.visible) continue;
+      if (!obj.local?.visible) continue;
       out.push(obj);
     }
     return out;

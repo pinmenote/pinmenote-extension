@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import { UrlFactory } from '../../../common/factory/url.factory';
 
 export class RuntimePinGetHrefCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const data = await new PinGetHrefCommand(UrlFactory.newUrl(), true).execute();
+    const data = await new PinGetHrefCommand(UrlFactory.newUrl()).execute();
     PinStore.clear();
     for (const pin of data) {
       new PinAddXpathCommand(pin).execute();

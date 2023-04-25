@@ -41,7 +41,7 @@ export class OptionsMessageHandler {
   private static handlePopupOpen = async (): Promise<void> => {
     await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({
       type: BusMessageType.POPUP_INIT,
-      data: { isAddingNote: false }
+      data: { isAdding: false }
     });
   };
 }

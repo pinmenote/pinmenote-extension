@@ -34,9 +34,8 @@ export enum BusMessageType {
   OPT_SHOW_HTML = 'opt.show.html',
   // Internal popup
   POP_CONSOLE_LOG = 'pop.console.log',
-  POP_PIN_REMOVE = 'pop.pin.remove',
+  POP_IS_ADDING = 'pop.is.adding',
   POP_UPDATE_URL = 'pop.update.url',
-  POP_UPDATE_ADDING = 'pop.update.adding',
   // Ack
   CONTENT_ACK = 'content.ack',
   POPUP_ACK = 'popup.ack',

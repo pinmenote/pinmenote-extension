@@ -1,6 +1,6 @@
 /*
  * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
- * Copyright (c) 2022 Michal Szczepanski.
+ * Copyright (c) 2023 Michal Szczepanski.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -40,17 +40,12 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
 
     for (let i = 0; i < data.ids.length; i++) {
       const key = `${ObjectStoreKeys.OBJECT_ID}:${data.ids[i]}`;
-      const obj = await BrowserStorageWrapper.get<ObjDto<ObjDataDto>>(key);
+      const obj = await BrowserStorageWrapper.get<ObjDto>(key);
       out.push(obj);
     }
     return {
       listId: data.listId,
       data: out
     };
-  }
-
-  private async getListId(): Promise<number> {
-    const value = await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
-    return value || 1;
   }
 }

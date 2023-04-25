@@ -95,7 +95,7 @@ export class ContentMessageHandler {
 
   private static handlePopupOpen = async (): Promise<void> => {
     const data: ExtensionPopupInitData = {
-      isAddingNote: !!PinAddFactory.currentElement
+      isAdding: !!PinAddFactory.currentElement
     };
     fnConsoleLog('ContentMessageHandler->handlePopupOpen', data);
     await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({ type: BusMessageType.POPUP_INIT, data });

@@ -29,7 +29,9 @@ export class PinRemoveCommand implements ICommand<void> {
   async execute(): Promise<void> {
     fnConsoleLog('WorkerPinManager->pinRemove', this.obj);
     await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
+
     await LinkHrefOriginStore.delHrefOriginId(this.obj.data.snapshot.url, this.obj.id);
+    await LinkHrefOriginStore.pinDel(this.obj.data.snapshot.url, this.obj.id);
 
     await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
 

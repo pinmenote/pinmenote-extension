@@ -27,10 +27,7 @@ import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { PinElementExpandComponent } from './pin-element-expand.component';
-import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
-import RemoveMarkdown from 'remove-markdown';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -38,11 +35,12 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 interface PinListElementProps {
   pin: ObjDto<ObjPagePinDto>;
   visibility: boolean;
+  removeCallback: (pin: ObjDto<ObjPagePinDto>) => void;
 }
 
-export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, visibility }) => {
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(pin.local?.visible);
+export const PinListElement: FunctionComponent<PinListElementProps> = (props) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isVisible, setIsVisible] = useState(props.pin.local?.visible);
   const handlePinGo = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
     data.local.visible = true;
     await new PinUpdateCommand(data).execute();
@@ -59,34 +57,32 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
     setIsVisible(data.local.visible);
   };
 
-  const handlePinRemove = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
-    await new PinRemoveCommand(data).execute();
-    await BrowserApi.sendTabMessage<number>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: data.id });
-    TinyEventDispatcher.dispatch(BusMessageType.POP_PIN_REMOVE, data);
+  const handlePinRemove = (data: ObjDto<ObjPagePinDto>): void => {
+    props.removeCallback(data);
   };
 
   const handlePopover = (): void => {
-    setIsPopoverOpen(!isPopoverOpen);
+    setIsExpanded(!isExpanded);
   };
 
-  const expandIcon = isPopoverOpen ? (
+  const expandIcon = isExpanded ? (
     <ExpandMoreIcon sx={{ fontSize: '12px' }} />
   ) : (
     <NavigateNextIcon sx={{ fontSize: '12px' }} />
   );
 
-  const visibleIcon = visibility ? (
-    <IconButton size="small" onClick={() => handlePinVisible(pin)}>
+  const visibleIcon = props.visibility ? (
+    <IconButton size="small" onClick={() => handlePinVisible(props.pin)}>
       {isVisible ? <VisibilityIcon sx={{ fontSize: '12px' }} /> : <VisibilityOffIcon sx={{ fontSize: '12px' }} />}
     </IconButton>
   ) : (
     ''
   );
-  const value = RemoveMarkdown(pin.data.value);
+  const value = props.pin.data.snapshot.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (
-    <div key={pin.id} style={{ width: '100%', marginBottom: 15 }}>
+    <div key={props.pin.id} style={{ width: '100%', marginBottom: 15 }}>
       <div
         style={{
           display: 'flex',
@@ -113,15 +109,15 @@ export const PinListElement: FunctionComponent<PinListElementProps> = ({ pin, vi
           }}
         >
           {visibleIcon}
-          <IconButton title="Go to pin" size="small" onClick={() => handlePinGo(pin)}>
+          <IconButton title="Go to pin" size="small" onClick={() => handlePinGo(props.pin)}>
             <ArrowForwardIcon sx={{ fontSize: '12px' }} />
           </IconButton>
-          <IconButton title="Remove pin" size="small" onClick={() => handlePinRemove(pin)}>
+          <IconButton title="Remove pin" size="small" onClick={() => handlePinRemove(props.pin)}>
             <CloseIcon sx={{ fontSize: '12px' }} />
           </IconButton>
         </div>
       </div>
-      <PinElementExpandComponent visible={isPopoverOpen} pin={pin}></PinElementExpandComponent>
+      <PinElementExpandComponent visible={isExpanded} pin={props.pin}></PinElementExpandComponent>
     </div>
   );
 };

@@ -37,6 +37,7 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
+    LogManager.log(`AccountDetailsComponent init`);
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
     }

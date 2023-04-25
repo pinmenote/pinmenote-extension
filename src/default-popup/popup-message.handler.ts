@@ -17,7 +17,6 @@
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
-import { LogManager } from '../common/popup/log.manager';
 import { PopupActiveTabStore } from './store/popup-active-tab.store';
 import { PopupTokenStore } from './store/popup-token.store';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
@@ -30,14 +29,13 @@ export class PopupMessageHandler {
 
     await PopupTokenStore.init();
 
-    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_OPEN });
-
     this.popupInitListener();
+
+    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_OPEN });
   }
 
   private static popupInitListener(): void {
     TinyEventDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
-      LogManager.log(`!!! INIT - ${event} ${JSON.stringify(value || {})}`);
       PopupActiveTabStore.updateState(value);
     });
   }

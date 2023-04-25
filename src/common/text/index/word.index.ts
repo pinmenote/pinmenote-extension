@@ -77,9 +77,11 @@ export class WordIndex {
     await BrowserStorageWrapper.set<number[]>(key, arr);
   };
 
-  private static saveWord = async (word: string) => {
+  private static saveWord = async (word: string): Promise<void> => {
     if (word.length < 3) return;
     const start = word.substring(0, 2);
+    await this.saveStartIndex(start);
+
     const key = `${ObjectStoreKeys.SEARCH_WORD}:${start}`;
     let arr = await BrowserStorageWrapper.get<string[]>(key);
     if (arr) {
@@ -106,5 +108,18 @@ export class WordIndex {
     } else {
       await BrowserStorageWrapper.set<string[]>(key, arr);
     }
+  };
+
+  private static saveStartIndex = async (start: string): Promise<void> => {
+    const key = `${ObjectStoreKeys.SEARCH_START}`;
+    let arr = await BrowserStorageWrapper.get<string[]>(key);
+    if (arr) {
+      const idx = arr.indexOf(start);
+      if (idx !== -1) return;
+      arr.push(start);
+    } else {
+      arr = [start];
+    }
+    await BrowserStorageWrapper.set<string[]>(key, arr);
   };
 }

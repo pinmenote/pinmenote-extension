@@ -32,16 +32,13 @@ export const EncryptMessageComponent: FunctionComponent<EncryptMessageComponentP
   const [usernameList, setUsernameList] = useState<string[]>([]);
   const [message, setMessage] = useState<string>(props.message.message);
 
-  const reloadList = async () => {
-    const list = await CryptoStore.getUsernameKeyList();
-    setUsernameList(list);
-  };
-
   useEffect(() => {
-    setTimeout(async () => {
-      await reloadList();
-    }, 0);
-  });
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    (async () => {
+      const list = await CryptoStore.getUsernameKeyList();
+      setUsernameList(list);
+    })();
+  }, []);
 
   const handleUsernameChange = (e: React.SyntheticEvent, value: string | null) => {
     if (value) setUsername(value);

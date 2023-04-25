@@ -17,6 +17,7 @@
 import { ObjNoteDto } from './obj-note.dto';
 import { ObjPagePinDto } from './obj-pin.dto';
 import { ObjSnapshotDto } from './obj-snapshot.dto';
+import { ObjTaskDto } from './obj-task.dto';
 
 export const OBJ_DTO_VERSION = 1;
 
@@ -46,6 +47,7 @@ export enum ObjTypeDto {
 }
 
 export type ObjDataDto = ObjPagePinDto | ObjSnapshotDto | ObjNoteDto;
+export type ObjPageDataDto = ObjPagePinDto | ObjSnapshotDto | ObjNoteDto | ObjTaskDto;
 
 export interface ObjDto<T = ObjDataDto> {
   id: number;

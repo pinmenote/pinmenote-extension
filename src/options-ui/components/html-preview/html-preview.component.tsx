@@ -148,7 +148,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       sizeRef.current.innerHTML = `${fnByteToMb(size)} MB`;
     }
     if (titleRef.current) {
-      titleRef.current.innerText = s.title;
+      titleRef.current.innerHTML = s.title;
     }
     if (urlRef.current) {
       urlRef.current.innerHTML = `<a href="${s.url.href}">${s.url.href}</a>`;

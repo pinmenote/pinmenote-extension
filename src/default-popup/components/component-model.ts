@@ -16,7 +16,7 @@
  */
 export enum MainViewEnum {
   CREATE_LIST = 1,
-  PIN,
+  PAGE_OBJECTS,
   TASK,
   NOTE,
   ENCRYPT,

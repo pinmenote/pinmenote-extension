@@ -51,14 +51,14 @@ enum IsLoadingType {
   PageSave
 }
 
-export const MainCreateListComponent: FunctionComponent<CreateListProps> = (props) => {
+export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props) => {
   const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
 
   const handleSavePageClick = async () => {
     TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
       TinyEventDispatcher.removeListener(event, key);
       setIsLoading(IsLoadingType.None);
-      setTimeout(() => props.closeListCallback(MainViewEnum.PIN), 100);
+      setTimeout(() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS), 100);
     });
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
     setIsLoading(IsLoadingType.PageSave);
@@ -73,7 +73,7 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
         type: ObjTypeDto.PageElementSnapshot
       }
     });
-    props.closeListCallback(MainViewEnum.PIN);
+    props.closeListCallback(MainViewEnum.PAGE_OBJECTS);
     window.close();
   };
 
@@ -95,11 +95,11 @@ export const MainCreateListComponent: FunctionComponent<CreateListProps> = (prop
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
-          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.PIN)}>
+          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS)}>
             <ListItemIcon>
               <PushPinIcon />
             </ListItemIcon>
-            <ListItemText primary="Show Pins" />
+            <ListItemText primary="Show Page Objects" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>

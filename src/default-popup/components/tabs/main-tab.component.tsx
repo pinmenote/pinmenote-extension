@@ -31,7 +31,7 @@ export const MainTabComponent: FunctionComponent = () => {
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
-  });
+  }, []);
 
   return (
     <div style={{ marginTop: 10, height: '100%' }}>

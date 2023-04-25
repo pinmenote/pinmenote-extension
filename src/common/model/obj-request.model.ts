@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto, ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
+import { ObjDto, ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
 
 export interface ObjIdRangeResponse {
   ids: number[];
@@ -30,7 +30,7 @@ export interface ObjRangeRequest {
 
 export interface ObjRangeResponse {
   listId: number;
-  data: ObjDto<ObjDataDto>[];
+  data: ObjDto[];
 }
 
 export interface PopupPinStartRequest {
@@ -47,5 +47,5 @@ export interface FetchImageRequest {
 }
 
 export interface ExtensionPopupInitData {
-  isAddingNote: boolean;
+  isAdding: boolean;
 }
