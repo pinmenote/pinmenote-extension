@@ -23,7 +23,7 @@ import { MainHeaderComponent } from './main-header.component';
 import { MainMenuListComponent } from './main-menu-list.component';
 import { MainViewEnum } from '../component-model';
 import { NoteComponent } from '../note/note.component';
-import { ObjListViewComponent } from '../obj/obj-list-view.component';
+import { ObjViewComponent } from '../obj/obj-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
 import { TaskComponent } from '../task/task.component';
 
@@ -35,7 +35,7 @@ const getViewComponent = (
     case MainViewEnum.CREATE_LIST:
       return <MainMenuListComponent closeListCallback={closeListCallback} />;
     case MainViewEnum.PAGE_OBJECTS:
-      return <ObjListViewComponent />;
+      return <ObjViewComponent />;
     case MainViewEnum.ENCRYPT:
       return <EncryptComponent />;
     case MainViewEnum.DECRYPT:

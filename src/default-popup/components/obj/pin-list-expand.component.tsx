@@ -23,7 +23,7 @@ interface PinExpandProps {
   pin: ObjDto<ObjPagePinDto>;
 }
 
-export const PinElementExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, visible }) => {
+export const PinListExpandComponent: FunctionComponent<PinExpandProps> = ({ pin, visible }) => {
   const ref = useRef<HTMLDivElement>(null);
   const img = new Image();
 

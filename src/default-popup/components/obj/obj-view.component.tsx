@@ -24,7 +24,7 @@ import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
-export const ObjListViewComponent: FunctionComponent = () => {
+export const ObjViewComponent: FunctionComponent = () => {
   const [originObjs, setOriginObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
   const [hrefObjs, setHrefObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
 

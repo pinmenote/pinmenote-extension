@@ -26,7 +26,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { PinElementExpandComponent } from './pin-element-expand.component';
+import { PinListExpandComponent } from './pin-list-expand.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -117,7 +117,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
           </IconButton>
         </div>
       </div>
-      <PinElementExpandComponent visible={isExpanded} pin={props.pin}></PinElementExpandComponent>
+      <PinListExpandComponent visible={isExpanded} pin={props.pin}></PinListExpandComponent>
     </div>
   );
 };
