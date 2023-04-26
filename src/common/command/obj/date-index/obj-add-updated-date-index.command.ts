@@ -27,9 +27,10 @@ export class ObjAddUpdatedDateIndexCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);
-    ids.push(this.id);
-
-    await BrowserStorageWrapper.set(key, ids);
+    if (ids.indexOf(this.id) === -1) {
+      ids.push(this.id);
+      await BrowserStorageWrapper.set(key, ids);
+    }
   }
 
   private async getList(key: string): Promise<number[]> {

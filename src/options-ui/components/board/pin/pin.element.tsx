@@ -14,17 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useEffect, useRef } from 'react';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
+import EditIcon from '@mui/icons-material/Edit';
 import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
+import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
+import { TitleEditComponent } from '../edit/title-edit.component';
 import Typography from '@mui/material/Typography';
 
 interface PinElementParams {
@@ -33,6 +36,7 @@ interface PinElementParams {
 }
 
 export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBoardCallback }) => {
+  const [editTitle, setEditTitle] = useState<boolean>(false);
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,6 +48,10 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
     }
   });
 
+  const handleEdit = () => {
+    setEditTitle(true);
+  };
+
   const handleHtml = () => {
     TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data.snapshot);
   };
@@ -54,16 +62,43 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
     }
   };
 
+  const titleSaveCallback = async (value: string) => {
+    if (dto.data.snapshot.title !== value) {
+      dto.data.snapshot.title = value;
+      dto.updatedAt = Date.now();
+      await new PinUpdateCommand(dto).execute();
+    }
+    setEditTitle(false);
+  };
+
+  const titleCancelCallback = () => {
+    setEditTitle(false);
+  };
+
   const title =
     dto.data.snapshot.title.length > 50 ? `${dto.data.snapshot.title.substring(0, 50)}...` : dto.data.snapshot.title;
   const url =
     decodeURI(dto.data.snapshot.url.href).length > 50
       ? decodeURI(dto.data.snapshot.url.href).substring(0, 50)
       : decodeURI(dto.data.snapshot.url.href);
+  const titleElement = editTitle ? (
+    <TitleEditComponent
+      value={dto.data.snapshot.title}
+      saveCallback={titleSaveCallback}
+      cancelCallback={titleCancelCallback}
+    />
+  ) : (
+    <h2 style={{ wordWrap: 'break-word', width: '80%' }}>{title}</h2>
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 4, margin: 10 }}>
-      <h2 style={{ wordWrap: 'break-word' }}>{title}</h2>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        {titleElement}
+        <IconButton onClick={handleEdit} style={{ display: editTitle ? 'none' : 'inline-block' }}>
+          <EditIcon />
+        </IconButton>
+      </div>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <IconButton title="HTML view" onClick={handleHtml}>
           <HtmlIcon />

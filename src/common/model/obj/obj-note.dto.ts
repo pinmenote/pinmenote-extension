@@ -20,4 +20,6 @@ export interface ObjNoteDto {
   title: string;
   value: string;
   url?: ObjUrlDto;
+  words: string[];
+  hashtags: string[];
 }

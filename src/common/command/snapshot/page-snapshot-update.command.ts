@@ -18,14 +18,15 @@ import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjAddUpdatedDateIndexCommand } from '../obj/date-index/obj-add-updated-date-index.command';
 import { ObjDto } from '../../model/obj/obj.dto';
-import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
+import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
 
-export class PinUpdateCommand implements ICommand<void> {
-  constructor(private obj: ObjDto<ObjPagePinDto>) {}
+export class PageSnapshotUpdateCommand implements ICommand<Promise<void>> {
+  constructor(private obj: ObjDto<ObjSnapshotDto>) {}
+
   async execute(): Promise<void> {
-    fnConsoleLog('PinUpdateCommand->execute', this.obj);
+    fnConsoleLog('PageSnapshotUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
 
     await new ObjAddUpdatedDateIndexCommand(this.obj.id, this.obj.updatedAt).execute();

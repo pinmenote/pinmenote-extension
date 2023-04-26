@@ -20,4 +20,6 @@ export interface ObjTaskDto {
   title: string;
   description: string;
   url?: ObjUrlDto;
+  words: string[];
+  hashtags: string[];
 }
