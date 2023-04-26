@@ -69,7 +69,13 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
           format
         </Typography>
-        <Select label="format" value={screenshotFormat} onChange={handleScreenshotFormat} style={{ width: 300 }}>
+        <Select
+          size="small"
+          label="format"
+          value={screenshotFormat}
+          onChange={handleScreenshotFormat}
+          style={{ width: 300 }}
+        >
           <MenuItem value="jpeg">JPEG</MenuItem>
           <MenuItem value="png">PNG</MenuItem>
         </Select>

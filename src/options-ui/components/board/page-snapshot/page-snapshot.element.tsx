@@ -17,7 +17,9 @@
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import { BusMessageType } from '../../../../common/model/bus.model';
-import Button from '@mui/material/Button';
+import ClearIcon from '@mui/icons-material/Clear';
+import HtmlIcon from '@mui/icons-material/Html';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
@@ -35,7 +37,7 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   useEffect(() => {
     if (divRef.current && !divRef.current?.firstChild && dto.data.screenshot) {
       const img = new Image();
-      img.width = window.innerWidth / 3;
+      img.width = window.innerWidth / 4;
       img.src = dto.data.screenshot;
       divRef.current.appendChild(img);
     }
@@ -51,18 +53,28 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
     }
   };
 
+  const title = dto.data.title.length > 50 ? `${dto.data.title.substring(0, 50)}...` : dto.data.title;
+  const url =
+    decodeURI(dto.data.url.href).length > 50
+      ? decodeURI(dto.data.url.href).substring(0, 50)
+      : decodeURI(dto.data.url.href);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 3, margin: 10 }}>
-      <h1>{dto.data.title}</h1>
-      <div>
-        <Button onClick={handleHtml}>HTML</Button>
-        <Button onClick={handleRemove}>Remove</Button>
+    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 4, margin: 10 }}>
+      <h2 style={{ wordWrap: 'break-word' }}>{title}</h2>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <IconButton title="HTML view" onClick={handleHtml}>
+          <HtmlIcon />
+        </IconButton>
+        <IconButton title="Remove" onClick={handleRemove}>
+          <ClearIcon />
+        </IconButton>
       </div>
-      <Link target="_blank" href={dto.data.url.href}>
-        <Typography sx={{ fontSize: '0.9em' }}>{decodeURI(dto.data.url.href)}</Typography>
-      </Link>
       <div ref={divRef}></div>
-      <p>snapshot {dto.createdAt}</p>
+      <Link target="_blank" href={dto.data.url.href}>
+        <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
+      </Link>
+      <p>page snapshot {dto.createdAt}</p>
     </div>
   );
 };

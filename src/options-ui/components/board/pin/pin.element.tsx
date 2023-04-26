@@ -16,21 +16,16 @@
  */
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { BoardStore } from '../../../store/board.store';
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
+import ClearIcon from '@mui/icons-material/Clear';
+import HtmlIcon from '@mui/icons-material/Html';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
-import { fnDateFormat } from '../../../../common/fn/date.format.fn';
 
 interface PinElementParams {
   dto: ObjDto<ObjPagePinDto>;
@@ -43,19 +38,11 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
   useEffect(() => {
     if (divRef.current && !divRef.current?.firstChild && dto.data.snapshot.screenshot) {
       const img = new Image();
-      img.width = window.innerWidth / 3;
+      img.width = window.innerWidth / 4;
       img.src = dto.data.snapshot.screenshot;
       divRef.current.appendChild(img);
     }
   });
-
-  const formatPinDate = (isoDt: number): string => {
-    return fnDateFormat(new Date(isoDt));
-  };
-
-  const handleUrlClick = async () => {
-    await BrowserStorageWrapper.set(ObjectStoreKeys.PIN_NAVIGATE, dto);
-  };
 
   const handleHtml = () => {
     TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data.snapshot);
@@ -67,26 +54,29 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
     }
   };
 
+  const title =
+    dto.data.snapshot.title.length > 50 ? `${dto.data.snapshot.title.substring(0, 50)}...` : dto.data.snapshot.title;
+  const url =
+    decodeURI(dto.data.snapshot.url.href).length > 50
+      ? decodeURI(dto.data.snapshot.url.href).substring(0, 50)
+      : decodeURI(dto.data.snapshot.url.href);
+
   return (
-    <Card variant="outlined" style={{ margin: 5 }}>
-      <CardHeader title={dto.data.snapshot.title} subheader={formatPinDate(dto.createdAt)} />
-      <CardContent>
-        <div>
-          <Button onClick={handleHtml}>HTML</Button>
-          <Button onClick={handleRemove}>Remove</Button>
-        </div>
-        <div style={{ overflow: 'auto', maxHeight: window.innerHeight, maxWidth: window.innerWidth - 350 }}>
-          <div ref={divRef}></div>
-        </div>
-      </CardContent>
-      <CardActions>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography sx={{ fontSize: '1.1em' }}>{dto.data.snapshot.title}</Typography>
-          <Link target="_blank" href={dto.data.snapshot.url.href} onClick={() => handleUrlClick()}>
-            <Typography sx={{ fontSize: '0.9em' }}>{dto.data.snapshot.url.origin}</Typography>
-          </Link>
-        </div>
-      </CardActions>
-    </Card>
+    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 4, margin: 10 }}>
+      <h2 style={{ wordWrap: 'break-word' }}>{title}</h2>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <IconButton title="HTML view" onClick={handleHtml}>
+          <HtmlIcon />
+        </IconButton>
+        <IconButton title="Remove" onClick={handleRemove}>
+          <ClearIcon />
+        </IconButton>
+      </div>
+      <div ref={divRef}></div>
+      <Link target="_blank" href={dto.data.snapshot.url.href}>
+        <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
+      </Link>
+      <p>page pin {dto.createdAt}</p>
+    </div>
   );
 };
