@@ -37,7 +37,6 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
       css: {
         css: []
       },
-      video: [],
       content: []
     });
     return id;

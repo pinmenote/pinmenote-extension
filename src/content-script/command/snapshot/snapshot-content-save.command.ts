@@ -14,19 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjSnapshotContentDto, ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextContentIdCommand } from '../../../common/command/obj/content/obj-next-content-id.command';
-import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 interface SnapshotResult {
   id: number;
   words: string[];
+  video: ObjVideoDataDto[];
 }
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
@@ -59,10 +60,9 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
       html,
       htmlAttr,
       css,
-      video: htmlContent.video,
       content: htmlContent.content
     });
 
-    return { id, words };
+    return { id, words, video: htmlContent.video };
   }
 }

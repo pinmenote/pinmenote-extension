@@ -32,6 +32,7 @@ export interface ObjSnapshotDto {
   screenshot?: string;
   contentId: number;
   canvas?: ObjCanvasDto;
+  video?: ObjVideoDataDto[];
 }
 
 export interface ObjVideoDataDto {
@@ -46,5 +47,4 @@ export interface ObjSnapshotContentDto {
   htmlAttr: string;
   css: CssStyleListDto;
   content: ObjContentDto[];
-  video?: ObjVideoDataDto[];
 }

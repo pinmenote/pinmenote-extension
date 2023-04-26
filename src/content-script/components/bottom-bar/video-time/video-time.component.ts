@@ -14,9 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjSnapshotContentDto, ObjSnapshotDto, ObjVideoDataDto } from '../../../../common/model/obj/obj-snapshot.dto';
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { ObjSnapshotDto, ObjVideoDataDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { XpathFactory } from '../../../../common/factory/xpath.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnVideoSecondsTime } from '../../../../common/fn/date.fn';
@@ -37,23 +35,12 @@ const titleStyle = {
 
 export class VideoTimeComponent {
   private el = document.createElement('div');
-  private video?: ObjVideoDataDto;
+  private readonly video?: ObjVideoDataDto;
 
   constructor(private snapshot: ObjSnapshotDto) {
-    this.fetchSnapshot();
-  }
-
-  private fetchSnapshot() {
-    const key = `${ObjectStoreKeys.CONTENT_ID}:${this.snapshot.contentId}`;
-    BrowserStorageWrapper.get<ObjSnapshotContentDto>(key)
-      .then((content) => {
-        if (!content.video || content.video.length === 0) return;
-        this.video = content.video[0];
-        this.renderVideo();
-      })
-      .catch(() => {
-        /* IGNORE */
-      });
+    if (snapshot.video) {
+      this.video = snapshot.video[0];
+    }
   }
 
   renderVideo = () => {
