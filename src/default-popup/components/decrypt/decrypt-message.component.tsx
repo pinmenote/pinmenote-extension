@@ -50,7 +50,9 @@ export const DecryptMessageComponent: FunctionComponent<DecryptMessageComponentP
 
   return (
     <div>
-      <Typography fontSize="2em">Decrypt</Typography>
+      <Typography fontSize="1.5em" fontWeight="bold" style={{ marginTop: 10, marginBottom: 10 }}>
+        Decrypt
+      </Typography>
       <div>
         <TextareaAutosize
           value={message}
@@ -66,7 +68,7 @@ export const DecryptMessageComponent: FunctionComponent<DecryptMessageComponentP
           <Typography>Check signature</Typography>
           <Checkbox checked={checked} onChange={handleCheckSignatureChange} />
         </div>
-        <Button variant="outlined" onClick={handleDecrypt}>
+        <Button variant="outlined" onClick={handleDecrypt} style={{ marginTop: 10 }}>
           Decrypt
         </Button>
       </div>

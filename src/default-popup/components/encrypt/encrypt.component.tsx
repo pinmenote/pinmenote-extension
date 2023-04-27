@@ -17,13 +17,15 @@
 import React, { useState } from 'react';
 import { CryptoEncryptCommand } from '../../../common/command/crypto/crypto-encrypt.command';
 import { CryptoStore } from '../../../common/store/crypto.store';
+import { EncryptAddKeyComponent } from './encrypt-add-key.component';
 import { EncryptMessage } from '../component-model';
 import { EncryptMessageComponent } from './encrypt-message.component';
 import { EncryptedValueComponent } from './encrypted-value.component';
 
 enum ComponentState {
   ENCRYPT_MESSAGE = 'ENCRYPT_MESSAGE',
-  ENCRYPTED_VALUE = 'ENCRYPTED_VALUE'
+  ENCRYPTED_VALUE = 'ENCRYPTED_VALUE',
+  ADD_KEY = 'ADD_KEY'
 }
 
 export const EncryptComponent = () => {
@@ -37,8 +39,12 @@ export const EncryptComponent = () => {
     setState(ComponentState.ENCRYPTED_VALUE);
   };
 
-  const handleBackToMessage = () => {
+  const setEncryptMessageState = () => {
     setState(ComponentState.ENCRYPT_MESSAGE);
+  };
+
+  const handleNewKey = () => {
+    setState(ComponentState.ADD_KEY);
   };
 
   const encryptMessage = async (data: EncryptMessage) => {
@@ -53,14 +59,18 @@ export const EncryptComponent = () => {
     }
   };
 
-  return (
-    <div>
-      <div style={{ display: state == ComponentState.ENCRYPT_MESSAGE ? 'inline-block' : 'none' }}>
-        <EncryptMessageComponent message={message} encryptCallback={handleEncrypt} />
-      </div>
-      <div style={{ display: state == ComponentState.ENCRYPTED_VALUE ? 'inline-block' : 'none' }}>
-        <EncryptedValueComponent backToMessageCallback={handleBackToMessage} message={encryptedMessage} />
-      </div>
-    </div>
-  );
+  const getComponent = (state: ComponentState) => {
+    switch (state) {
+      case ComponentState.ENCRYPT_MESSAGE:
+        return <EncryptMessageComponent message={message} encryptCallback={handleEncrypt} addCallback={handleNewKey} />;
+      case ComponentState.ENCRYPTED_VALUE:
+        return <EncryptedValueComponent backToMessageCallback={setEncryptMessageState} message={encryptedMessage} />;
+      case ComponentState.ADD_KEY:
+        return <EncryptAddKeyComponent hideComponent={setEncryptMessageState} />;
+    }
+  };
+
+  const component = getComponent(state);
+
+  return <div>{component}</div>;
 };

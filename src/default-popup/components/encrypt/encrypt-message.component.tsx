@@ -16,14 +16,17 @@
  */
 import { Autocomplete, TextField } from '@mui/material';
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import { CryptoStore } from '../../../common/store/crypto.store';
 import { EncryptMessage } from '../component-model';
+import IconButton from '@mui/material/IconButton';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 
 interface EncryptMessageComponentProps {
   encryptCallback: (message: EncryptMessage) => void;
+  addCallback: () => void;
   message: EncryptMessage;
 }
 
@@ -62,9 +65,12 @@ export const EncryptMessageComponent: FunctionComponent<EncryptMessageComponentP
           size="small"
           value={username}
           onChange={handleUsernameChange}
-          renderInput={(params) => <TextField style={{ width: '300px' }} {...params} label="user" />}
+          renderInput={(params) => <TextField style={{ width: '260px' }} {...params} label="user" />}
           options={usernameList}
         />
+        <IconButton onClick={() => props.addCallback()}>
+          <AddIcon />
+        </IconButton>
       </div>
       <div style={{ marginTop: 10 }}>
         <TextareaAutosize
