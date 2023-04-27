@@ -41,7 +41,7 @@ interface PinListElementProps {
 export const PinListElement: FunctionComponent<PinListElementProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(props.obj.local?.visible);
-  const handlePinGo = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
+  const handleNavigate = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
     data.local.visible = true;
     await new PinUpdateCommand(data).execute();
 
@@ -114,7 +114,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
           }}
         >
           {visibleIcon}
-          <IconButton title="Go to pin" size="small" onClick={() => handlePinGo(props.obj)}>
+          <IconButton title="Go to page" size="small" onClick={() => handleNavigate(props.obj)}>
             <ArrowForwardIcon sx={{ fontSize: '12px' }} />
           </IconButton>
           <IconButton title="Remove pin" size="small" onClick={() => handlePinRemove(props.obj)}>

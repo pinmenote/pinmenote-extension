@@ -16,11 +16,14 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useState } from 'react';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
 import { SnapshotListExpandComponent } from './snapshot-list-expand.component';
 import Typography from '@mui/material/Typography';
@@ -33,6 +36,13 @@ interface SnapshotListElementProps {
 
 export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleNavigate = async (data: ObjDto<ObjSnapshotDto>): Promise<void> => {
+    if (PopupActiveTabStore.url?.href !== data.data.url.href) {
+      await BrowserApi.setActiveTabUrl(data.data.url.href);
+      window.close();
+    }
+  };
 
   const handleObjRemove = (data: ObjDto<ObjSnapshotDto>): void => {
     props.removeCallback(data);
@@ -80,6 +90,9 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
             justifyContent: 'flex-end'
           }}
         >
+          <IconButton title="Go to page" size="small" onClick={() => handleNavigate(props.obj)}>
+            <ArrowForwardIcon sx={{ fontSize: '12px' }} />
+          </IconButton>
           <IconButton title="Remove obj" size="small" onClick={() => handleObjRemove(props.obj)}>
             <CloseIcon sx={{ fontSize: '12px' }} />
           </IconButton>
