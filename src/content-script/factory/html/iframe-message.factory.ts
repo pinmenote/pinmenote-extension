@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { IFrameMessage } from '../../../common/model/iframe-message.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class IFrameMessageFactory {
   static parse(msg: any): IFrameMessage | undefined {
@@ -30,7 +29,7 @@ export class IFrameMessageFactory {
       }
     } catch (e) {
       /* IGNORE */
-      fnConsoleLog('IFrameMessageFactory->parse->error', e, msg);
+      // fnConsoleLog('IFrameMessageFactory->parse->error', e, msg);
     }
     return undefined;
   }

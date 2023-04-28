@@ -86,7 +86,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemIcon>
               <SaveElementIcon />
             </ListItemIcon>
-            <ListItemText primary="Save Page Fragment" />
+            <ListItemText primary="Save Fragment" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
@@ -100,7 +100,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemIcon>
               <PushPinIcon />
             </ListItemIcon>
-            <ListItemText primary="Show Page Objects" />
+            <ListItemText primary="On Page" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>

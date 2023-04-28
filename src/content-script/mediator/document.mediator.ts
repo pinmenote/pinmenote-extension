@@ -187,13 +187,20 @@ export class DocumentMediator {
     const elements = document.elementsFromPoint(e.offsetX, e.offsetY);
     if (elements[1] instanceof HTMLIFrameElement) {
       fnConsoleLog('IFRAME PASS');
-      const uid = IframeMediator.addIframe(document.activeElement as HTMLIFrameElement);
-      IFrameMessageFactory.postIFrame(elements[1], {
-        type: IFrameMessageType.START_LISTENERS,
-        data: { type: this.type },
-        uid
+      const el = elements[1];
+      const uid = IframeMediator.addIframe(el, () => {
+        IFrameMessageFactory.postIFrame(el, {
+          type: IFrameMessageType.START_LISTENERS,
+          data: { type: this.type },
+          uid
+        });
+        this.stopListeners();
       });
-      this.stopListeners();
+      IFrameMessageFactory.postIFrame(elements[1], {
+        type: IFrameMessageType.PING,
+        uid,
+        keep: true
+      });
     } else if (elements[1] instanceof HTMLElement) {
       this.updateFactoryElement(elements[1]);
     } else if (elements[1] instanceof SVGElement) {

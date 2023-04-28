@@ -95,10 +95,7 @@ export class IframeScript {
           document.removeEventListener('mouseout', this.handleMouseOut);
         }
       });
-      // TODO fix racing
-      setTimeout(() => {
-        document.addEventListener('mouseout', this.handleMouseOut);
-      }, 200);
+      document.addEventListener('mouseout', this.handleMouseOut);
     }
   };
 

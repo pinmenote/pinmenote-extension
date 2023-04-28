@@ -4,9 +4,6 @@ pinmenote-extension
 ### Description
 Browser extension nobody wants and nobody needs.    
 Thank You life for opportunity to make it.  
-Thank you people for not using it.  
-Hope you will not start using this software, if you started using this software - please stop.  
-If you want to make PR because you believe you found bug, don't do it, fork this repository and make your own product, let people use it and be happy.    
 I didn't make this software, God did it so don't ask me questions how and why it works, ask God.     
 God knows all the answers I know only answer to ultimate question.  
 Answer to ultimate question is 42.  
@@ -42,3 +39,7 @@ Open shadow root is not always displayed or parsed correctly - but at least it m
 #### Youtube
 Youtube use polymer dom with ```<!--css-build:shady-->```. 
 It is some polymer polyfil for shadow root that messes with css. 
+
+### Limitations
+
+Not downloading svg icons from css files - to limit number of requests
