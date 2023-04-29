@@ -75,6 +75,8 @@ export class TextEditContainerComponent implements HtmlComponent<HTMLElement> {
 
   private handleSaveClick = () => {
     this.addCommentCallback(this.textEditor.value);
+    this.textEditor.cleanup();
+    this.textEditor.create();
   };
 
   private handleCancelClick = () => {

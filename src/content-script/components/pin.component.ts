@@ -70,7 +70,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.rect = this.canvas ? this.canvas.rect : PinPointFactory.calculateRect(this.refValue);
     this.topBar = new TopBarComponent(this, object, this.rect);
     this.bottomBar = new BottomBarComponent(this, object, this.rect);
-    this.text = new TextContainerComponent(this.rect, this.addCommentCallback);
+    this.text = new TextContainerComponent(this, this.rect, this.addCommentCallback);
 
     this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
 
@@ -201,9 +201,10 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   private addCommentCallback = async (value: string): Promise<void> => {
     await new ObjAddHashtagsCommand(this.object.id, value).execute();
-    this.object.data.comments.data.push({ value });
+    this.object.data.comments.data.push({ value, createdDate: Date.now() });
     try {
       await new PinUpdateCommand(this.object).execute();
+      this.text.reloadComments();
     } catch (e) {
       fnConsoleLog('ERROR UPDATE PIN', e);
     }

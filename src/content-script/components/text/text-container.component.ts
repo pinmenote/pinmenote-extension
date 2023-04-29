@@ -16,6 +16,8 @@
  */
 import { HtmlComponent } from '../../../common/model/html.model';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
+import { PinComponent } from '../pin.component';
+import { TextCommentListComponent } from './text-comment-list.component';
 import { TextEditContainerComponent } from './text-edit-container.component';
 import { applyStylesToElement } from '../../../common/style.utils';
 
@@ -28,13 +30,16 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   private editContainer: TextEditContainerComponent;
+  private comments: TextCommentListComponent;
 
-  constructor(rect: ObjRectangleDto, addCommentCallback: (value: string) => void) {
+  constructor(parent: PinComponent, rect: ObjRectangleDto, addCommentCallback: (value: string) => void) {
     this.editContainer = new TextEditContainerComponent(rect, addCommentCallback, this.cancelCallback);
+    this.comments = new TextCommentListComponent(parent);
   }
 
   render(): HTMLElement {
     applyStylesToElement(this.el, elStyles);
+    this.el.appendChild(this.comments.render());
     const text = this.editContainer.render();
     this.el.appendChild(text);
     this.el.style.display = 'none';
@@ -62,6 +67,10 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement> {
 
   cleanup(): void {
     this.editContainer.cleanup();
+  }
+
+  reloadComments(): void {
+    this.comments.renderComments();
   }
 
   private cancelCallback = () => {

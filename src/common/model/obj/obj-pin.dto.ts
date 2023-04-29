@@ -20,6 +20,7 @@ import { ObjSnapshotDto } from './obj-snapshot.dto';
 export interface ObjCommentDto {
   username?: string;
   value: string;
+  createdDate?: number;
 }
 
 export interface ObjCommentListDto {

@@ -2,11 +2,7 @@ pinmenote-extension
 ---
 
 ### Description
-Browser extension nobody wants and nobody needs.    
-Thank You life for opportunity to make it.  
-I didn't make this software, God did it so don't ask me questions how and why it works, ask God.     
-God knows all the answers I know only answer to ultimate question.  
-Answer to ultimate question is 42.  
+Browser extension nobody wants and nobody needs.  
 
 - offline first with p2p in mind
 
