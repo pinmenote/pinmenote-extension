@@ -20,6 +20,8 @@ import { BoardAddElementSearch } from './search/board-add-element.search';
 import { BoardInputSearch } from './search/board-input.search';
 import { BoardStore } from '../../store/board.store';
 import Box from '@mui/material/Box';
+import { NoteElement } from './note/note.element';
+import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { PageElementSnapshotElement } from './page-element-snapshot/page-element-snapshot.element';
@@ -95,8 +97,11 @@ export const BoardComponent: FunctionComponent = () => {
           key={obj.id}
         />
       );
+    } else if (obj.type === ObjTypeDto.PageNote) {
+      boardElements.push(
+        <NoteElement key={obj.id} dto={obj as ObjDto<ObjNoteDto>} refreshBoardCallback={refreshBoardCallback} />
+      );
     } else {
-      fnConsoleLog('NOT SUPPORTED !!!', obj);
       boardElements.push(
         <div key={obj.id}>
           <h1>Not Supported, TODO: {obj.type}</h1>

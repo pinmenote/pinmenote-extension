@@ -14,45 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
-import { BusMessageType } from '../../../../common/model/bus.model';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
-import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
+import { NoteUpdateCommand } from '../../../../common/command/note/note-update.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
-import { PageSnapshotUpdateCommand } from '../../../../common/command/snapshot/page-snapshot-update.command';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
+import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { TitleEditComponent } from '../edit/title-edit.component';
 import Typography from '@mui/material/Typography';
+import { WordIndex } from '../../../../common/text/index/word.index';
 
-interface PageSnapshotElementParams {
-  dto: ObjDto<ObjSnapshotDto>;
+interface PinElementParams {
+  dto: ObjDto<ObjNoteDto>;
   refreshBoardCallback: () => void;
 }
 
-export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> = ({ dto, refreshBoardCallback }) => {
+export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshBoardCallback }) => {
   const [editTitle, setEditTitle] = useState<boolean>(false);
-  const divRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (divRef.current && !divRef.current?.firstChild && dto.data.screenshot) {
-      const img = new Image();
-      img.width = window.innerWidth / 4;
-      img.src = dto.data.screenshot;
-      divRef.current.appendChild(img);
-    }
-  });
 
   const handleEditTitle = () => {
     setEditTitle(true);
-  };
-
-  const handleHtml = () => {
-    TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data);
   };
 
   const handleRemove = async () => {
@@ -65,7 +49,10 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
     if (dto.data.title !== value) {
       dto.data.title = value;
       dto.updatedAt = Date.now();
-      await new PageSnapshotUpdateCommand(dto).execute();
+      const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(dto.data.description)]);
+      const oldWords = dto.data.words.slice();
+      dto.data.words = Array.from(words);
+      await new NoteUpdateCommand(dto, oldWords).execute();
     }
     setEditTitle(false);
   };
@@ -75,10 +62,14 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   };
 
   const title = dto.data.title.length > 50 ? `${dto.data.title.substring(0, 50)}...` : dto.data.title;
-  const url =
-    decodeURI(dto.data.url.href).length > 50
-      ? decodeURI(dto.data.url.href).substring(0, 50)
-      : decodeURI(dto.data.url.href);
+  let url = '';
+  if (dto.data.url) {
+    url =
+      decodeURI(dto.data.url.href).length > 50
+        ? decodeURI(dto.data.url.href).substring(0, 50)
+        : decodeURI(dto.data.url.href);
+  }
+
   const titleElement = editTitle ? (
     <TitleEditComponent value={dto.data.title} saveCallback={titleSaveCallback} cancelCallback={titleCancelCallback} />
   ) : (
@@ -86,13 +77,19 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 4, margin: 10 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minWidth: window.innerWidth / 4,
+        margin: 10,
+        border: '1px solid #eeeeee',
+        padding: 10
+      }}
+    >
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         {titleElement}
-        <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton title="HTML view" onClick={handleHtml}>
-            <HtmlIcon />
-          </IconButton>
+        <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row' }}>
           <IconButton onClick={handleEditTitle}>
             <EditIcon />
           </IconButton>
@@ -101,11 +98,18 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
           </IconButton>
         </div>
       </div>
-      <div ref={divRef}></div>
-      <Link target="_blank" href={dto.data.url.href}>
-        <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
+      <div>
+        <Typography fontSize="1em" fontWeight="bold">
+          Note Description
+        </Typography>
+      </div>
+      <div>
+        <Typography fontSize="1.5em">{dto.data.description}</Typography>
+      </div>
+      <Link target="_blank" style={{ display: dto.data.url ? 'inline-block' : 'none' }} href={dto.data.url?.href}>
+        <Typography fontSize="0.9em">{url}</Typography>
       </Link>
-      <p>page snapshot {dto.createdAt}</p>
+      <p>page note {dto.createdAt}</p>
     </div>
   );
 };

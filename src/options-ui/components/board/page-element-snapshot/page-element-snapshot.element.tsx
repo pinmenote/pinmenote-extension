@@ -50,7 +50,7 @@ export const PageElementSnapshotElement: FunctionComponent<PageElementSnapshotEl
     }
   });
 
-  const handleEdit = () => {
+  const handleEditTitle = () => {
     setEditTitle(true);
   };
 
@@ -92,17 +92,17 @@ export const PageElementSnapshotElement: FunctionComponent<PageElementSnapshotEl
     <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 4, margin: 10 }}>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         {titleElement}
-        <IconButton onClick={handleEdit} style={{ display: editTitle ? 'none' : 'inline-block' }}>
-          <EditIcon />
-        </IconButton>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <IconButton title="HTML view" onClick={handleHtml}>
-          <HtmlIcon />
-        </IconButton>
-        <IconButton title="Remove" onClick={handleRemove}>
-          <ClearIcon />
-        </IconButton>
+        <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <IconButton title="HTML view" onClick={handleHtml}>
+            <HtmlIcon />
+          </IconButton>
+          <IconButton onClick={handleEditTitle}>
+            <EditIcon />
+          </IconButton>
+          <IconButton title="Remove" onClick={handleRemove}>
+            <ClearIcon />
+          </IconButton>
+        </div>
       </div>
       <div ref={divRef}></div>
       <Link target="_blank" href={dto.data.url.href}>
