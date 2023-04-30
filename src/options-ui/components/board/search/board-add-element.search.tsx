@@ -12,9 +12,8 @@ interface AddMenuItem {
 }
 
 const addMenuItemList: AddMenuItem[] = [
-  { title: 'Drawing', type: ObjTypeDto.Drawing },
-  { title: 'Note', type: ObjTypeDto.Note },
-  { title: 'Todo', type: ObjTypeDto.Todo }
+  { title: 'Note', type: ObjTypeDto.PageNote },
+  { title: 'Todo', type: ObjTypeDto.PageTask }
 ];
 
 export const BoardAddElementSearch: FunctionComponent = () => {

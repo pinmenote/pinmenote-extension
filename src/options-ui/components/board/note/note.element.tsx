@@ -89,9 +89,11 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
         display: 'flex',
         flexDirection: 'column',
         minWidth: window.innerWidth / 4,
-        margin: 10,
+        maxHeight: '500px',
+        minHeight: '340px',
+        margin: 5,
         border: '1px solid #eeeeee',
-        padding: 10
+        padding: 5
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -115,7 +117,9 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
       >
         <Typography fontSize="0.9em">{url}</Typography>
       </Link>
-      <p>page note {dto.createdAt}</p>
+      <div style={{ display: 'flex', height: '100%', alignItems: 'end' }}>
+        <p>page note {dto.createdAt}</p>
+      </div>
     </div>
   );
 };

@@ -92,7 +92,16 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: window.innerWidth / 4, margin: 10 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        maxWidth: window.innerWidth / 4,
+        margin: 5,
+        padding: 5,
+        border: '1px solid #eeeeee'
+      }}
+    >
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         {titleElement}
         <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row', alignItems: 'center' }}>
