@@ -57,6 +57,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
     data.local.visible = !data.local.visible;
     await new PinUpdateCommand(data).execute();
     setIsVisible(data.local.visible);
+    await BrowserApi.sendTabMessage<ObjDto<ObjPagePinDto>>({ type: BusMessageType.CONTENT_PIN_VISIBLE, data });
   };
 
   const handlePinRemove = (data: ObjDto<ObjPagePinDto>): void => {
