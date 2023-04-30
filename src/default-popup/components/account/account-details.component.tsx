@@ -61,7 +61,7 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
     };
-  });
+  }, []);
 
   const handleLogout = async (): Promise<void> => {
     LogManager.log('AccountDetailsComponent->handleLogout');

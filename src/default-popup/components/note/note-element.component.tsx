@@ -14,12 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjUrlDto } from './obj.dto';
+import React, { FunctionComponent, useState } from 'react';
+import { NoteElementExpandComponent } from './note-element-expand.component';
+import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import Typography from '@mui/material/Typography';
 
-export interface ObjNoteDto {
-  title: string;
-  description: string;
-  url?: ObjUrlDto;
-  words: string[];
-  hashtags: string[];
+interface NoteElementComponentProps {
+  note: ObjNoteDto;
 }
+
+export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> = ({ note }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  return (
+    <div>
+      <Typography>{note.title}</Typography>
+      <NoteElementExpandComponent note={note} />
+    </div>
+  );
+};

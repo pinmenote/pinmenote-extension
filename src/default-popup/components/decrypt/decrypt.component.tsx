@@ -18,29 +18,29 @@ import React, { useState } from 'react';
 import { DecryptMessageComponent } from './decrypt-message.component';
 import { DecryptedValueComponent } from './decrypted-value.component';
 
-enum ComponentState {
+enum CurrentView {
   DECRYPT_MESSAGE = 'DECRYPT_MESSAGE',
   DECRYPTED_VALUE = 'DECRYPTED_VALUE'
 }
 
 export const DecryptComponent = () => {
-  const [state, setState] = useState<ComponentState>(ComponentState.DECRYPT_MESSAGE);
+  const [state, setState] = useState<CurrentView>(CurrentView.DECRYPT_MESSAGE);
   const [message, setMessage] = useState<string>('');
 
   const handleDecrypt = (message: string) => {
-    setState(ComponentState.DECRYPTED_VALUE);
+    setState(CurrentView.DECRYPTED_VALUE);
     setMessage(message);
   };
 
   const handleBack = () => {
-    setState(ComponentState.DECRYPT_MESSAGE);
+    setState(CurrentView.DECRYPT_MESSAGE);
   };
   return (
     <div>
-      <div style={{ display: state == ComponentState.DECRYPT_MESSAGE ? 'inline-block' : 'none' }}>
+      <div style={{ display: state == CurrentView.DECRYPT_MESSAGE ? 'inline-block' : 'none' }}>
         <DecryptMessageComponent decryptCallback={handleDecrypt} />
       </div>
-      <div style={{ display: state == ComponentState.DECRYPTED_VALUE ? 'inline-block' : 'none' }}>
+      <div style={{ display: state == CurrentView.DECRYPTED_VALUE ? 'inline-block' : 'none' }}>
         <DecryptedValueComponent backCallback={handleBack} message={message} />
       </div>
     </div>

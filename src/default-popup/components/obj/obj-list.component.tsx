@@ -18,6 +18,9 @@ import { ObjDto, ObjPageDataDto, ObjTypeDto } from '../../../common/model/obj/ob
 import React, { FunctionComponent, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { NoteListElementComponent } from './note-list-element.component';
+import { NoteRemoveCommand } from '../../../common/command/note/note-remove.command';
+import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { PageSnapshotRemoveCommand } from '../../../common/command/snapshot/page-snapshot-remove.command';
@@ -41,6 +44,11 @@ export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, vis
 
   const handleSnapshotRemove = async (data: ObjDto<ObjSnapshotDto>) => {
     await new PageSnapshotRemoveCommand(data).execute();
+    handleRemove(data.id);
+  };
+
+  const handleNoteRemove = async (data: ObjDto<ObjNoteDto>) => {
+    await new NoteRemoveCommand(data).execute();
     handleRemove(data.id);
   };
 
@@ -71,6 +79,8 @@ export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, vis
       objs.push(
         <SnapshotListElement key={obj.id} obj={obj as ObjDto<ObjSnapshotDto>} removeCallback={handleSnapshotRemove} />
       );
+    } else if (obj.type === ObjTypeDto.PageNote) {
+      objs.push(<NoteListElementComponent obj={obj as ObjDto<ObjNoteDto>} removeCallback={handleNoteRemove} />);
     }
   }
   return (

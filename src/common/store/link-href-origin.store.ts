@@ -18,6 +18,7 @@ import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
 import { ObjUrlDto } from '../model/obj/obj.dto';
 
 export class LinkHrefOriginStore {
+  private static NOTE_HREF = 'note:href';
   private static PIN_HREF = 'pin:href';
   private static OBJ_HREF = 'obj:href';
   private static OBJ_ORIGIN = 'obj:origin';
@@ -83,6 +84,28 @@ export class LinkHrefOriginStore {
 
   static async pinIds(url: string): Promise<number[]> {
     const key = `${this.PIN_HREF}:${url}`;
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    return value || [];
+  }
+
+  static async noteAdd(url: ObjUrlDto, id: number): Promise<void> {
+    const hrefIds = await this.noteIds(url.href);
+    hrefIds.push(id);
+    await BrowserStorageWrapper.set(`${this.NOTE_HREF}:${url.href}`, hrefIds);
+  }
+
+  static async noteDel(url: ObjUrlDto, id: number): Promise<void> {
+    const hrefIds = await this.noteIds(url.href);
+    const newHref = hrefIds.filter((i) => i !== id);
+    if (newHref.length === 0) {
+      await BrowserStorageWrapper.remove(`${this.NOTE_HREF}:${url.href}`);
+    } else {
+      await BrowserStorageWrapper.set(`${this.NOTE_HREF}:${url.href}`, newHref);
+    }
+  }
+
+  static async noteIds(url: string): Promise<number[]> {
+    const key = `${this.NOTE_HREF}:${url}`;
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
   }

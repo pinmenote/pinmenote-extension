@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjUrlDto } from './obj.dto';
+import React, { FunctionComponent } from 'react';
+import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 
-export interface ObjNoteDto {
-  title: string;
-  description: string;
-  url?: ObjUrlDto;
-  words: string[];
-  hashtags: string[];
+interface NoteElementExpandComponentProps {
+  note: ObjNoteDto;
 }
+
+export const NoteElementExpandComponent: FunctionComponent<NoteElementExpandComponentProps> = ({ note }) => {
+  return <div>{note.description}</div>;
+};

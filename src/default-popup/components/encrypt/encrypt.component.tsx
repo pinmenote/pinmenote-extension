@@ -22,7 +22,7 @@ import { EncryptMessage } from '../component-model';
 import { EncryptMessageComponent } from './encrypt-message.component';
 import { EncryptedValueComponent } from './encrypted-value.component';
 
-enum ComponentState {
+enum CurrentView {
   ENCRYPT_MESSAGE = 'ENCRYPT_MESSAGE',
   ENCRYPTED_VALUE = 'ENCRYPTED_VALUE',
   ADD_KEY = 'ADD_KEY'
@@ -31,20 +31,20 @@ enum ComponentState {
 export const EncryptComponent = () => {
   const [message, setMessage] = useState<EncryptMessage>({ username: '', message: '' });
   const [encryptedMessage, setEncryptedMessage] = useState<string>('');
-  const [state, setState] = useState<ComponentState>(ComponentState.ENCRYPT_MESSAGE);
+  const [state, setState] = useState<CurrentView>(CurrentView.ENCRYPT_MESSAGE);
 
   const handleEncrypt = async (message: EncryptMessage) => {
     setMessage(message);
     await encryptMessage(message);
-    setState(ComponentState.ENCRYPTED_VALUE);
+    setState(CurrentView.ENCRYPTED_VALUE);
   };
 
   const setEncryptMessageState = () => {
-    setState(ComponentState.ENCRYPT_MESSAGE);
+    setState(CurrentView.ENCRYPT_MESSAGE);
   };
 
   const handleNewKey = () => {
-    setState(ComponentState.ADD_KEY);
+    setState(CurrentView.ADD_KEY);
   };
 
   const encryptMessage = async (data: EncryptMessage) => {
@@ -59,13 +59,13 @@ export const EncryptComponent = () => {
     }
   };
 
-  const getComponent = (state: ComponentState) => {
+  const getComponent = (state: CurrentView) => {
     switch (state) {
-      case ComponentState.ENCRYPT_MESSAGE:
+      case CurrentView.ENCRYPT_MESSAGE:
         return <EncryptMessageComponent message={message} encryptCallback={handleEncrypt} addCallback={handleNewKey} />;
-      case ComponentState.ENCRYPTED_VALUE:
+      case CurrentView.ENCRYPTED_VALUE:
         return <EncryptedValueComponent backToMessageCallback={setEncryptMessageState} message={encryptedMessage} />;
-      case ComponentState.ADD_KEY:
+      case CurrentView.ADD_KEY:
         return <EncryptAddKeyComponent hideComponent={setEncryptMessageState} />;
     }
   };
