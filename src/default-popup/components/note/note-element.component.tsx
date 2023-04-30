@@ -15,6 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import IconButton from '@mui/material/IconButton';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { NoteElementExpandComponent } from './note-element-expand.component';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import Typography from '@mui/material/Typography';
@@ -25,10 +28,34 @@ interface NoteElementComponentProps {
 
 export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> = ({ note }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const handlePopover = (): void => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const expandIcon = isExpanded ? (
+    <ExpandMoreIcon sx={{ fontSize: '12px' }} />
+  ) : (
+    <NavigateNextIcon sx={{ fontSize: '12px' }} />
+  );
+  const title = note.title.length > 50 ? `${note.title.substring(0, 50)}...` : note.title;
   return (
-    <div>
-      <Typography>{note.title}</Typography>
-      <NoteElementExpandComponent note={note} />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }} onClick={handlePopover}>
+          {title}
+        </Typography>
+        <IconButton size="small" onClick={handlePopover}>
+          {expandIcon}
+        </IconButton>
+      </div>
+      <NoteElementExpandComponent visible={isExpanded} note={note} />
     </div>
   );
 };

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
@@ -26,6 +26,7 @@ import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { TitleEditComponent } from '../edit/title-edit.component';
 import Typography from '@mui/material/Typography';
 import { WordIndex } from '../../../../common/text/index/word.index';
+import { marked } from 'marked';
 
 interface PinElementParams {
   dto: ObjDto<ObjNoteDto>;
@@ -34,6 +35,12 @@ interface PinElementParams {
 
 export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshBoardCallback }) => {
   const [editTitle, setEditTitle] = useState<boolean>(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = marked(dto.data.description);
+  }, []);
 
   const handleEditTitle = () => {
     setEditTitle(true);
@@ -99,14 +106,13 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
         </div>
       </div>
       <div>
-        <Typography fontSize="1em" fontWeight="bold">
-          Note Description
-        </Typography>
+        <div ref={ref}></div>
       </div>
-      <div>
-        <Typography fontSize="1.5em">{dto.data.description}</Typography>
-      </div>
-      <Link target="_blank" style={{ display: dto.data.url ? 'inline-block' : 'none' }} href={dto.data.url?.href}>
+      <Link
+        target="_blank"
+        style={{ marginTop: 5, display: dto.data.url ? 'inline-block' : 'none' }}
+        href={dto.data.url?.href}
+      >
         <Typography fontSize="0.9em">{url}</Typography>
       </Link>
       <p>page note {dto.createdAt}</p>

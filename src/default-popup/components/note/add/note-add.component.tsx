@@ -15,31 +15,67 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { COLOR_DEFAULT_BORDER, DEFAULT_BORDER_RADIUS } from '../../../../common/components/colors';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
+import { EditorView } from 'prosemirror-view';
 import { NoteAddCommand } from '../../../../common/command/note/note-add.command';
 import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { StyledInput } from '../../../../common/components/react/styled.input';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { WordIndex } from '../../../../common/text/index/word.index';
+import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
+import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 
 interface NoteAddComponentProps {
   addCallback: () => void;
   cancelCallback: () => void;
 }
 
+class LocalModel {
+  static editorView?: EditorView;
+
+  static get description(): string {
+    if (this.editorView) {
+      return defaultMarkdownSerializer.serialize(this.editorView?.state.doc);
+    }
+    return '';
+  }
+}
+
 export const NoteAddComponent: FunctionComponent<NoteAddComponentProps> = (props) => {
   const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      create(ref.current);
+    }
+    return () => {
+      LocalModel.editorView?.destroy();
+    };
+  }, []);
+
+  const create = (el: HTMLDivElement): void => {
+    let state = createTextEditorState('');
+    LocalModel.editorView = new EditorView(el, {
+      state,
+      handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
+        event.stopImmediatePropagation();
+      },
+      dispatchTransaction: (tx) => {
+        state = state.apply(tx);
+        LocalModel.editorView?.updateState(state);
+      }
+    });
+  };
 
   const handleAdd = async () => {
     const url = PopupActiveTabStore.url;
-    const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(description)]);
+    const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(LocalModel.description)]);
     const note: ObjNoteDto = {
       title,
-      description,
       url,
+      description: LocalModel.description,
       words: Array.from(words),
       hashtags: []
     };
@@ -60,16 +96,17 @@ export const NoteAddComponent: FunctionComponent<NoteAddComponentProps> = (props
       >
         <StyledInput value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
       </div>
-      <div style={{ marginTop: 5 }}>
-        <TextareaAutosize
-          style={{ borderRadius: DEFAULT_BORDER_RADIUS, padding: 5 }}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          minRows={9}
-          maxRows={9}
-          cols={34}
-          placeholder="Description"
-        ></TextareaAutosize>
+      <div
+        style={{
+          marginTop: 5,
+          marginBottom: 10,
+          borderRadius: DEFAULT_BORDER_RADIUS,
+          maxHeight: '220px',
+          minHeight: '220px',
+          overflow: 'auto'
+        }}
+      >
+        <div ref={ref}></div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
         <Button variant="outlined" onClick={props.cancelCallback}>

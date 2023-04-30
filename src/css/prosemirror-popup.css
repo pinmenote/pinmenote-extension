@@ -1,7 +1,7 @@
 @import "prosemirror-base.css";
 
 .ProseMirror {
-    min-height: 30px;
+    min-height: 200px;
     height: fit-content;
     outline: none;
     overflow: auto;
@@ -14,8 +14,8 @@
     text-transform: none;
     line-height: 100%;
     box-shadow: none;
-    margin: 2px;
-    padding: 2px;
+    margin: 0;
+    padding: 0;
     text-align: left;
     white-space: pre-wrap;
 }

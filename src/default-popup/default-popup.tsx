@@ -19,6 +19,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+import '../css/prosemirror-popup.css';
+
 import React, { ReactElement, useEffect, useState } from 'react';
 import { AccountTabComponent } from './components/tabs/account-tab.component';
 import Box from '@mui/material/Box';

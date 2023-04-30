@@ -1,0 +1,97 @@
+.ProseMirror p {
+    font-family: Roboto, serif;
+    font-size: 1em;
+}
+
+.ProseMirror:focus {
+    outline: none;
+}
+
+.ProseMirror p:first-child {
+    margin: 0px 0px 4px;
+}
+
+.ProseMirror p {
+    margin: 0px 0px 4px;
+    padding: 0;
+    border: none;
+}
+
+.ProseMirror ol {
+    padding-left: 20px;
+    list-style-type: decimal;
+    border: none;
+}
+
+.ProseMirror ul {
+    padding-left: 20px;
+    list-style-type: disc;
+    border: none;
+}
+
+.ProseMirror li {
+    position: relative;
+    border: none;
+}
+
+/* HEADER STYLES */
+
+.ProseMirror h1 {
+    display: block;
+    margin: 0.67em 0;
+    font-size: 2em;
+    font-family: Roboto, serif;
+    font-weight: bold;
+    border: none;
+    color: #000000;
+}
+
+.ProseMirror h2 {
+    display: block;
+    margin: 0.83em 0;
+    font-size: 1.5em;
+    font-family: Roboto, serif;
+    font-weight: bold;
+    border: none;
+    color: #000000;
+}
+
+.ProseMirror h3 {
+    display: block;
+    margin: 1em 0;
+    font-size: 1.17em;
+    font-family: Roboto, serif;
+    font-weight: bold;
+    border: none;
+    color: #000000;
+}
+
+.ProseMirror h4 {
+    display: block;
+    margin: 1.33em 0;
+    font-size: 1em;
+    font-family: Roboto, serif;
+    font-weight: bold;
+    border: none;
+    color: #000000;
+}
+
+.ProseMirror h5 {
+    display: block;
+    margin: 1.67em 0;
+    font-size: .83em;
+    font-family: Roboto, serif;
+    font-weight: bold;
+    border: none;
+    color: #000000;
+}
+
+.ProseMirror h6 {
+    display: block;
+    margin: 2.33em 0;
+    font-size: .67em;
+    font-family: Roboto, serif;
+    font-weight: bold;
+    border: none;
+    color: #000000;
+}

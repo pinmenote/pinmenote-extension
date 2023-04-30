@@ -14,13 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { marked } from 'marked';
 
 interface NoteElementExpandComponentProps {
   note: ObjNoteDto;
+  visible: boolean;
 }
 
-export const NoteElementExpandComponent: FunctionComponent<NoteElementExpandComponentProps> = ({ note }) => {
-  return <div>{note.description}</div>;
+export const NoteElementExpandComponent: FunctionComponent<NoteElementExpandComponentProps> = ({ note, visible }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = marked(note.description);
+  }, []);
+  return (
+    <div
+      style={{
+        width: '290px',
+        padding: 5,
+        marginLeft: 5,
+        position: 'relative',
+        display: visible ? 'inline-block' : 'none'
+      }}
+    >
+      <div ref={ref}></div>
+    </div>
+  );
 };

@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { marked } from 'marked';
 
 interface PinExpandProps {
   visible: boolean;
@@ -24,7 +25,11 @@ interface PinExpandProps {
 }
 
 export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ note, visible }) => {
-  const [description, setDescription] = useState<string>(note.data.description);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = marked(note.data.description);
+  }, []);
 
   return (
     <div
@@ -36,7 +41,7 @@ export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ not
         display: visible ? 'inline-block' : 'none'
       }}
     >
-      <div>{description}</div>
+      <div ref={ref}></div>
     </div>
   );
 };
