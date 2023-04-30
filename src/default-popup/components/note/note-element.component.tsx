@@ -15,18 +15,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { NoteElementExpandComponent } from './note-element-expand.component';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import Typography from '@mui/material/Typography';
 
 interface NoteElementComponentProps {
-  note: ObjNoteDto;
+  obj: ObjDto<ObjNoteDto>;
+  editCallback: (obj: ObjDto<ObjNoteDto>) => void;
 }
 
-export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> = ({ note }) => {
+export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> = ({ obj, editCallback }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handlePopover = (): void => {
@@ -38,7 +41,7 @@ export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> 
   ) : (
     <NavigateNextIcon sx={{ fontSize: '12px' }} />
   );
-  const title = note.title.length > 50 ? `${note.title.substring(0, 50)}...` : note.title;
+  const title = obj.data.title.length > 50 ? `${obj.data.title.substring(0, 50)}...` : obj.data.title;
   return (
     <div
       style={{
@@ -51,11 +54,16 @@ export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> 
         <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }} onClick={handlePopover}>
           {title}
         </Typography>
-        <IconButton size="small" onClick={handlePopover}>
-          {expandIcon}
-        </IconButton>
+        <div>
+          <IconButton size="small" onClick={() => editCallback(obj)}>
+            <EditIcon sx={{ fontSize: '12px' }} />
+          </IconButton>
+          <IconButton size="small" onClick={handlePopover}>
+            {expandIcon}
+          </IconButton>
+        </div>
       </div>
-      <NoteElementExpandComponent visible={isExpanded} note={note} />
+      <NoteElementExpandComponent visible={isExpanded} note={obj.data} />
     </div>
   );
 };

@@ -22,7 +22,11 @@ import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 
-export const NoteListComponent: FunctionComponent = () => {
+interface NoteListComponentProps {
+  editCallback: (obj: ObjDto<ObjNoteDto>) => void;
+}
+
+export const NoteListComponent: FunctionComponent<NoteListComponentProps> = (props) => {
   const [noteList, setNoteList] = useState<ObjDto<ObjNoteDto>[]>([]);
   useEffect(() => {
     const url = PopupActiveTabStore.url;
@@ -37,8 +41,8 @@ export const NoteListComponent: FunctionComponent = () => {
   }, []);
 
   const objs: React.ReactNode[] = [];
-  for (const note of noteList) {
-    objs.push(<NoteElementComponent note={note.data} key={note.id} />);
+  for (const obj of noteList) {
+    objs.push(<NoteElementComponent key={obj.id} obj={obj} editCallback={props.editCallback} />);
   }
 
   return <div style={{ display: 'flex', flexDirection: 'column' }}>{objs}</div>;

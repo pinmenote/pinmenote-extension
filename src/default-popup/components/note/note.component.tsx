@@ -18,25 +18,41 @@ import React, { FunctionComponent, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import { NoteAddComponent } from './add/note-add.component';
+import { NoteEditComponent } from './add/note-edit.component';
 import { NoteListComponent } from './note-list.component';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 
 enum CurrentView {
   NOTE_LIST = 'NOTE_LIST',
-  NOTE_ADD = 'NOTE_ADD'
+  NOTE_ADD = 'NOTE_ADD',
+  NOTE_EDIT = 'NOTE_EDIT'
 }
 
 export const NoteComponent: FunctionComponent = () => {
   const [state, setState] = useState<CurrentView>(CurrentView.NOTE_LIST);
+  const [editNote, setEditNote] = useState<ObjDto<ObjNoteDto> | undefined>();
   const handleAddNote = () => {
+    setState(CurrentView.NOTE_LIST);
+  };
+
+  const handleEdit = (obj: ObjDto<ObjNoteDto>) => {
+    setEditNote(obj);
+    setState(CurrentView.NOTE_EDIT);
+  };
+
+  const handleCancel = () => {
     setState(CurrentView.NOTE_LIST);
   };
 
   const getComponent = (state: CurrentView) => {
     switch (state) {
       case CurrentView.NOTE_ADD:
-        return <NoteAddComponent addCallback={handleAddNote} cancelCallback={() => setState(CurrentView.NOTE_LIST)} />;
+        return <NoteAddComponent addCallback={handleAddNote} cancelCallback={handleCancel} />;
       case CurrentView.NOTE_LIST:
-        return <NoteListComponent />;
+        return <NoteListComponent editCallback={handleEdit} />;
+      case CurrentView.NOTE_EDIT:
+        return <NoteEditComponent obj={editNote} saveCallback={handleCancel} cancelCallback={handleCancel} />;
     }
   };
 
