@@ -1,17 +1,15 @@
 import React, { FunctionComponent } from 'react';
-import AddIcon from '@mui/icons-material/Add';
-import IconButton from '@mui/material/IconButton';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjTaskDto } from '../../../common/model/obj/obj-task.dto';
 
 interface TaskListComponentProps {
-  addCallback: () => void;
+  editCallback: (obj: ObjDto<ObjTaskDto>) => void;
 }
 
 export const TaskListComponent: FunctionComponent<TaskListComponentProps> = (props) => {
   return (
     <div>
-      <IconButton onClick={() => props.addCallback()}>
-        <AddIcon />
-      </IconButton>
+      <h2>List</h2>
     </div>
   );
 };

@@ -61,7 +61,7 @@ export const NoteComponent: FunctionComponent = () => {
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <h2>Notes</h2>
+        <h2>Note</h2>
         <IconButton onClick={() => setState(CurrentView.NOTE_ADD)}>
           <AddIcon />
         </IconButton>

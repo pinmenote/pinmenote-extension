@@ -50,7 +50,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   const urlRef = useRef<HTMLDivElement>(null);
   const sizeRef = useRef<HTMLDivElement>(null);
 
-  const [content, setContent] = useState<ObjSnapshotData | undefined>();
+  const [snapshotData, setSnapshotData] = useState<ObjSnapshotData | undefined>();
+  const [snapshot, setSnapshot] = useState<ObjSnapshotDto | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPreLoading, setIsPreLoading] = useState<boolean>(true);
 
@@ -60,10 +61,11 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       async (event, key, value) => {
         setIsPreLoading(true);
         setIsLoading(true);
+        setSnapshot(value);
         let c: ObjSnapshotData | undefined = undefined;
         if (value.contentId > 0) {
           c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
-          setContent(c);
+          setSnapshotData(c);
         }
         if (value.canvas) {
           renderCanvas(value, c);
@@ -121,7 +123,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
 
-    const html = IframeHtmlFactory.computeHtml(c.snapshot.css, c.snapshot.html, c.snapshot.htmlAttr) || '';
+    const html = IframeHtmlFactory.computeHtml(c.snapshot);
 
     const doc = iframe.contentWindow.document;
     await asyncRenderIframe(html, doc);
@@ -177,7 +179,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
             const iframe: ObjIframeContentDto = dto.content as ObjIframeContentDto;
             const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
             if (iframeDoc) {
-              const iframeHtml = IframeHtmlFactory.computeHtml(iframe.css, iframe.html, iframe.htmlAttr);
+              const iframeHtml = IframeHtmlFactory.computeHtml(iframe);
               iframeDoc.write(iframeHtml);
               iframeDoc.close();
               for (const content of iframe.content) {
@@ -235,9 +237,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   };
 
   const handleDownload = async () => {
-    if (!content) return;
-    const html =
-      IframeHtmlFactory.computeHtml(content.snapshot.css, content.snapshot.html, content.snapshot.htmlAttr) || '';
+    if (!snapshotData || !snapshot) return;
+    const html = IframeHtmlFactory.computeDownload(snapshot, snapshotData);
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
     const filename = `${fnUid()}.html`;
