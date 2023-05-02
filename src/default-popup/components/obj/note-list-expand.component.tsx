@@ -27,6 +27,7 @@ interface PinExpandProps {
 export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ note, visible }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (!visible) return;
     if (!ref.current) return;
     ref.current.innerHTML = marked(note.data.description);
   }, []);
@@ -37,8 +38,7 @@ export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ not
         width: '290px',
         padding: 5,
         marginLeft: 5,
-        position: 'relative',
-        display: visible ? 'inline-block' : 'none'
+        position: 'relative'
       }}
     >
       <div ref={ref}></div>

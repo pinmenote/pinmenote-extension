@@ -23,13 +23,11 @@ import { ObjPagePinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../model/obj/obj-snapshot.dto';
 import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnConsoleLog } from '../../../fn/console.fn';
 
 export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
   constructor(private data: ObjUrlDto) {}
 
   async execute(): Promise<ObjDto<ObjPageDataDto>[]> {
-    fnConsoleLog('WorkerPinManager->pinGetOrigin', this.data);
     const pinIds = (await LinkHrefOriginStore.originIds(this.data.origin)).reverse();
     const out: ObjDto<ObjPageDataDto>[] = [];
     for (const id of pinIds) {
@@ -45,6 +43,8 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
         if ((obj.data as ObjTaskDto).url?.href === this.data.href) continue;
       }
       out.push(obj);
+      // TODO pagination - now show last 10
+      if (out.length === 10) break;
     }
     return out;
   }

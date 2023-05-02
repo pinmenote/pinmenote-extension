@@ -25,9 +25,10 @@ interface SnapshotExpandProps {
 
 export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps> = ({ obj, visible }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const img = new Image();
 
   useEffect(() => {
+    if (!visible) return;
+    const img = new Image();
     img.width = 280;
     if (obj.data.screenshot) img.src = obj.data.screenshot;
     ref.current?.appendChild(img);
@@ -43,8 +44,7 @@ export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps>
         width: '290px',
         padding: 5,
         marginLeft: 5,
-        position: 'relative',
-        display: visible ? 'inline-block' : 'none'
+        position: 'relative'
       }}
     >
       <div ref={ref}></div>
