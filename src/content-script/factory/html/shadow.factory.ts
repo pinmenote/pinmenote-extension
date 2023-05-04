@@ -84,6 +84,7 @@ export class ShadowFactory {
 
   private static computeShadowChild = async (ref: Element, skipUrlCache?: Set<string>): Promise<string> => {
     const tagName = ref.tagName.toLowerCase();
+    if (['script', 'link', 'noscript'].includes(tagName)) return '';
 
     let htmlPrefilled = false;
 

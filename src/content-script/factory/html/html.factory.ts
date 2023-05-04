@@ -71,6 +71,7 @@ export class HtmlFactory {
 
   static computeHtmlIntermediateData = async (params: HtmlComputeParams): Promise<HtmlIntermediateData> => {
     const tagName = params.ref.tagName.toLowerCase();
+    if (['script', 'link', 'noscript'].includes(tagName)) return HtmlAttrFactory.EMPTY_RESULT;
 
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !params.skipTagCache.has(tagName)) {
       const shadow = BrowserApi.shadowRoot(params.ref);
@@ -87,10 +88,7 @@ export class HtmlFactory {
 
     let html = `<${tagName} `;
 
-    if (tagName === 'script' || tagName === 'link') return HtmlAttrFactory.EMPTY_RESULT;
-
     // IFRAME POC
-    // TODO add iframe attributes and save as iframe and iframe content save separately
     if (tagName === 'iframe') {
       return await IFrameFactory.computeIframe(params.ref as HTMLIFrameElement, params.depth);
     } else if (tagName === 'canvas') {

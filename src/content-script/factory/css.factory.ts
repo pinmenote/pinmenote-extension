@@ -129,7 +129,7 @@ export class CssFactory {
       if (url.startsWith('url')) {
         const urlMatch = url.match(CSS_URL_REG);
         if (!urlMatch) continue;
-        url = urlMatch[0].substring(5, urlMatch[0].length - 2);
+        url = urlMatch[0].substring(4, urlMatch[0].length - 2);
       } else {
         url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
       }
@@ -142,7 +142,7 @@ export class CssFactory {
         } else {
           url = new URL(baseUrl + '/' + url).href;
         }
-        fnConsoleLog('CssFactory->fetchImports->REL !!!', url);
+        fnConsoleLog('CssFactory->fetchImports->REL !!!', rel, url);
       } else {
         url = fnComputeUrl(url);
       }
