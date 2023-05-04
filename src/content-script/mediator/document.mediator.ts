@@ -58,7 +58,6 @@ export class DocumentMediator {
       'lock',
       document.pointerLockElement
     );
-    // TODO verify if it's still required - if yes add check if iframe fills whole screen
     if (this.isIFrameActive && !params?.restart) {
       const uid = IframeMediator.addIframe(document.activeElement as HTMLIFrameElement);
       IFrameMessageFactory.postIFrame(document.activeElement as HTMLIFrameElement, {
@@ -75,14 +74,19 @@ export class DocumentMediator {
     return (
       !!document.activeElement &&
       document.activeElement?.tagName.toLowerCase() === 'iframe' &&
-      this.checkVisible(document.activeElement)
+      this.checkIframeSizePosition(document.activeElement)
     );
   }
 
-  private static checkVisible(elm: Element): boolean {
+  private static checkIframeSizePosition(elm: Element): boolean {
     const rect = elm.getBoundingClientRect();
     const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-    return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
+    // TODO verify if 4/5 size ratio is ok - mainly we check this cause of office365 apps running inside iframe
+    return (
+      rect.height > (window.innerHeight * 4) / 5 &&
+      rect.width > (window.innerWidth * 4) / 5 &&
+      !(rect.bottom < 0 || rect.top - viewHeight >= 0)
+    );
   }
 
   private static startOverlay = (): void => {

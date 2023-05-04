@@ -20,10 +20,11 @@ import { fnConsoleLog } from '../fn/console.fn';
 export class DetectLanguage {
   private static lang = new LanguageDetect();
 
-  static detect(sample: string): string {
+  static detect(sample: string): string | undefined {
     this.lang.setLanguageType('iso2');
     const samp = sample.length < 1000 ? sample : sample.substring(0, 1000);
     const languages = this.lang.detect(samp);
+    if (!languages) return undefined;
     fnConsoleLog('DetectLanguage', languages[0]);
     return languages[0][0];
   }

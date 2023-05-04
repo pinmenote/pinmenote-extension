@@ -42,8 +42,6 @@ export class AutoTagMediator {
   };
 
   private static calculateTags(keywords: string[]): string[] {
-    const language = DetectLanguage.detect(document.body.innerText);
-    fnConsoleLog('LANGUAGE', language);
     let tagList = [];
     for (const keyword of keywords) {
       const words = WordIndex.toWordList(keyword);
@@ -53,7 +51,12 @@ export class AutoTagMediator {
       }
     }
     tagList = Array.from(new Set(tagList));
-    tagList = StopWordRemove.execute(language, tagList);
+
+    const language = DetectLanguage.detect(document.body.innerText);
+    fnConsoleLog('LANGUAGE', language);
+    // TODO maybe check if anything removed - if not maybe take second guess from detected language
+    if (language) tagList = StopWordRemove.execute(language, tagList);
+
     return tagList;
   }
 
