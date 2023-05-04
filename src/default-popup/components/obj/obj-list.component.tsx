@@ -66,21 +66,26 @@ export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, vis
   // Render pins
   const objs: React.ReactNode[] = [];
   for (const obj of objList) {
-    if (obj.type === ObjTypeDto.PageElementPin) {
-      objs.push(
-        <PinListElement
-          key={obj.id}
-          visibility={visibility}
-          obj={obj as ObjDto<ObjPagePinDto>}
-          removeCallback={handlePinRemove}
-        />
-      );
-    } else if (obj.type === ObjTypeDto.PageElementSnapshot || obj.type === ObjTypeDto.PageSnapshot) {
-      objs.push(
-        <SnapshotListElement key={obj.id} obj={obj as ObjDto<ObjSnapshotDto>} removeCallback={handleSnapshotRemove} />
-      );
-    } else if (obj.type === ObjTypeDto.PageNote) {
-      objs.push(<NoteListElementComponent obj={obj as ObjDto<ObjNoteDto>} removeCallback={handleNoteRemove} />);
+    switch (obj.type) {
+      case ObjTypeDto.PageElementPin:
+        objs.push(
+          <PinListElement
+            key={obj.id}
+            visibility={visibility}
+            obj={obj as ObjDto<ObjPagePinDto>}
+            removeCallback={handlePinRemove}
+          />
+        );
+        break;
+      case ObjTypeDto.PageElementSnapshot:
+      case ObjTypeDto.PageSnapshot:
+        objs.push(
+          <SnapshotListElement key={obj.id} obj={obj as ObjDto<ObjSnapshotDto>} removeCallback={handleSnapshotRemove} />
+        );
+        break;
+      case ObjTypeDto.PageNote:
+        objs.push(<NoteListElementComponent obj={obj as ObjDto<ObjNoteDto>} removeCallback={handleNoteRemove} />);
+        break;
     }
   }
   return (
