@@ -14,30 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useEffect, useRef } from 'react';
+import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 
 interface SnapshotExpandProps {
-  visible: boolean;
   obj: ObjDto<ObjSnapshotDto>;
 }
 
-export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps> = ({ obj, visible }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!visible) return;
-    const img = new Image();
-    img.width = 280;
-    if (obj.data.screenshot) img.src = obj.data.screenshot;
-    ref.current?.appendChild(img);
-
-    return () => {
-      ref.current?.removeChild(img);
-    };
-  });
-
+export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps> = ({ obj }) => {
   return (
     <div
       style={{
@@ -47,7 +32,7 @@ export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps>
         position: 'relative'
       }}
     >
-      <div ref={ref}></div>
+      <img src={obj.data.screenshot} width="280" />
     </div>
   );
 };

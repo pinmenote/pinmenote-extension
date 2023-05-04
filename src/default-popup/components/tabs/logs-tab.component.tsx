@@ -41,7 +41,7 @@ export const LogsTabComponent: FunctionComponent = () => {
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POP_CONSOLE_LOG, key);
     };
-  });
+  }, []);
   return (
     <div style={{ height: '100%', margin: 5 }}>
       <div>

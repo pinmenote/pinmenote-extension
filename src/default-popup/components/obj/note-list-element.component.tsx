@@ -46,6 +46,8 @@ export const NoteListElementComponent: FunctionComponent<NoteListElementComponen
   ) : (
     <NavigateNextIcon sx={{ fontSize: '12px' }} />
   );
+  const expandComponent = isExpanded ? <NoteListExpandComponent note={props.obj} /> : '';
+
   const value = props.obj.data.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
@@ -84,7 +86,7 @@ export const NoteListElementComponent: FunctionComponent<NoteListElementComponen
           </IconButton>
         </div>
       </div>
-      <NoteListExpandComponent visible={isExpanded} note={props.obj} />
+      {expandComponent}
     </div>
   );
 };

@@ -20,17 +20,15 @@ import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { marked } from 'marked';
 
 interface PinExpandProps {
-  visible: boolean;
   note: ObjDto<ObjNoteDto>;
 }
 
-export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ note, visible }) => {
+export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ note }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!visible) return;
     if (!ref.current) return;
     ref.current.innerHTML = marked(note.data.description);
-  }, []);
+  });
 
   return (
     <div

@@ -73,6 +73,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
   ) : (
     <NavigateNextIcon sx={{ fontSize: '12px' }} />
   );
+  const expandComponent = isExpanded ? <PinListExpandComponent pin={props.obj}></PinListExpandComponent> : '';
 
   const visibleIcon = props.visibility ? (
     <IconButton size="small" onClick={() => handlePinVisible(props.obj)}>
@@ -123,7 +124,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
           </IconButton>
         </div>
       </div>
-      <PinListExpandComponent visible={isExpanded} pin={props.obj}></PinListExpandComponent>
+      {expandComponent}
     </div>
   );
 };

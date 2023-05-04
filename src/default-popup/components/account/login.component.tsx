@@ -65,7 +65,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN, loginKey);
     };
-  });
+  }, []);
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);

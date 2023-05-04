@@ -65,7 +65,7 @@ export const Verify2faComponent: FunctionComponent<Verify2faComponentProps> = ({
     return () => {
       TinyEventDispatcher.removeListener(BusMessageType.POPUP_VERIFY_2FA, loginKey);
     };
-  });
+  }, []);
 
   const handleTotpChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setTotp(e.target.value);

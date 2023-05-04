@@ -57,6 +57,8 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
   ) : (
     <NavigateNextIcon sx={{ fontSize: '12px' }} />
   );
+  const expandComponent = isExpanded ? <SnapshotListExpandComponent obj={props.obj} /> : '';
+
   const value = props.obj.data.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
@@ -98,7 +100,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
           </IconButton>
         </div>
       </div>
-      <SnapshotListExpandComponent visible={isExpanded} obj={props.obj} />
+      {expandComponent}
     </div>
   );
 };

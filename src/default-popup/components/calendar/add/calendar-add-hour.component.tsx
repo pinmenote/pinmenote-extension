@@ -45,7 +45,7 @@ export const CalendarAddHourComponent: FunctionComponent<CalendarAddHourComponen
         break;
       }
     }
-  });
+  }, []);
 
   const handleAdd = (hours: number) => {
     props.addCallback(hours);
