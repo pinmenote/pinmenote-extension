@@ -24,7 +24,7 @@ export class DetectLanguage {
     this.lang.setLanguageType('iso2');
     const samp = sample.length < 1000 ? sample : sample.substring(0, 1000);
     const languages = this.lang.detect(samp);
-    if (!languages) return undefined;
+    if (!languages[0]) return undefined;
     fnConsoleLog('DetectLanguage', languages[0]);
     return languages[0][0];
   }
