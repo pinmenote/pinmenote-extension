@@ -16,6 +16,7 @@
  */
 import React, { FunctionComponent, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -27,6 +28,7 @@ import Typography from '@mui/material/Typography';
 
 interface NoteListElementComponentProps {
   obj: ObjDto<ObjNoteDto>;
+  editCallback: (obj: ObjDto<ObjNoteDto>) => void;
   removeCallback: (note: ObjDto<ObjNoteDto>) => void;
 }
 
@@ -81,6 +83,9 @@ export const NoteListElementComponent: FunctionComponent<NoteListElementComponen
             justifyContent: 'flex-end'
           }}
         >
+          <IconButton size="small" onClick={() => props.editCallback(props.obj)}>
+            <EditIcon sx={{ fontSize: '12px' }} />
+          </IconButton>
           <IconButton title="Remove note" size="small" onClick={() => handleNoteRemove(props.obj)}>
             <CloseIcon sx={{ fontSize: '12px' }} />
           </IconButton>

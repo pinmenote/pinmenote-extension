@@ -23,44 +23,62 @@ import { MainHeaderComponent } from './main-header.component';
 import { MainMenuListComponent } from './main-menu-list.component';
 import { MainViewEnum } from '../component-model';
 import { NoteComponent } from '../note/note.component';
+import { NoteEditComponent } from '../note/add/note-edit.component';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjViewComponent } from '../obj/obj-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
 import { TaskComponent } from '../task/task.component';
 
-const getViewComponent = (
-  viewType: MainViewEnum,
-  closeListCallback: (viewType: MainViewEnum) => void
-): ReactElement | undefined => {
-  switch (viewType) {
-    case MainViewEnum.CREATE_LIST:
-      return <MainMenuListComponent closeListCallback={closeListCallback} />;
-    case MainViewEnum.PAGE_OBJECTS:
-      return <ObjViewComponent />;
-    case MainViewEnum.ENCRYPT:
-      return <EncryptComponent />;
-    case MainViewEnum.DECRYPT:
-      return <DecryptComponent />;
-    case MainViewEnum.CALENDAR:
-      return <CalendarComponent />;
-    case MainViewEnum.TASK:
-      return <TaskComponent />;
-    case MainViewEnum.NOTE:
-      return <NoteComponent />;
-    case MainViewEnum.FUNCTION:
-      return <PopupFunctionsComponent />;
-  }
-};
-
 export const MainViewComponent: FunctionComponent = () => {
   const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
   const [currentView, setCurrentView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
+  const [editNote, setEditNote] = useState<ObjDto<ObjNoteDto> | undefined>();
 
   const changeMainTab = (viewType: MainViewEnum) => {
     setPreviousView(currentView);
     setCurrentView(viewType);
   };
 
-  const currentComponent = getViewComponent(currentView, changeMainTab);
+  const editNoteCallback = (obj: ObjDto<ObjNoteDto>) => {
+    setEditNote(obj);
+    setCurrentView(MainViewEnum.NOTE_EDIT);
+  };
+
+  const editNoteActionCallback = () => {
+    changeMainTab(MainViewEnum.PAGE_OBJECTS);
+  };
+
+  const getViewComponent = (viewType: MainViewEnum): ReactElement | undefined => {
+    switch (viewType) {
+      case MainViewEnum.CREATE_LIST:
+        return <MainMenuListComponent closeListCallback={changeMainTab} />;
+      case MainViewEnum.PAGE_OBJECTS:
+        return <ObjViewComponent editNoteCallback={editNoteCallback} />;
+      case MainViewEnum.ENCRYPT:
+        return <EncryptComponent />;
+      case MainViewEnum.DECRYPT:
+        return <DecryptComponent />;
+      case MainViewEnum.CALENDAR:
+        return <CalendarComponent />;
+      case MainViewEnum.TASK:
+        return <TaskComponent />;
+      case MainViewEnum.NOTE:
+        return <NoteComponent />;
+      case MainViewEnum.NOTE_EDIT:
+        return (
+          <NoteEditComponent
+            saveCallback={editNoteActionCallback}
+            cancelCallback={editNoteActionCallback}
+            obj={editNote}
+          />
+        );
+      case MainViewEnum.FUNCTION:
+        return <PopupFunctionsComponent />;
+    }
+  };
+
+  const currentComponent = getViewComponent(currentView);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>

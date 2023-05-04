@@ -19,6 +19,7 @@ export enum MainViewEnum {
   PAGE_OBJECTS,
   TASK,
   NOTE,
+  NOTE_EDIT,
   ENCRYPT,
   DECRYPT,
   CALENDAR,

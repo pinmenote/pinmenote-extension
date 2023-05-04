@@ -28,12 +28,12 @@ import { PinListElement } from './pin-list-element.component';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { SnapshotListElement } from './snapshot-list-element.component';
 
-interface PinListProps {
+interface ObjListComponentProps {
+  editNoteCallback: (obj: ObjDto<ObjNoteDto>) => void;
   objList: ObjDto<ObjPageDataDto>[];
-  visibility: boolean;
 }
 
-export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, visibility }) => {
+export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props) => {
   const [reRender, setReRender] = useState(false);
 
   const handlePinRemove = async (data: ObjDto<ObjPagePinDto>) => {
@@ -53,10 +53,10 @@ export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, vis
   };
 
   const handleRemove = (id: number) => {
-    for (let i = 0; i < objList.length; i++) {
-      const obj = objList[i];
+    for (let i = 0; i < props.objList.length; i++) {
+      const obj = props.objList[i];
       if (obj.id === id) {
-        objList.splice(i, 1);
+        props.objList.splice(i, 1);
         setReRender(!reRender);
         break;
       }
@@ -65,17 +65,10 @@ export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, vis
 
   // Render pins
   const objs: React.ReactNode[] = [];
-  for (const obj of objList) {
+  for (const obj of props.objList) {
     switch (obj.type) {
       case ObjTypeDto.PageElementPin:
-        objs.push(
-          <PinListElement
-            key={obj.id}
-            visibility={visibility}
-            obj={obj as ObjDto<ObjPagePinDto>}
-            removeCallback={handlePinRemove}
-          />
-        );
+        objs.push(<PinListElement key={obj.id} obj={obj as ObjDto<ObjPagePinDto>} removeCallback={handlePinRemove} />);
         break;
       case ObjTypeDto.PageElementSnapshot:
       case ObjTypeDto.PageSnapshot:
@@ -84,7 +77,13 @@ export const ObjListComponent: FunctionComponent<PinListProps> = ({ objList, vis
         );
         break;
       case ObjTypeDto.PageNote:
-        objs.push(<NoteListElementComponent obj={obj as ObjDto<ObjNoteDto>} removeCallback={handleNoteRemove} />);
+        objs.push(
+          <NoteListElementComponent
+            editCallback={props.editNoteCallback}
+            obj={obj as ObjDto<ObjNoteDto>}
+            removeCallback={handleNoteRemove}
+          />
+        );
         break;
     }
   }

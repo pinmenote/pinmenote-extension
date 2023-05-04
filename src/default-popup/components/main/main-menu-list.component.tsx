@@ -100,7 +100,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemIcon>
               <PushPinIcon />
             </ListItemIcon>
-            <ListItemText primary="On Page" />
+            <ListItemText primary="On This Page" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>
@@ -111,7 +111,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemText primary="Use Function" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad}>
+        {/*<ListItem sx={zeroPad}>
           <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.CALENDAR)}>
             <ListItemIcon>
               <CalendarMonthIcon />
@@ -126,7 +126,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             </ListItemIcon>
             <ListItemText primary="Task" />
           </ListItemButton>
-        </ListItem>
+        </ListItem>*/}
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.NOTE)}>
             <ListItemIcon>

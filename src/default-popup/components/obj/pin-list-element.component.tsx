@@ -34,7 +34,6 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface PinListElementProps {
   obj: ObjDto<ObjPagePinDto>;
-  visibility: boolean;
   removeCallback: (pin: ObjDto<ObjPagePinDto>) => void;
 }
 
@@ -42,8 +41,11 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(props.obj.local?.visible);
   const handleNavigate = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
-    data.local.visible = true;
-    await new PinUpdateCommand(data).execute();
+    if (!isVisible) {
+      data.local.visible = true;
+      await new PinUpdateCommand(data).execute();
+      setIsVisible(true);
+    }
 
     if (PopupActiveTabStore.url?.href !== data.data.snapshot.url.href) {
       await BrowserApi.setActiveTabUrl(data.data.snapshot.url.href);
@@ -75,7 +77,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
   );
   const expandComponent = isExpanded ? <PinListExpandComponent pin={props.obj}></PinListExpandComponent> : '';
 
-  const visibleIcon = props.visibility ? (
+  const visibleIcon = isVisible ? (
     <IconButton size="small" onClick={() => handlePinVisible(props.obj)}>
       {isVisible ? <VisibilityIcon sx={{ fontSize: '12px' }} /> : <VisibilityOffIcon sx={{ fontSize: '12px' }} />}
     </IconButton>

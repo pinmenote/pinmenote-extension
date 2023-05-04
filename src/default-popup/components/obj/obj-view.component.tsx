@@ -20,11 +20,16 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjGetHrefCommand } from '../../../common/command/obj/url/obj-get-href.command';
 import { ObjGetOriginCommand } from '../../../common/command/obj/url/obj-get-origin.command';
 import { ObjListComponent } from './obj-list.component';
+import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import Typography from '@mui/material/Typography';
 
-export const ObjViewComponent: FunctionComponent = () => {
+interface ObjViewComponent {
+  editNoteCallback: (obj: ObjDto<ObjNoteDto>) => void;
+}
+
+export const ObjViewComponent: FunctionComponent<ObjViewComponent> = (props) => {
   const [originObjs, setOriginObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
   const [hrefObjs, setHrefObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
 
@@ -53,11 +58,11 @@ export const ObjViewComponent: FunctionComponent = () => {
       <Typography fontWeight="bold" fontSize="14px">
         On this page
       </Typography>
-      <ObjListComponent objList={hrefObjs} visibility={true} />
+      <ObjListComponent objList={hrefObjs} editNoteCallback={props.editNoteCallback} />
       <Typography fontWeight="bold" fontSize="14px">
         On {PopupActiveTabStore.url?.origin}
       </Typography>
-      <ObjListComponent objList={originObjs} visibility={false} />
+      <ObjListComponent objList={originObjs} editNoteCallback={props.editNoteCallback} />
     </div>
   );
 };

@@ -19,7 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { NoteElementExpandComponent } from './note-element-expand.component';
+import { NoteListExpandComponent } from '../obj/note-list-expand.component';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import Typography from '@mui/material/Typography';
@@ -41,6 +41,8 @@ export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> 
   ) : (
     <NavigateNextIcon sx={{ fontSize: '12px' }} />
   );
+  const expandComponent = isExpanded ? <NoteListExpandComponent note={obj} /> : '';
+
   const title = obj.data.title.length > 50 ? `${obj.data.title.substring(0, 50)}...` : obj.data.title;
   return (
     <div
@@ -63,7 +65,7 @@ export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> 
           </IconButton>
         </div>
       </div>
-      <NoteElementExpandComponent visible={isExpanded} note={obj.data} />
+      {expandComponent}
     </div>
   );
 };
