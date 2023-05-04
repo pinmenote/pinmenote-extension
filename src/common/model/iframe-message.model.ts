@@ -18,8 +18,9 @@ export enum IFrameMessageType {
   LOADED = 'loaded',
   FETCH = 'fetch',
   PING = 'ping',
-  START_LISTENERS = 'start-listeners',
-  RESTART_LISTENERS = 'restart-listeners' // to parent
+  START_LISTENERS = 'START_LISTENERS',
+  STOP_LISTENERS = 'STOP_LISTENERS',
+  RESTART_LISTENERS = 'RESTART_LISTENERS' // to parent
 }
 
 export interface IFrameMessage {

@@ -72,7 +72,17 @@ export class DocumentMediator {
   }
 
   private static get isIFrameActive(): boolean {
-    return document.activeElement?.tagName.toLowerCase() === 'iframe';
+    return (
+      !!document.activeElement &&
+      document.activeElement?.tagName.toLowerCase() === 'iframe' &&
+      this.checkVisible(document.activeElement)
+    );
+  }
+
+  private static checkVisible(elm: Element): boolean {
+    const rect = elm.getBoundingClientRect();
+    const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+    return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
   }
 
   private static startOverlay = (): void => {
@@ -102,6 +112,8 @@ export class DocumentMediator {
     document.removeEventListener('scroll', this.handleScroll);
     window.removeEventListener('keydown', this.handleKeyDown);
     PinAddFactory.clear();
+    // Cleanup iframe
+    IFrameMessageFactory.cleanupListeners(Array.from(document.getElementsByTagName('iframe')));
     if (this.params?.stopCallback) this.params.stopCallback();
   }
 

@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { IFrameMessage } from '../../../common/model/iframe-message.model';
+import { IFrameMessage, IFrameMessageType } from '../../../common/model/iframe-message.model';
+import { fnUid } from '../../../common/fn/uid.fn';
 
 export class IFrameMessageFactory {
   static parse(msg: any): IFrameMessage | undefined {
@@ -37,6 +38,16 @@ export class IFrameMessageFactory {
   static postIFrame(iframe: HTMLIFrameElement, msg: IFrameMessage) {
     if (!iframe.contentWindow) return;
     iframe.contentWindow.postMessage(this.create(msg), '*');
+  }
+
+  static cleanupListeners(frames: HTMLIFrameElement[]) {
+    frames.forEach((el) => {
+      IFrameMessageFactory.postIFrame(el, {
+        type: IFrameMessageType.PING,
+        uid: fnUid(),
+        keep: false
+      });
+    });
   }
 
   private static create(message: IFrameMessage) {

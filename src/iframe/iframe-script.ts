@@ -76,26 +76,36 @@ export class IframeScript {
   private handleIframeMessage = async (e: MessageEvent<any>): Promise<void> => {
     const msg = IFrameMessageFactory.parse(e.data);
     if (!msg) return;
-    if (msg.type === IFrameMessageType.PING) {
-      // Send to parent only using service worker because parent messages not always get to parent (thank you m$)
-      // TODO relay only on browserApi
-      fnConsoleLog('IframeScript->constructor->iframe->ping', msg);
-      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_IFRAME_MESSAGE, data: msg });
-    } else if (msg.type === IFrameMessageType.FETCH) {
-      fnConsoleLog('IframeScript->constructor->iframe->fetch', msg);
-      await new ContentFetchIframeCommand(msg, this.href).execute();
-    } else if (msg.type === IFrameMessageType.START_LISTENERS) {
-      fnConsoleLog('IframeScript->constructor->iframe->start-listeners', msg);
-      this.type = msg.data.type;
-      this.uid = msg.uid;
-      // TODO pass correct url -> so we save correct href and origin
-      // fix screenshot -> pass iframe position inside origin window
-      DocumentMediator.startListeners(msg.data.type, {
-        stopCallback: () => {
-          document.removeEventListener('mouseout', this.handleMouseOut);
-        }
-      });
-      document.addEventListener('mouseout', this.handleMouseOut);
+    switch (msg.type) {
+      case IFrameMessageType.PING: {
+        // Send to parent only using service worker because parent messages not always get to parent (thank you m$)
+        // TODO relay only on browserApi
+        fnConsoleLog('IframeScript->constructor->iframe->ping', msg);
+        await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_IFRAME_MESSAGE, data: msg });
+        break;
+      }
+      case IFrameMessageType.FETCH: {
+        fnConsoleLog('IframeScript->constructor->iframe->fetch', msg);
+        await new ContentFetchIframeCommand(msg, this.href).execute();
+        break;
+      }
+      case IFrameMessageType.START_LISTENERS: {
+        fnConsoleLog('IframeScript->constructor->iframe->start-listeners', msg);
+        this.type = msg.data.type;
+        this.uid = msg.uid;
+        // TODO pass correct url -> so we save correct href and origin
+        // fix screenshot -> pass iframe position inside origin window
+        DocumentMediator.startListeners(msg.data.type, {
+          stopCallback: () => {
+            document.removeEventListener('mouseout', this.handleMouseOut);
+          }
+        });
+        document.addEventListener('mouseout', this.handleMouseOut);
+        break;
+      }
+      case IFrameMessageType.STOP_LISTENERS: {
+        DocumentMediator.stopListeners();
+      }
     }
   };
 
