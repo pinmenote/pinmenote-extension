@@ -58,6 +58,7 @@ export class DocumentMediator {
       'lock',
       document.pointerLockElement
     );
+    // TODO verify if it's still required - if yes add check if iframe fills whole screen
     if (this.isIFrameActive && !params?.restart) {
       const uid = IframeMediator.addIframe(document.activeElement as HTMLIFrameElement);
       IFrameMessageFactory.postIFrame(document.activeElement as HTMLIFrameElement, {

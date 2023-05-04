@@ -1,8 +1,8 @@
-pinmenote-extension
+pinmenote-extension - pre-alpha
 ---
 
 ### Description
-Browser extension nobody wants and nobody needs.  
+Browser extension
 
 - offline first with p2p in mind
 
@@ -14,18 +14,22 @@ npm run dev
 ### Website
 [https://pinmenote.com](https://pinmenote.com)
 
-### Features
+### Features Summary
 - select website area, add comment and draw on selected part
-- save website / part of website as single page for offline use ( state of the art )
+- save website / part of website as single page for offline use
 - capture image / map / canvas
 - capture video time
 - download table as csv
-- add task, note to any website as well as standalone
+- add / manage note to any website or without website
 - encrypt / decrypt messages
 - html preview and board view
 - add and manage tags of any content you saved
-- add calendar event (repeat in progress)
-- smart search using index of words (reverse index), dates, website addresses
+- automatic reverse index of saved content
+- smart search using levenshtein distance, dates, website addresses
+
+### In progress
+- add / manage calendar event (repeat in progress)
+- add / manage task
 
 ### Known issues
 
@@ -37,5 +41,7 @@ Youtube use polymer dom with ```<!--css-build:shady-->```.
 It is some polymer polyfil for shadow root that messes with css. 
 
 ### Limitations
-
-Not downloading svg icons from css files - to limit number of requests
+- Sometimes what you see / saw is what you saved 
+  - some websites offload content not displayed on page - ex. using shadow dom
+  - the same condition applies to websites that don't load images until you scroll to them
+- Not downloading svg icons from css files - to limit number of requests

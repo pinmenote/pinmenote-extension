@@ -33,6 +33,8 @@ export const CSS_IMPORT_REG = new RegExp(
 );
 
 export class CssFactory {
+  private static readonly urlImportStripRegex = new RegExp('[()\'";]', 'g');
+
   static computeCssContent = async (skipUrlCache?: Set<string>): Promise<CssStyleListDto> => {
     const css: CssStyleDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
@@ -50,7 +52,7 @@ export class CssFactory {
         if (cssFetchData.ok) {
           const imports = await this.fetchImports(cssFetchData.res, url.href, skipUrlCache);
 
-          let data = cssFetchData.res.replaceAll(CSS_IMPORT_REG, '').trim();
+          let data = cssFetchData.res.replace(CSS_IMPORT_REG, '').trim();
           data = await this.fetchUrls(data, url.href, skipUrlCache);
           css.push(...imports);
 
@@ -129,10 +131,9 @@ export class CssFactory {
       if (url.startsWith('url')) {
         const urlMatch = url.match(CSS_URL_REG);
         if (!urlMatch) continue;
-        url = urlMatch[0].substring(4, urlMatch[0].length - 2);
-      } else {
-        url = url.endsWith(';') ? url.substring(1, url.length - 2) : url.substring(1, url.length - 1);
+        url = urlMatch[0].substring(3, urlMatch[0].length - 1);
       }
+      url = url.replaceAll(this.urlImportStripRegex, '');
 
       if (rel && !url.startsWith('http')) {
         const a = rel.split('/');
