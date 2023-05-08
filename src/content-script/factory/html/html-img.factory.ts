@@ -78,8 +78,21 @@ export class HtmlImgFactory {
   };
 
   private static computeSrcSet = async (srcset: string[]): Promise<string> => {
-    // last value so it's biggest image
-    const value = srcset[srcset.length - 1].trim().split(' ')[0];
+    // sort by size so it's best image
+    if (srcset.length > 1) {
+      srcset = srcset.sort((a, b) => {
+        a = a.trim().split(' ')[1].trim();
+        b = b.trim().split(' ')[1].trim();
+        a = a.substring(0, a.length - 1);
+        b = b.substring(0, b.length - 1);
+        const aa = parseInt(a);
+        const bb = parseInt(b);
+        if (aa > bb) return -1;
+        if (aa < bb) return 1;
+        return 0;
+      });
+    }
+    const value = srcset[0].trim().split(' ')[0];
     const url = fnComputeUrl(value);
     if (url.startsWith('http')) {
       const imageData = await fnFetchImage(url);

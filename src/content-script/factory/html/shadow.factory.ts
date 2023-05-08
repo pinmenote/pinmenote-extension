@@ -18,9 +18,9 @@ import { CSS_IMPORT_REG, CssFactory } from '../css.factory';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
-import { HtmlFactory } from './html.factory';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../../common/model/html.model';
+import { HtmlPictureFactory } from './html-picture.factory';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
@@ -105,7 +105,7 @@ export class ShadowFactory {
     } else if (tagName === 'style') {
       return this.computeCssData(ref.innerHTML);
     } else if (tagName === 'picture') {
-      const pic = await HtmlFactory.computePicture(ref as HTMLPictureElement, true, skipUrlCache);
+      const pic = await HtmlPictureFactory.computePicture(ref as HTMLPictureElement, true, skipUrlCache);
       return pic.html;
     } else if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName)) {
       const shadow = BrowserApi.shadowRoot(ref);

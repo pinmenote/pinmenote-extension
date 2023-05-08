@@ -52,6 +52,7 @@ export type ObjPageDataDto = ObjPagePinDto | ObjSnapshotDto | ObjNoteDto | ObjTa
 
 export interface ObjDto<T = ObjDataDto> {
   id: number;
+  remoteId?: number;
   version: number;
   type: ObjTypeDto;
   updatedAt: number;
