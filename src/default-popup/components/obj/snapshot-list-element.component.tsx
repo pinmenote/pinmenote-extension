@@ -18,7 +18,7 @@ import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -96,7 +96,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
             <ArrowForwardIcon sx={{ fontSize: '12px' }} />
           </IconButton>
           <IconButton title="Remove obj" size="small" onClick={() => handleObjRemove(props.obj)}>
-            <CloseIcon sx={{ fontSize: '12px' }} />
+            <DeleteIcon sx={{ fontSize: '12px' }} />
           </IconButton>
         </div>
       </div>

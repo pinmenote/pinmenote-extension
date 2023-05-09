@@ -17,8 +17,8 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { AddKeyComponent } from './add-key.component';
-import ClearIcon from '@mui/icons-material/Clear';
 import { CryptoStore } from '../../../../../common/store/crypto.store';
+import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import { KeyDetailsComponent } from './key-details.component';
 import List from '@mui/material/List';
@@ -89,7 +89,7 @@ export const KeyListComponent: FunctionComponent = () => {
                     <VisibilityIcon />
                   </IconButton>
                   <IconButton onClick={() => handleRemoveKey(username)}>
-                    <ClearIcon />
+                    <DeleteIcon />
                   </IconButton>
                 </div>
               }

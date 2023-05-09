@@ -18,7 +18,7 @@ import React, { FunctionComponent, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -122,7 +122,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
             <ArrowForwardIcon sx={{ fontSize: '12px' }} />
           </IconButton>
           <IconButton title="Remove pin" size="small" onClick={() => handlePinRemove(props.obj)}>
-            <CloseIcon sx={{ fontSize: '12px' }} />
+            <DeleteIcon sx={{ fontSize: '12px' }} />
           </IconButton>
         </div>
       </div>

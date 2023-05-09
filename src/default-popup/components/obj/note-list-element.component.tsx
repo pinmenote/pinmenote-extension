@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
@@ -87,7 +87,7 @@ export const NoteListElementComponent: FunctionComponent<NoteListElementComponen
             <EditIcon sx={{ fontSize: '12px' }} />
           </IconButton>
           <IconButton title="Remove note" size="small" onClick={() => handleNoteRemove(props.obj)}>
-            <CloseIcon sx={{ fontSize: '12px' }} />
+            <DeleteIcon sx={{ fontSize: '12px' }} />
           </IconButton>
         </div>
       </div>

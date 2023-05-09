@@ -16,7 +16,7 @@
  */
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
-import ClearIcon from '@mui/icons-material/Clear';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
@@ -103,7 +103,7 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
             <EditIcon />
           </IconButton>
           <IconButton title="Remove" onClick={handleRemove}>
-            <ClearIcon />
+            <DeleteIcon />
           </IconButton>
         </div>
       </div>

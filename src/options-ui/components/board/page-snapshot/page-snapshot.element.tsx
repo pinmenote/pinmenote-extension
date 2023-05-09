@@ -17,7 +17,7 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import { BusMessageType } from '../../../../common/model/bus.model';
-import ClearIcon from '@mui/icons-material/Clear';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
@@ -106,7 +106,7 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
             <EditIcon />
           </IconButton>
           <IconButton title="Remove" onClick={handleRemove}>
-            <ClearIcon />
+            <DeleteIcon />
           </IconButton>
         </div>
       </div>
