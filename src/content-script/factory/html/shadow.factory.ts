@@ -33,7 +33,7 @@ export class ShadowFactory {
     shadow: ShadowRoot,
     skipUrlCache: Set<string>
   ): Promise<HtmlIntermediateData> => {
-    fnConsoleLog('ShadowFactory->computeShadow');
+    fnConsoleLog('ShadowFactory->computeShadow->start');
     const uid = fnUid();
     let html = `<${tagName} data-pin-id="${uid}" `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
@@ -43,6 +43,7 @@ export class ShadowFactory {
 
     html += `</${tagName}>`;
     const shadowHtml = await this.computeShadowHtml(shadow, skipUrlCache);
+    fnConsoleLog('ShadowFactory->computeShadow->end');
     return {
       html,
       video: [],
@@ -84,7 +85,7 @@ export class ShadowFactory {
 
   private static computeShadowChild = async (ref: Element, skipUrlCache?: Set<string>): Promise<string> => {
     const tagName = ref.tagName.toLowerCase();
-    if (['script', 'link', 'noscript'].includes(tagName)) return '';
+    if (['script', 'noscript'].includes(tagName)) return '';
 
     let htmlPrefilled = false;
 
