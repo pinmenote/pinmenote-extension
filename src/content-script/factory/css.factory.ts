@@ -24,7 +24,7 @@ import { fnComputeUrl } from '../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 
-type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule;
+type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule & CSSSupportsRule;
 
 export const CSS_URL_REG = new RegExp('url\\(.*\\)', 'g');
 export const CSS_IMPORT_REG = new RegExp(
@@ -93,22 +93,18 @@ export class CssFactory {
         const imports = await this.fetchImports(data, undefined, skipUrlCache);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
-        out +=
-          data +
-          `
-`;
+        out += data + '\n';
       } else if (r.selectorText) {
         let data = r.cssText;
         const imports = await this.fetchImports(data, undefined, skipUrlCache);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
-        out +=
-          data +
-          `
-`;
+        out += data + '\n';
+      } else if (r instanceof CSSSupportsRule) {
+        out += r.cssText + '\n';
       } else {
         // TODO parse other rules ex CSSKeyFrameRules
-        // fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
+        fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
     }
     css.push({
