@@ -24,6 +24,7 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class IFrameFactory {
   static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
+    fnConsoleLog('IFrameFactory->computeIframe');
     // Skip iframe->iframe->skip
     if (depth > 3) return HtmlAttrFactory.EMPTY_RESULT;
     try {

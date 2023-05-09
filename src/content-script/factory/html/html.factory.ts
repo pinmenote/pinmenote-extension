@@ -39,8 +39,8 @@ export interface HtmlComputeParams {
 
 export class HtmlFactory {
   static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
-    const imgData = ref.toDataURL('image/png', 80);
     fnConsoleLog('HtmlFactory->computeCanvas');
+    const imgData = ref.toDataURL('image/png', 80);
     let width = ref.getAttribute('width') || '100%';
     let height = ref.getAttribute('height') || '100%';
     const rect = ref.parentElement?.getBoundingClientRect();
@@ -107,7 +107,6 @@ export class HtmlFactory {
         displayTime: environmentConfig.settings.videoDisplayTime
       });
     } else if (tagName === 'picture') {
-      params.ref as HTMLPictureElement;
       return await HtmlPictureFactory.computePicture(params.ref as HTMLPictureElement, false, params.skipUrlCache);
     } else if (tagName === 'img') {
       const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params.skipUrlCache);

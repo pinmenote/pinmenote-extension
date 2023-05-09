@@ -79,7 +79,10 @@ export class FetchService {
 
   static async get<T>(url: string, authenticate = false, type = ResponseType.JSON): Promise<FetchResponse<T>> {
     const ctrl = new AbortController();
-    setTimeout(() => ctrl.abort(), 15000);
+    setTimeout(() => {
+      fnConsoleLog('FetchService->get->abort');
+      ctrl.abort();
+    }, 15000);
 
     const requestInit = { method: 'GET', signal: ctrl.signal };
 

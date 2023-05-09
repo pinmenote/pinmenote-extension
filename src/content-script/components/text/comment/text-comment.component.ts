@@ -25,6 +25,8 @@ const elStyles = {
   display: 'flex',
   'flex-direction': 'row',
   'justify-content': 'space-between',
+  'font-size': '1em',
+  color: '#000',
   width: '100%'
 };
 

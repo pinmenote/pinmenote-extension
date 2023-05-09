@@ -18,6 +18,7 @@ import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../../common/model/html.model';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 
 export class HtmlPictureFactory {
@@ -26,6 +27,7 @@ export class HtmlPictureFactory {
     forShadow: boolean,
     skipUrlCache?: Set<string>
   ): Promise<HtmlIntermediateData> => {
+    fnConsoleLog('HtmlPictureFactory->computePicture');
     if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
 
     const children = Array.from(ref.children);

@@ -33,7 +33,7 @@ export class ShadowFactory {
     shadow: ShadowRoot,
     skipUrlCache: Set<string>
   ): Promise<HtmlIntermediateData> => {
-    fnConsoleLog('COMPUTE SHADOW !!!', tagName, ref);
+    fnConsoleLog('ShadowFactory->computeShadow');
     const uid = fnUid();
     let html = `<${tagName} data-pin-id="${uid}" `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
