@@ -27,6 +27,7 @@ import { IFrameMessageFactory } from '../content-script/factory/html/iframe-mess
 import { ObjTypeDto } from '../common/model/obj/obj.dto';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
+import { fnIsIframe } from '../common/fn/fn-is-iframe';
 import { fnUid } from '../common/fn/uid.fn';
 
 /**
@@ -39,11 +40,13 @@ export class IframeScript {
   private type?: ObjTypeDto;
   private uid?: string;
 
-  constructor(private readonly id: string, private ms: number) {
+  constructor(private readonly id: string) {
     this.href = UrlFactory.normalizeHref(window.location.href);
     window.addEventListener('message', this.handleIframeMessage);
 
-    ContentMessageHandler.start(this.href);
+    fnConsoleLog('IframeScript->constructor', this.href);
+
+    ContentMessageHandler.start(this.href, true);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
@@ -137,8 +140,8 @@ export class IframeScript {
 }
 
 try {
-  if (window !== window.parent) {
-    new IframeScript(fnUid(), 250);
+  if (fnIsIframe()) {
+    new IframeScript(fnUid());
   }
 } catch (e: unknown) {
   fnConsoleError('PinMeScript->PROBLEM !!!', e);

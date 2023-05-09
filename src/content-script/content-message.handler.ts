@@ -29,9 +29,11 @@ import { fnConsoleLog } from '../common/fn/console.fn';
 
 export class ContentMessageHandler {
   private static href?: string;
+  private static iframe = false;
 
-  static start(href: string): void {
+  static start(href: string, iframe = false): void {
     this.href = href;
+    this.iframe = iframe;
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
     TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
@@ -59,7 +61,7 @@ export class ContentMessageHandler {
     });
     switch (msg.type) {
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
-        await new ContentPageSnapshotAddCommand(msg.data).execute();
+        if (!this.iframe) await new ContentPageSnapshotAddCommand(msg.data).execute();
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PIN_START:
