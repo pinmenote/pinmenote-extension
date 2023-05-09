@@ -36,7 +36,6 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       words = res.words;
       video = res.video;
     } else if (this.element instanceof HTMLImageElement) {
-      // TODO save image
       contentId = await new SnapshotSaveImageCommand(this.element).execute();
     }
     const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);

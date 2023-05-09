@@ -19,8 +19,10 @@ import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
 export class ObjNextIdCommand implements ICommand<Promise<number>> {
+  constructor(private key: string) {}
   async execute(): Promise<number> {
-    const value = await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID);
+    const value = await BrowserStorageWrapper.get<number | undefined>(this.key);
+    await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_ID, value ? value + 1 : 1);
     if (value) return value + 1;
     return 1;
   }

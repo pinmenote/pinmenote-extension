@@ -17,7 +17,7 @@
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { HtmlImgFactory } from '../../factory/html/html-img.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjNextContentIdCommand } from '../../../common/command/obj/content/obj-next-content-id.command';
+import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
 import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 
@@ -25,7 +25,7 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
   constructor(private element: HTMLElement) {}
 
   async execute(): Promise<number> {
-    const id = await new ObjNextContentIdCommand().execute();
+    const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
     const value = await HtmlImgFactory.computeImgValue(this.element as HTMLImageElement);

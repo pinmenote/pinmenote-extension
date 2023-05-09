@@ -18,7 +18,6 @@ import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper'
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjAddCreatedDateIndexCommand } from '../date-index/obj-add-created-date-index.command';
 import { ObjAddUpdatedDateIndexCommand } from '../date-index/obj-add-updated-date-index.command';
-import { ObjUpdateLastIdCommand } from './obj-update-last-id.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
 
@@ -42,7 +41,6 @@ export class ObjAddIdCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
 
     await BrowserStorageWrapper.set(key, ids);
-    await new ObjUpdateLastIdCommand(this.id).execute();
 
     await new ObjAddCreatedDateIndexCommand(this.id, this.dt).execute();
     await new ObjAddUpdatedDateIndexCommand(this.id, this.dt).execute();

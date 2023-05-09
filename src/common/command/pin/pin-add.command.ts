@@ -33,7 +33,7 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
   async execute(): Promise<ObjDto<ObjPagePinDto>> {
     fnConsoleLog('PinAddCommand->execute', this.pin);
 
-    const id = await new ObjNextIdCommand().execute();
+    const id = await new ObjNextIdCommand(ObjectStoreKeys.OBJECT_ID).execute();
     const dt = Date.now();
 
     const dto: ObjDto<ObjPagePinDto> = {

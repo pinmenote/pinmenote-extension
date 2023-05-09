@@ -20,7 +20,7 @@ import { BrowserStorageWrapper } from '../../../common/service/browser.storage.w
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjNextContentIdCommand } from '../../../common/command/obj/content/obj-next-content-id.command';
+import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
@@ -33,10 +33,10 @@ interface SnapshotResult {
 export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
   constructor(private element: HTMLElement, private isPartial = true) {}
   async execute(): Promise<SnapshotResult> {
-    const id = await new ObjNextContentIdCommand().execute();
+    const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
-    fnConsoleLog('START', key);
+    fnConsoleLog('START', key, window.location.href);
     const urlCache = new Set<string>();
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: this.element,
