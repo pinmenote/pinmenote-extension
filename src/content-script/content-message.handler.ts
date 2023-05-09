@@ -59,7 +59,7 @@ export class ContentMessageHandler {
     });
     switch (msg.type) {
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
-        await new ContentPageSnapshotAddCommand(msg.data, this.href).execute();
+        await new ContentPageSnapshotAddCommand(msg.data).execute();
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PIN_START:

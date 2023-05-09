@@ -24,13 +24,9 @@ import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
 
 export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
-  constructor(private url: ObjUrlDto, private href?: string) {}
+  constructor(private url: ObjUrlDto) {}
 
   async execute(): Promise<void> {
-    if (this.href !== this.url.href) {
-      // fnConsoleLog('SKIP', this.href, this.url.href);
-      return;
-    }
     const screenshot = await ScreenshotFactory.takeScreenshot(undefined, this.url);
 
     const res = await new SnapshotContentSaveCommand(document.body, false).execute();

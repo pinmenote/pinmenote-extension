@@ -137,7 +137,7 @@ export class IframeScript {
 }
 
 try {
-  if (window.top) {
+  if (window !== window.parent) {
     new IframeScript(fnUid(), 250);
   }
 } catch (e: unknown) {
