@@ -27,7 +27,6 @@ import { ContentThemeCommand } from './command/content/content-theme.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLoginSuccessCommand } from './command/popup/popup-login-success.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
-import { PopupSyncDataCommand } from './command/popup/popup-sync-data.command';
 import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
 import { PopupVerify2faCommand } from './command/popup/popup-verify-2fa.command';
 import { ScriptService } from './service/script.service';
@@ -82,9 +81,6 @@ const handleMessage = async (
       break;
     case BusMessageType.POPUP_LOGOUT:
       await new PopupLogoutCommand().execute();
-      break;
-    case BusMessageType.POPUP_SYNC_DATA:
-      await new PopupSyncDataCommand().execute();
       break;
     case BusMessageType.POPUP_TAKE_SCREENSHOT:
       await new PopupTakeScreenshotCommand().execute();

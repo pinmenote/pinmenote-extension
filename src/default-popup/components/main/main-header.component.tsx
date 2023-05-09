@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
@@ -25,6 +25,7 @@ import { MainViewEnum } from '../component-model';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
+import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 
 interface CreateComponentProps {
   currentView: MainViewEnum;
@@ -33,6 +34,16 @@ interface CreateComponentProps {
 }
 
 export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (props) => {
+  const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAdding);
+
+  useEffect(() => {
+    const addKey = TinyEventDispatcher.addListener<boolean>(BusMessageType.POP_IS_ADDING, (event, key, value) => {
+      setIsAdding(value);
+    });
+    return () => {
+      TinyEventDispatcher.removeListener(BusMessageType.POP_IS_ADDING, addKey);
+    };
+  }, []);
   const handleNewPin = async () => {
     try {
       if (!PopupActiveTabStore.url) return;
@@ -60,7 +71,7 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (pro
     window.close();
   };
 
-  const pinBtn = PopupActiveTabStore.isAdding ? (
+  const pinBtn = isAdding ? (
     <Button sx={{ width: '100%' }} variant="outlined" onClick={handlePinStop}>
       Cancel
     </Button>

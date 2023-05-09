@@ -77,7 +77,7 @@ export class PopupActiveTabStore {
     LogManager.log(`PopupActiveTabStore->INIT - ${JSON.stringify(initData || {})}`);
     if (initData?.isAdding) {
       this.isAddingValue = true;
-      TinyEventDispatcher.dispatch<void>(BusMessageType.POP_IS_ADDING);
+      TinyEventDispatcher.dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAddingValue);
     }
   };
 }
