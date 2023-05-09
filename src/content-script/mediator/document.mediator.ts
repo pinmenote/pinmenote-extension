@@ -154,7 +154,9 @@ export class DocumentMediator {
           const { x, y } = PinAddFactory.startPoint;
           const width = e.offsetX - x;
           const height = e.offsetY - y;
-          canvas = PinFactory.objCanvasPinNew({ x, y, width, height });
+          if (width > 10 && height > 10) {
+            canvas = PinFactory.objCanvasPinNew({ x, y, width, height });
+          }
           this.overlayCanvas?.remove();
           this.overlayCanvas = undefined;
         } else {
