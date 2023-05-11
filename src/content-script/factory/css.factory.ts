@@ -173,6 +173,11 @@ export class CssFactory {
   static fetchUrls = async (css: string, baseurl?: string, skipUrlCache?: Set<string>): Promise<string> => {
     const urlList = css.match(CSS_URL_REG);
     if (!urlList) return css;
+    if (baseurl?.endsWith('.css')) {
+      const a = baseurl?.split('/');
+      a.pop();
+      baseurl = a.join('/');
+    }
 
     for (const urlMatch of urlList) {
       let url = urlMatch.substring(4, urlMatch.length - 1);
@@ -184,10 +189,16 @@ export class CssFactory {
       if (url.startsWith('#')) continue;
       // skip multiple urls
       if (url.split('url(').length > 2) continue;
-      // skip fonts
-      if (url.indexOf('format(') > 0) continue;
-      // skip svg
-      if (url.endsWith('.svg')) continue;
+      if (
+        !(
+          url.endsWith('.gif') ||
+          url.endsWith('.png') ||
+          url.endsWith('.jpg') ||
+          url.endsWith('.jpeg') ||
+          url.endsWith('.webp')
+        )
+      )
+        continue;
 
       if (baseurl && !url.startsWith('http')) {
         if (url.startsWith('/')) {
