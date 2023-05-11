@@ -28,18 +28,16 @@ export class HtmlImgFactory {
     // yet another problem with some library loading img tags async
     const isAsyncDecoding = ref.getAttribute('decoding') === 'async';
 
-    fnConsoleLog('HtmlImgFactory->computeImgValue', ref);
+    // fnConsoleLog('HtmlImgFactory->computeImgValue', ref);
 
     // we have data already inside image so just add it except it's not async loading cause might be blank
     if (!isAsyncDecoding && value.startsWith('data:')) {
-      fnConsoleLog('HtmlImgFactory->computeImgValue->data');
       return value;
     }
 
     if (value.startsWith('http')) {
       const imageData = await fnFetchImage(value);
       if (imageData.ok) {
-        fnConsoleLog('HtmlImgFactory->computeImgValue->fnFetchImage');
         return imageData.res;
       }
     }
@@ -50,7 +48,6 @@ export class HtmlImgFactory {
       const url = fnComputeUrl(value);
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
-        fnConsoleLog('HtmlImgFactory->computeImgValue->data-src');
         return imageData.res;
       }
     }
@@ -60,8 +57,9 @@ export class HtmlImgFactory {
       const url = fnComputeUrl(value);
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
-        fnConsoleLog('HtmlImgFactory->computeImgValue->data-lazy-src');
         return imageData.res;
+      } else {
+        fnConsoleLog('HtmlImgFactory->computeImgValue->data-pin-media', url);
       }
     }
 
@@ -71,8 +69,9 @@ export class HtmlImgFactory {
       const url = fnComputeUrl(value);
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
-        fnConsoleLog('HtmlImgFactory->computeImgValue->data-pin-media');
         return imageData.res;
+      } else {
+        fnConsoleLog('HtmlImgFactory->computeImgValue->data-pin-media', url);
       }
     }
 
@@ -102,17 +101,15 @@ export class HtmlImgFactory {
     value = value.replaceAll('"', '&quot;');
 
     const url = fnComputeUrl(value);
-    fnConsoleLog('HtmlImgFactory->computeImgValue', url);
     if (skipUrlCache?.has(url)) return url;
 
     const imageData = await fnFetchImage(url);
     if (imageData.ok) {
-      fnConsoleLog('HtmlImgFactory->computeImgValue->fnFetchImage');
       return imageData.res;
     } else {
+      fnConsoleLog('HtmlImgFactory->computeImgValue->skipUrlCache', url);
       skipUrlCache?.add(url);
     }
-    fnConsoleLog('HtmlImgFactory->computeImgValue->url');
     return url;
   };
 
