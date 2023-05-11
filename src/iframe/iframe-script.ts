@@ -24,6 +24,7 @@ import { ContentSettingsStore } from '../content-script/store/content-settings.s
 import { DocumentMediator } from '../content-script/mediator/document.mediator';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
+import { fnIframeIndex } from '../common/fn/fn-iframe-index';
 import { fnIsIframe } from '../common/fn/fn-is-iframe';
 import { fnUid } from '../common/fn/uid.fn';
 
@@ -81,15 +82,11 @@ export class IframeScript {
   };
 
   private sendIframeIndex = async (type: BusMessageType): Promise<void> => {
-    for (let i = 0; i < window.parent.frames.length; i++) {
-      if (window.parent.frames[i] == window) {
-        await BrowserApi.sendRuntimeMessage<IFrameIndexMessage | IFrameListenerMessage>({
-          type,
-          data: { index: i, uid: this.id, type: DocumentMediator.type }
-        });
-        return;
-      }
-    }
+    const index = fnIframeIndex();
+    await BrowserApi.sendRuntimeMessage<IFrameIndexMessage | IFrameListenerMessage>({
+      type,
+      data: { index, uid: this.id, type: DocumentMediator.type }
+    });
     fnConsoleLog('IframeScript->sendIframeIndex->NOT_FOUND', window.document);
   };
 

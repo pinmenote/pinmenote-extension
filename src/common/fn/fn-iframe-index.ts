@@ -14,20 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjIFrameContentDto } from './obj/obj-content.dto';
-import { ObjTypeDto } from './obj/obj.dto';
+export const fnIframeIndex = (win?: any): string => {
+  win = win || window; // Assume self by default
+  if (findIndex(win) < 0) {
+    return '';
+  }
+  return fnIframeIndex(win.parent) + '.' + findIndex(win).toString();
+};
 
-export interface IFrameIndexMessage {
-  index: string;
-  uid: string;
-}
-
-export interface IFrameListenerMessage extends IFrameIndexMessage {
-  type: ObjTypeDto;
-}
-
-export interface IFrameFetchMessage {
-  uid: string;
-  href: string;
-  data: ObjIFrameContentDto;
-}
+const findIndex = (win: any): number => {
+  if (win.parent != win) {
+    for (let i = 0; i < win.parent.frames.length; i++) {
+      if (win.parent.frames[i] == win) {
+        return i;
+      }
+    }
+  }
+  return -1;
+};

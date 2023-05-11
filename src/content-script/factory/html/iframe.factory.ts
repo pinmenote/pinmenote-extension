@@ -53,11 +53,11 @@ export class IFrameFactory {
     return new Promise<IFrameFetchMessage | undefined>((resolve) => {
       const msg = IFrameStore.findIndex(ref);
       if (!msg) {
-        fnConsoleLog('IFrameFactory->fetchIframe->findIndex->NOT_FOUND', ref);
+        fnConsoleLog('IFrameFactory->fetchIframe->findIndex->NOT_FOUND', 'src', ref.src);
         resolve(undefined);
         return;
       }
-      fnConsoleLog('IFrameFactory->fetchIframe->index', msg.index, msg.uid);
+      fnConsoleLog('IFrameFactory->fetchIframe->index', msg.index, msg.uid, 'src', ref.src);
 
       const pingKey = TinyEventDispatcher.addListener<IFrameIndexMessage>(
         BusMessageType.IFRAME_PING_RESULT,

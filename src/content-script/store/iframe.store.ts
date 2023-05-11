@@ -21,7 +21,7 @@ import { DocumentMediator } from '../mediator/document.mediator';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class IFrameStore {
-  private static iframeMap: { [key: number]: IFrameIndexMessage } = {};
+  private static iframeMap: { [key: string]: IFrameIndexMessage } = {};
   private static passIndex?: IFrameIndexMessage;
 
   static registerIframe(value: IFrameIndexMessage) {
@@ -33,15 +33,11 @@ export class IFrameStore {
     fnConsoleLog('IframeMediator->registerIframe', value.index, value.uid);
   }
 
-  static getMessage(index: number): IFrameIndexMessage {
-    return this.iframeMap[index];
-  }
-
   static findIndex(ref: HTMLIFrameElement): IFrameIndexMessage | undefined {
     const frames = Array.from(window.frames);
     for (let i = 0; i < frames.length; i++) {
       if (frames[i] === ref.contentWindow) {
-        return this.iframeMap[i];
+        return this.iframeMap[`.${i}`];
       }
     }
     return undefined;
