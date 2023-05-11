@@ -19,19 +19,17 @@ import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnYearMonthFormat } from '../../../fn/date.format.fn';
 
-export class ObjRemoveUpdatedDateIndexCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private dt: Date) {}
+export class ObjCreateIndexAddCommand implements ICommand<Promise<void>> {
+  constructor(private id: number, private dt: number) {}
 
   async execute(): Promise<void> {
-    const yearMonth = fnYearMonthFormat(this.dt);
-    const key = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;
+    const yearMonth = fnYearMonthFormat(new Date(this.dt));
+    const key = `${ObjectStoreKeys.CREATED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);
-    const idIndex = ids.indexOf(this.id);
-    if (idIndex > -1) {
-      ids.splice(idIndex, 1);
-      await BrowserStorageWrapper.set(key, ids);
-    }
+    ids.push(this.id);
+
+    await BrowserStorageWrapper.set(key, ids);
   }
 
   private async getList(key: string): Promise<number[]> {

@@ -68,6 +68,8 @@ export class IFrameFactory {
       });
 
       IFrameMessageFactory.postIFrame(ref, { type: IFrameMessageType.PING, uid, keep: true });
+      ref.contentWindow.postMessage('foo', '*');
+      // console.log('fetchIframe->index', window.frames[0] === ref.contentWindow);
 
       // TODO handle this more gracefully - like ping iframe for status
       const iframeFetchTimeout = setTimeout(() => {
@@ -75,7 +77,7 @@ export class IFrameFactory {
       }, 20000);
       const iframeTimeout = setTimeout(() => {
         reject(`Iframe iframeTimeout ${uid} ${ref.src}`);
-      }, 500);
+      }, 5000);
     });
   };
 }

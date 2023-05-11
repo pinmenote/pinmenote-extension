@@ -16,10 +16,10 @@
  */
 import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 
 interface SnapshotExpandProps {
-  obj: ObjDto<ObjSnapshotDto>;
+  obj: ObjDto<ObjPageDto>;
 }
 
 export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps> = ({ obj }) => {
@@ -32,7 +32,7 @@ export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps>
         position: 'relative'
       }}
     >
-      <img src={obj.data.screenshot} width="280" />
+      <img src={obj.data.snapshot.screenshot} width="280" />
     </div>
   );
 };

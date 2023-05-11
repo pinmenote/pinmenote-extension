@@ -16,25 +16,29 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjAddRemovedDateIndexCommand } from '../date-index/obj-add-removed-date-index.command';
-import { ObjRemoveCreatedDateIndexCommand } from '../date-index/obj-remove-created-date-index.command';
-import { ObjRemoveUpdatedDateIndexCommand } from '../date-index/obj-remove-updated-date-index.command';
+import { ObjCreateIndexDelCommand } from '../date-index/obj-create-index-del.command';
+import { ObjDto } from '../../../model/obj/obj.dto';
+import { ObjRemoveIndexAddCommand } from '../date-index/obj-remove-index-add.command';
+import { ObjUpdateIndexDelCommand } from '../date-index/obj-update-index-del.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
 export class ObjRemoveIdCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private dt: Date) {}
+  constructor(private obj: ObjDto) {}
   async execute(): Promise<void> {
     const listId = await this.getListId();
     await this.removeFromList(listId);
 
-    await new ObjRemoveCreatedDateIndexCommand(this.id, this.dt).execute();
-    await new ObjRemoveUpdatedDateIndexCommand(this.id, this.dt).execute();
-    await new ObjAddRemovedDateIndexCommand(this.id, this.dt).execute();
+    const createdAt = new Date(this.obj.createdAt);
+    const updatedAt = new Date(this.obj.updatedAt);
+
+    await new ObjCreateIndexDelCommand(this.obj.id, createdAt).execute();
+    await new ObjUpdateIndexDelCommand(this.obj.id, updatedAt).execute();
+    await new ObjRemoveIndexAddCommand(new Date(), this.obj).execute();
   }
 
   private async removeFromList(listId: number): Promise<void> {
     const ids = await this.getList(listId);
-    const idIndex = ids.indexOf(this.id);
+    const idIndex = ids.indexOf(this.obj.id);
     if (idIndex > -1) {
       ids.splice(idIndex, 1);
       const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;

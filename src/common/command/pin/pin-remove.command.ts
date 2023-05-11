@@ -33,7 +33,7 @@ export class PinRemoveCommand implements ICommand<void> {
     await LinkHrefOriginStore.delHrefOriginId(this.obj.data.snapshot.url, this.obj.id);
     await LinkHrefOriginStore.pinDel(this.obj.data.snapshot.url, this.obj.id);
 
-    await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
+    await new ObjRemoveIdCommand(this.obj).execute();
 
     await new ObjRemoveSnapshotContentCommand(this.obj.data.snapshot, this.obj.id).execute();
   }

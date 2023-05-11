@@ -17,7 +17,7 @@
 import { ObjSnapshotDto, ObjVideoDataDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { XpathFactory } from '../../../../common/factory/xpath.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { fnVideoSecondsTime } from '../../../../common/fn/date.fn';
+import { fnVideoSecondsTime } from '../../../../common/fn/date.format.fn';
 
 const elStyles = {
   display: 'flex',

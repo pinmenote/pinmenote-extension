@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { ObjPageDto, ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardAddElementSearch } from './search/board-add-element.search';
 import { BoardInputSearch } from './search/board-input.search';
@@ -22,9 +23,6 @@ import { BoardStore } from '../../store/board.store';
 import Box from '@mui/material/Box';
 import { NoteElement } from './note/note.element';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { PageElementSnapshotElement } from './page-element-snapshot/page-element-snapshot.element';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
 import { PinElement } from './pin/pin.element';
 import Stack from '@mui/material/Stack';
@@ -77,36 +75,38 @@ export const BoardComponent: FunctionComponent = () => {
   const boardElements: any[] = [];
   for (let i = 0; i < objData.length; i++) {
     const obj = objData[i];
-    if (obj.type === ObjTypeDto.PageElementPin) {
-      boardElements.push(
-        <PinElement refreshBoardCallback={refreshBoardCallback} dto={obj as ObjDto<ObjPagePinDto>} key={obj.id} />
-      );
-    } else if (obj.type === ObjTypeDto.PageSnapshot) {
-      boardElements.push(
-        <PageSnapshotElement
-          refreshBoardCallback={refreshBoardCallback}
-          dto={obj as ObjDto<ObjSnapshotDto>}
-          key={obj.id}
-        />
-      );
-    } else if (obj.type === ObjTypeDto.PageElementSnapshot) {
-      boardElements.push(
-        <PageElementSnapshotElement
-          refreshBoardCallback={refreshBoardCallback}
-          dto={obj as ObjDto<ObjSnapshotDto>}
-          key={obj.id}
-        />
-      );
-    } else if (obj.type === ObjTypeDto.PageNote) {
-      boardElements.push(
-        <NoteElement key={obj.id} dto={obj as ObjDto<ObjNoteDto>} refreshBoardCallback={refreshBoardCallback} />
-      );
-    } else {
-      boardElements.push(
-        <div key={obj.id}>
-          <h1>Not Supported, TODO: {obj.type}</h1>
-        </div>
-      );
+    switch (obj.type) {
+      case ObjTypeDto.PageSnapshot:
+      case ObjTypeDto.PageElementSnapshot: {
+        boardElements.push(
+          <PageSnapshotElement
+            refreshBoardCallback={refreshBoardCallback}
+            dto={obj as ObjDto<ObjPageDto>}
+            key={obj.id}
+          />
+        );
+        break;
+      }
+      case ObjTypeDto.PageElementPin: {
+        boardElements.push(
+          <PinElement refreshBoardCallback={refreshBoardCallback} dto={obj as ObjDto<ObjPagePinDto>} key={obj.id} />
+        );
+        break;
+      }
+      case ObjTypeDto.PageNote: {
+        boardElements.push(
+          <NoteElement key={obj.id} dto={obj as ObjDto<ObjNoteDto>} refreshBoardCallback={refreshBoardCallback} />
+        );
+        break;
+      }
+      default: {
+        boardElements.push(
+          <div key={obj.id}>
+            <h1>Not Supported, TODO: {obj.type}</h1>
+          </div>
+        );
+        break;
+      }
     }
   }
 

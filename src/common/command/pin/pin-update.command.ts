@@ -16,9 +16,9 @@
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
-import { ObjAddUpdatedDateIndexCommand } from '../obj/date-index/obj-add-updated-date-index.command';
 import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
+import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
 
@@ -28,7 +28,7 @@ export class PinUpdateCommand implements ICommand<void> {
     fnConsoleLog('PinUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
 
-    await new ObjAddUpdatedDateIndexCommand(this.obj.id, this.obj.updatedAt).execute();
+    await new ObjUpdateIndexAddCommand(this.obj.id, this.obj.updatedAt).execute();
 
     await BrowserStorageWrapper.set(key, this.obj);
   }

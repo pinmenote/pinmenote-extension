@@ -16,18 +16,22 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
+import { ObjDto } from '../../../model/obj/obj.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnYearMonthFormat } from '../../../fn/date.format.fn';
 
-export class ObjAddCreatedDateIndexCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private dt: number) {}
+export class ObjRemoveIndexAddCommand implements ICommand<Promise<void>> {
+  constructor(private dt: Date, private obj: ObjDto) {}
 
   async execute(): Promise<void> {
-    const yearMonth = fnYearMonthFormat(new Date(this.dt));
-    const key = `${ObjectStoreKeys.CREATED_DT}:${yearMonth}`;
+    // we only care about objects with serverId because we want to mark it as deleted on server,
+    // so it will be deleted from all devices
+    if (!this.obj.serverId) return;
+    const yearMonth = fnYearMonthFormat(this.dt);
+    const key = `${ObjectStoreKeys.REMOVED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);
-    ids.push(this.id);
+    ids.push(this.obj.serverId);
 
     await BrowserStorageWrapper.set(key, ids);
   }

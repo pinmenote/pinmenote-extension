@@ -16,9 +16,9 @@
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
-import { ObjAddUpdatedDateIndexCommand } from '../obj/date-index/obj-add-updated-date-index.command';
 import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
+import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';
 import { fnConsoleLog } from '../../fn/console.fn';
@@ -29,7 +29,7 @@ export class NoteUpdateCommand implements ICommand<void> {
     fnConsoleLog('NoteUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
 
-    await new ObjAddUpdatedDateIndexCommand(this.obj.id, this.obj.updatedAt).execute();
+    await new ObjUpdateIndexAddCommand(this.obj.id, this.obj.updatedAt).execute();
 
     await WordIndex.removeFlat(this.oldWords, this.obj.id);
     await WordIndex.indexFlat(this.obj.data.words, this.obj.id);

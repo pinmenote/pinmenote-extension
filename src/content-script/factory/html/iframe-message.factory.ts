@@ -43,7 +43,7 @@ export class IFrameMessageFactory {
   static cleanupListeners(frames: HTMLIFrameElement[]) {
     frames.forEach((el) => {
       IFrameMessageFactory.postIFrame(el, {
-        type: IFrameMessageType.PING,
+        type: IFrameMessageType.STOP_LISTENERS,
         uid: fnUid(),
         keep: false
       });

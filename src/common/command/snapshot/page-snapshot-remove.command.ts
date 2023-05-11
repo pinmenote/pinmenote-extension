@@ -18,22 +18,22 @@ import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjDto } from '../../model/obj/obj.dto';
+import { ObjPageDto } from '../../model/obj/obj-pin.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjRemoveSnapshotContentCommand } from '../obj/content/obj-remove-snapshot-content.command';
-import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 
 export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjSnapshotDto>) {}
+  constructor(private obj: ObjDto<ObjPageDto>) {}
 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
     await BrowserStorageWrapper.remove(key);
 
-    await new ObjRemoveIdCommand(this.obj.id, new Date(this.obj.createdAt)).execute();
+    await new ObjRemoveIdCommand(this.obj).execute();
 
-    await LinkHrefOriginStore.delHrefOriginId(this.obj.data.url, this.obj.id);
+    await LinkHrefOriginStore.delHrefOriginId(this.obj.data.snapshot.url, this.obj.id);
 
-    await new ObjRemoveSnapshotContentCommand(this.obj.data, this.obj.id).execute();
+    await new ObjRemoveSnapshotContentCommand(this.obj.data.snapshot, this.obj.id).execute();
   }
 }

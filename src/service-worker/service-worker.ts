@@ -31,6 +31,7 @@ import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screensho
 import { PopupVerify2faCommand } from './command/popup/popup-verify-2fa.command';
 import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
+import { SyncServerCommand } from './command/sync/sync-server.command';
 import { fnConsoleLog } from '../common/fn/console.fn';
 
 const handleMessage = async (
@@ -86,6 +87,8 @@ const handleMessage = async (
       await new PopupTakeScreenshotCommand().execute();
       break;
   }
+  // Sync command
+  await new SyncServerCommand().execute();
 };
 
 const handleInstalled = async (event: unknown): Promise<void> => {

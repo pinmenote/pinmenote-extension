@@ -15,21 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const fnIsoDateToUtcMiliseconds = (dt: string): number => {
-  const date = new Date(dt);
-  return Math.floor(date.getTime()) + date.getTimezoneOffset() * 60000;
+export const fnMonthLastDay = (): Date => {
+  const dt = new Date();
+  return new Date(dt.getFullYear(), dt.getMonth() + 1, 1);
 };
 
-export const fnMilisecondsToUtcDate = (dt: number): Date => {
-  const date = new Date(dt);
-  date.setMinutes(date.getMinutes() - date.getTimezoneOffset() * 1000);
-  return date;
-};
-
-export const fnVideoSecondsTime = (seconds: number): string => {
-  const s = Math.floor(seconds % 60);
-  const m = Math.floor(seconds / 60);
-  let out = m > 9 ? `${m}:` : `0${m}:`;
-  s > 9 ? (out += `${s}`) : (out += `0${s}`);
-  return out;
+export const fnDateToMonthFirstDay = (dt: Date): Date => {
+  return new Date(dt.getFullYear(), dt.getMonth(), 1);
 };

@@ -16,43 +16,26 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjCreateIndexAddCommand } from '../date-index/obj-create-index-add.command';
-import { ObjUpdateIndexAddCommand } from '../date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { environmentConfig } from '../../../environment';
+import { fnYearMonthFormat } from '../../../fn/date.format.fn';
 
-export class ObjAddIdCommand implements ICommand<Promise<void>> {
-  private readonly listLimit = environmentConfig.objListLimit;
-
+export class ObjUpdateIndexAddCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private dt: number) {}
-  async execute(): Promise<void> {
-    let listId = await this.getListId();
-    let ids = await this.getList(listId);
 
-    // hit limit so create new list
-    // this way we get faster writes and can batch
-    if (ids.length >= this.listLimit) {
-      listId += 1;
-      ids = [];
-      await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LIST_ID, listId);
-    }
+  async execute(): Promise<void> {
+    const yearMonth = fnYearMonthFormat(new Date(this.dt));
+    const key = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;
+
+    const ids = await this.getList(key);
+
+    // always add as last id to maintain the date order
+    if (ids.indexOf(this.id) > -1) ids.splice(ids.indexOf(this.id), 1);
 
     ids.push(this.id);
-    const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
-
     await BrowserStorageWrapper.set(key, ids);
-
-    await new ObjCreateIndexAddCommand(this.id, this.dt).execute();
-    await new ObjUpdateIndexAddCommand(this.id, this.dt).execute();
   }
 
-  private async getListId(): Promise<number> {
-    const value = await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
-    return value || 1;
-  }
-
-  private async getList(listId: number): Promise<number[]> {
-    const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
+  private async getList(key: string): Promise<number[]> {
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
   }

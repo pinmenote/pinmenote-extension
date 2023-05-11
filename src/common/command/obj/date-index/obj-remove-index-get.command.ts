@@ -16,16 +16,21 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { fnYearMonthFormat } from '../../../fn/date.format.fn';
 
-export class ObjNextIdCommand implements ICommand<Promise<number>> {
-  constructor(private key: string) {}
-  async execute(): Promise<number> {
-    const value = await BrowserStorageWrapper.get<number | undefined>(this.key);
-    if (value) {
-      await BrowserStorageWrapper.set(this.key, value + 1);
-      return value + 1;
-    }
-    await BrowserStorageWrapper.set(this.key, 1);
-    return 1;
+export class ObjRemoveIndexGetCommand implements ICommand<Promise<number[]>> {
+  constructor(private dt: number) {}
+
+  async execute(): Promise<number[]> {
+    const yearMonth = fnYearMonthFormat(new Date(this.dt));
+    const key = `${ObjectStoreKeys.REMOVED_DT}:${yearMonth}`;
+
+    return await this.getList(key);
+  }
+
+  private async getList(key: string): Promise<number[]> {
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    return value || [];
   }
 }

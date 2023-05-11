@@ -27,11 +27,14 @@ export interface ObjCommentListDto {
   data: ObjCommentDto[];
 }
 
-export interface ObjPagePinDto {
-  xpath: string;
-  draw: ObjDrawDto[];
-  comments: ObjCommentListDto;
+export interface ObjPageDto {
   snapshot: ObjSnapshotDto;
+  comments: ObjCommentListDto;
+  draw: ObjDrawDto[];
+}
+
+export interface ObjPagePinDto extends ObjPageDto {
+  xpath: string;
   border: PinBorderDataDto;
 }
 

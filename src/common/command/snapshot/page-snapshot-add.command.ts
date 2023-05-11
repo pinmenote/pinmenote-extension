@@ -20,6 +20,7 @@ import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
+import { ObjPageDto } from '../../model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';
@@ -31,12 +32,12 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
     const id = await new ObjNextIdCommand(ObjectStoreKeys.OBJECT_ID).execute();
     const dt = Date.now();
 
-    const dto: ObjDto<ObjSnapshotDto> = {
+    const dto: ObjDto<ObjPageDto> = {
       id,
       type: ObjTypeDto.PageSnapshot,
       createdAt: dt,
       updatedAt: dt,
-      data: this.dto,
+      data: { snapshot: this.dto, draw: [], comments: { data: [] } },
       version: OBJ_DTO_VERSION,
       local: {
         visible: true

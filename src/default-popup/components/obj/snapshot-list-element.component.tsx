@@ -22,7 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
 import { SnapshotListExpandComponent } from './snapshot-list-expand.component';
@@ -30,21 +30,21 @@ import Typography from '@mui/material/Typography';
 import { WebOutlined } from '@mui/icons-material';
 
 interface SnapshotListElementProps {
-  obj: ObjDto<ObjSnapshotDto>;
-  removeCallback: (pin: ObjDto<ObjSnapshotDto>) => void;
+  obj: ObjDto<ObjPageDto>;
+  removeCallback: (obj: ObjDto<ObjPageDto>) => void;
 }
 
 export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleNavigate = async (data: ObjDto<ObjSnapshotDto>): Promise<void> => {
-    if (PopupActiveTabStore.url?.href !== data.data.url.href) {
-      await BrowserApi.setActiveTabUrl(data.data.url.href);
+  const handleNavigate = async (data: ObjDto<ObjPageDto>): Promise<void> => {
+    if (PopupActiveTabStore.url?.href !== data.data.snapshot.url.href) {
+      await BrowserApi.setActiveTabUrl(data.data.snapshot.url.href);
       window.close();
     }
   };
 
-  const handleObjRemove = (data: ObjDto<ObjSnapshotDto>): void => {
+  const handleObjRemove = (data: ObjDto<ObjPageDto>): void => {
     props.removeCallback(data);
   };
 
@@ -59,7 +59,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
   );
   const expandComponent = isExpanded ? <SnapshotListExpandComponent obj={props.obj} /> : '';
 
-  const value = props.obj.data.title;
+  const value = props.obj.data.snapshot.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (

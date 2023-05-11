@@ -37,7 +37,9 @@ export class ObjectStoreKeys {
   static readonly ACCESS_TOKEN = 'accessToken';
 
   // SYNC
-  static readonly SYNC_TIME = 'sync';
+  static readonly SYNC_TIME = 'sync:time';
+  static readonly SYNC_LOCAL_ID = 'sync:local:id';
+  static readonly SYNC_INTERVAL = 'sync:interval';
 
   // SETTINGS
   static readonly CONTENT_SETTINGS_KEY = 'content-settings';

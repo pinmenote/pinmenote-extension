@@ -27,3 +27,11 @@ export const fnDateFormat = (dt: Date): string => {
 export const fnYearMonthFormat = (dt: Date): string => {
   return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}`;
 };
+
+export const fnVideoSecondsTime = (seconds: number): string => {
+  const s = Math.floor(seconds % 60);
+  const m = Math.floor(seconds / 60);
+  let out = m > 9 ? `${m}:` : `0${m}:`;
+  s > 9 ? (out += `${s}`) : (out += `0${s}`);
+  return out;
+};

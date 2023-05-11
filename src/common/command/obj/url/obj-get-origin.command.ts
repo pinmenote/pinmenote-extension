@@ -19,8 +19,7 @@ import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper'
 import { ICommand } from '../../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../../store/link-href-origin.store';
 import { ObjNoteDto } from '../../../model/obj/obj-note.dto';
-import { ObjPagePinDto } from '../../../model/obj/obj-pin.dto';
-import { ObjSnapshotDto } from '../../../model/obj/obj-snapshot.dto';
+import { ObjPageDto } from '../../../model/obj/obj-pin.dto';
 import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
@@ -33,10 +32,12 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
     for (const id of pinIds) {
       const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
       const obj = await BrowserStorageWrapper.get<ObjDto<ObjPageDataDto>>(key);
-      if (obj.type === ObjTypeDto.PageElementPin) {
-        if ((obj.data as ObjPagePinDto).snapshot.url.href === this.data.href) continue;
-      } else if (obj.type === ObjTypeDto.PageSnapshot || obj.type === ObjTypeDto.PageElementSnapshot) {
-        if ((obj.data as ObjSnapshotDto).url.href === this.data.href) continue;
+      if (!obj) {
+        await LinkHrefOriginStore.delHrefOriginId(this.data, id);
+        continue;
+      }
+      if ([ObjTypeDto.PageSnapshot, ObjTypeDto.PageElementSnapshot, ObjTypeDto.PageElementPin].includes(obj.type)) {
+        if ((obj.data as ObjPageDto).snapshot.url.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageNote) {
         if ((obj.data as ObjNoteDto).url?.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageTask) {

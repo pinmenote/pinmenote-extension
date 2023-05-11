@@ -16,6 +16,7 @@
  */
 import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
 import { ObjUrlDto } from '../model/obj/obj.dto';
+import { fnConsoleLog } from '../fn/console.fn';
 
 export class LinkHrefOriginStore {
   private static NOTE_HREF = 'note:href';
@@ -25,6 +26,7 @@ export class LinkHrefOriginStore {
 
   static async addHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
+    fnConsoleLog('LinkHrefOriginStore->addHrefOriginId', url.href);
     const hrefIds = await this.hrefIds(url.href);
     hrefIds.push(id);
     await BrowserStorageWrapper.set(`${this.OBJ_HREF}:${url.href}`, hrefIds);
@@ -37,6 +39,7 @@ export class LinkHrefOriginStore {
 
   static async delHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
+    fnConsoleLog('LinkHrefOriginStore->delHrefOriginId', url.href);
     const hrefIds = await this.hrefIds(url.href);
     const newHref = hrefIds.filter((i) => i !== id);
     if (newHref.length === 0) {
@@ -55,12 +58,14 @@ export class LinkHrefOriginStore {
   }
 
   static async hrefIds(url: string): Promise<number[]> {
+    fnConsoleLog('LinkHrefOriginStore->hrefIds', url);
     const key = `${this.OBJ_HREF}:${url}`;
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
   }
 
   static async originIds(url: string): Promise<number[]> {
+    fnConsoleLog('LinkHrefOriginStore->originIds', url);
     const key = `${this.OBJ_ORIGIN}:${url}`;
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];

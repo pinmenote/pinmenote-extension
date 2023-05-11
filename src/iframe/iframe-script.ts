@@ -43,6 +43,12 @@ export class IframeScript {
   constructor(private readonly id: string) {
     this.href = UrlFactory.normalizeHref(window.location.href);
     window.addEventListener('message', this.handleIframeMessage);
+    for (let i = 0; i < window.parent.frames.length; i++) {
+      if (window.parent.frames[i] == window) {
+        // console.log('iframe->id', i);
+        break;
+      }
+    }
 
     fnConsoleLog('IframeScript->constructor', this.href);
 
@@ -77,6 +83,7 @@ export class IframeScript {
   };
 
   private handleIframeMessage = async (e: MessageEvent<any>): Promise<void> => {
+    fnConsoleLog('IframeScript->handleIframeMessage', e.data);
     const msg = IFrameMessageFactory.parse(e.data);
     if (!msg) return;
     switch (msg.type) {

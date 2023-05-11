@@ -23,6 +23,7 @@ import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { PageSnapshotUpdateCommand } from '../../../../common/command/snapshot/page-snapshot-update.command';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
@@ -30,7 +31,7 @@ import { TitleEditComponent } from '../edit/title-edit.component';
 import Typography from '@mui/material/Typography';
 
 interface PageSnapshotElementParams {
-  dto: ObjDto<ObjSnapshotDto>;
+  dto: ObjDto<ObjPageDto>;
   refreshBoardCallback: () => void;
 }
 
@@ -39,10 +40,10 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (divRef.current && !divRef.current?.firstChild && dto.data.screenshot) {
+    if (divRef.current && !divRef.current?.firstChild && dto.data.snapshot.screenshot) {
       const img = new Image();
       img.width = window.innerWidth / 4;
-      img.src = dto.data.screenshot;
+      img.src = dto.data.snapshot.screenshot;
       divRef.current.appendChild(img);
     }
   });
@@ -52,7 +53,7 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   };
 
   const handleHtml = () => {
-    TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data);
+    TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data.snapshot);
   };
 
   const handleRemove = async () => {
@@ -62,8 +63,8 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   };
 
   const titleSaveCallback = async (value: string) => {
-    if (dto.data.title !== value) {
-      dto.data.title = value;
+    if (dto.data.snapshot.title !== value) {
+      dto.data.snapshot.title = value;
       dto.updatedAt = Date.now();
       await new PageSnapshotUpdateCommand(dto).execute();
     }
@@ -74,13 +75,18 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
     setEditTitle(false);
   };
 
-  const title = dto.data.title.length > 50 ? `${dto.data.title.substring(0, 50)}...` : dto.data.title;
+  const title =
+    dto.data.snapshot.title.length > 50 ? `${dto.data.snapshot.title.substring(0, 50)}...` : dto.data.snapshot.title;
   const url =
-    decodeURI(dto.data.url.href).length > 50
-      ? decodeURI(dto.data.url.href).substring(0, 50)
-      : decodeURI(dto.data.url.href);
+    decodeURI(dto.data.snapshot.url.href).length > 50
+      ? decodeURI(dto.data.snapshot.url.href).substring(0, 50)
+      : decodeURI(dto.data.snapshot.url.href);
   const titleElement = editTitle ? (
-    <TitleEditComponent value={dto.data.title} saveCallback={titleSaveCallback} cancelCallback={titleCancelCallback} />
+    <TitleEditComponent
+      value={dto.data.snapshot.title}
+      saveCallback={titleSaveCallback}
+      cancelCallback={titleCancelCallback}
+    />
   ) : (
     <h2 style={{ wordWrap: 'break-word', width: '80%' }}>{title}</h2>
   );
@@ -111,7 +117,7 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
         </div>
       </div>
       <div ref={divRef}></div>
-      <Link target="_blank" href={dto.data.url.href}>
+      <Link target="_blank" href={dto.data.snapshot.url.href}>
         <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
       </Link>
       <p>page snapshot {dto.createdAt}</p>

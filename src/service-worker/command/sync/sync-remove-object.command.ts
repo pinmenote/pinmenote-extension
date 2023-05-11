@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { ApiStoreRemoveObjectCommand } from '../api/store/api-store-remove-object.command';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class SyncClearDtCommand implements ICommand<Promise<void>> {
+export class SyncRemoveObjectCommand implements ICommand<Promise<void>> {
+  constructor(private id: number) {}
   async execute(): Promise<void> {
-    await BrowserStorageWrapper.set(ObjectStoreKeys.SYNC_TIME, 0);
+    fnConsoleLog('SyncRemoveObjectCommand->execute', this.id);
+    await new ApiStoreRemoveObjectCommand(this.id).execute();
   }
 }
