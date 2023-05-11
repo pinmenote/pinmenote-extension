@@ -63,7 +63,7 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
     await new ObjAddIdCommand(id, dt).execute();
 
     // Send stop - iframe loads own content scripts
-    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_PIN_STOP });
+    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS });
     return dto;
   }
 }

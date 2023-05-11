@@ -19,11 +19,11 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
-import { ContentIframeMessageCommand } from './command/content/content-iframe-message.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
+import { IframePassMessageCommand } from './command/iframe/iframe-pass-message.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLoginSuccessCommand } from './command/popup/popup-login-success.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
@@ -59,7 +59,7 @@ const handleMessage = async (
     case BusMessageType.CONTENT_INVALIDATE:
       await new ContentInvalidateCommand().execute();
       break;
-    case BusMessageType.CONTENT_PIN_STOP:
+    case BusMessageType.CONTENT_STOP_LISTENERS:
       await new ContentPinStopCommand().execute();
       break;
     case BusMessageType.CONTENT_FETCH_CSS:
@@ -67,9 +67,6 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data).execute();
-      break;
-    case BusMessageType.CONTENT_IFRAME_MESSAGE:
-      await new ContentIframeMessageCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();
@@ -86,6 +83,18 @@ const handleMessage = async (
     case BusMessageType.POPUP_TAKE_SCREENSHOT:
       await new PopupTakeScreenshotCommand().execute();
       break;
+    case BusMessageType.IFRAME_INDEX:
+    case BusMessageType.IFRAME_START_LISTENERS:
+    case BusMessageType.IFRAME_START_LISTENERS_RESULT:
+    case BusMessageType.IFRAME_STOP_LISTENERS:
+    case BusMessageType.IFRAME_MOUSE_OUT:
+    case BusMessageType.IFRAME_PING:
+    case BusMessageType.IFRAME_PING_RESULT:
+    case BusMessageType.IFRAME_FETCH:
+    case BusMessageType.IFRAME_FETCH_RESULT: {
+      await new IframePassMessageCommand(msg).execute();
+      break;
+    }
   }
   // Sync command
   await new SyncServerCommand().execute();

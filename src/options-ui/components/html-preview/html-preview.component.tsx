@@ -17,7 +17,7 @@
 import {
   ObjContentDto,
   ObjContentTypeDto,
-  ObjIframeContentDto,
+  ObjIFrameContentDto,
   ObjShadowContentDto
 } from '../../../common/model/obj/obj-content.dto';
 import {
@@ -176,7 +176,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       fnSleep(5)
         .then(() => {
           if (dto.type === ObjContentTypeDto.IFRAME) {
-            const iframe: ObjIframeContentDto = dto.content as ObjIframeContentDto;
+            const iframe: ObjIFrameContentDto = dto.content as ObjIFrameContentDto;
             const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
             if (iframeDoc) {
               const iframeHtml = IframeHtmlFactory.computeHtml(iframe);

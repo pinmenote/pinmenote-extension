@@ -19,18 +19,18 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { IFrameMessage } from '../../../common/model/iframe-message.model';
-import { ObjIframeContentDto } from '../../../common/model/obj/obj-content.dto';
+import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
+import { ObjIFrameContentDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
-  constructor(private msg: IFrameMessage, private href: string) {}
+  constructor(private href: string, private uid: string, private depth: number) {}
 
   async execute(): Promise<void> {
-    fnConsoleLog('ContentFetchIframeCommand->execute', this.msg);
+    fnConsoleLog('ContentFetchIframeCommand->execute', this.href, this.uid);
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: document.body,
-      depth: (this.msg.data.depth as number) + 1,
+      depth: this.depth + 1,
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false
@@ -38,21 +38,17 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     fnConsoleLog('ContentFetchIframeCommand->html->done');
     const css = await CssFactory.computeCssContent();
     fnConsoleLog('ContentFetchIframeCommand->css->done');
-    const dto: ObjIframeContentDto = {
-      ok: true,
-      uid: this.msg.uid,
-      url: this.href,
+    const dto: ObjIFrameContentDto = {
       html: htmlContent.html,
       htmlAttr: HtmlFactory.computeHtmlAttr(),
       css,
       content: htmlContent.content
     };
-    await BrowserApi.sendRuntimeMessage<IFrameMessage>({
-      type: BusMessageType.CONTENT_IFRAME_MESSAGE,
+    await BrowserApi.sendRuntimeMessage<IFrameFetchMessage>({
+      type: BusMessageType.IFRAME_FETCH_RESULT,
       data: {
-        type: this.msg.type,
-        uid: this.msg.uid,
-        keep: this.msg.keep,
+        uid: this.uid,
+        href: this.href,
         data: dto
       }
     });

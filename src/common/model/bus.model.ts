@@ -43,7 +43,6 @@ export enum BusMessageType {
   // Popup
   POPUP_API_ERROR = 'popup.api.error',
   POPUP_CAPTURE_ELEMENT_START = 'popup.capture.element.start',
-  POPUP_CAPTURE_ELEMENT_STOP = 'popup.capture.element.stop',
   POPUP_INIT = 'popup.init',
   POPUP_LOGIN = 'popup.login',
   POPUP_VERIFY_2FA = 'popup.verify.2fa',
@@ -53,20 +52,28 @@ export enum BusMessageType {
   POPUP_PAGE_SNAPSHOT_ADD = 'popup.page.snapshot.add',
   POPUP_PAGE_ELEMENT_SNAPSHOT_ADD = 'popup.page.element.snapshot.add',
   POPUP_PIN_START = 'popup.pin.start',
-  POPUP_PIN_STOP = 'popup.pin.stop',
   POPUP_TAKE_SCREENSHOT = 'popup.take.screenshot',
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
   CONTENT_INVALIDATE = 'content.invalidate',
   CONTENT_FETCH_CSS = 'content.fetch.css',
   CONTENT_FETCH_IMAGE = 'content.fetch.image',
-  CONTENT_IFRAME_MESSAGE = 'content.iframe.message',
   CONTENT_PING_URL = 'content.ping.url',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
   CONTENT_PIN_REMOVE = 'content.pin.remove',
-  CONTENT_PIN_STOP = 'content.pin.stop',
+  CONTENT_STOP_LISTENERS = 'content.stop.listeners',
   CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
-  CONTENT_THEME = 'content.theme'
+  CONTENT_THEME = 'content.theme',
+  // Iframe content script
+  IFRAME_INDEX = 'iframe.index',
+  IFRAME_START_LISTENERS = 'iframe.start.listeners',
+  IFRAME_START_LISTENERS_RESULT = 'iframe.start.listeners.result',
+  IFRAME_STOP_LISTENERS = 'iframe.stop.listeners',
+  IFRAME_MOUSE_OUT = 'iframe.mouse.out',
+  IFRAME_PING = 'iframe.ping',
+  IFRAME_PING_RESULT = 'iframe.ping.result',
+  IFRAME_FETCH = 'iframe.fetch',
+  IFRAME_FETCH_RESULT = 'iframe.fetch.result'
   // Options
 }

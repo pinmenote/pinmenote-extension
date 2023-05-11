@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjSnapshotContentDto, ObjSnapshotDto } from '../model/obj/obj-snapshot.dto';
-import { ObjIframeContentDto } from '../model/obj/obj-content.dto';
+import { ObjIFrameContentDto } from '../model/obj/obj-content.dto';
 import { ObjSnapshotData } from '../command/obj/content/obj-get-snapshot-content.command';
 
 export class IframeHtmlFactory {
-  static computeHtml = (snapshot: ObjSnapshotContentDto | ObjIframeContentDto, title?: string): string => {
+  static computeHtml = (snapshot: ObjSnapshotContentDto | ObjIFrameContentDto, title?: string): string => {
     let style = '';
     let titleTag = '';
     if (title) {

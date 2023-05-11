@@ -21,7 +21,7 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export class ContentPinStopCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    await BrowserApi.sendTabMessage<undefined>({ type: BusMessageType.CONTENT_PIN_STOP });
+    await BrowserApi.sendTabMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS });
     fnConsoleLog('ContentPinStopCommand->execute');
   }
 }

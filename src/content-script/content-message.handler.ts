@@ -19,7 +19,7 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentPageSnapshotAddCommand } from './command/snapshot/content-page-snapshot-add.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
-import { IframeMediator } from './mediator/iframe.mediator';
+import { IFrameMessageHandler } from './iframe-message.handler';
 import { PinAddFactory } from './factory/pin-add.factory';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinStore } from './store/pin.store';
@@ -30,10 +30,12 @@ import { fnConsoleLog } from '../common/fn/console.fn';
 export class ContentMessageHandler {
   private static href?: string;
   private static iframe = false;
+  private static uid: string;
 
-  static start(href: string, iframe = false): void {
+  static start(href: string, iframe = false, uid = ''): void {
     this.href = href;
     this.iframe = iframe;
+    this.uid = uid;
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
     TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
@@ -63,6 +65,15 @@ export class ContentMessageHandler {
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
         if (!this.iframe) await new ContentPageSnapshotAddCommand(msg.data).execute();
         break;
+      case BusMessageType.IFRAME_INDEX:
+      case BusMessageType.IFRAME_PING:
+      case BusMessageType.IFRAME_START_LISTENERS:
+      case BusMessageType.IFRAME_START_LISTENERS_RESULT:
+      case BusMessageType.IFRAME_STOP_LISTENERS:
+      case BusMessageType.IFRAME_MOUSE_OUT:
+      case BusMessageType.IFRAME_FETCH:
+        await IFrameMessageHandler.handleMessage(msg, this.iframe, this.uid, this.href);
+        break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PIN_START:
         if (this.href !== msg.data.url.href) {
@@ -72,9 +83,7 @@ export class ContentMessageHandler {
         fnConsoleLog('DocumentMediator->startListeners', this.href);
         DocumentMediator.startListeners(msg.data.type);
         break;
-      case BusMessageType.POPUP_CAPTURE_ELEMENT_STOP:
-      case BusMessageType.CONTENT_PIN_STOP:
-      case BusMessageType.POPUP_PIN_STOP:
+      case BusMessageType.CONTENT_STOP_LISTENERS:
         DocumentMediator.stopListeners();
         break;
       case BusMessageType.CONTENT_PIN_NAVIGATE:
@@ -85,9 +94,6 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.CONTENT_PIN_VISIBLE:
         new PinVisibleCommand(msg.data).execute();
-        break;
-      case BusMessageType.CONTENT_IFRAME_MESSAGE:
-        IframeMediator.resolveIframeMessage(msg.data);
         break;
       default:
         TinyEventDispatcher.dispatch(msg.type, msg.data);

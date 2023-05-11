@@ -15,13 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CSS_URL_REG, CssFactory } from '../css.factory';
+import { HtmlIntermediateData } from '../../../common/model/html.model';
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 const TRANSLATE_REG = new RegExp('(transform: translateY\\()([0-9.px]+)(\\);)', 'g');
 
 export class HtmlAttrFactory {
-  static readonly EMPTY_RESULT = {
+  static readonly EMPTY_RESULT: HtmlIntermediateData = {
     html: '',
     video: [],
     content: []

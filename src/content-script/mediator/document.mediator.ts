@@ -17,9 +17,8 @@
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
-import { IFrameMessageFactory } from '../factory/html/iframe-message.factory';
-import { IFrameMessageType } from '../../common/model/iframe-message.model';
-import { IframeMediator } from './iframe.mediator';
+import { IFrameIndexMessage } from '../../common/model/iframe-message.model';
+import { IFrameStore } from '../store/iframe.store';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PageElementSnapshotAddCommand } from '../../common/command/snapshot/page-element-snapshot-add.command';
@@ -29,45 +28,76 @@ import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from '../factory/pin.factory';
 import { SnapshotCreateCommand } from '../command/snapshot/snapshot-create.command';
+import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnSleep } from '../../common/fn/sleep.fn';
 import { pinStyles } from '../components/styles/pin.styles';
 
-export interface StartListenersParams {
-  stopCallback?: () => void;
-  restart?: boolean;
-  baseUrl?: string;
-}
-
 export class DocumentMediator {
-  private static type?: ObjTypeDto;
-  private static params?: StartListenersParams;
+  static type?: ObjTypeDto;
+  static active = false;
+  private static baseUrl?: string;
   private static overlay?: HTMLDivElement;
   private static overlayCanvas?: HTMLCanvasElement;
 
+  private static startingIframeListeners = false;
+
   private static preloader = document.createElement('div');
 
-  static startListeners(type: ObjTypeDto, params?: StartListenersParams): void {
+  static startListeners(type: ObjTypeDto, baseUrl?: string): void {
+    if (this.active) return;
     this.type = type;
-    this.params = params;
+    this.baseUrl = baseUrl;
     fnConsoleLog(
       'DocumentMediator->startListeners->activeElement',
       document.activeElement,
       'lock',
       document.pointerLockElement
     );
-    if (this.isIFrameActive && !params?.restart) {
-      const uid = IframeMediator.addIframe(document.activeElement as HTMLIFrameElement);
-      IFrameMessageFactory.postIFrame(document.activeElement as HTMLIFrameElement, {
-        type: IFrameMessageType.START_LISTENERS,
-        data: { type: this.type },
-        uid
-      });
-    } else {
-      this.startOverlay();
+    if (this.isIFrameActive) this.startIframeListeners(document.activeElement as HTMLIFrameElement);
+    this.startOverlay();
+    this.active = true;
+  }
+
+  private static startIframeListeners(ref: HTMLIFrameElement) {
+    if (this.startingIframeListeners) return;
+    this.startingIframeListeners = true;
+    const msg = IFrameStore.findIndex(ref);
+    if (!msg) {
+      this.startingIframeListeners = false;
+      return;
     }
+    fnConsoleLog('DocumentMediator->startIframeListeners', msg);
+
+    const key = TinyEventDispatcher.addListener<IFrameIndexMessage>(
+      BusMessageType.IFRAME_START_LISTENERS_RESULT,
+      (event, key, value) => {
+        if (msg.uid === value.uid) {
+          fnConsoleLog('DocumentMediator->startIframeListeners->IFRAME_START_LISTENERS_RESULT');
+          clearTimeout(timeout);
+          TinyEventDispatcher.removeListener(event, key);
+          this.stopListeners(false);
+          this.startingIframeListeners = false;
+          IFrameStore.passListeners(msg);
+        }
+      }
+    );
+
+    BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_START_LISTENERS, data: { ...msg, type: this.type } })
+      .then(() => {
+        /* IGNORE */
+      })
+      .catch(() => {
+        /* IGNORE */
+      });
+
+    const timeout = setTimeout(() => {
+      fnConsoleLog('DocumentMediator->startIframeListeners->timeout');
+      this.startingIframeListeners = false;
+      TinyEventDispatcher.removeListener(BusMessageType.IFRAME_START_LISTENERS_RESULT, key);
+    }, 1000);
   }
 
   private static get isIFrameActive(): boolean {
@@ -104,8 +134,11 @@ export class DocumentMediator {
     window.addEventListener('keydown', this.handleKeyDown);
   };
 
-  static stopListeners(): void {
+  static stopListeners(iframe = true): void {
     if (this.overlayCanvas) return;
+    if (!this.active) return;
+    this.startingIframeListeners = false;
+    this.active = false;
     fnConsoleLog('DocumentMediator->stopListeners');
     if (this.overlay) {
       this.overlay.removeEventListener('mousemove', this.handleOverlayMove);
@@ -117,8 +150,7 @@ export class DocumentMediator {
     window.removeEventListener('keydown', this.handleKeyDown);
     PinAddFactory.clear();
     // Cleanup iframe
-    IFrameMessageFactory.cleanupListeners(Array.from(document.getElementsByTagName('iframe')));
-    if (this.params?.stopCallback) this.params.stopCallback();
+    if (iframe) IFrameStore.stopListeners();
   }
 
   private static handleScroll = (): void => {
@@ -206,20 +238,7 @@ export class DocumentMediator {
     const elements = document.elementsFromPoint(e.offsetX, e.offsetY);
     if (elements[1] instanceof HTMLIFrameElement) {
       fnConsoleLog('IFRAME PASS');
-      const el = elements[1];
-      const uid = IframeMediator.addIframe(el, () => {
-        IFrameMessageFactory.postIFrame(el, {
-          type: IFrameMessageType.START_LISTENERS,
-          data: { type: this.type },
-          uid
-        });
-        this.stopListeners();
-      });
-      IFrameMessageFactory.postIFrame(elements[1], {
-        type: IFrameMessageType.PING,
-        uid,
-        keep: true
-      });
+      this.startIframeListeners(elements[1]);
     } else if (elements[1] instanceof HTMLElement) {
       this.updateFactoryElement(elements[1]);
     } else if (elements[1] instanceof SVGElement) {

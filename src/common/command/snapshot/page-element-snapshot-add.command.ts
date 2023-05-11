@@ -15,7 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
+import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BusMessageType } from '../../model/bus.model';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
@@ -59,5 +61,6 @@ export class PageElementSnapshotAddCommand implements ICommand<Promise<void>> {
     await LinkHrefOriginStore.addHrefOriginId(this.dto.url, id);
 
     await new ObjAddIdCommand(id, dt).execute();
+    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS });
   }
 }

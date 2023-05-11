@@ -62,8 +62,8 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (pro
 
   const handlePinStop = async () => {
     try {
-      await BrowserApi.sendTabMessage<undefined>({
-        type: BusMessageType.POPUP_PIN_STOP
+      await BrowserApi.sendRuntimeMessage({
+        type: BusMessageType.CONTENT_STOP_LISTENERS
       });
     } catch (e) {
       LogManager.log(JSON.stringify(e));

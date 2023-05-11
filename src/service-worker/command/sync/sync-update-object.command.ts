@@ -17,7 +17,6 @@
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjUpdateIndexDelCommand } from '../../../common/command/obj/date-index/obj-update-index-del.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';

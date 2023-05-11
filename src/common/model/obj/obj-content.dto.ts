@@ -16,10 +16,7 @@
  */
 import { CssStyleListDto } from './obj-pin.dto';
 
-export interface ObjIframeContentDto {
-  uid: string;
-  ok: boolean;
-  url: string;
+export interface ObjIFrameContentDto {
   html: string;
   htmlAttr: string;
   css: CssStyleListDto;
@@ -36,7 +33,7 @@ export enum ObjContentTypeDto {
   SHADOW
 }
 
-type ObjContent = ObjIframeContentDto | ObjShadowContentDto | string;
+type ObjContent = ObjIFrameContentDto | ObjShadowContentDto | string;
 
 export interface ObjContentDto {
   type: ObjContentTypeDto;

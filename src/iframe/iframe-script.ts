@@ -14,17 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { IFrameMessage, IFrameMessageType } from '../common/model/iframe-message.model';
+import { IFrameIndexMessage, IFrameListenerMessage } from '../common/model/iframe-message.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../common/model/bus.model';
-import { ContentFetchIframeCommand } from '../content-script/command/snapshot/content-fetch-iframe.command';
 import { ContentMessageHandler } from '../content-script/content-message.handler';
 import { ContentSettingsStore } from '../content-script/store/content-settings.store';
 import { DocumentMediator } from '../content-script/mediator/document.mediator';
-import { IFrameMessageFactory } from '../content-script/factory/html/iframe-message.factory';
-import { ObjTypeDto } from '../common/model/obj/obj.dto';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
 import { fnIsIframe } from '../common/fn/fn-is-iframe';
@@ -37,24 +34,16 @@ import { fnUid } from '../common/fn/uid.fn';
 export class IframeScript {
   private readonly href: string;
   private timeoutId = 0;
-  private type?: ObjTypeDto;
-  private uid?: string;
 
   constructor(private readonly id: string) {
     this.href = UrlFactory.normalizeHref(window.location.href);
-    window.addEventListener('message', this.handleIframeMessage);
-    for (let i = 0; i < window.parent.frames.length; i++) {
-      if (window.parent.frames[i] == window) {
-        // console.log('iframe->id', i);
-        break;
-      }
-    }
 
-    fnConsoleLog('IframeScript->constructor', this.href);
+    fnConsoleLog('IframeScript->constructor', this.id, this.href);
 
-    ContentMessageHandler.start(this.href, true);
+    ContentMessageHandler.start(this.href, true, this.id);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    document.addEventListener('mouseout', this.handleMouseOut);
 
     TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
     TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
@@ -64,6 +53,7 @@ export class IframeScript {
     TinyEventDispatcher.removeListener(event, key);
 
     await ContentSettingsStore.initSettings();
+    await this.sendIframeIndex(BusMessageType.IFRAME_INDEX);
   };
 
   private handleVisibilityChange = async (): Promise<void> => {
@@ -82,61 +72,28 @@ export class IframeScript {
     return false;
   };
 
-  private handleIframeMessage = async (e: MessageEvent<any>): Promise<void> => {
-    fnConsoleLog('IframeScript->handleIframeMessage', e.data);
-    const msg = IFrameMessageFactory.parse(e.data);
-    if (!msg) return;
-    switch (msg.type) {
-      case IFrameMessageType.PING: {
-        // Send to parent only using service worker because parent messages not always get to parent (thank you m$)
-        // TODO relay only on browserApi
-        fnConsoleLog('IframeScript->constructor->iframe->ping', msg);
-        await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_IFRAME_MESSAGE, data: msg });
-        break;
-      }
-      case IFrameMessageType.FETCH: {
-        fnConsoleLog('IframeScript->constructor->iframe->fetch', msg);
-        await new ContentFetchIframeCommand(msg, this.href).execute();
-        break;
-      }
-      case IFrameMessageType.START_LISTENERS: {
-        fnConsoleLog('IframeScript->constructor->iframe->start-listeners', msg);
-        this.type = msg.data.type;
-        this.uid = msg.uid;
-        // TODO pass correct url -> so we save correct href and origin
-        // fix screenshot -> pass iframe position inside origin window
-        DocumentMediator.startListeners(msg.data.type, {
-          stopCallback: () => {
-            document.removeEventListener('mouseout', this.handleMouseOut);
-          }
-        });
-        document.addEventListener('mouseout', this.handleMouseOut);
-        break;
-      }
-      case IFrameMessageType.STOP_LISTENERS: {
-        DocumentMediator.stopListeners();
-      }
+  private handleMouseOut = async () => {
+    if (DocumentMediator.active) {
+      fnConsoleLog('IframeScript->handleMouseOut', this.id);
+      DocumentMediator.stopListeners();
+      await this.sendIframeIndex(BusMessageType.IFRAME_MOUSE_OUT);
     }
   };
 
-  private handleMouseOut = async () => {
-    fnConsoleLog('PinMeScript->handleMouseOut', this.id, this.type, this.uid);
-    document.removeEventListener('mouseout', this.handleMouseOut);
-    DocumentMediator.stopListeners();
-    if (!this.type || !this.uid) return;
-    await BrowserApi.sendRuntimeMessage<IFrameMessage>({
-      type: BusMessageType.CONTENT_IFRAME_MESSAGE,
-      data: {
-        uid: this.uid,
-        type: IFrameMessageType.RESTART_LISTENERS,
-        data: { type: this.type }
+  private sendIframeIndex = async (type: BusMessageType): Promise<void> => {
+    for (let i = 0; i < window.parent.frames.length; i++) {
+      if (window.parent.frames[i] == window) {
+        await BrowserApi.sendRuntimeMessage<IFrameIndexMessage | IFrameListenerMessage>({
+          type,
+          data: { index: i, uid: this.id, type: DocumentMediator.type }
+        });
+        return;
       }
-    });
-    this.type = undefined;
+    }
+    fnConsoleLog('IframeScript->sendIframeIndex->NOT_FOUND', window.document);
   };
 
   private cleanup(): void {
-    window.removeEventListener('message', this.handleIframeMessage);
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     document.removeEventListener('mouseout', this.handleMouseOut);
     TinyEventDispatcher.cleanup();

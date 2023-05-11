@@ -15,18 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { BusMessage } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { IFrameMessage } from '../../../common/model/iframe-message.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
 
-export class ContentIframeMessageCommand implements ICommand<Promise<void>> {
-  constructor(private data: IFrameMessage) {}
+export class IframePassMessageCommand implements ICommand<Promise<void>> {
+  constructor(private msg: BusMessage<any>) {}
+
   async execute(): Promise<void> {
-    fnConsoleLog('ContentIframePongCommand->execute', this.data);
-    await BrowserApi.sendTabMessage<IFrameMessage>({
-      type: BusMessageType.CONTENT_IFRAME_MESSAGE,
-      data: this.data
-    });
+    await BrowserApi.sendTabMessage(this.msg);
   }
 }

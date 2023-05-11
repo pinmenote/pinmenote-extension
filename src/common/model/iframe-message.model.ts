@@ -14,18 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export enum IFrameMessageType {
-  LOADED = 'loaded',
-  FETCH = 'fetch',
-  PING = 'ping',
-  START_LISTENERS = 'START_LISTENERS',
-  STOP_LISTENERS = 'STOP_LISTENERS',
-  RESTART_LISTENERS = 'RESTART_LISTENERS' // to parent
+import { ObjIFrameContentDto } from './obj/obj-content.dto';
+import { ObjTypeDto } from './obj/obj.dto';
+
+export interface IFrameIndexMessage {
+  index: number;
+  uid: string;
 }
 
-export interface IFrameMessage {
-  type: IFrameMessageType;
+export interface IFrameListenerMessage extends IFrameIndexMessage {
+  type: ObjTypeDto;
+}
+
+export interface IFrameFetchMessage {
   uid: string;
-  data?: any;
-  keep?: boolean;
+  href: string;
+  data: ObjIFrameContentDto;
 }
