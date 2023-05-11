@@ -183,6 +183,11 @@ export class CssFactory {
       let url = urlMatch.substring(4, urlMatch.length - 1);
       if (url.startsWith('"') || url.startsWith("'")) url = url.substring(1, url.length - 1);
       if (url.endsWith(';')) url = url.substring(0, url.length - 1);
+      // TODO not working svg+xml - but we skip svg anyway so ignore now
+      if (url.startsWith('data:image/svg+xml;charset=utf8')) {
+        css = css.replace(urlMatch, 'url()');
+        continue;
+      }
       // skip data elements
       if (url.startsWith('data:')) continue;
       // skip url with #
