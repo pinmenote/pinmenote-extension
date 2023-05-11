@@ -88,7 +88,7 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
       cancelCallback={titleCancelCallback}
     />
   ) : (
-    <h2 style={{ wordWrap: 'break-word', width: '80%' }}>{title}</h2>
+    <h2 style={{ overflowWrap: 'anywhere', width: '80%' }}>{title}</h2>
   );
 
   return (
