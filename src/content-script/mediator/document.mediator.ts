@@ -168,7 +168,7 @@ export class DocumentMediator {
     if (e.key === 'Escape') {
       this.overlayCanvas?.remove();
       this.overlayCanvas = undefined;
-      this.stopListeners();
+      this.stopListeners(true);
     }
   };
 

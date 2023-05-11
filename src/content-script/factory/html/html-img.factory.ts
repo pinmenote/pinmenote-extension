@@ -19,21 +19,13 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnFetchImage } from '../../../common/fn/fetch-image.fn';
 
 export class HtmlImgFactory {
-  static computeImgValue = async (
-    ref: HTMLImageElement | HTMLSourceElement,
-    skipUrlCache?: Set<string>
-  ): Promise<string> => {
+  static computeImgValue = async (ref: HTMLImageElement, skipUrlCache?: Set<string>): Promise<string> => {
     let value = ref.src || '';
 
     // yet another problem with some library loading img tags async
     const isAsyncDecoding = ref.getAttribute('decoding') === 'async';
 
     // fnConsoleLog('HtmlImgFactory->computeImgValue', ref);
-
-    // we have data already inside image so just add it except it's not async loading cause might be blank
-    if (!isAsyncDecoding && value.startsWith('data:')) {
-      return value;
-    }
 
     if (value.startsWith('http')) {
       const imageData = await fnFetchImage(value);
@@ -42,19 +34,10 @@ export class HtmlImgFactory {
       }
     }
 
-    // data-src
-    if (ref.getAttribute('data-src')) {
-      value = ref.getAttribute('data-src') || '';
-      const url = fnComputeUrl(value);
-      const imageData = await fnFetchImage(url);
-      if (imageData.ok) {
-        return imageData.res;
-      }
-    }
     //
     if (isAsyncDecoding && ref.getAttribute('data-lazy-src')) {
-      value = ref.getAttribute('data-lazy-src') || '';
-      const url = fnComputeUrl(value);
+      let url = ref.getAttribute('data-lazy-src') || '';
+      url = fnComputeUrl(url);
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
         return imageData.res;
@@ -63,10 +46,20 @@ export class HtmlImgFactory {
       }
     }
 
+    // data-src
+    if (ref.getAttribute('data-src')) {
+      let url = ref.getAttribute('data-src') || '';
+      url = fnComputeUrl(url);
+      const imageData = await fnFetchImage(url);
+      if (imageData.ok) {
+        return imageData.res;
+      }
+    }
+
     // data-pin-media - maybe merge with data-src
     if (ref.getAttribute('data-pin-media')) {
-      value = ref.getAttribute('data-pin-media') || '';
-      const url = fnComputeUrl(value);
+      let url = ref.getAttribute('data-pin-media') || '';
+      url = fnComputeUrl(url);
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
         return imageData.res;
@@ -94,6 +87,11 @@ export class HtmlImgFactory {
       if (result) return result;
     }
 
+    // we have data already inside image so just add it except it's not async loading cause might be blank
+    if (!isAsyncDecoding && value.startsWith('data:')) {
+      return value;
+    }
+
     if (ref.getAttribute('lazy-source') && value === '') {
       value = ref.getAttribute('lazy-source') || '';
     }
@@ -114,14 +112,16 @@ export class HtmlImgFactory {
   };
 
   private static computeSrcSet = async (srcset: string[]): Promise<string> => {
-    fnConsoleLog('HtmlImgFactory->computeSrcSet');
+    fnConsoleLog('HtmlImgFactory->computeSrcSet', srcset);
     // sort by size so it's best image
     if (srcset.length > 1) {
       srcset = srcset.sort((a, b) => {
-        a = a.trim().split(' ')[1].trim();
-        b = b.trim().split(' ')[1].trim();
-        a = a.substring(0, a.length - 1);
-        b = b.substring(0, b.length - 1);
+        const x = a.trim().split(' ');
+        const y = b.trim().split(' ');
+        if (x.length === 1) return -1;
+        if (y.length === 1) return -1;
+        a = x[1].trim().substring(0, a.length - 1);
+        b = y[1].trim().substring(0, b.length - 1);
         const aa = parseInt(a);
         const bb = parseInt(b);
         if (aa > bb) return -1;

@@ -31,33 +31,21 @@ export class HtmlPictureFactory {
     if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
 
     const children = Array.from(ref.children);
+    // TODO use source - pick best one - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
     const img = children.filter((c) => c.tagName.toLowerCase() === 'img').pop();
-    const sources = children.filter((c) => c.tagName.toLowerCase() === 'source');
+    if (!img) return HtmlAttrFactory.EMPTY_RESULT;
 
     const content: ObjContentDto[] = [];
     let html = `<picture `;
     html += await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes));
     html = html.substring(0, html.length - 1);
 
-    // Source must be converted to img - we lose size information that's why we need to put style with those attributes
     html += '>';
-    let child = sources.shift();
-    while (child) {
-      if (child.getAttribute('src') || child.getAttribute('srcset')) {
-        break;
-      }
-      child = sources.shift();
-    }
-    let value = '';
-    if (child) {
-      value = await HtmlImgFactory.computeImgValue(child as HTMLImageElement, skipUrlCache);
-    } else {
-      value = await HtmlImgFactory.computeImgValue(img as HTMLImageElement, skipUrlCache);
-    }
-    const uid = fnUid();
+    const value = await HtmlImgFactory.computeImgValue(img as HTMLImageElement, skipUrlCache);
     if (forShadow) {
       html += `<img src="${value}" `;
     } else {
+      const uid = fnUid();
       html += `<img data-pin-id=${uid} `;
       content.push({
         id: uid,
@@ -65,22 +53,9 @@ export class HtmlPictureFactory {
         content: value
       });
     }
-    if (!child) {
+    if (img) {
       const imgAttr = Array.from(img.attributes);
       html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
-    } else {
-      const imgAttr = Array.from(child.attributes);
-      html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
-      if (img) {
-        const rect = img.getBoundingClientRect();
-        let w = parseInt(img.getAttribute('width') || '0');
-        let h = parseInt(img.getAttribute('height') || '0');
-        if (rect.height > h) {
-          w = rect.width;
-          h = rect.height;
-        }
-        html += `width="${w}" height="${h}" `;
-      }
     }
     html = html.substring(0, html.length - 1) + '/>';
     html += '</picture>';

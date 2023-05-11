@@ -19,11 +19,9 @@ import { BusMessageType } from '../model/bus.model';
 import { FetchImageRequest } from '../model/obj-request.model';
 import { FetchResponse } from '../model/api.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
-import { fnConsoleLog } from './console.fn';
 
 export const fnFetchImage = (url: string): Promise<FetchResponse<string>> => {
   return new Promise<FetchResponse<string>>((resolve, reject) => {
-    fnConsoleLog('fnFetchImage');
     TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_IMAGE, (event, key, value) => {
       if (value.url === url) {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
