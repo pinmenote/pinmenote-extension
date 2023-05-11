@@ -34,7 +34,8 @@ npm run dev
 ### Known issues
 
 #### Shadow root  
-Open shadow root is not always displayed or parsed correctly - but at least it matches mht quality or sometimes it's better.
+Open shadow root is not always displayed or parsed correctly - but at least it matches mht quality or sometimes it's better.  
+Saving fragment / adding pin to shadow root is not working right now.
 
 #### Youtube
 Youtube use polymer dom with ```<!--css-build:shady-->```. 

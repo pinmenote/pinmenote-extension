@@ -26,7 +26,7 @@ import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule & CSSSupportsRule;
 
-export const CSS_URL_REG = new RegExp('url\\(.*\\)', 'g');
+export const CSS_URL_REG = new RegExp('url\\(.*?\\)', 'ig');
 export const CSS_IMPORT_REG = new RegExp(
   '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
   'gi'
