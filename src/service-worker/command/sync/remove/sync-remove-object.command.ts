@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ApiStoreRemoveObjectCommand } from '../api/store/api-store-remove-object.command';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { ApiStoreRemoveObjectCommand } from '../../api/store/api-store-remove-object.command';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 export class SyncRemoveObjectCommand implements ICommand<Promise<void>> {
   constructor(private id: number) {}

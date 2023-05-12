@@ -14,14 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-
-export class SyncTimeCommand implements ICommand<Promise<number>> {
-  async execute(): Promise<number> {
-    const dt = await BrowserStorageWrapper.get<number>(ObjectStoreKeys.SYNC_TIME);
-    if (!dt) return 0;
-    return dt;
-  }
+export interface SyncProgress {
+  id: number;
+  timestamp: number;
+  state: 'update' | 'remove' | 'remote';
 }

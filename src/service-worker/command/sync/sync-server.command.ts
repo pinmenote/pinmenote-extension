@@ -17,63 +17,46 @@
 import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/date.fn';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjRemoveIndexGetCommand } from '../../../common/command/obj/date-index/obj-remove-index-get.command';
-import { ObjUpdateIndexGetCommand } from '../../../common/command/obj/date-index/obj-update-index-get.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { SyncFirstDateCommand } from './sync-first-date.command';
-import { SyncRemoveObjectCommand } from './sync-remove-object.command';
-import { SyncTimeCommand } from './sync-time.command';
-import { SyncUpdateObjectCommand } from './sync-update-object.command';
+import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
+import { SyncProgress } from './sync.model';
+import { SyncRemoveListCommand } from './remove/sync-remove-list.command';
+import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
+import { SyncUpdateListCommand } from './update/sync-update-list.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnSleep } from '../../../common/fn/sleep.fn';
-import { fnYearMonthFormat } from '../../../common/fn/date.format.fn';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
+  private static isInSync = false;
+
   async execute(): Promise<void> {
+    if (SyncServerCommand.isInSync) return;
+
     if (!(await this.shouldSync())) return;
-    let timestamp = await new SyncTimeCommand().execute();
-    if (timestamp === 0) {
-      timestamp = await new SyncFirstDateCommand().execute();
+    try {
+      SyncServerCommand.isInSync = true;
+      const progress = await new SyncGetProgressCommand().execute();
+      fnConsoleLog('SyncServerCommand->execute-progress', progress);
+      await this.sync(progress);
+    } finally {
+      SyncServerCommand.isInSync = false;
     }
-    const dt = new Date(timestamp);
-    fnConsoleLog('SyncServerCommand->execute-timestamp', dt);
-    await this.sync(dt);
   }
 
-  private async sync(dt: Date): Promise<void> {
-    dt = fnDateToMonthFirstDay(dt);
+  private async sync(progress: SyncProgress): Promise<void> {
+    const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
-    fnConsoleLog('SyncServerCommand->today', lastDay, 'dt', dt, '<=', dt <= lastDay, dt.getTime(), lastDay.getTime());
-    while (dt <= lastDay) {
-      await this.syncMonth(dt);
+    while (dt < lastDay) {
+      fnConsoleLog('Sync', dt);
+      await this.syncMonth(progress, dt);
       dt.setMonth(dt.getMonth() + 1);
-      await fnSleep(100);
     }
   }
 
-  private async syncMonth(dt: Date): Promise<void> {
-    const yearMonth = fnYearMonthFormat(dt);
-    const syncLocalId = (await BrowserStorageWrapper.get<number>(ObjectStoreKeys.SYNC_LOCAL_ID)) || 0;
-    const updated = await new ObjUpdateIndexGetCommand(dt.getTime()).execute();
-    const removed = await new ObjRemoveIndexGetCommand(dt.getTime()).execute();
-    fnConsoleLog(
-      'SyncServerCommand->syncMonth',
-      yearMonth,
-      'updated',
-      updated,
-      'removed',
-      removed,
-      'syncLocalId',
-      syncLocalId
-    );
-    for (const id of updated) {
-      await new SyncUpdateObjectCommand(id, dt).execute();
-      await fnSleep(100);
-    }
-    for (const id of removed) {
-      await new SyncRemoveObjectCommand(id).execute();
-      await fnSleep(100);
-    }
+  private async syncMonth(progress: SyncProgress, dt: Date): Promise<void> {
+    progress.timestamp = dt.getTime();
+    await new SyncSetProgressCommand(progress).execute();
+    await new SyncUpdateListCommand().execute();
+    await new SyncRemoveListCommand().execute();
   }
 
   private async shouldSync(): Promise<boolean> {

@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjUpdateIndexDelCommand } from '../../../common/command/obj/date-index/obj-update-index-del.command';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjUpdateIndexDelCommand } from '../../../../common/command/obj/date-index/obj-update-index-del.command';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 export class SyncUpdateObjectCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private dt: Date) {}
@@ -37,16 +37,6 @@ export class SyncUpdateObjectCommand implements ICommand<Promise<void>> {
         fnConsoleLog('SyncUpdateObjectCommand->execute->contentId', this.id);
         break;
       }
-    }
-  }
-
-  async updateData(obj: ObjDto): Promise<void> {
-    if (!obj.serverId) {
-      await BrowserStorageWrapper.set<number>(ObjectStoreKeys.SYNC_TIME, obj.createdAt);
-      await BrowserStorageWrapper.set<{ id: number; list: 'update' | 'remove' }>(ObjectStoreKeys.SYNC_LOCAL_ID, {
-        id: obj.id,
-        list: 'update'
-      });
     }
   }
 }
