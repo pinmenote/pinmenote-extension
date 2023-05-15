@@ -14,32 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BoolDto, ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
-import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
 import { ApiHelper } from '../../../api/api-helper';
+import { FetchResponse } from '../../../../common/model/api.model';
 import { FetchService } from '../../../service/fetch.service';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjAddResultDto } from '../../../../common/model/obj/obj-server.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export class ApiStoreAddObjectCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
+export class ApiStoreAddObjectCommand implements ICommand<Promise<FetchResponse<ObjAddResultDto> | undefined>> {
   constructor(private obj: ObjDto) {}
 
-  async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {
+  async execute(): Promise<FetchResponse<ObjAddResultDto> | undefined> {
     fnConsoleLog('ApiStoreAddObjectCommand->execute');
     const storeUrl = await ApiHelper.getStoreUrl();
 
-    const url = `${storeUrl}/api/v1/store/obj/add`;
+    const url = `${storeUrl}/api/v1/obj/add`;
 
     try {
-      return await FetchService.post<BoolDto>(url, this.obj, true);
+      return await FetchService.post<ObjAddResultDto>(url, this.obj, true);
     } catch (e) {
-      return {
-        ok: false,
-        url,
-        status: 500,
-        type: ResponseType.JSON,
-        res: { message: 'Send request problem' }
-      };
+      fnConsoleLog('ApiStoreAddObjectCommand->Error', e);
     }
   }
 }

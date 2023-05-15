@@ -30,7 +30,9 @@ export class SyncUpdateListCommand implements ICommand<Promise<void>> {
     let i = updated.indexOf(progress.id) + 1;
     for (i; i < updated.length; i++) {
       const id = updated[i];
-      await new SyncUpdateObjectCommand(id, new Date(progress.timestamp)).execute();
+      const result = await new SyncUpdateObjectCommand(id, new Date(progress.timestamp)).execute();
+      // skip this run because we probably got server error
+      if (!result) return;
 
       progress.id = id;
       await new SyncSetProgressCommand(progress).execute();

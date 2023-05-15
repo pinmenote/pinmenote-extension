@@ -19,10 +19,12 @@ import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper'
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
+import { fnConsoleLog } from '../../../fn/console.fn';
 
 export class TokenStorageSetCommand implements ICommand<Promise<void>> {
   constructor(private value: AccessTokenDto) {}
   async execute(): Promise<void> {
+    fnConsoleLog('TokenStorageSetCommand->execute');
     const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.defaultServer}`;
     await BrowserStorageWrapper.set(key, this.value);
   }

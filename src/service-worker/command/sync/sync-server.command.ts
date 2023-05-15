@@ -15,11 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/date.fn';
+import { ApiHelper } from '../../api/api-helper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
 import { SyncProgress } from './sync.model';
+import { SyncRemoteCommand } from './remote/sync-remote.command';
 import { SyncRemoveListCommand } from './remove/sync-remove-list.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncUpdateListCommand } from './update/sync-update-list.command';
@@ -34,9 +36,10 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (!(await this.shouldSync())) return;
     try {
       SyncServerCommand.isInSync = true;
+      const a = Date.now();
       const progress = await new SyncGetProgressCommand().execute();
-      fnConsoleLog('SyncServerCommand->execute-progress', progress);
       await this.sync(progress);
+      fnConsoleLog('SyncServerCommand->execute-progress', progress, 'in', Date.now() - a);
     } finally {
       SyncServerCommand.isInSync = false;
     }
@@ -46,10 +49,11 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
     while (dt < lastDay) {
-      fnConsoleLog('Sync', dt);
+      fnConsoleLog('SyncServerCommand->sync-loop', dt);
       await this.syncMonth(progress, dt);
       dt.setMonth(dt.getMonth() + 1);
     }
+    await new SyncRemoteCommand().execute();
   }
 
   private async syncMonth(progress: SyncProgress, dt: Date): Promise<void> {
@@ -60,9 +64,13 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   }
 
   private async shouldSync(): Promise<boolean> {
+    const loggedIn = await ApiHelper.isLoggedIn();
+    fnConsoleLog('SyncServerCommand->loggedIn', loggedIn);
+    if (!loggedIn) return false;
+
     const interval = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.SYNC_INTERVAL)) || 0;
     fnConsoleLog('SyncServerCommand->shouldSync', Date.now() - interval);
-    if (Date.now() - interval > 10_000) {
+    if (Date.now() - interval > 5_000) {
       await BrowserStorageWrapper.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
       return true;
     }

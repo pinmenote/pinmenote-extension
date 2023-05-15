@@ -201,7 +201,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   private addCommentCallback = async (value: string): Promise<void> => {
     await new ObjAddHashtagsCommand(this.object.id, value).execute();
-    this.object.data.comments.data.push({ value, createdDate: Date.now() });
+    const dt = Date.now();
+    this.object.data.comments.data.push({ value, createdDate: dt, updatedDate: dt });
     try {
       await new PinUpdateCommand(this.object).execute();
       this.text.reloadComments();

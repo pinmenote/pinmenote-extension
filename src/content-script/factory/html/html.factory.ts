@@ -118,9 +118,11 @@ export class HtmlFactory {
       });
       html += `data-pin-id=${uid} `;
     } else if (tagName === 'textarea') {
-      html += `value="${(params.ref as HTMLTextAreaElement).value}" `;
+      const value = (params.ref as HTMLTextAreaElement).value.replaceAll('"', '&quot;');
+      html += `value="${value}" `;
     } else if (tagName === 'input' && (params.ref as HTMLInputElement).type !== 'password') {
-      html += `value="${(params.ref as HTMLInputElement).value}" `;
+      const value = (params.ref as HTMLInputElement).value.replaceAll('"', '&quot;');
+      html += `value="${value}" `;
     }
 
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes));
@@ -131,8 +133,8 @@ export class HtmlFactory {
     for (const node of nodes) {
       if (node.nodeType === Node.TEXT_NODE) {
         const nre = new RegExp(String.fromCharCode(160), 'g');
-        let txt = node.textContent ? node.textContent.replace(nre, '&nbsp;') : '';
-        txt = txt.replace('<', '&lt').replace('>', '&gt;');
+        let txt = node.textContent ? node.textContent.replaceAll(nre, '&nbsp;') : '';
+        txt = txt.replaceAll('<', '&lt').replaceAll('>', '&gt;');
         html += txt;
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         const computed = await this.computeHtmlIntermediateData({

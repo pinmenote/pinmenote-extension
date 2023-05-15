@@ -14,42 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDrawDto } from './obj-draw.dto';
-import { ObjSnapshotDto } from './obj-snapshot.dto';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnSleep } from '../../../../common/fn/sleep.fn';
 
-export interface ObjCommentDto {
-  value: string;
-  id?: string;
-  createdDate?: number;
-  updatedDate?: number;
-}
-
-export interface ObjCommentListDto {
-  data: ObjCommentDto[];
-}
-
-export interface ObjPageDto {
-  snapshot: ObjSnapshotDto;
-  comments: ObjCommentListDto;
-  draw: ObjDrawDto[];
-}
-
-export interface ObjPagePinDto extends ObjPageDto {
-  xpath: string;
-  border: PinBorderDataDto;
-}
-
-export interface CssStyleListDto {
-  css: CssStyleDto[];
-}
-
-export interface CssStyleDto {
-  href?: string;
-  data?: string;
-  media?: string;
-}
-
-export interface PinBorderDataDto {
-  radius: string;
-  style: string;
+export class SyncRemoteCommand implements ICommand<Promise<void>> {
+  async execute(): Promise<void> {
+    fnConsoleLog('SyncRemoteCommand->execute');
+    await fnSleep(100);
+  }
 }

@@ -23,7 +23,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
 
 export class PinUpdateCommand implements ICommand<void> {
-  constructor(private obj: ObjDto<ObjPagePinDto>) {}
+  constructor(private obj: ObjDto<ObjPagePinDto>, private changes?: string[]) {}
   async execute(): Promise<void> {
     fnConsoleLog('PinUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;

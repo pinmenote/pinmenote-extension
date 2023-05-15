@@ -17,12 +17,9 @@
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { SyncFirstDateCommand } from '../sync-first-date.command';
-import { SyncProgress } from '../sync.model';
 
 export class SyncDelProgressCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const timestamp = await new SyncFirstDateCommand().execute();
-    await BrowserStorageWrapper.set<SyncProgress>(ObjectStoreKeys.SYNC_PROGRESS, { id: 0, state: 'update', timestamp });
+    await BrowserStorageWrapper.remove(ObjectStoreKeys.SYNC_PROGRESS);
   }
 }

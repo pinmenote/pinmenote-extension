@@ -14,20 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
-import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { ApiHelper } from '../../../api/api-helper';
+import { FetchResponse } from '../../../../common/model/api.model';
 import { FetchService } from '../../../service/fetch.service';
+import { ICommand } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 interface ChangesDto {
   data: number[];
 }
 
-export class ApiStoreChangesCommand implements ICommand<Promise<FetchResponse<ChangesDto | ServerErrorDto>>> {
+export class ApiStoreChangesCommand implements ICommand<Promise<FetchResponse<ChangesDto> | undefined>> {
   constructor(private dt: string) {}
 
-  async execute(): Promise<FetchResponse<ChangesDto | ServerErrorDto>> {
+  async execute(): Promise<FetchResponse<ChangesDto> | undefined> {
     fnConsoleLog('ApiStoreChangesCommand->execute');
     const storeUrl = await ApiHelper.getStoreUrl();
 
@@ -36,13 +36,7 @@ export class ApiStoreChangesCommand implements ICommand<Promise<FetchResponse<Ch
     try {
       return await FetchService.get<ChangesDto>(url, true);
     } catch (e) {
-      return {
-        ok: false,
-        url,
-        status: 500,
-        type: ResponseType.JSON,
-        res: { message: 'Send request problem' }
-      };
+      fnConsoleLog('ApiStoreChangesCommand->Error', e);
     }
   }
 }

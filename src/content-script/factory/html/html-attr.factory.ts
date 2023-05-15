@@ -90,7 +90,7 @@ export class HtmlAttrFactory {
           const value = await CssFactory.fetchUrls(attrValue);
           html += `${attr.name}="${value}" `;
         } else {
-          html += `${attr.name}="${attrValue}" `;
+          html += `${attr.name}="${attrValue.replaceAll('"', '&quot;')}" `;
         }
       } else if (attrValue) {
         html += `${attr.name}="${attrValue}" `;
@@ -102,7 +102,7 @@ export class HtmlAttrFactory {
   };
 
   static cutPartialStyles(value: string): string {
-    value = value.replace(TRANSLATE_REG, '');
+    value = value.replaceAll(TRANSLATE_REG, '').replaceAll('"', '&quot;');
     return value;
   }
 }

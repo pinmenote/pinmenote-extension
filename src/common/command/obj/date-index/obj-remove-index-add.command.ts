@@ -26,12 +26,12 @@ export class ObjRemoveIndexAddCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     // we only care about objects with serverId because we want to mark it as deleted on server,
     // so it will be deleted from all devices
-    if (!this.obj.serverId) return;
+    if (!this.obj.server) return;
     const yearMonth = fnYearMonthFormat(this.dt);
     const key = `${ObjectStoreKeys.REMOVED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);
-    ids.push(this.obj.serverId);
+    ids.push(this.obj.server.id);
 
     await BrowserStorageWrapper.set(key, ids);
   }

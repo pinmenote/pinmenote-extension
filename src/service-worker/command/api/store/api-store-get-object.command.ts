@@ -14,18 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
 import { ApiHelper } from '../../../api/api-helper';
+import { FetchResponse } from '../../../../common/model/api.model';
 import { FetchService } from '../../../service/fetch.service';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<ObjDto | ServerErrorDto>>> {
+export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<ObjDto> | undefined>> {
   constructor(private id: number) {}
 
-  async execute(): Promise<FetchResponse<ObjDto | ServerErrorDto>> {
+  async execute(): Promise<FetchResponse<ObjDto> | undefined> {
     fnConsoleLog('ApiStoreGetObjectCommand->execute');
     const storeUrl = await ApiHelper.getStoreUrl();
 
@@ -34,13 +33,7 @@ export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<
     try {
       return await FetchService.get(url, true);
     } catch (e) {
-      return {
-        ok: false,
-        url,
-        status: 500,
-        type: ResponseType.JSON,
-        res: { message: 'Send request problem' }
-      };
+      fnConsoleLog('ApiStoreGetObjectCommand->Error', e);
     }
   }
 }

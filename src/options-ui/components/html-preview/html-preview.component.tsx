@@ -176,6 +176,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
       fnSleep(5)
         .then(() => {
           if (dto.type === ObjContentTypeDto.IFRAME) {
+            fnConsoleLog('RENDER IFRAME');
             const iframe: ObjIFrameContentDto = dto.content as ObjIFrameContentDto;
             const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
             if (iframeDoc) {
@@ -199,14 +200,13 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
                 }
               }
             }
-            fnConsoleLog('RENDER IFRAME', iframe.ok, iframe.url);
           } else if (dto.type === ObjContentTypeDto.IMG) {
             fnConsoleLog('RENDER IMAGE');
             (el as HTMLImageElement).src = dto.content as string;
           } else if (dto.type === ObjContentTypeDto.SHADOW) {
+            fnConsoleLog('RENDER SHADOW');
             const content = dto.content as ObjShadowContentDto;
             renderShadow(el, content);
-            // el.innerHTML = content.html;
           }
           resolve();
         })

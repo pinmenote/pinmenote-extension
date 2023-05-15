@@ -106,7 +106,8 @@ export class FetchService {
 
   private static async refreshToken(): Promise<void> {
     try {
-      const req = await fetch(`${ApiHelper.apiUrl}/api/v1/refresh-token`, {
+      fnConsoleLog('FetchService->refreshToken', ApiHelper.authUrl);
+      const req = await fetch(`${ApiHelper.authUrl}/refresh-token`, {
         method: 'POST',
         headers: await ApiHelper.getAuthHeaders()
       });
@@ -123,6 +124,7 @@ export class FetchService {
     init: RequestInit,
     type = ResponseType.JSON
   ): Promise<FetchResponse<T>> => {
+    fnConsoleLog('refetch', url);
     let req = await fetch(url, init);
     const res = await req.json();
 

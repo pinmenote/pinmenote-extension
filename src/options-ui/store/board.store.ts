@@ -15,10 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
+import { ObjPageDto, ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
-import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
-import { ObjSnapshotDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
 import { OptionsObjSearchCommand } from '../../service-worker/command/options/options-obj-search.command';
@@ -48,7 +47,7 @@ export class BoardStore {
         if (value.type === ObjTypeDto.PageElementPin) {
           await new PinRemoveCommand(value as ObjDto<ObjPagePinDto>).execute();
         } else if (value.type === ObjTypeDto.PageSnapshot || value.type === ObjTypeDto.PageElementSnapshot) {
-          await new PageSnapshotRemoveCommand(value as ObjDto<ObjSnapshotDto>).execute();
+          await new PageSnapshotRemoveCommand(value as ObjDto<ObjPageDto>).execute();
         }
         return true;
       }

@@ -33,6 +33,15 @@ export class ApiHelper {
     return environmentConfig.defaultServer;
   }
 
+  static get authUrl(): string {
+    return `${this.apiUrl}/api/v1/auth`;
+  }
+
+  static async isLoggedIn(): Promise<boolean> {
+    const token = await new TokenStorageGetCommand().execute();
+    return !!token;
+  }
+
   static async getStoreUrl(): Promise<string> {
     const token = await new TokenStorageGetCommand().execute();
     if (!token) return '';

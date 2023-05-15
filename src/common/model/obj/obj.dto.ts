@@ -16,7 +16,7 @@
  */
 import { ObjPageDto, ObjPagePinDto } from './obj-pin.dto';
 import { ObjNoteDto } from './obj-note.dto';
-import { ObjSnapshotDto } from './obj-snapshot.dto';
+import { ObjServerDto } from './obj-server.dto';
 import { ObjTaskDto } from './obj-task.dto';
 
 export const OBJ_DTO_VERSION = 1;
@@ -47,12 +47,12 @@ export enum ObjTypeDto {
   PageEvent = 'PAGE_EVENT'
 }
 
-export type ObjDataDto = ObjPagePinDto | ObjPageDto | ObjNoteDto | ObjSnapshotDto;
+export type ObjDataDto = ObjPagePinDto | ObjPageDto | ObjNoteDto;
 export type ObjPageDataDto = ObjPagePinDto | ObjPageDto | ObjNoteDto | ObjTaskDto;
 
 export interface ObjDto<T = ObjDataDto> {
   id: number;
-  serverId?: number;
+  server?: ObjServerDto;
   version: number;
   type: ObjTypeDto;
   updatedAt: number;
