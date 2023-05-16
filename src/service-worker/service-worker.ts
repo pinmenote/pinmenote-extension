@@ -97,7 +97,9 @@ const handleMessage = async (
     }
   }
   // Sync command
-  await new SyncServerCommand().execute();
+  if (![BusMessageType.CONTENT_FETCH_CSS, BusMessageType.CONTENT_FETCH_IMAGE].includes(msg.type)) {
+    await new SyncServerCommand().execute();
+  }
 };
 
 const handleInstalled = async (event: unknown): Promise<void> => {

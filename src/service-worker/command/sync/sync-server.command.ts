@@ -64,14 +64,15 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   }
 
   private async shouldSync(): Promise<boolean> {
-    const loggedIn = await ApiHelper.isLoggedIn();
-    fnConsoleLog('SyncServerCommand->loggedIn', loggedIn);
-    if (!loggedIn) return false;
-
     const interval = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.SYNC_INTERVAL)) || 0;
     fnConsoleLog('SyncServerCommand->shouldSync', Date.now() - interval);
     if (Date.now() - interval > 5_000) {
       await BrowserStorageWrapper.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
+
+      const loggedIn = await ApiHelper.isLoggedIn();
+      fnConsoleLog('SyncServerCommand->loggedIn', loggedIn);
+      if (!loggedIn) return false;
+
       return true;
     }
     return false;
