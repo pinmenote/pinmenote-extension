@@ -60,7 +60,7 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
     await LinkHrefOriginStore.addHrefOriginId(this.pin.snapshot.url, id);
     await LinkHrefOriginStore.pinAdd(this.pin.snapshot.url, id);
 
-    await new ObjAddIdCommand(id, dt).execute();
+    await new ObjAddIdCommand({ id, dt }).execute();
 
     // Send stop - iframe loads own content scripts
     await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS });

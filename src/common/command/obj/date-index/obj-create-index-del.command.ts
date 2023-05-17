@@ -16,26 +16,27 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
+import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnYearMonthFormat } from '../../../fn/date.format.fn';
+import { fnTimestampKeyFormat } from '../../../fn/date.format.fn';
 
 export class ObjCreateIndexDelCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private dt: Date) {}
+  constructor(private index: ObjDateIndex) {}
 
   async execute(): Promise<void> {
-    const yearMonth = fnYearMonthFormat(this.dt);
+    const yearMonth = fnTimestampKeyFormat(this.index.dt);
     const key = `${ObjectStoreKeys.CREATED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);
-    const idIndex = ids.indexOf(this.id);
+    const idIndex = ids.findIndex((o) => o.id === this.index.id);
     if (idIndex > -1) {
       ids.splice(idIndex, 1);
       await BrowserStorageWrapper.set(key, ids);
     }
   }
 
-  private async getList(key: string): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+  private async getList(key: string): Promise<ObjDateIndex[]> {
+    const value = await BrowserStorageWrapper.get<ObjDateIndex[] | undefined>(key);
     return value || [];
   }
 }

@@ -36,6 +36,6 @@ export class NoteUpdateCommand implements ICommand<void> {
 
     await BrowserStorageWrapper.set(key, this.obj);
 
-    await new ObjUpdateIndexAddCommand(this.obj.id, this.obj.updatedAt).execute();
+    await new ObjUpdateIndexAddCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
   }
 }

@@ -23,9 +23,9 @@ import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
 import { SyncProgress } from './sync.model';
 import { SyncRemoteCommand } from './remote/sync-remote.command';
 import { SyncRemoveListCommand } from './remove/sync-remove-list.command';
-import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncUpdateListCommand } from './update/sync-update-list.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnTimestampKeyFormat } from '../../../common/fn/date.format.fn';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
@@ -49,18 +49,17 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
     while (dt < lastDay) {
-      fnConsoleLog('SyncServerCommand->sync-loop', dt);
-      await this.syncMonth(progress, dt);
+      const yearMonth = fnTimestampKeyFormat(progress.timestamp);
+      fnConsoleLog('SyncServerCommand->sync-loop', yearMonth);
+      await this.syncMonth(yearMonth);
       dt.setMonth(dt.getMonth() + 1);
     }
     await new SyncRemoteCommand().execute();
   }
 
-  private async syncMonth(progress: SyncProgress, dt: Date): Promise<void> {
-    progress.timestamp = dt.getTime();
-    await new SyncSetProgressCommand(progress).execute();
-    await new SyncUpdateListCommand().execute();
-    await new SyncRemoveListCommand().execute();
+  private async syncMonth(yearMonth: string): Promise<void> {
+    await new SyncUpdateListCommand(yearMonth).execute();
+    await new SyncRemoveListCommand(yearMonth).execute();
   }
 
   private async shouldSync(): Promise<boolean> {

@@ -60,7 +60,7 @@ export class PageElementSnapshotAddCommand implements ICommand<Promise<void>> {
 
     await LinkHrefOriginStore.addHrefOriginId(this.dto.url, id);
 
-    await new ObjAddIdCommand(id, dt).execute();
+    await new ObjAddIdCommand({ id, dt }).execute();
     await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS });
   }
 }

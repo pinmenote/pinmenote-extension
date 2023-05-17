@@ -14,32 +14,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjUpdateIndexGetCommand } from '../../../../common/command/obj/date-index/obj-update-index-get.command';
+import { ObjDateIndex } from '../../../../common/model/obj-index.model';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from '../progress/sync-get-progress.command';
 import { SyncSetProgressCommand } from '../progress/sync-set-progress.command';
 import { SyncUpdateObjectCommand } from './sync-update-object.command';
 import { fnSleep } from '../../../../common/fn/sleep.fn';
 
 export class SyncUpdateListCommand implements ICommand<Promise<void>> {
+  constructor(private yearMonth: string) {}
+
   async execute(): Promise<void> {
     const progress = await new SyncGetProgressCommand().execute();
     if (progress.state !== 'update') return;
 
-    const updated = await new ObjUpdateIndexGetCommand(progress.timestamp).execute();
-    let i = updated.indexOf(progress.id) + 1;
-    for (i; i < updated.length; i++) {
-      const id = updated[i];
-      const result = await new SyncUpdateObjectCommand(id, new Date(progress.timestamp)).execute();
+    const key = `${ObjectStoreKeys.UPDATED_DT}:${this.yearMonth}`;
+    const updated = await this.getList(key);
+
+    for (let i = 0; i < updated.length; i++) {
+      const index = updated[i];
+      if (index.dt <= progress.timestamp) continue;
+
+      const result = await new SyncUpdateObjectCommand(index).execute();
+
       // skip this run because we probably got server error
       if (!result) return;
 
-      progress.id = id;
+      progress.timestamp = index.dt;
       await new SyncSetProgressCommand(progress).execute();
       await fnSleep(100);
     }
+  }
 
-    progress.state = 'remove';
-    await new SyncSetProgressCommand(progress).execute();
+  private async getList(key: string): Promise<ObjDateIndex[]> {
+    const value = await BrowserStorageWrapper.get<ObjDateIndex[] | undefined>(key);
+    return value || [];
   }
 }

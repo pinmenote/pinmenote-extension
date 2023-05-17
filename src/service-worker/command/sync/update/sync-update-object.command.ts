@@ -18,6 +18,7 @@ import { ObjServerDto, ObjStatusDto, ObjSyncStatusDto } from '../../../../common
 import { ApiStoreAddObjectCommand } from '../../api/store/api-store-add-object.command';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjDateIndex } from '../../../../common/model/obj-index.model';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjUpdateIndexDelCommand } from '../../../../common/command/obj/date-index/obj-update-index-del.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
@@ -26,14 +27,14 @@ import { SyncSendChangesCommand } from './sync-send-changes.command';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
-  constructor(private id: number, private dt: Date) {}
+  constructor(private index: ObjDateIndex) {}
   async execute(): Promise<boolean> {
-    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.id}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.index.id}`;
     const obj = await BrowserStorageWrapper.get<ObjDto>(key);
 
     // some error when you update object then you remove it - remove from index cause no object found
     if (!obj) {
-      await new ObjUpdateIndexDelCommand(this.id, this.dt).execute();
+      await new ObjUpdateIndexDelCommand(this.index).execute();
       return false;
     }
 
@@ -85,7 +86,7 @@ export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
     if (!req) return;
     const res = req.res;
     if (req.status !== 201 && res.result !== ObjStatusDto.OK) {
-      fnConsoleLog('SyncUpdateObjectCommand->resp', req, this.id, obj);
+      fnConsoleLog('SyncUpdateObjectCommand->resp', req, this.index.id, obj);
       return;
     }
 

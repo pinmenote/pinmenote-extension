@@ -16,28 +16,25 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjDto } from '../../../model/obj/obj.dto';
+import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnYearMonthFormat } from '../../../fn/date.format.fn';
+import { fnTimestampKeyFormat } from '../../../fn/date.format.fn';
 
 export class ObjRemoveIndexAddCommand implements ICommand<Promise<void>> {
-  constructor(private dt: Date, private obj: ObjDto) {}
+  constructor(private index: ObjDateIndex) {}
 
   async execute(): Promise<void> {
-    // we only care about objects with serverId because we want to mark it as deleted on server,
-    // so it will be deleted from all devices
-    if (!this.obj.server) return;
-    const yearMonth = fnYearMonthFormat(this.dt);
+    const yearMonth = fnTimestampKeyFormat(this.index.dt);
     const key = `${ObjectStoreKeys.REMOVED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);
-    ids.push(this.obj.server.id);
+    ids.push(this.index);
 
     await BrowserStorageWrapper.set(key, ids);
   }
 
-  private async getList(key: string): Promise<number[]> {
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+  private async getList(key: string): Promise<ObjDateIndex[]> {
+    const value = await BrowserStorageWrapper.get<ObjDateIndex[] | undefined>(key);
     return value || [];
   }
 }

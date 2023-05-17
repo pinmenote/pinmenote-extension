@@ -18,6 +18,7 @@ import { COLOR_DEFAULT_BORDER, DEFAULT_BORDER_RADIUS } from '../../../../common/
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { EditorView } from 'prosemirror-view';
+import { LogManager } from '../../../../common/popup/log.manager';
 import { NoteUpdateCommand } from '../../../../common/command/note/note-update.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
@@ -80,6 +81,7 @@ export const NoteEditComponent: FunctionComponent<NoteEditComponentProps> = (pro
     note.title = title;
     note.description = description;
     note.words = Array.from(words);
+    LogManager.log(`Note->handleUpdate->${props.obj.id}`);
     await new NoteUpdateCommand(props.obj, oldWords).execute();
     props.saveCallback();
   };

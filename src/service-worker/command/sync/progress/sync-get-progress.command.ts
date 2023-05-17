@@ -25,7 +25,7 @@ export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
     const sync = await BrowserStorageWrapper.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
     if (!sync) {
       const timestamp = await new SyncFirstDateCommand().execute();
-      return { id: 0, state: 'update', timestamp };
+      return { state: 'update', timestamp };
     }
     return sync;
   }

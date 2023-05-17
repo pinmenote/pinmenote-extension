@@ -57,6 +57,6 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
       await LinkHrefOriginStore.noteAdd(this.note.url, id);
     }
 
-    await new ObjAddIdCommand(id, dt).execute();
+    await new ObjAddIdCommand({ id, dt }).execute();
   }
 }

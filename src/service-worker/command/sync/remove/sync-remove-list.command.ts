@@ -14,30 +14,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjRemoveIndexGetCommand } from '../../../../common/command/obj/date-index/obj-remove-index-get.command';
+import { ObjDateIndex } from '../../../../common/model/obj-index.model';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from '../progress/sync-get-progress.command';
 import { SyncRemoveObjectCommand } from './sync-remove-object.command';
 import { SyncSetProgressCommand } from '../progress/sync-set-progress.command';
 import { fnSleep } from '../../../../common/fn/sleep.fn';
 
 export class SyncRemoveListCommand implements ICommand<Promise<void>> {
+  constructor(private yearMonth: string) {}
   async execute(): Promise<void> {
     const progress = await new SyncGetProgressCommand().execute();
     if (progress.state !== 'remove') return;
 
-    const removed = await new ObjRemoveIndexGetCommand(progress.timestamp).execute();
+    const key = `${ObjectStoreKeys.REMOVED_DT}:${this.yearMonth}`;
+    const removed = await this.getList(key);
 
-    let i = removed.indexOf(progress.id) + 1;
-    for (i; i < removed.length; i++) {
-      const id = removed[i];
-      await new SyncRemoveObjectCommand(id).execute();
+    while (removed.length > 0) {
+      const index = removed.shift();
+      if (!index) continue;
 
-      progress.id = id;
-      await new SyncSetProgressCommand(progress).execute();
+      await new SyncRemoveObjectCommand(index.id).execute();
+
+      await this.updateList(key, removed);
+
       await fnSleep(100);
     }
+
     progress.state = 'update';
     await new SyncSetProgressCommand(progress).execute();
+  }
+
+  private async getList(key: string): Promise<ObjDateIndex[]> {
+    const value = await BrowserStorageWrapper.get<ObjDateIndex[] | undefined>(key);
+    return value || [];
+  }
+
+  private async updateList(key: string, value: ObjDateIndex[]): Promise<void> {
+    await BrowserStorageWrapper.set(key, value);
   }
 }

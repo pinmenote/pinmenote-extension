@@ -18,7 +18,7 @@ import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { HtmlComponent } from '../../../../common/model/html.model';
 import { LinkHrefOriginStore } from '../../../../common/store/link-href-origin.store';
-import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
+import { ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { PinComponent } from '../../pin.component';
 import { PinStore } from '../../../store/pin.store';
@@ -57,13 +57,13 @@ export class EditBarSnapshotButton implements HtmlComponent<HTMLElement> {
   private handleClick = async () => {
     this.el.removeEventListener('click', this.handleClick);
     const o = this.parent.object;
-    const obj: ObjDto<ObjSnapshotDto> = {
+    const obj: ObjDto<ObjPageDto> = {
       ...o,
-      data: o.data.snapshot
+      data: { snapshot: o.data.snapshot, draw: [], comments: { data: [] } }
     };
     obj.type = ObjTypeDto.PageElementSnapshot;
 
-    await LinkHrefOriginStore.pinDel(obj.data.url, obj.id);
+    await LinkHrefOriginStore.pinDel(obj.data.snapshot.url, obj.id);
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${obj.id}`;
     await BrowserStorageWrapper.set(key, obj);

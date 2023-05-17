@@ -51,7 +51,7 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
     await BrowserStorageWrapper.set(key, dto);
 
-    await new ObjAddIdCommand(id, dt).execute();
+    await new ObjAddIdCommand({ id, dt }).execute();
 
     await LinkHrefOriginStore.addHrefOriginId(this.dto.url, id);
   }

@@ -17,6 +17,7 @@
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjCreateIndexAddCommand } from '../date-index/obj-create-index-add.command';
+import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjUpdateIndexAddCommand } from '../date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
@@ -24,7 +25,7 @@ import { environmentConfig } from '../../../environment';
 export class ObjAddIdCommand implements ICommand<Promise<void>> {
   private readonly listLimit = environmentConfig.objListLimit;
 
-  constructor(private id: number, private dt: number) {}
+  constructor(private index: ObjDateIndex) {}
   async execute(): Promise<void> {
     let listId = await this.getListId();
     let ids = await this.getList(listId);
@@ -37,13 +38,13 @@ export class ObjAddIdCommand implements ICommand<Promise<void>> {
       await BrowserStorageWrapper.set(ObjectStoreKeys.OBJECT_LIST_ID, listId);
     }
 
-    ids.push(this.id);
+    ids.push(this.index.id);
     const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
 
     await BrowserStorageWrapper.set(key, ids);
 
-    await new ObjCreateIndexAddCommand(this.id, this.dt).execute();
-    await new ObjUpdateIndexAddCommand(this.id, this.dt).execute();
+    await new ObjCreateIndexAddCommand(this.index).execute();
+    await new ObjUpdateIndexAddCommand(this.index).execute();
   }
 
   private async getListId(): Promise<number> {
