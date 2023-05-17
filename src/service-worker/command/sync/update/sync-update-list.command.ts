@@ -46,6 +46,9 @@ export class SyncUpdateListCommand implements ICommand<Promise<void>> {
       await new SyncSetProgressCommand(progress).execute();
       await fnSleep(100);
     }
+    // set this so we can progress with remove changes
+    progress.state = 'remove';
+    await new SyncSetProgressCommand(progress).execute();
   }
 
   private async getList(key: string): Promise<ObjDateIndex[]> {

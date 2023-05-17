@@ -32,9 +32,8 @@ export class ObjRemoveIdCommand implements ICommand<Promise<void>> {
     await new ObjUpdateIndexDelCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
     // we only care about objects with serverId because we want to mark it as deleted on server,
     // so it will be deleted from all devices
-    if (this.obj.server?.id) {
-      await new ObjRemoveIndexAddCommand({ id: this.obj.server.id, dt: Date.now() }).execute();
-    }
+    if (!this.obj.server?.id) return;
+    await new ObjRemoveIndexAddCommand({ id: this.obj.server.id, dt: Date.now() }).execute();
   }
 
   private async removeFromList(listId: number): Promise<void> {
