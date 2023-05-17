@@ -28,7 +28,7 @@ export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<
     fnConsoleLog('ApiStoreGetObjectCommand->execute');
     const storeUrl = await ApiHelper.getStoreUrl();
 
-    const url = `${storeUrl}/api/v1/store/obj/${this.id}`;
+    const url = `${storeUrl}/api/v1/obj/${this.id}`;
 
     try {
       return await FetchService.get(url, true);

@@ -108,7 +108,7 @@ export class FetchService {
     try {
       fnConsoleLog('FetchService->refreshToken', ApiHelper.authUrl);
       const req = await fetch(`${ApiHelper.authUrl}/refresh-token`, {
-        method: 'POST',
+        method: 'PUT',
         headers: await ApiHelper.getAuthHeaders()
       });
       const res = await req.json();
@@ -124,7 +124,6 @@ export class FetchService {
     init: RequestInit,
     type = ResponseType.JSON
   ): Promise<FetchResponse<T>> => {
-    fnConsoleLog('refetch', url);
     let req = await fetch(url, init);
     const res = await req.json();
 

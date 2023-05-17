@@ -64,7 +64,7 @@ export const MainViewComponent: FunctionComponent = () => {
       case MainViewEnum.TASK:
         return <TaskComponent />;
       case MainViewEnum.NOTE:
-        return <NoteComponent />;
+        return <NoteComponent currentView={'NOTE_ADD'} />;
       case MainViewEnum.NOTE_EDIT:
         return (
           <NoteEditComponent

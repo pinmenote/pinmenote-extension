@@ -39,7 +39,7 @@ export class SyncSendChangesCommand implements ICommand<Promise<void>> {
         case ServerPathDto.SNAPSHOT:
         case ServerPathDto.SNAPSHOT_CONTENT:
         case ServerPathDto.SNAPSHOT_CSS:
-          fnConsoleLog('SyncSendChangesCommand->send', changes[0]);
+          fnConsoleLog('SyncSendChangesCommand->send', this.obj.id, changes[0]);
           await fnSleep(100);
           // remove change from changes
           break;

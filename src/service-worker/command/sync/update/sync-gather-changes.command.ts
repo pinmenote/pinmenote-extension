@@ -25,8 +25,6 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
   constructor(private obj: ObjDto) {}
 
   async execute(): Promise<ServerChangeDto[]> {
-    if (this.obj.server) return this.obj.server.changes;
-
     let changes: ServerChangeDto[] = [];
 
     switch (this.obj.type) {

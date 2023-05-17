@@ -41,11 +41,16 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
     }
-    const loginSuccessKey = TinyEventDispatcher.addListener(BusMessageType.POPUP_LOGIN_SUCCESS, (event, key, value) => {
-      TinyEventDispatcher.removeListener(event, key);
-      // TODO upload keys ???
-      LogManager.log(`${JSON.stringify(value)}`);
-    });
+    const loginSuccessKey = TinyEventDispatcher.addListener(
+      BusMessageType.POPUP_LOGIN_SUCCESS,
+      async (event, key, value) => {
+        TinyEventDispatcher.removeListener(event, key);
+        await PopupTokenStore.init();
+        if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
+        // TODO upload keys ???
+        LogManager.log(`${JSON.stringify(value)}`);
+      }
+    );
     const logoutKey = TinyEventDispatcher.addListener<FetchResponse<BoolDto | ServerErrorDto>>(
       BusMessageType.POPUP_LOGOUT,
       (event, key, value) => {
@@ -73,7 +78,7 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
   return (
     <div>
       <Typography align="center" fontSize="1.5em" fontWeight="bold">
-        Logged in as {tokenData?.data.username}
+        Welcome {tokenData?.data.username}
       </Typography>
       <div style={{ position: 'absolute', bottom: 0, width: 300 }}>
         <div style={{ margin: 10 }}>

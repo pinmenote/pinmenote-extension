@@ -117,8 +117,9 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
       >
         <Typography fontSize="0.9em">{url}</Typography>
       </Link>
-      <div style={{ display: 'flex', height: '100%', alignItems: 'end' }}>
+      <div>
         <p>page note {dto.createdAt}</p>
+        <p>{dto.data.words.join(', ')}</p>
       </div>
     </div>
   );

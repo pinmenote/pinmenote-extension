@@ -67,6 +67,8 @@ export class ConstraintsWord {
     ',',
     "'",
     '"',
+    '‘',
+    '’',
     '?',
     '։',
     '؟',
@@ -196,7 +198,8 @@ export class ConstraintsWord {
     '¿',
     '¼',
     '½',
-    '¾'
+    '¾',
+    '→'
   ]);
 
   static readonly KEY_MAP: { [key: string]: string } = {

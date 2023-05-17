@@ -29,8 +29,10 @@ export class PageSnapshotUpdateCommand implements ICommand<Promise<void>> {
     fnConsoleLog('PageSnapshotUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
 
-    await new ObjUpdateIndexAddCommand(this.obj.id, this.obj.updatedAt).execute();
+    this.obj.updatedAt = Date.now();
 
     await BrowserStorageWrapper.set(key, this.obj);
+
+    await new ObjUpdateIndexAddCommand(this.obj.id, this.obj.updatedAt).execute();
   }
 }

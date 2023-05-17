@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjServerDto, ObjSyncStatusDto } from '../../../../common/model/obj/obj-server.dto';
+import { ObjServerDto, ObjStatusDto, ObjSyncStatusDto } from '../../../../common/model/obj/obj-server.dto';
 import { ApiStoreAddObjectCommand } from '../../api/store/api-store-add-object.command';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
@@ -76,16 +76,19 @@ export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
     delete obj['data'];
     delete obj['local'];
 
-    const resp = await new ApiStoreAddObjectCommand(obj).execute();
-    fnConsoleLog('SyncUpdateObjectCommand->resp', resp);
+    const req = await new ApiStoreAddObjectCommand(obj).execute();
 
     // bring back data
     obj.data = data;
     obj.local = local;
 
-    if (!resp) return;
-    if (resp.status !== 200) return;
+    if (!req) return;
+    const res = req.res;
+    if (req.status !== 201 && res.result !== ObjStatusDto.OK) {
+      fnConsoleLog('SyncUpdateObjectCommand->resp', req, this.id, obj);
+      return;
+    }
 
-    return { id: resp.res.serverId, changes: [], status: ObjSyncStatusDto.GATHER };
+    return { id: res.serverId, changes: [], status: ObjSyncStatusDto.GATHER };
   };
 }

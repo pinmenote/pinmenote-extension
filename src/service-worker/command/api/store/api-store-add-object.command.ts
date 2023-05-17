@@ -26,9 +26,7 @@ export class ApiStoreAddObjectCommand implements ICommand<Promise<FetchResponse<
   constructor(private obj: ObjDto) {}
 
   async execute(): Promise<FetchResponse<ObjAddResultDto> | undefined> {
-    fnConsoleLog('ApiStoreAddObjectCommand->execute');
     const storeUrl = await ApiHelper.getStoreUrl();
-
     const url = `${storeUrl}/api/v1/obj/add`;
 
     try {

@@ -26,7 +26,6 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}
   async execute(): Promise<void> {
-    fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
     try {
       const blob = await FetchService.get<Blob>(this.req.url, false, ResponseType.BLOB);
       const data = await UrlFactory.toDataUri(blob.res);
@@ -40,7 +39,7 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
         data: { ...blob, res: data, ok }
       });
     } catch (e) {
-      fnConsoleLog('ERROR', e);
+      fnConsoleLog('ERROR', e, this.req.url);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,
         data: {

@@ -29,8 +29,12 @@ enum CurrentView {
   NOTE_EDIT = 'NOTE_EDIT'
 }
 
-export const NoteComponent: FunctionComponent = () => {
-  const [state, setState] = useState<CurrentView>(CurrentView.NOTE_LIST);
+interface NoteComponentProps {
+  currentView: string;
+}
+
+export const NoteComponent: FunctionComponent<NoteComponentProps> = ({ currentView }) => {
+  const [state, setState] = useState<CurrentView>(currentView as CurrentView);
   const [editNote, setEditNote] = useState<ObjDto<ObjNoteDto> | undefined>();
   const handleAddNote = () => {
     setState(CurrentView.NOTE_LIST);

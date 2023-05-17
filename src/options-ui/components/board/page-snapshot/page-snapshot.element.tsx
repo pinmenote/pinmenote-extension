@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -37,16 +37,6 @@ interface PageSnapshotElementParams {
 
 export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> = ({ dto, refreshBoardCallback }) => {
   const [editTitle, setEditTitle] = useState<boolean>(false);
-  const divRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (divRef.current && !divRef.current?.firstChild && dto.data.snapshot.screenshot) {
-      const img = new Image();
-      img.width = window.innerWidth / 4;
-      img.src = dto.data.snapshot.screenshot;
-      divRef.current.appendChild(img);
-    }
-  });
 
   const handleEditTitle = () => {
     setEditTitle(true);
@@ -116,11 +106,16 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
           </IconButton>
         </div>
       </div>
-      <div ref={divRef}></div>
-      <Link target="_blank" href={dto.data.snapshot.url.href}>
-        <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
-      </Link>
-      <p>page snapshot {dto.createdAt}</p>
+      <div>
+        <img width={window.innerWidth / 4} src={dto.data.snapshot.screenshot} />
+      </div>
+      <div>
+        <Link target="_blank" href={dto.data.snapshot.url.href}>
+          <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
+        </Link>
+        <p>page snapshot {dto.createdAt}</p>
+        <p>{dto.data.snapshot.words.join(', ')}</p>
+      </div>
     </div>
   );
 };

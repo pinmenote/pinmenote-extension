@@ -32,7 +32,7 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
     const res = await new SnapshotContentSaveCommand(document.body, false).execute();
 
     const dto: ObjSnapshotDto = {
-      title: document.title,
+      title: document.title || this.url.origin, // sometimes document don't have title
       url: this.url,
       screenshot,
       contentId: res.id,

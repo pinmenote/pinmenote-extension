@@ -224,9 +224,8 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   const renderTemplate = (el: Element) => {
     const templates = Array.from(el.querySelectorAll('template'));
     for (const template of templates) {
-      // TODO - remove mode
-      const mode = template.getAttribute('mode') || template.getAttribute('data-mode');
       if (template.parentElement) {
+        const mode = template.getAttribute('data-mode');
         const shadow = template.parentElement.attachShadow({ mode: mode as ShadowRootMode });
         shadow.appendChild(template.content.cloneNode(true));
         for (const child of Array.from(shadow.children)) {

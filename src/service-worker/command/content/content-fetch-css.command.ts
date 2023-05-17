@@ -25,12 +25,11 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}
   async execute(): Promise<void> {
-    fnConsoleLog('ContentFetchCssCommand->execute', this.req.url);
     try {
       const data = await FetchService.get<string>(this.req.url, false, ResponseType.TEXT);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({ type: BusMessageType.CONTENT_FETCH_CSS, data });
     } catch (e) {
-      fnConsoleLog('ERROR', e);
+      fnConsoleLog('ERROR', e, this.req.url);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_CSS,
         data: {

@@ -29,11 +29,13 @@ export class NoteUpdateCommand implements ICommand<void> {
     fnConsoleLog('NoteUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
 
-    await new ObjUpdateIndexAddCommand(this.obj.id, this.obj.updatedAt).execute();
+    this.obj.updatedAt = Date.now();
 
     await WordIndex.removeFlat(this.oldWords, this.obj.id);
     await WordIndex.indexFlat(this.obj.data.words, this.obj.id);
 
     await BrowserStorageWrapper.set(key, this.obj);
+
+    await new ObjUpdateIndexAddCommand(this.obj.id, this.obj.updatedAt).execute();
   }
 }

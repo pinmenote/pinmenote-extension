@@ -31,7 +31,7 @@ export class ApiStoreChangesCommand implements ICommand<Promise<FetchResponse<Ch
     fnConsoleLog('ApiStoreChangesCommand->execute');
     const storeUrl = await ApiHelper.getStoreUrl();
 
-    const url = `${storeUrl}/api/v1/store/changes?dt=${this.dt}`;
+    const url = `${storeUrl}/api/v1/changes?dt=${this.dt}`;
 
     try {
       return await FetchService.get<ChangesDto>(url, true);

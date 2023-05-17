@@ -60,6 +60,9 @@ export const ContentSettingsComponent: FunctionComponent = () => {
       <Typography fontSize="2.5em" style={{ marginBottom: 10 }}>
         content
       </Typography>
+      <Typography fontSize="2em" style={{ marginBottom: 10 }}>
+        pin page appearance
+      </Typography>
       <div style={borderContainer}>
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
           border radius
