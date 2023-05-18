@@ -33,7 +33,7 @@ export class SyncSendChangesCommand implements ICommand<Promise<void>> {
       switch (changes[0].path) {
         case ServerPathDto.HASHTAGS:
         case ServerPathDto.WORDS:
-        case ServerPathDto.COMMENTS:
+        case ServerPathDto.COMMENT:
         case ServerPathDto.DRAW:
         case ServerPathDto.NOTE:
         case ServerPathDto.PIN:

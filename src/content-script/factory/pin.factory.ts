@@ -28,7 +28,9 @@ export class PinFactory {
       comments: {
         data: []
       },
-      draw: []
+      draw: {
+        data: []
+      }
     };
   };
 

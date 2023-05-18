@@ -31,7 +31,7 @@ export enum ServerPathDto {
 export interface ServerChangeDto {
   id?: number;
   path: ServerPathDto;
-  type: 'download' | 'upload';
+  type: 'download' | 'upload' | 'remove';
 }
 
 export interface ServerObjDto {

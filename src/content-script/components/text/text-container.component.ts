@@ -21,6 +21,7 @@ import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command
 import { TextCommentEditorComponent } from './text-comment-editor.component';
 import { TextCommentListComponent } from './text-comment-list.component';
 import { applyStylesToElement } from '../../../common/style.utils';
+import { fnUid } from '../../../common/fn/uid.fn';
 
 const elStyles = {
   'min-height': '40px',
@@ -79,7 +80,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement> {
     await new ObjAddHashtagsCommand(this.model.id, value).execute();
     const dt = Date.now();
 
-    this.model.comments.data.push({ value, createdAt: dt, updatedAt: dt });
+    this.model.comments.data.push({ id: fnUid(), value, createdAt: dt, updatedAt: dt });
 
     await new PinUpdateCommand(this.model.object).execute();
     this.reloadComments();

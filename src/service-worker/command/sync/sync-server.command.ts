@@ -31,8 +31,6 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
 
   async execute(): Promise<void> {
-    if (SyncServerCommand.isInSync) return;
-
     if (!(await this.shouldSync())) return;
     try {
       SyncServerCommand.isInSync = true;
@@ -63,6 +61,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   }
 
   private async shouldSync(): Promise<boolean> {
+    if (SyncServerCommand.isInSync) return false;
     const interval = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.SYNC_INTERVAL)) || 0;
     fnConsoleLog('SyncServerCommand->shouldSync', Date.now() - interval);
     if (Date.now() - interval > 5_000) {

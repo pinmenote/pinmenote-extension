@@ -24,6 +24,7 @@ export enum DrawToolDto {
 }
 
 export interface ObjDrawDto {
+  id: string;
   data: ObjDrawDataDto[];
   size: ObjSizeDto;
   createdAt: number;

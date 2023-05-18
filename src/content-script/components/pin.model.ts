@@ -89,7 +89,7 @@ export class PinModel {
   }
 
   get drawData(): ObjDrawDto[] {
-    return this.obj.data.draw;
+    return this.obj.data.draw.data;
   }
 
   get canvas(): ObjCanvasDto | undefined {

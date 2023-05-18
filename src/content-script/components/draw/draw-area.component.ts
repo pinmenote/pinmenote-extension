@@ -24,6 +24,7 @@ import { PinModel } from '../pin.model';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnUid } from '../../../common/fn/uid.fn';
 
 const canvasStyles = {
   position: 'absolute',
@@ -251,6 +252,7 @@ no javascript enabled - drawing not working</h1>`;
     if (this.model.drawData.length === 0) {
       const dt = Date.now();
       this.model.drawData.push({
+        id: fnUid(),
         data: this.drawData,
         size: {
           width: this.rasterCanvas.width,

@@ -19,7 +19,7 @@ import { ObjSnapshotDto } from './obj-snapshot.dto';
 
 export interface ObjCommentDto {
   value: string;
-  id?: string;
+  id: string;
   createdAt: number;
   updatedAt: number;
 }
@@ -28,10 +28,14 @@ export interface ObjCommentListDto {
   data: ObjCommentDto[];
 }
 
+export interface ObjDrawListDto {
+  data: ObjDrawDto[];
+}
+
 export interface ObjPageDto {
   snapshot: ObjSnapshotDto;
   comments: ObjCommentListDto;
-  draw: ObjDrawDto[];
+  draw: ObjDrawListDto;
 }
 
 export interface ObjPagePinDto extends ObjPageDto {
