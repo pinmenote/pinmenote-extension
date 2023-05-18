@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../../model/html.model';
 import { HtmlPrettifyFactory } from '../../factory/html-prettify.factory';
 import { applyStylesToElement } from '../../../common/style.utils';
 

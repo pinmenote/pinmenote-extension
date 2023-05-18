@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjSnapshotDto, ObjVideoDataDto } from '../../../../common/model/obj/obj-snapshot.dto';
+import { ObjVideoDataDto } from '../../../../common/model/obj/obj-snapshot.dto';
+import { PinModel } from '../../pin.model';
 import { XpathFactory } from '../../../../common/factory/xpath.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnVideoSecondsTime } from '../../../../common/fn/date.format.fn';
@@ -37,9 +38,9 @@ export class VideoTimeComponent {
   private el = document.createElement('div');
   private readonly video?: ObjVideoDataDto;
 
-  constructor(private snapshot: ObjSnapshotDto) {
-    if (snapshot.video) {
-      this.video = snapshot.video[0];
+  constructor(private model: PinModel) {
+    if (model.video) {
+      this.video = model.video[0];
     }
   }
 

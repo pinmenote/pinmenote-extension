@@ -111,6 +111,9 @@ export class FetchService {
         method: 'PUT',
         headers: await ApiHelper.getAuthHeaders()
       });
+
+      if (req.status !== 200) return;
+
       const res = await req.json();
       await new TokenStorageSetCommand(res).execute();
     } catch (e) {

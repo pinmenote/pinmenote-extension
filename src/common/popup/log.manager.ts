@@ -16,12 +16,14 @@
  */
 import { BusMessageType } from '../model/bus.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
+import { fnConsoleLog } from '../fn/console.fn';
 
 export class LogManager {
   private static logValue = '';
 
   static log = (value: string): void => {
     this.logValue = '<span>' + value + '</span><br />' + this.logValue;
+    fnConsoleLog(value);
     TinyEventDispatcher.dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
   };
 

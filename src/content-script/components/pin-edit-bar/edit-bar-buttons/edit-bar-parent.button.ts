@@ -18,12 +18,12 @@ import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { ContentSettingsStore } from '../../../store/content-settings.store';
-import { HtmlComponent } from '../../../../common/model/html.model';
+import { HtmlComponent } from '../../../model/html.model';
 import { HtmlFactory } from '../../../factory/html/html.factory';
 import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
 import { ObjSnapshotContentDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { PinComponent } from '../../pin.component';
+import { PinModel } from '../../pin.model';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../../../common/factory/xpath.factory';
@@ -35,7 +35,7 @@ import { iconButtonStyles } from '../../styles/icon-button.styles';
 export class EditBarParentButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  constructor(private parent: PinComponent) {}
+  constructor(private model: PinModel, private resizeCallback: () => void) {}
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#000000" height="24" viewBox="0 0 24 24" width="24">
@@ -57,32 +57,32 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = async (): Promise<void> => {
-    if (this.parent.ref.parentElement?.tagName === 'BODY') {
-      fnConsoleLog(`No parent for note ${this.parent.object.id}`);
+    if (this.model.ref.parentElement?.tagName === 'BODY') {
+      fnConsoleLog(`No parent for node ${this.model.id}`);
       return;
     }
-    if (this.parent.ref.parentElement) {
-      this.parent.setNewRef(this.parent.ref.parentElement);
+    if (this.model.ref.parentElement) {
+      this.model.ref = this.model.ref.parentElement;
       await fnSleep(100);
 
       const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
-        ref: this.parent.ref,
+        ref: this.model.ref,
         depth: 1,
         skipTagCache: new Set<string>(),
         skipUrlCache: new Set<string>(),
         isPartial: true
       });
-      const html = HtmlFactory.computeHtmlParent(this.parent.ref.parentElement, htmlContent.html, true);
+      const html = HtmlFactory.computeHtmlParent(this.model.ref.parentElement, htmlContent.html, true);
 
       // snapshot content
-      const key = `${ObjectStoreKeys.CONTENT_ID}:${this.parent.object.data.snapshot.contentId}`;
+      const key = `${ObjectStoreKeys.CONTENT_ID}:${this.model.object.data.snapshot.contentId}`;
       const snapshot = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
       snapshot.html = html;
       snapshot.content = htmlContent.content;
       await BrowserStorageWrapper.set(key, snapshot);
 
-      this.parent.object.data.xpath = XpathFactory.newXPathString(this.parent.ref);
-      const rect = XpathFactory.computeRect(this.parent.ref);
+      this.model.object.data.xpath = XpathFactory.newXPathString(this.model.ref);
+      const rect = XpathFactory.computeRect(this.model.ref);
 
       return new Promise((resolve, reject) => {
         BrowserApi.sendRuntimeMessage<undefined>({
@@ -101,15 +101,15 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
 
           // After taking screenshot let's go back to note styles
           // pinData.container.style.display = 'inline-block';
-          if (this.parent.ref) {
-            this.parent.ref.style.border = ContentSettingsStore.borderStyle;
-            this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
+          if (this.model.ref) {
+            this.model.ref.style.border = ContentSettingsStore.borderStyle;
+            this.model.ref.style.borderRadius = ContentSettingsStore.borderRadius;
           }
 
-          this.parent.object.data.snapshot.screenshot = await ImageResizeFactory.resize(rect, value);
+          this.model.object.data.snapshot.screenshot = await ImageResizeFactory.resize(rect, value);
 
-          await new PinUpdateCommand(this.parent.object).execute();
-          this.parent.resize();
+          await new PinUpdateCommand(this.model.object).execute();
+          this.resizeCallback();
 
           resolve();
         });

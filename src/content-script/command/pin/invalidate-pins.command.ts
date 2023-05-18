@@ -52,8 +52,8 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     // Ok so check if we displayed on some elements that are not visible
     PinStore.each((pinData) => {
       if (pinData.isHidden()) {
-        const data = PinStore.delByUid(pinData.object.id);
-        if (data) PinPendingStore.add(data.object);
+        const data = PinStore.delByUid(pinData.model.id);
+        if (data) PinPendingStore.add(data.model.object);
       }
       pinData.resize();
     });

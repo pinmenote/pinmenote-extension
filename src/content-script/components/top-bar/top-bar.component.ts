@@ -14,17 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../../model/html.model';
 import { ActionCopyButton } from './action-buttons/action-copy.button';
 import { ActionDownloadButton } from './action-buttons/action-download.button';
 import { ActionDrawButton } from './action-buttons/action-draw.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
-import { ObjCanvasDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
-import { PinComponent } from '../pin.component';
+import { PinEditManager } from '../pin-edit.manager';
+import { PinModel } from '../pin.model';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const topBarStyles = {
@@ -74,16 +71,14 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   private readonly drawIcon: ActionDrawButton;
 
   private topMargin = '-24px';
-  private canvas?: ObjCanvasDto;
 
-  constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
-    this.canvas = object.data.snapshot.canvas;
-    this.editIcon = new ActionPinEditButton(parent, object);
-    this.removeIcon = new ActionRemoveButton(parent);
-    this.copyIcon = new ActionCopyButton(parent);
-    this.downloadIcon = new ActionDownloadButton(parent);
+  constructor(edit: PinEditManager, private model: PinModel) {
+    this.editIcon = new ActionPinEditButton(edit);
+    this.removeIcon = new ActionRemoveButton(model);
+    this.copyIcon = new ActionCopyButton(model);
+    this.downloadIcon = new ActionDownloadButton(edit);
 
-    this.drawIcon = new ActionDrawButton(parent);
+    this.drawIcon = new ActionDrawButton(edit, model);
   }
 
   focusin(): void {
@@ -96,7 +91,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   }
 
   moveup(): void {
-    if (this.rect.y > 0) {
+    if (this.model.rect.y > 0) {
       this.topMargin = '-48px';
       this.adjustTop();
     }
@@ -108,7 +103,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   }
 
   render(): HTMLElement {
-    const style = Object.assign({ width: `${this.rect.width}px` }, topBarStyles);
+    const style = Object.assign({ width: `${this.model.rect.width}px` }, topBarStyles);
 
     applyStylesToElement(this.el, style);
 
@@ -117,9 +112,11 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.el.appendChild(removeComponent);
     applyStylesToElement(removeComponent, removeIconStyles);
 
-    const editComponent = this.editIcon.render();
-    if (!this.canvas) this.el.appendChild(editComponent);
-    applyStylesToElement(editComponent, editIconStyles);
+    if (!this.model.canvas) {
+      const editComponent = this.editIcon.render();
+      this.el.appendChild(editComponent);
+      applyStylesToElement(editComponent, editIconStyles);
+    }
 
     const copyComponent = this.copyIcon.render();
     this.el.appendChild(copyComponent);
@@ -151,10 +148,9 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.editIcon.turnoff();
   }
 
-  resize(rect: ObjRectangleDto): void {
-    this.rect = rect;
-    if (rect.y === 0) this.topMargin = '0px';
-    this.el.style.width = `${rect.width}px`;
+  resize(): void {
+    if (this.model.rect.y === 0) this.topMargin = '0px';
+    this.el.style.width = `${this.model.rect.width}px`;
     this.adjustTop();
   }
 

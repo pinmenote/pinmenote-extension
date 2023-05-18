@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../../../model/html.model';
 import { DrawColorPicker } from './draw-color-picker';
-import { ObjRectangleDto } from '../../../../common/model/obj/obj-utils.dto';
-import { PinComponent } from '../../pin.component';
+import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -28,8 +27,8 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
 
   private visible = false;
 
-  constructor(private rect: ObjRectangleDto, private parent: PinComponent) {
-    this.picker = new DrawColorPicker(rect, this);
+  constructor(private model: PinModel) {
+    this.picker = new DrawColorPicker(model.rect, this);
   }
 
   render(): HTMLElement {
@@ -42,18 +41,15 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 
-    this.parent.top.appendChild(this.picker.render());
+    this.model.top.appendChild(this.picker.render());
     this.picker.setColor('#ff0000');
-    this.updateColor(this.color());
+    this.updateColor('fill', '#ff0000');
     return this.el;
   }
 
-  color(): string {
-    return this.picker.hexColor();
-  }
-
-  updateColor(color: string) {
-    (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute('fill', color);
+  updateColor(attr: string, color: string) {
+    (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute(attr, color);
+    this.model.draw.color = color;
   }
 
   cleanup(): void {
@@ -72,10 +68,10 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
     this.visible = !this.visible;
     if (this.visible) {
       this.picker.show();
-      (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute('stroke', '#ff0000');
+      this.updateColor('stroke', '#ff0000');
     } else {
       this.picker.hide();
-      (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute('stroke', '#000000');
+      this.updateColor('stroke', '#000000');
     }
   };
 }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../../model/html.model';
 import { DrawBrushSizeButton } from './draw-buttons/draw-brush-size.button';
 import { DrawColorPickerButton } from './draw-buttons/draw-color-picker.button';
 import { DrawEraseButton } from './draw-buttons/draw-erase.button';
@@ -25,8 +25,7 @@ import { DrawRedoButton } from './draw-buttons/draw-redo.button';
 import { DrawTestButton } from './draw-buttons/draw-test.button';
 import { DrawToolDto } from '../../../common/model/obj/obj-draw.dto';
 import { DrawUndoButton } from './draw-buttons/draw-undo.button';
-import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
-import { PinComponent } from '../pin.component';
+import { PinModel } from '../pin.model';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const drawBarStyles = {
@@ -47,7 +46,6 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private readonly el = document.createElement('div');
 
   private visible = false;
-  private toolValue: DrawToolDto = DrawToolDto.Pencil;
 
   private readonly pencil: DrawPencilButton;
   private readonly line: DrawLineButton;
@@ -62,18 +60,23 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
   private readonly drawTest: DrawTestButton;
 
-  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
+  constructor(private model: PinModel) {
     this.pencil = new DrawPencilButton(this);
     this.line = new DrawLineButton(this);
     this.fill = new DrawFillButton(this);
     this.erase = new DrawEraseButton(this);
 
-    this.colorPicker = new DrawColorPickerButton(rect, parent);
-    this.sizeButton = new DrawBrushSizeButton(parent);
+    this.colorPicker = new DrawColorPickerButton(model);
+    this.sizeButton = new DrawBrushSizeButton(model);
 
     this.undoButton = new DrawUndoButton(this);
     this.redoButton = new DrawRedoButton(this);
-    this.drawTest = new DrawTestButton(parent);
+
+    // TODO move logic to model
+    this.model.draw.setUndoButton(this.undoButton);
+    this.model.draw.setRedoButton(this.redoButton);
+
+    this.drawTest = new DrawTestButton(model);
   }
 
   setTool(tool: DrawToolDto): void {
@@ -103,55 +106,37 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
         this.erase.unselect();
         break;
     }
-    this.toolValue = tool;
+    this.model.draw.tool = tool;
   }
 
   async undo(): Promise<void> {
-    await this.parent.drawComponent.drawArea.undo();
-    if (this.parent.drawComponent.drawArea.canUndo()) {
+    if (!this.model.draw.area) return;
+    await this.model.draw.area.undo();
+    if (this.model.draw.area.canUndo()) {
       this.undoButton.select();
     } else {
       this.undoButton.unselect();
     }
-    if (this.parent.drawComponent.drawArea.canRedo()) {
+    if (this.model.draw.area.canRedo()) {
       this.redoButton.select();
     }
   }
 
   async redo(): Promise<void> {
-    await this.parent.drawComponent.drawArea.redo();
-    if (this.parent.drawComponent.drawArea.canRedo()) {
+    if (!this.model.draw.area) return;
+    await this.model.draw.area.redo();
+    if (this.model.draw.area.canRedo()) {
       this.redoButton.select();
     } else {
       this.redoButton.unselect();
     }
-    if (this.parent.drawComponent.drawArea.canUndo()) {
+    if (this.model.draw.area.canUndo()) {
       this.undoButton.select();
     }
   }
 
-  undoSelect(): void {
-    this.undoButton.select();
-  }
-
-  redoUnselect(): void {
-    this.redoButton.unselect();
-  }
-
-  size(): number {
-    return this.sizeButton.value();
-  }
-
-  tool(): DrawToolDto {
-    return this.toolValue;
-  }
-
   setSize(value: number): void {
     this.sizeButton.setSize(value);
-  }
-
-  color(): string {
-    return this.colorPicker.color();
   }
 
   focusin(): void {
@@ -192,7 +177,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   }
 
   render(): HTMLElement {
-    const style = Object.assign({ width: `${this.rect.width}px` }, drawBarStyles);
+    const style = Object.assign({ width: `${this.model.rect.width}px` }, drawBarStyles);
     applyStylesToElement(this.el, style);
 
     this.placeComponent(this.pencil.render(), 5);
@@ -219,9 +204,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     applyStylesToElement(component, iconStyles);
   }
 
-  resize(rect: ObjRectangleDto): void {
-    this.rect = rect;
-    this.el.style.width = `${rect.width}px`;
+  resize(): void {
+    this.el.style.width = `${this.model.rect.width}px`;
     this.adjustTop();
   }
 
@@ -230,7 +214,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
    * @private
    */
   private adjustTop(): void {
-    if (this.rect.y === 0) {
+    if (this.model.rect.y === 0) {
       this.el.style.top = '24px';
     } else {
       this.el.style.top = '-24px';

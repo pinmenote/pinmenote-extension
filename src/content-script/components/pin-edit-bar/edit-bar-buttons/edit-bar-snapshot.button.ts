@@ -16,11 +16,11 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { HtmlComponent } from '../../../../common/model/html.model';
+import { HtmlComponent } from '../../../model/html.model';
 import { LinkHrefOriginStore } from '../../../../common/store/link-href-origin.store';
 import { ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { PinComponent } from '../../pin.component';
+import { PinModel } from '../../pin.model';
 import { PinStore } from '../../../store/pin.store';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
@@ -28,7 +28,7 @@ import { iconButtonStyles } from '../../styles/icon-button.styles';
 export class EditBarSnapshotButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  constructor(private parent: PinComponent) {}
+  constructor(private model: PinModel) {}
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#777777" height="24" viewBox="0 0 24 24" width="24">
@@ -56,7 +56,7 @@ export class EditBarSnapshotButton implements HtmlComponent<HTMLElement> {
 
   private handleClick = async () => {
     this.el.removeEventListener('click', this.handleClick);
-    const o = this.parent.object;
+    const o = this.model.object;
     const obj: ObjDto<ObjPageDto> = {
       ...o,
       data: { snapshot: o.data.snapshot, draw: [], comments: { data: [] } }
@@ -69,6 +69,6 @@ export class EditBarSnapshotButton implements HtmlComponent<HTMLElement> {
     await BrowserStorageWrapper.set(key, obj);
 
     // Remove from store
-    PinStore.delByUid(this.parent.object.id);
+    PinStore.delByUid(this.model.object.id);
   };
 }

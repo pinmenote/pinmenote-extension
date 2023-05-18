@@ -14,27 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, PageComponent } from '../../common/model/html.model';
+import { HtmlComponent, PageComponent } from '../model/html.model';
 import { BottomBarComponent } from './bottom-bar/bottom-bar.component';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj/obj-draw.dto';
-import { ObjAddHashtagsCommand } from '../../common/command/obj/hashtag/obj-add-hashtags.command';
-import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
-import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { PinEditBarComponent } from './pin-edit-bar/pin-edit-bar.component';
 import { PinEditManager } from './pin-edit.manager';
+import { PinModel } from './pin.model';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinPointFactory } from '../factory/pin-point.factory';
-import { PinUpdateCommand } from '../../common/command/pin/pin-update.command';
 import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../common/style.utils';
-import { fnConsoleLog } from '../../common/fn/console.fn';
 import { isElementHiddenFn } from '../fn/is-element-hidden.fn';
 import { pinStyles } from './styles/pin.styles';
 import { scrollToElementFn } from '../fn/scroll-to-element.fn';
@@ -48,7 +44,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly topBar: TopBarComponent;
   readonly bottomBar: BottomBarComponent;
-  readonly text: TextContainerComponent;
+  private text: TextContainerComponent;
 
   readonly drawComponent: DrawContainerComponent;
   readonly drawBar: DrawBarComponent;
@@ -59,62 +55,42 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly edit: PinEditManager;
 
-  private rect: ObjRectangleDto;
+  readonly model: PinModel;
 
-  private refValue: HTMLElement;
-  private readonly canvas?: ObjCanvasDto;
-
-  constructor(ref: HTMLElement, readonly object: ObjDto<ObjPagePinDto>) {
-    this.refValue = ref;
-    this.canvas = object.data.snapshot.canvas;
-    this.rect = this.canvas ? this.canvas.rect : PinPointFactory.calculateRect(this.refValue);
-    this.topBar = new TopBarComponent(this, object, this.rect);
-    this.bottomBar = new BottomBarComponent(this, object, this.rect);
-    this.text = new TextContainerComponent(this, this.rect, this.addCommentCallback);
-
-    this.mouseManager = new PinMouseManager(this, this.handleMouseOver, this.handleMouseOut);
-
-    this.drawBar = new DrawBarComponent(this, this.rect);
-    this.drawComponent = new DrawContainerComponent(this, this.rect);
-
-    this.downloadBar = new DownloadBarComponent(this, this.rect);
-
-    this.editBar = new PinEditBarComponent(this, this.rect);
-
+  constructor(ref: HTMLElement, object: ObjDto<ObjPagePinDto>) {
+    this.mouseManager = new PinMouseManager(this.top, this.bottom, this.handleMouseOver, this.handleMouseOut);
+    this.model = new PinModel(object, ref, this.top, this.bottom, this.mouseManager);
     this.edit = new PinEditManager(this);
-  }
 
-  setNewRef(ref: HTMLElement): void {
-    this.mouseManager.stop();
-    this.refValue.style.border = this.object.data.border.style;
-    this.refValue.style.borderRadius = this.object.data.border.radius;
-    this.refValue.removeEventListener('mouseover', this.handleMouseOver);
-    this.refValue.removeEventListener('mouseout', this.handleMouseOut);
-    this.refValue = ref;
-    this.mouseManager.start();
-  }
+    this.topBar = new TopBarComponent(this.edit, this.model);
+    this.bottomBar = new BottomBarComponent(this.edit, this.model);
+    this.text = new TextContainerComponent(this.model);
 
-  get ref(): HTMLElement {
-    return this.refValue;
+    this.drawBar = new DrawBarComponent(this.model);
+    this.drawComponent = new DrawContainerComponent(this.model);
+
+    this.downloadBar = new DownloadBarComponent(this.edit, this.model);
+
+    this.editBar = new PinEditBarComponent(this.model, this.resize);
   }
 
   focus(): void {
-    scrollToElementFn(this.refValue, this.refValue.getBoundingClientRect().height / 2);
+    scrollToElementFn(this.model.ref, this.model.ref.getBoundingClientRect().height / 2);
     this.handleMouseOver();
   }
 
   render(): void {
     const bottomStyles = Object.assign(
       {
-        left: `${this.rect.x}px`,
-        top: `${this.rect.y + this.rect.height}px`
+        left: `${this.model.rect.x}px`,
+        top: `${this.model.rect.y + this.model.rect.height}px`
       },
       pinStyles
     );
     const topStyles = Object.assign(
       {
-        left: `${this.rect.x}px`,
-        top: `${this.rect.y}px`
+        left: `${this.model.rect.x}px`,
+        top: `${this.model.rect.y}px`
       },
       pinStyles
     );
@@ -130,7 +106,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.top.appendChild(this.drawBar.render());
     this.drawBar.setSize(4);
     this.drawBar.setTool(DrawToolDto.Pencil);
-    if (this.object.local?.drawVisible) {
+    if (this.model.local.drawVisible) {
       this.drawComponent.focusin();
       this.drawComponent.drawArea.canDraw = false;
     }
@@ -143,48 +119,48 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     document.body.appendChild(this.top);
     document.body.appendChild(this.bottom);
-    this.mouseManager.start();
+    this.mouseManager.start(this.model.ref);
     this.handleMouseOut();
 
     // If not canvas
-    if (this.canvas) {
-      this.border.style.minWidth = `${this.rect.width}px`;
-      this.border.style.minHeight = `${this.rect.height - 4}px`;
+    if (this.model.canvas) {
+      this.border.style.minWidth = `${this.model.rect.width}px`;
+      this.border.style.minHeight = `${this.model.rect.height - 4}px`;
       this.border.style.position = 'absolute';
       this.border.style.pointerEvents = 'none';
-      this.border.style.top = `${this.rect.y}px`;
-      this.border.style.left = `${this.rect.x}px`;
+      this.border.style.top = `${this.model.rect.y}px`;
+      this.border.style.left = `${this.model.rect.x}px`;
       this.border.style.border = ContentSettingsStore.newElementStyle;
       document.body.appendChild(this.border);
     } else {
-      this.refValue.style.border = ContentSettingsStore.borderStyle;
-      this.refValue.style.borderRadius = ContentSettingsStore.borderRadius;
+      this.model.ref.style.border = ContentSettingsStore.borderStyle;
+      this.model.ref.style.borderRadius = ContentSettingsStore.borderRadius;
     }
   }
 
-  resize(): void {
-    if (this.canvas) {
-      this.rect = this.canvas.rect;
+  resize = (): void => {
+    if (this.model.canvas) {
+      this.model.rect = this.model.canvas.rect;
     } else {
-      this.rect = PinPointFactory.calculateRect(this.refValue);
+      this.model.rect = PinPointFactory.calculateRect(this.model.ref);
     }
-    this.top.style.top = `${this.rect.y}px`;
-    this.top.style.left = `${this.rect.x}px`;
-    this.bottom.style.top = `${this.rect.y + this.rect.height}px`;
-    this.bottom.style.left = `${this.rect.x}px`;
+    this.top.style.top = `${this.model.rect.y}px`;
+    this.top.style.left = `${this.model.rect.x}px`;
+    this.bottom.style.top = `${this.model.rect.y + this.model.rect.height}px`;
+    this.bottom.style.left = `${this.model.rect.x}px`;
 
-    this.text.resize(this.rect);
-    this.topBar.resize(this.rect);
-    this.bottomBar.resize(this.rect);
-    this.drawComponent.resize(this.rect);
-    this.drawBar.resize(this.rect);
-    this.downloadBar.resize(this.rect);
-    this.editBar.resize(this.rect);
-  }
+    this.text.resize();
+    this.topBar.resize();
+    this.bottomBar.resize();
+    this.drawComponent.resize();
+    this.drawBar.resize();
+    this.downloadBar.resize();
+    this.editBar.resize();
+  };
 
   cleanup(): void {
-    this.refValue.style.border = this.object.data.border.style;
-    this.refValue.style.borderRadius = this.object.data.border.radius;
+    this.model.ref.style.border = this.model.border.style;
+    this.model.ref.style.borderRadius = this.model.border.radius;
 
     this.text.cleanup();
     this.topBar.cleanup();
@@ -192,24 +168,12 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.top.remove();
     this.bottom.remove();
     this.border.remove();
-    this.mouseManager.stop();
+    this.mouseManager.stop(this.model.ref);
 
     this.drawComponent.cleanup();
     this.drawBar.cleanup();
     this.editBar.cleanup();
   }
-
-  private addCommentCallback = async (value: string): Promise<void> => {
-    await new ObjAddHashtagsCommand(this.object.id, value).execute();
-    const dt = Date.now();
-    this.object.data.comments.data.push({ value, createdDate: dt, updatedDate: dt });
-    try {
-      await new PinUpdateCommand(this.object).execute();
-      this.text.reloadComments();
-    } catch (e) {
-      fnConsoleLog('ERROR UPDATE PIN', e);
-    }
-  };
 
   private timeoutId = -1;
 
@@ -223,14 +187,14 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.downloadBar.focusin();
     this.editBar.focusin();
     if (ContentSettingsStore.borderStyle === ContentSettingsStore.borderNone) {
-      this.ref.style.border = ContentSettingsStore.newElementStyle;
+      this.model.ref.style.border = ContentSettingsStore.newElementStyle;
     }
-    if (!this.canvas) this.timeoutId = window.setTimeout(this.handleMouseOut, 3000);
+    if (!this.model.canvas) this.timeoutId = window.setTimeout(this.handleMouseOut, 3000);
   };
 
   private handleMouseOut = () => {
     window.clearTimeout(this.timeoutId);
-    if (this.canvas) return;
+    if (this.model.canvas) return;
     this.timeoutId = window.setTimeout(() => {
       this.topBar.focusout();
       this.bottomBar.focusout();
@@ -238,13 +202,13 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
       this.downloadBar.focusout();
       this.editBar.focusout();
       if (ContentSettingsStore.borderStyle === ContentSettingsStore.borderNone) {
-        this.ref.style.border = ContentSettingsStore.borderNone;
+        this.model.ref.style.border = ContentSettingsStore.borderNone;
       }
-      this.refValue.style.border = ContentSettingsStore.borderStyle;
+      this.model.ref.style.border = ContentSettingsStore.borderStyle;
     }, 2000);
   };
 
   isHidden(): boolean {
-    return isElementHiddenFn(this.refValue);
+    return isElementHiddenFn(this.model.ref);
   }
 }

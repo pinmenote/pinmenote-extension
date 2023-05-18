@@ -16,7 +16,7 @@
  */
 import { DrawBarComponent } from '../draw-bar.component';
 import { DrawToolDto } from '../../../../common/model/obj/obj-draw.dto';
-import { HtmlComponent } from '../../../../common/model/html.model';
+import { HtmlComponent } from '../../../model/html.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 

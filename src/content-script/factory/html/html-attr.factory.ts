@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CSS_URL_REG, CssFactory } from '../css.factory';
-import { HtmlIntermediateData } from '../../../common/model/html.model';
+import { HtmlIntermediateData } from '../../model/html.model';
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 

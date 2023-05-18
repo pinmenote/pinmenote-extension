@@ -15,14 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { DrawToolDto, ObjDrawDataDto } from '../../../common/model/obj/obj-draw.dto';
-import { ObjPointDto, ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { EraserDraw } from './tool/eraser.draw';
 import { FillDraw } from './tool/fill.draw';
 import { LineDraw } from './tool/line.draw';
+import { ObjPointDto } from '../../../common/model/obj/obj-utils.dto';
 import { PencilDraw } from './tool/pencil.draw';
-import { PinComponent } from '../pin.component';
+import { PinModel } from '../pin.model';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
+import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 const canvasStyles = {
   position: 'absolute',
@@ -36,20 +37,16 @@ export class DrawAreaComponent {
   private readonly drawCtx: CanvasRenderingContext2D | null;
   private readonly rasterCtx: CanvasRenderingContext2D | null;
 
-  private tool = DrawToolDto.Pencil;
-  private size = 4;
-  private color = '#ff0000';
-
   canDraw = false;
   private drawing = false;
-  private drawData: ObjDrawDataDto[] = [];
+  private readonly drawData: ObjDrawDataDto[] = [];
   private drawRedoData: ObjDrawDataDto[] = [];
 
-  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
+  constructor(private model: PinModel) {
     this.drawCtx = this.drawCanvas.getContext('2d');
     this.rasterCtx = this.rasterCanvas.getContext('2d');
-    if (parent.object.data.draw.length > 0) {
-      const draw = parent.object.data.draw[0];
+    if (model.drawData.length > 0) {
+      const draw = model.drawData[0];
       this.drawData = draw.data;
       this.initDrawCanvas(draw.size.width, draw.size.height);
       this.initRasterCanvas(draw.size.width, draw.size.height);
@@ -57,8 +54,8 @@ export class DrawAreaComponent {
         this.drawOne(this.drawData[i]);
       }
     } else {
-      const width = Math.min(rect.width, window.innerWidth);
-      const height = Math.min(rect.height, window.innerHeight);
+      const width = Math.min(model.rect.width, window.innerWidth);
+      const height = Math.min(model.rect.height, window.innerHeight);
       this.initDrawCanvas(width, height);
       this.initRasterCanvas(width, height);
     }
@@ -154,9 +151,9 @@ no javascript enabled - drawing not working</h1>`;
     this.drawCanvas.addEventListener('mousemove', this.handleMouseMove);
   }
 
-  resize(rect: ObjRectangleDto): void {
+  resize(): void {
     // TODO scale image based on size ?
-    this.rect = rect;
+    fnConsoleLog('scale image based on size');
   }
 
   cleanup(): void {
@@ -173,35 +170,35 @@ no javascript enabled - drawing not working</h1>`;
     this.drawing = false;
 
     // we can undo
-    this.parent.drawBar.undoSelect();
+    this.model.draw.undoSelect();
 
     // show back raster canvas
     this.rasterCanvas.style.display = 'inline-block';
     let points: ObjPointDto[] = [];
-    switch (this.tool) {
+    switch (this.model.draw.tool) {
       case DrawToolDto.Pencil:
         points = PencilDraw.stopDraw();
-        PencilDraw.raster(points, this.color, this.size, this.rasterCtx);
+        PencilDraw.raster(points, this.model.draw.color, this.model.draw.size, this.rasterCtx);
         break;
       case DrawToolDto.Line:
         points = LineDraw.stopDraw();
-        LineDraw.raster(points, this.color, this.size, this.rasterCtx);
+        LineDraw.raster(points, this.model.draw.color, this.model.draw.size, this.rasterCtx);
         break;
       case DrawToolDto.Erase:
         points = EraserDraw.stopDraw(this.drawCtx);
-        EraserDraw.raster(points, this.size, this.rasterCtx);
+        EraserDraw.raster(points, this.model.draw.size, this.rasterCtx);
         break;
       case DrawToolDto.Fill:
-        points = FillDraw.fill({ x: e.offsetX, y: e.offsetY }, this.color, this.drawCtx);
-        FillDraw.raster(points, this.color, this.rasterCtx);
+        points = FillDraw.fill({ x: e.offsetX, y: e.offsetY }, this.model.draw.color, this.drawCtx);
+        FillDraw.raster(points, this.model.draw.color, this.rasterCtx);
         break;
     }
     // clear draw canvas
     this.drawCtx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
     this.drawData.push({
-      tool: this.tool,
-      size: this.size,
-      color: this.color,
+      tool: this.model.draw.tool,
+      size: this.model.draw.size,
+      color: this.model.draw.color,
       points
     });
     await this.saveOrUpdateDraw();
@@ -210,7 +207,7 @@ no javascript enabled - drawing not working</h1>`;
   private handleMouseMove = (e: MouseEvent) => {
     if (!this.canDraw) return;
     if (!this.drawCtx || !this.drawing) return;
-    switch (this.tool) {
+    switch (this.model.draw.tool) {
       case DrawToolDto.Pencil:
         PencilDraw.draw({ x: e.offsetX, y: e.offsetY }, this.drawCtx);
         break;
@@ -231,43 +228,42 @@ no javascript enabled - drawing not working</h1>`;
     this.drawing = true;
     // cleanup redo
     this.drawRedoData = [];
-    this.parent.drawBar.redoUnselect();
-
-    // set draw data from draw bar
-    this.tool = this.parent.drawBar.tool();
-    this.size = this.parent.drawBar.size();
-    this.color = this.parent.drawBar.color();
+    this.model.draw.redoUnselect();
 
     // draw from raster to draw and hide raster canvas
     this.drawCtx.drawImage(this.rasterCanvas, 0, 0);
     this.rasterCanvas.style.display = 'none';
 
-    switch (this.tool) {
+    switch (this.model.draw.tool) {
       case DrawToolDto.Pencil:
-        PencilDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.color, this.size, this.drawCtx);
+        PencilDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.model.draw.color, this.model.draw.size, this.drawCtx);
         break;
       case DrawToolDto.Line:
-        LineDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.color, this.size, this.drawCtx);
+        LineDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.model.draw.color, this.model.draw.size, this.drawCtx);
         break;
       case DrawToolDto.Erase:
-        EraserDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.size, this.drawCtx);
+        EraserDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.model.draw.size, this.drawCtx);
         break;
     }
   };
 
   private saveOrUpdateDraw = async () => {
-    if (this.parent.object.data.draw.length === 0) {
-      this.parent.object.data.draw.push({
+    if (this.model.drawData.length === 0) {
+      const dt = Date.now();
+      this.model.drawData.push({
         data: this.drawData,
         size: {
           width: this.rasterCanvas.width,
           height: this.rasterCanvas.height
-        }
+        },
+        updatedAt: dt,
+        createdAt: dt
       });
-      await new PinUpdateCommand(this.parent.object).execute();
+      await new PinUpdateCommand(this.model.object).execute();
     } else {
-      this.parent.object.data.draw[0].data = this.drawData;
-      await new PinUpdateCommand(this.parent.object).execute();
+      this.model.drawData[0].data = this.drawData;
+      this.model.drawData[0].updatedAt = Date.now();
+      await new PinUpdateCommand(this.model.object).execute();
     }
   };
 }

@@ -14,12 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { applyStylesToElement } from '../../../common/style.utils';
 
-export class SyncDelProgressCommand implements ICommand<Promise<void>> {
-  async execute(): Promise<void> {
-    await BrowserStorageWrapper.remove(ObjectStoreKeys.SYNC_PROGRESS);
+const elStyles = {
+  'background-color': '#ffffff',
+  color: '#000000',
+  border: 'none',
+  margin: '2px',
+  padding: '2px',
+  display: 'inline-block'
+};
+
+export class ContentButton {
+  private readonly btn = document.createElement('button');
+  constructor(private html: string, private clickCallback: () => void) {
+    this.btn.innerHTML = html;
+    this.btn.addEventListener('click', clickCallback);
+  }
+
+  render(): HTMLElement {
+    applyStylesToElement(this.btn, elStyles);
+    return this.btn;
   }
 }

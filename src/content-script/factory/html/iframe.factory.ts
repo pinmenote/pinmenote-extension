@@ -18,7 +18,7 @@ import { IFrameFetchMessage, IFrameIndexMessage } from '../../../common/model/if
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { HtmlAttrFactory } from './html-attr.factory';
-import { HtmlIntermediateData } from '../../../common/model/html.model';
+import { HtmlIntermediateData } from '../../model/html.model';
 import { IFrameStore } from '../../store/iframe.store';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';

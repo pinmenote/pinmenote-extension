@@ -14,37 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../common/model/html.model';
-import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
+import { ContentButton } from '../base/content-button';
+import { HtmlComponent } from '../../model/html.model';
+import { PinModel } from '../pin.model';
 import { TextEditorComponent } from './text-editor.component';
 
-export class TextEditContainerComponent implements HtmlComponent<HTMLElement> {
+export class TextCommentEditorComponent implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
   private textEditor: TextEditorComponent;
-  private saveButton: HTMLButtonElement = document.createElement('button');
-  private cancelButton: HTMLButtonElement = document.createElement('button');
+  private readonly saveButton: ContentButton;
+  private readonly cancelButton?: ContentButton;
 
   constructor(
-    rect: ObjRectangleDto,
-    private addCommentCallback: (value: string) => void,
-    private cancelCallback: () => void
+    model: PinModel,
+    saveLabel: string,
+    private saveCallback: (value: string) => void,
+    cancelLabel?: string,
+    cancelCallback?: () => void,
+    initialValue = ''
   ) {
-    this.textEditor = new TextEditorComponent(rect);
-    this.saveButton.innerText = 'Add';
-    this.saveButton.style.color = '#000000';
-    this.saveButton.style.backgroundColor = '#ffffff';
-    this.cancelButton.innerText = 'Cancel';
-    this.cancelButton.style.color = '#000000';
-    this.cancelButton.style.backgroundColor = '#ffffff';
+    this.textEditor = new TextEditorComponent(initialValue, model);
+    this.saveButton = new ContentButton(saveLabel, this.handleSaveClick);
+    if (cancelLabel && cancelCallback) this.cancelButton = new ContentButton(cancelLabel, cancelCallback);
   }
 
   render(): HTMLElement {
     const text = this.textEditor.render();
-    this.saveButton.addEventListener('click', this.handleSaveClick);
-    this.cancelButton.addEventListener('click', this.handleCancelClick);
     this.el.appendChild(text);
-    this.el.appendChild(this.saveButton);
+    this.el.appendChild(this.saveButton.render());
+    if (this.cancelButton) this.el.appendChild(this.cancelButton.render());
     return this.el;
   }
 
@@ -56,8 +55,8 @@ export class TextEditContainerComponent implements HtmlComponent<HTMLElement> {
     this.textEditor.focus();
   }
 
-  resize(rect: ObjRectangleDto): void {
-    this.textEditor.resize(rect);
+  resize(): void {
+    this.textEditor.resize();
   }
 
   show(): void {
@@ -74,12 +73,8 @@ export class TextEditContainerComponent implements HtmlComponent<HTMLElement> {
   }
 
   private handleSaveClick = () => {
-    this.addCommentCallback(this.textEditor.value);
+    this.saveCallback(this.textEditor.value);
     this.textEditor.cleanup();
     this.textEditor.create();
-  };
-
-  private handleCancelClick = () => {
-    this.cancelCallback();
   };
 }

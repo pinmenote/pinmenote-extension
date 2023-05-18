@@ -17,7 +17,7 @@
 import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlImgFactory } from './html-img.factory';
-import { HtmlIntermediateData } from '../../../common/model/html.model';
+import { HtmlIntermediateData } from '../../model/html.model';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 

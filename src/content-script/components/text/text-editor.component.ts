@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { EditorView } from 'prosemirror-view';
-import { HtmlComponent } from '../../../common/model/html.model';
-import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
+import { HtmlComponent } from '../../model/html.model';
+import { PinModel } from '../pin.model';
 import { createTextEditorState } from '../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 
@@ -25,7 +25,7 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement> {
 
   private editorView?: EditorView;
 
-  constructor(private rect: ObjRectangleDto) {}
+  constructor(private initialValue: string, private model: PinModel) {}
 
   get value(): string {
     if (!this.editorView) return '';
@@ -33,7 +33,7 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement> {
   }
 
   render(): HTMLElement {
-    this.resize(this.rect);
+    this.resize();
     return this.el;
   }
 
@@ -41,8 +41,8 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement> {
     this.editorView?.destroy();
   }
 
-  resize(rect: ObjRectangleDto): void {
-    this.el.style.width = `${rect.width}px`;
+  resize(): void {
+    this.el.style.width = `${this.model.rect.width}px`;
   }
 
   focus(): void {
@@ -50,7 +50,7 @@ export class TextEditorComponent implements HtmlComponent<HTMLElement> {
   }
 
   create(): void {
-    let state = createTextEditorState('');
+    let state = createTextEditorState(this.initialValue);
     this.editorView = new EditorView(this.el, {
       state,
       handleKeyDown: (view: EditorView, event: KeyboardEvent) => {

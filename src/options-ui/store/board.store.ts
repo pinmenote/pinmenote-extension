@@ -45,7 +45,8 @@ export class BoardStore {
       if (this.objData[i].id == value.id) {
         this.objData.splice(i, 1);
         if (value.type === ObjTypeDto.PageElementPin) {
-          await new PinRemoveCommand(value as ObjDto<ObjPagePinDto>).execute();
+          const pin = value as ObjDto<ObjPagePinDto>;
+          await new PinRemoveCommand(pin.id, pin.data.snapshot, pin.server?.id).execute();
         } else if (value.type === ObjTypeDto.PageSnapshot || value.type === ObjTypeDto.PageElementSnapshot) {
           await new PageSnapshotRemoveCommand(value as ObjDto<ObjPageDto>).execute();
         }

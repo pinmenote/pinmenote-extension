@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../../common/model/html.model';
+import { HtmlComponent } from '../../../model/html.model';
 import MathMLToLaTeX from '../../../../vendor/mathml-to-latex/src/index';
-import { PinComponent } from '../../pin.component';
+import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ActionCopyButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
-  constructor(private parent: PinComponent) {}
+  constructor(private model: PinModel) {}
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#000000" height="24" viewBox="0 0 24 24" width="24">
@@ -48,29 +48,29 @@ export class ActionCopyButton implements HtmlComponent<HTMLElement> {
 
   private handleClick = () => {
     let text = '';
-    const clipboardCopy = this.parent.ref.getElementsByTagName('clipboard-copy');
+    const clipboardCopy = this.model.ref.getElementsByTagName('clipboard-copy');
     if (clipboardCopy.length > 0) {
       text = clipboardCopy[0].getAttribute('value') || '';
     }
-    if (!text && this.parent.ref.tagName === 'IMG') {
-      text = this.parent.ref.getAttribute('alt') || '';
+    if (!text && this.model.ref.tagName === 'IMG') {
+      text = this.model.ref.getAttribute('alt') || '';
     }
     // Support for math-jax copy as tex inside iframe
     // Sample url https://github.com/mholtrop/QMPython/blob/master/Solving_the_Schrodinger_Equation_Numerically.ipynb
-    if (this.parent.ref.tagName.startsWith('MJX-')) {
+    if (this.model.ref.tagName.startsWith('MJX-')) {
       // find mathjax and then find math tag inside it
-      const mathJaxContainer = this.findMathJaxParent(this.parent.ref);
+      const mathJaxContainer = this.findMathJaxParent(this.model.ref);
       const mathTag = mathJaxContainer.getElementsByTagName('math')[0];
       if (mathTag?.parentElement) {
         text = MathMLToLaTeX.convert(mathTag.parentElement.innerHTML);
       }
     }
     if (!text) {
-      text = this.parent.ref.innerText.replaceAll('\u00a0', ' ');
+      text = this.model.ref.innerText.replaceAll('\u00a0', ' ');
     }
     // window.navigator.clipboard not working in iframe :/
     const copyFn = (event: ClipboardEvent) => {
-      fnConsoleLog('COPY FN', event.clipboardData, 'text :', text, 'ref', this.parent.ref);
+      fnConsoleLog('COPY FN', event.clipboardData, 'text :', text, 'ref', this.model.ref);
       event.preventDefault();
       event.clipboardData?.setData('text/plain', text);
     };

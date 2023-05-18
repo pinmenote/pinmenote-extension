@@ -23,7 +23,6 @@ export const OBJ_DTO_VERSION = 1;
 
 export interface ObjLocalDto {
   drawVisible?: boolean;
-  boardView?: string;
   visible?: boolean;
 }
 

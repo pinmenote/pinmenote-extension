@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjContentDto } from './obj/obj-content.dto';
-import { ObjDto } from './obj/obj.dto';
-import { ObjPagePinDto } from './obj/obj-pin.dto';
-import { ObjVideoDataDto } from './obj/obj-snapshot.dto';
+import { ObjContentDto } from '../../common/model/obj/obj-content.dto';
+import { ObjVideoDataDto } from '../../common/model/obj/obj-snapshot.dto';
+import { PinModel } from '../components/pin.model';
 
 export interface HtmlIntermediateData {
   html: string;
@@ -31,7 +30,7 @@ export interface HtmlComponentFocusable {
 }
 
 export interface PageComponent {
-  object: ObjDto<ObjPagePinDto>;
+  model: PinModel; // TODO REMOVE here
   focus(goto: boolean): void;
   cleanup(): void;
   resize(): void;
@@ -41,5 +40,4 @@ export interface PageComponent {
 
 export interface HtmlComponent<T> {
   render(): T;
-  cleanup?: () => void;
 }

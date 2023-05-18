@@ -16,7 +16,7 @@
  */
 import { BusDownloadMessage, BusMessageType } from '../../../../common/model/bus.model';
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { PinComponent } from '../../pin.component';
+import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnUid } from '../../../../common/fn/uid.fn';
 
@@ -28,7 +28,7 @@ const elStyles = {
 };
 
 export class DownloadCsvButton {
-  constructor(private parent: PinComponent) {}
+  constructor(private model: PinModel) {}
 
   private readonly el = document.createElement('div');
 
@@ -46,12 +46,12 @@ export class DownloadCsvButton {
   }
 
   visible(): boolean {
-    const parent = this.parent.ref.parentElement;
+    const parent = this.model.ref.parentElement;
     return (
-      this.parent.ref.tagName === 'TABLE' ||
-      this.parent.ref.getElementsByTagName('table').length > 0 ||
-      document.getElementsByClassName(this.parent.ref.className).length > 1 ||
-      (!!parent && parent.getElementsByTagName(this.parent.ref.tagName).length > 0)
+      this.model.ref.tagName === 'TABLE' ||
+      this.model.ref.getElementsByTagName('table').length > 0 ||
+      document.getElementsByClassName(this.model.ref.className).length > 1 ||
+      (!!parent && parent.getElementsByTagName(this.model.ref.tagName).length > 0)
     );
   }
 
@@ -64,19 +64,19 @@ export class DownloadCsvButton {
   }
 
   private handleClick = async (): Promise<void> => {
-    if (this.parent.ref.tagName === 'TABLE') {
-      return await this.downloadTable(this.parent.ref as HTMLTableElement);
+    if (this.model.ref.tagName === 'TABLE') {
+      return await this.downloadTable(this.model.ref as HTMLTableElement);
     }
-    const tableElements = this.parent.ref.getElementsByTagName('table');
+    const tableElements = this.model.ref.getElementsByTagName('table');
     if (tableElements.length > 0) {
       const table: HTMLTableElement = tableElements[0];
       await this.downloadTable(table);
-    } else if (document.getElementsByClassName(this.parent.ref.className).length > 1) {
-      await this.downloadSameClass(this.parent.ref);
+    } else if (document.getElementsByClassName(this.model.ref.className).length > 1) {
+      await this.downloadSameClass(this.model.ref);
     } else {
-      const parent = this.parent.ref.parentElement;
-      if (!!parent && parent.getElementsByTagName(this.parent.ref.tagName).length > 0) {
-        await this.downloadSameTag(parent, this.parent.ref.tagName);
+      const parent = this.model.ref.parentElement;
+      if (!!parent && parent.getElementsByTagName(this.model.ref.tagName).length > 0) {
+        await this.downloadSameTag(parent, this.model.ref.tagName);
       }
     }
   };

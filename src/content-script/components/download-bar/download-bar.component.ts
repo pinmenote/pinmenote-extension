@@ -16,9 +16,9 @@
  */
 import { DownloadCsvButton } from './download-buttons/download-csv.button';
 import { DownloadImageButton } from './download-buttons/download-image.button';
-import { HtmlComponent } from '../../../common/model/html.model';
-import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
-import { PinComponent } from '../pin.component';
+import { HtmlComponent } from '../../model/html.model';
+import { PinEditManager } from '../pin-edit.manager';
+import { PinModel } from '../pin.model';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const downloadBarStyles = {
@@ -41,9 +41,9 @@ export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
   private imageButton: DownloadImageButton;
   private csvButton: DownloadCsvButton;
 
-  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
-    this.imageButton = new DownloadImageButton(parent);
-    this.csvButton = new DownloadCsvButton(parent);
+  constructor(edit: PinEditManager, private model: PinModel) {
+    this.imageButton = new DownloadImageButton(edit, model);
+    this.csvButton = new DownloadCsvButton(model);
   }
 
   show(): void {
@@ -67,7 +67,7 @@ export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
   }
 
   render(): HTMLElement {
-    const style = Object.assign({ width: `${this.rect.width}px` }, downloadBarStyles);
+    const style = Object.assign({ width: `${this.model.rect.width}px` }, downloadBarStyles);
     applyStylesToElement(this.el, style);
 
     this.el.appendChild(this.csvButton.render());
@@ -78,9 +78,8 @@ export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
     return this.el;
   }
 
-  resize(rect: ObjRectangleDto): void {
-    this.rect = rect;
-    this.el.style.width = `${rect.width}px`;
+  resize(): void {
+    this.el.style.width = `${this.model.rect.width}px`;
     this.adjustTop();
   }
 
@@ -94,7 +93,7 @@ export class DownloadBarComponent implements HtmlComponent<HTMLElement> {
    * @private
    */
   private adjustTop(): void {
-    if (this.rect.y === 0) {
+    if (this.model.rect.y === 0) {
       this.el.style.top = '24px';
     } else {
       this.el.style.top = '-24px';

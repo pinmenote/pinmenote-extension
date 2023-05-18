@@ -19,7 +19,7 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';
-import { HtmlIntermediateData } from '../../../common/model/html.model';
+import { HtmlIntermediateData } from '../../model/html.model';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnComputeUrl } from '../../../common/fn/compute-url.fn';

@@ -16,7 +16,7 @@
  */
 import { ColorUtils, RGBColor } from './draw-color.utils';
 import { DrawColorPickerButton } from './draw-color-picker.button';
-import { HtmlComponent } from '../../../../common/model/html.model';
+import { HtmlComponent } from '../../../model/html.model';
 import { ObjRectangleDto } from '../../../../common/model/obj/obj-utils.dto';
 import { applyStylesToElement } from '../../../../common/style.utils';
 
@@ -204,7 +204,7 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
       this.color.b
     )})`;
     const hex = this.hexColor();
-    this.colorDisplay.updateColor(hex);
+    this.colorDisplay.updateColor('fill', hex);
     if (updateInput) this.colorInput.value = hex;
   }
 
@@ -218,7 +218,7 @@ export class DrawColorPicker implements HtmlComponent<HTMLElement> {
     hsv.v = 1 - top / 175;
     this.color = ColorUtils.hsvToRgb(hsv.h, hsv.s, hsv.v);
     const hex = this.hexColor();
-    this.colorDisplay.updateColor(hex);
+    this.colorDisplay.updateColor('fill', hex);
     if (updateInput) this.colorInput.value = hex;
   }
 

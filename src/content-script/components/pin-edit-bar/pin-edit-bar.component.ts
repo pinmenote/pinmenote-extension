@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../../model/html.model';
 import { EditBarParentButton } from './edit-bar-buttons/edit-bar-parent.button';
 import { EditBarSnapshotButton } from './edit-bar-buttons/edit-bar-snapshot.button';
-import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
-import { PinComponent } from '../pin.component';
+import { PinModel } from '../pin.model';
 import { applyStylesToElement } from '../../../common/style.utils';
 
 const editBarStyles = {
@@ -39,13 +38,13 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
   private parentButton: EditBarParentButton;
   private snapshotButton: EditBarSnapshotButton;
 
-  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
-    this.parentButton = new EditBarParentButton(parent);
-    this.snapshotButton = new EditBarSnapshotButton(parent);
+  constructor(private model: PinModel, resizeCallback: () => void) {
+    this.parentButton = new EditBarParentButton(model, resizeCallback);
+    this.snapshotButton = new EditBarSnapshotButton(model);
   }
 
   render(): HTMLElement {
-    const style = Object.assign({ width: `${this.rect.width}px` }, editBarStyles);
+    const style = Object.assign({ width: `${this.model.rect.width}px` }, editBarStyles);
     applyStylesToElement(this.el, style);
 
     this.adjustTop();
@@ -79,9 +78,8 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
     this.focusout();
   }
 
-  resize(rect: ObjRectangleDto): void {
-    this.rect = rect;
-    this.el.style.width = `${rect.width}px`;
+  resize(): void {
+    this.el.style.width = `${this.model.rect.width}px`;
     this.adjustTop();
   }
 
@@ -90,7 +88,7 @@ export class PinEditBarComponent implements HtmlComponent<HTMLElement>, HtmlComp
    * @private
    */
   private adjustTop(): void {
-    if (this.rect.y === 0) {
+    if (this.model.rect.y === 0) {
       this.el.style.top = '24px';
     } else {
       this.el.style.top = '-24px';

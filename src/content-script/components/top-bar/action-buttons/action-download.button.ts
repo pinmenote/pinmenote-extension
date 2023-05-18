@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../../common/model/html.model';
-import { PinComponent } from '../../pin.component';
+import { HtmlComponent } from '../../../model/html.model';
+import { PinEditManager } from '../../pin-edit.manager';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -25,7 +25,7 @@ export class ActionDownloadButton implements HtmlComponent<HTMLElement> {
   private visible = false;
   private fillColor = '#000000';
 
-  constructor(private parent: PinComponent) {}
+  constructor(private edit: PinEditManager) {}
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
@@ -50,10 +50,10 @@ export class ActionDownloadButton implements HtmlComponent<HTMLElement> {
   private handleClick = () => {
     this.visible = !this.visible;
     if (this.visible) {
-      this.parent.edit.startDownload();
+      this.edit.startDownload();
       this.fillColor = '#ff0000';
     } else {
-      this.parent.edit.stopEdit();
+      this.edit.stopEdit();
       this.fillColor = '#000000';
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);

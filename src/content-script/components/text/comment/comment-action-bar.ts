@@ -14,34 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CommentRemoveComponent } from './comment-remove.component';
-import { HtmlComponent } from '../../../../common/model/html.model';
-import { ObjCommentDto } from '../../../../common/model/obj/obj-pin.dto';
+import { CommentEditButton } from './comment-edit.button';
+import { CommentRemoveButton } from './comment-remove.button';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { fnDateFormat } from '../../../../common/fn/date.format.fn';
-import { marked } from 'marked';
 
 const elStyles = {
+  margin: '10px',
   display: 'flex',
-  'flex-direction': 'row',
-  'justify-content': 'space-between',
-  'font-size': '1em',
-  color: '#000',
-  width: '100%'
+  'flex-direction': 'row'
 };
 
-export class TextCommentComponent implements HtmlComponent<HTMLElement> {
+export class CommentActionBar {
   private el = document.createElement('div');
+  constructor(private removeCallback: () => void, private editCallback: () => void) {}
 
-  constructor(private comment: ObjCommentDto, private index: number, private removeCallback: (index: number) => void) {}
   render(): HTMLElement {
-    const d = document.createElement('div');
-    const r = new CommentRemoveComponent(this.index, this.removeCallback);
-    if (this.comment.createdDate) {
-      fnDateFormat(new Date(this.comment.createdDate));
-    }
-    d.innerHTML = marked(this.comment.value);
-    this.el.appendChild(d);
+    const r = new CommentRemoveButton(this.removeCallback);
+    const e = new CommentEditButton(this.editCallback);
+    this.el.appendChild(e.render());
     this.el.appendChild(r.render());
     applyStylesToElement(this.el, elStyles);
     return this.el;

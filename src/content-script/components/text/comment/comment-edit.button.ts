@@ -14,26 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { DrawBarComponent } from '../draw-bar.component';
 import { HtmlComponent } from '../../../model/html.model';
-import { applyStylesToElement } from '../../../../common/style.utils';
-import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawUndoButton implements HtmlComponent<HTMLElement> {
+export class CommentEditButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  private canUndo = false;
-
-  constructor(private drawBar: DrawBarComponent) {}
+  constructor(private editCallback: () => void) {}
 
   render(): HTMLElement {
-    const fill = this.canUndo ? '#ff0000' : '#000000';
-    this.el.innerHTML = `<svg fill="${fill}" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-<path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#000000" height="16" viewBox="0 0 24 24" width="16">
+    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
 </svg>`;
+    this.el.style.marginRight = '5px';
+    this.el.style.cursor = 'pointer';
+    this.el.setAttribute('title', 'edit');
     this.el.addEventListener('click', this.handleClick);
-    applyStylesToElement(this.el, iconButtonStyles);
-
     return this.el;
   }
 
@@ -41,17 +36,7 @@ export class DrawUndoButton implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  select(): void {
-    this.canUndo = true;
-    (this.el.firstChild as SVGElement).setAttribute('fill', '#ff0000');
-  }
-
-  unselect(): void {
-    this.canUndo = false;
-    (this.el.firstChild as SVGElement).setAttribute('fill', '#000000');
-  }
-
-  private handleClick = async () => {
-    await this.drawBar.undo();
+  handleClick = (): void => {
+    this.editCallback();
   };
 }

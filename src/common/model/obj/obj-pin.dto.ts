@@ -20,8 +20,8 @@ import { ObjSnapshotDto } from './obj-snapshot.dto';
 export interface ObjCommentDto {
   value: string;
   id?: string;
-  createdDate?: number;
-  updatedDate?: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface ObjCommentListDto {

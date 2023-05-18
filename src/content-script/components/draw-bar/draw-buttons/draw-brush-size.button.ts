@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../../../model/html.model';
 import { DrawBrushSize } from './draw-brush-size';
-import { PinComponent } from '../../pin.component';
+import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
@@ -27,8 +27,8 @@ export class DrawBrushSizeButton implements HtmlComponent<HTMLElement>, HtmlComp
 
   private sizeInput: DrawBrushSize;
 
-  constructor(private parent: PinComponent) {
-    this.sizeInput = new DrawBrushSize();
+  constructor(private model: PinModel) {
+    this.sizeInput = new DrawBrushSize(model);
   }
 
   render(): HTMLElement {
@@ -39,17 +39,13 @@ export class DrawBrushSizeButton implements HtmlComponent<HTMLElement>, HtmlComp
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 
-    this.parent.top.appendChild(this.sizeInput.render());
+    this.model.top.appendChild(this.sizeInput.render());
 
     return this.el;
   }
 
   setSize(value: number) {
     this.sizeInput.setSize(value);
-  }
-
-  value(): number {
-    return this.sizeInput.value();
   }
 
   focusin() {
@@ -62,6 +58,7 @@ export class DrawBrushSizeButton implements HtmlComponent<HTMLElement>, HtmlComp
 
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
+    this.sizeInput.cleanup();
   }
 
   private handleClick = () => {

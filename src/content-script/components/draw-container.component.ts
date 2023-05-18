@@ -14,19 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../common/model/html.model';
+import { HtmlComponent, HtmlComponentFocusable } from '../model/html.model';
 import { DrawAreaComponent } from './draw/draw-area.component';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
-import { PinComponent } from './pin.component';
+import { PinModel } from './pin.model';
 import { applyStylesToElement } from '../../common/style.utils';
 
 export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
   readonly drawArea: DrawAreaComponent;
+  private rect: ObjRectangleDto;
 
-  constructor(private parent: PinComponent, private rect: ObjRectangleDto) {
-    this.drawArea = new DrawAreaComponent(parent, rect);
+  constructor(private model: PinModel) {
+    this.rect = model.rect;
+    this.drawArea = new DrawAreaComponent(model);
+
+    // TODO move logic to model
+    model.draw.setDrawArea(this.drawArea);
   }
 
   render(): HTMLElement {
@@ -44,10 +49,10 @@ export class DrawContainerComponent implements HtmlComponent<HTMLElement>, HtmlC
     return this.el;
   }
 
-  resize(rect: ObjRectangleDto): void {
-    if (rect.width === this.rect.width && this.rect.height === rect.height) return;
-    this.rect = rect;
-    this.drawArea.resize(rect);
+  resize(): void {
+    if (this.model.rect.width === this.rect.width && this.model.rect.height === this.rect.height) return;
+    this.rect = this.model.rect;
+    this.drawArea.resize();
   }
 
   focusin(): void {

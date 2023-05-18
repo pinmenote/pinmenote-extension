@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../../common/model/html.model';
-import { PinComponent } from '../../pin.component';
+import { HtmlComponent } from '../../../model/html.model';
+import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class DrawTestButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  constructor(private parent: PinComponent) {}
+  constructor(private model: PinModel) {}
 
   render(): HTMLElement {
     this.el.innerText = 'test';
@@ -38,7 +38,8 @@ export class DrawTestButton implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = () => {
-    const can = this.parent.drawComponent.drawArea.rasterCanvas;
+    if (!this.model.draw.area) return;
+    const can = this.model.draw.area.rasterCanvas;
     const ctx = can.getContext('2d');
     if (!ctx) return;
     const pixelData = ctx.getImageData(0, 0, can.width, can.height).data;

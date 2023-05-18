@@ -14,26 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PinComponent } from './pin.component';
 
 export class PinMouseManager {
-  constructor(private pin: PinComponent, private handleMouseOver: () => void, private handleMouseOut: () => void) {}
+  constructor(
+    private top: HTMLElement,
+    private bottom: HTMLElement,
+    private handleMouseOver: () => void,
+    private handleMouseOut: () => void
+  ) {}
 
-  start(): void {
-    this.pin.top.addEventListener('mouseover', this.handleMouseOver);
-    this.pin.top.addEventListener('mouseout', this.handleMouseOut);
-    this.pin.bottom.addEventListener('mouseover', this.handleMouseOver);
-    this.pin.bottom.addEventListener('mouseout', this.handleMouseOut);
-    this.pin.ref.addEventListener('mouseover', this.handleMouseOver);
-    this.pin.ref.addEventListener('mouseout', this.handleMouseOut);
+  start(ref: HTMLElement): void {
+    this.top.addEventListener('mouseover', this.handleMouseOver);
+    this.top.addEventListener('mouseout', this.handleMouseOut);
+    this.bottom.addEventListener('mouseover', this.handleMouseOver);
+    this.bottom.addEventListener('mouseout', this.handleMouseOut);
+    ref.addEventListener('mouseover', this.handleMouseOver);
+    ref.addEventListener('mouseout', this.handleMouseOut);
   }
 
-  stop(): void {
-    this.pin.top.removeEventListener('mouseover', this.handleMouseOver);
-    this.pin.top.removeEventListener('mouseout', this.handleMouseOut);
-    this.pin.bottom.removeEventListener('mouseover', this.handleMouseOver);
-    this.pin.bottom.removeEventListener('mouseout', this.handleMouseOut);
-    this.pin.ref.removeEventListener('mouseover', this.handleMouseOver);
-    this.pin.ref.removeEventListener('mouseout', this.handleMouseOut);
+  stop(ref: HTMLElement): void {
+    this.top.removeEventListener('mouseover', this.handleMouseOver);
+    this.top.removeEventListener('mouseout', this.handleMouseOut);
+    this.bottom.removeEventListener('mouseover', this.handleMouseOver);
+    this.bottom.removeEventListener('mouseout', this.handleMouseOut);
+    ref.removeEventListener('mouseover', this.handleMouseOver);
+    ref.removeEventListener('mouseout', this.handleMouseOut);
   }
 }

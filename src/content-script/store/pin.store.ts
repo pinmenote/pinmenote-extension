@@ -16,14 +16,14 @@
  */
 import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
-import { PageComponent } from '../../common/model/html.model';
+import { PageComponent } from '../model/html.model';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class PinStore {
   private static pinData: PageComponent[] = [];
 
   public static getByUid(id: number): PageComponent | undefined {
-    const index = this.pinData.findIndex((p) => p.object.id === id);
+    const index = this.pinData.findIndex((p) => p.model.id === id);
     if (index > -1) {
       return this.pinData[index];
     }
@@ -31,7 +31,7 @@ export class PinStore {
   }
 
   public static add(data: PageComponent): PageComponent {
-    if (this.pinData.findIndex((c) => c.object.id === data.object.id) === -1) {
+    if (this.pinData.findIndex((c) => c.model.id === data.model.id) === -1) {
       this.pinData.push(data);
     }
     return data;
@@ -39,7 +39,7 @@ export class PinStore {
 
   public static delByUid(id: number): PageComponent | undefined {
     fnConsoleLog('PinStore->delByUid', id);
-    const index = this.pinData.findIndex((c) => c.object.id === id);
+    const index = this.pinData.findIndex((c) => c.model.id === id);
     if (index > -1) {
       const data = this.pinData.splice(index, 1)[0];
       // Cleanup component

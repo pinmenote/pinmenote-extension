@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../../common/model/html.model';
+import { HtmlComponent } from '../../../model/html.model';
+import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
 
 const elStyles = {
@@ -40,11 +41,14 @@ export class DrawBrushSize implements HtmlComponent<HTMLElement> {
 
   private input = document.createElement('input');
 
+  constructor(private model: PinModel) {}
+
   render(): HTMLElement {
     applyStylesToElement(this.el, elStyles);
 
     this.input.type = 'number';
     this.el.appendChild(this.input);
+    this.input.addEventListener('input', this.handleChange);
     applyStylesToElement(this.input, inputStyles);
     return this.el;
   }
@@ -63,10 +67,11 @@ export class DrawBrushSize implements HtmlComponent<HTMLElement> {
     this.input.value = `${value}`;
   }
 
-  value(): number {
-    return Math.floor(this.input.valueAsNumber);
-  }
+  handleChange = () => {
+    this.model.draw.size = Math.floor(this.input.valueAsNumber);
+  };
 
-  /* eslint-disable @typescript-eslint/no-empty-function*/
-  cleanup() {}
+  cleanup() {
+    this.input.removeEventListener('input', this.handleChange);
+  }
 }

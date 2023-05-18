@@ -18,7 +18,8 @@ import { BusDownloadMessage, BusMessageType } from '../../../../common/model/bus
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { ContentSettingsStore } from '../../../store/content-settings.store';
 import { ObjRectangleDto } from '../../../../common/model/obj/obj-utils.dto';
-import { PinComponent } from '../../pin.component';
+import { PinEditManager } from '../../pin-edit.manager';
+import { PinModel } from '../../pin.model';
 import { ScreenshotFactory } from '../../../../common/factory/screenshot.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnB64toBlob } from '../../../../common/fn/b64.to.blob.fn';
@@ -33,7 +34,7 @@ const elStyles = {
 export class DownloadImageButton {
   private readonly el = document.createElement('div');
 
-  constructor(private parent: PinComponent) {}
+  constructor(private edit: PinEditManager, private model: PinModel) {}
 
   render(): HTMLElement {
     this.el.innerText = 'image';
@@ -51,23 +52,23 @@ export class DownloadImageButton {
 
   private handleClick = () => {
     // Switch to original border
-    this.parent.ref.style.border = this.parent.object.data.border.style;
-    this.parent.ref.style.borderRadius = this.parent.object.data.border.radius;
+    this.model.ref.style.border = this.model.border.style;
+    this.model.ref.style.borderRadius = this.model.border.radius;
 
-    this.parent.edit.hideScreenshot();
+    this.edit.hideScreenshot();
 
     setTimeout(async () => {
-      let rect: ObjRectangleDto = this.parent.ref.getBoundingClientRect();
-      if (this.parent.object.data.snapshot.canvas) {
-        rect = this.parent.object.data.snapshot.canvas.rect;
+      let rect: ObjRectangleDto = this.model.ref.getBoundingClientRect();
+      if (this.model.canvas) {
+        rect = this.model.canvas.rect;
       }
       const screenshot = await ScreenshotFactory.takeScreenshot(rect);
       await this.downloadScreenshot(screenshot);
 
-      this.parent.edit.showScreenshot();
+      this.edit.showScreenshot();
 
-      this.parent.ref.style.border = ContentSettingsStore.borderStyle;
-      this.parent.ref.style.borderRadius = ContentSettingsStore.borderRadius;
+      this.model.ref.style.border = ContentSettingsStore.borderStyle;
+      this.model.ref.style.borderRadius = ContentSettingsStore.borderRadius;
     }, 0);
   };
 

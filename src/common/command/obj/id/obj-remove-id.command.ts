@@ -17,28 +17,28 @@
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjCreateIndexDelCommand } from '../date-index/obj-create-index-del.command';
-import { ObjDto } from '../../../model/obj/obj.dto';
+import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjRemoveIndexAddCommand } from '../date-index/obj-remove-index-add.command';
 import { ObjUpdateIndexDelCommand } from '../date-index/obj-update-index-del.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
 export class ObjRemoveIdCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto) {}
+  constructor(private index: ObjDateIndex, private serverId?: number) {}
   async execute(): Promise<void> {
     const listId = await this.getListId();
     await this.removeFromList(listId);
 
-    await new ObjCreateIndexDelCommand({ id: this.obj.id, dt: this.obj.createdAt }).execute();
-    await new ObjUpdateIndexDelCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
+    await new ObjCreateIndexDelCommand(this.index).execute();
+    await new ObjUpdateIndexDelCommand(this.index).execute();
     // we only care about objects with serverId because we want to mark it as deleted on server,
     // so it will be deleted from all devices
-    if (!this.obj.server?.id) return;
-    await new ObjRemoveIndexAddCommand({ id: this.obj.server.id, dt: Date.now() }).execute();
+    if (!this.serverId) return;
+    await new ObjRemoveIndexAddCommand({ id: this.serverId, dt: this.index.dt }).execute();
   }
 
   private async removeFromList(listId: number): Promise<void> {
     const ids = await this.getList(listId);
-    const idIndex = ids.indexOf(this.obj.id);
+    const idIndex = ids.indexOf(this.index.id);
     if (idIndex > -1) {
       ids.splice(idIndex, 1);
       const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;

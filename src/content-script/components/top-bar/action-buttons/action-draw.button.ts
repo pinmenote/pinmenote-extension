@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../../common/model/html.model';
-import { PinComponent } from '../../pin.component';
+import { HtmlComponent } from '../../../model/html.model';
+import { PinEditManager } from '../../pin-edit.manager';
+import { PinModel } from '../../pin.model';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
@@ -27,7 +28,7 @@ export class ActionDrawButton implements HtmlComponent<HTMLElement> {
 
   private fillColor = '#000000';
 
-  constructor(private parent: PinComponent) {}
+  constructor(private edit: PinEditManager, private model: PinModel) {}
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" height="24" viewBox="0 0 24 24" width="24">
@@ -51,15 +52,15 @@ export class ActionDrawButton implements HtmlComponent<HTMLElement> {
   handleClick = async () => {
     this.visible = !this.visible;
     if (this.visible) {
-      this.parent.edit.startDraw();
-      this.parent.object.local.drawVisible = true;
+      this.edit.startDraw();
+      this.model.local.drawVisible = true;
       this.fillColor = '#ff0000';
     } else {
-      this.parent.edit.stopDraw();
+      this.edit.stopDraw();
       this.fillColor = '#000000';
-      this.parent.object.local.drawVisible = false;
+      this.model.local.drawVisible = false;
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
-    await new PinUpdateCommand(this.parent.object).execute();
+    await new PinUpdateCommand(this.model.object).execute();
   };
 }

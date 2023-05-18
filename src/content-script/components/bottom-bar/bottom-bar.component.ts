@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent, HtmlComponentFocusable } from '../../../common/model/html.model';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
-import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
-import { PinComponent } from '../pin.component';
+import { HtmlComponent, HtmlComponentFocusable } from '../../model/html.model';
+import { PinEditManager } from '../pin-edit.manager';
+import { PinModel } from '../pin.model';
 import { ShowCommentButton } from './buttons/show-comment.button';
 import { VideoTimeComponent } from './video-time/video-time.component';
 import { applyStylesToElement } from '../../../common/style.utils';
@@ -37,13 +35,13 @@ export class BottomBarComponent implements HtmlComponent<HTMLElement>, HtmlCompo
   private videoTime: VideoTimeComponent;
   private addComment: ShowCommentButton;
 
-  constructor(private parent: PinComponent, private object: ObjDto<ObjPagePinDto>, private rect: ObjRectangleDto) {
-    this.videoTime = new VideoTimeComponent(object.data.snapshot);
-    this.addComment = new ShowCommentButton(parent);
+  constructor(edit: PinEditManager, private model: PinModel) {
+    this.videoTime = new VideoTimeComponent(model);
+    this.addComment = new ShowCommentButton(edit);
   }
 
   render(): HTMLDivElement {
-    const style = Object.assign({ width: `${this.rect.width}px` }, elStyles);
+    const style = Object.assign({ width: `${this.model.rect.width}px` }, elStyles);
     applyStylesToElement(this.el, style);
 
     this.el.appendChild(this.videoTime.render());
@@ -57,9 +55,8 @@ export class BottomBarComponent implements HtmlComponent<HTMLElement>, HtmlCompo
     this.addComment.cleanup();
   }
 
-  resize(rect: ObjRectangleDto): void {
-    this.rect = rect;
-    this.el.style.width = `${rect.width}px`;
+  resize(): void {
+    this.el.style.width = `${this.model.rect.width}px`;
   }
 
   focusin(): void {

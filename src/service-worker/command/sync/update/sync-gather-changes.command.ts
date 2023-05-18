@@ -37,11 +37,11 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
       case ObjTypeDto.PageElementPin: {
         const pageObj = this.obj.data as ObjPageDto;
         changes = await this.pageChanges(pageObj);
-        changes.push({ type: 'upload', path: ServerPathDto.PAGE_PIN });
+        changes.push({ type: 'upload', path: ServerPathDto.PIN });
         break;
       }
       case ObjTypeDto.PageNote: {
-        changes.push({ type: 'upload', path: ServerPathDto.PAGE_NOTE });
+        changes.push({ type: 'upload', path: ServerPathDto.NOTE });
         changes.push({ type: 'upload', path: ServerPathDto.HASHTAGS });
       }
     }
@@ -67,7 +67,7 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
   private drawChanges = (data: ObjDrawDto[]): ServerChangeDto[] => {
     const changes: ServerChangeDto[] = [];
     for (let i = 0; i < data.length; i++) {
-      changes.push({ path: ServerPathDto.PAGE_DRAW, type: 'upload', id: i });
+      changes.push({ path: ServerPathDto.DRAW, type: 'upload', id: i });
     }
     return changes;
   };
@@ -75,7 +75,7 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
   private commentChanges = (data: ObjCommentDto[]): ServerChangeDto[] => {
     const changes: ServerChangeDto[] = [];
     for (let i = 0; i < data.length; i++) {
-      changes.push({ path: ServerPathDto.PAGE_COMMENTS, type: 'upload', id: i });
+      changes.push({ path: ServerPathDto.COMMENT, type: 'upload', id: i });
     }
     return changes;
   };

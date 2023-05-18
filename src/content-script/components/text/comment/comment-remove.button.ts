@@ -15,48 +15,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../../../model/html.model';
-import { PinEditManager } from '../../pin-edit.manager';
-import { applyStylesToElement } from '../../../../common/style.utils';
 
-const elStyles = {
-  color: '#000000',
-  'margin-right': '5px',
-  'font-size': '0.8em',
-  'text-decoration': 'underline',
-  'user-select': 'none',
-  cursor: 'pointer'
-};
-
-export class ShowCommentButton implements HtmlComponent<HTMLElement> {
+export class CommentRemoveButton implements HtmlComponent<HTMLElement> {
   private el = document.createElement('div');
 
-  private visible = false;
+  constructor(private removeCallback: () => void) {}
 
-  constructor(private edit: PinEditManager) {}
+  render(): HTMLElement {
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="#000000" height="16" viewBox="0 0 24 24" width="16">    
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+  </svg>`;
+    this.el.style.cursor = 'pointer';
+    this.el.setAttribute('title', 'remove');
+    this.el.addEventListener('click', this.handleClick);
+    return this.el;
+  }
 
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  get isVisible(): boolean {
-    return this.visible;
-  }
-
-  render(): HTMLElement {
-    applyStylesToElement(this.el, elStyles);
-    this.el.innerText = 'show comments';
-    this.el.addEventListener('click', this.handleClick);
-    return this.el;
-  }
-
-  private handleClick = () => {
-    this.visible = !this.visible;
-    if (this.visible) {
-      this.edit.showText();
-      this.el.innerText = 'hide comments';
-    } else {
-      this.edit.hideText();
-      this.el.innerText = 'show comments';
-    }
+  handleClick = (): void => {
+    this.removeCallback();
   };
 }

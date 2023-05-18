@@ -17,11 +17,12 @@
 
 export enum ServerPathDto {
   OBJ = 'obj',
-  HASHTAGS = 'page/hashtags',
-  PAGE_COMMENTS = 'page/comments',
-  PAGE_DRAW = 'page/draw',
-  PAGE_NOTE = 'page/note',
-  PAGE_PIN = 'page/pin',
+  HASHTAGS = 'hashtags',
+  WORDS = 'words',
+  COMMENT = 'comment',
+  DRAW = 'draw',
+  NOTE = 'note',
+  PIN = 'pin',
   SNAPSHOT = 'page/snapshot',
   SNAPSHOT_CONTENT = 'page/snapshot/content',
   SNAPSHOT_CSS = 'page/snapshot/css'

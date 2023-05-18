@@ -30,7 +30,7 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
     await BrowserStorageWrapper.remove(key);
 
-    await new ObjRemoveIdCommand(this.obj).execute();
+    await new ObjRemoveIdCommand({ id: this.obj.id, dt: Date.now() }, this.obj.server?.id).execute();
 
     await LinkHrefOriginStore.delHrefOriginId(this.obj.data.snapshot.url, this.obj.id);
 
