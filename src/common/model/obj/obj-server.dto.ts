@@ -23,13 +23,13 @@ export enum ServerPathDto {
   DRAW = 'draw',
   NOTE = 'note',
   PIN = 'pin',
-  SNAPSHOT = 'page/snapshot',
-  SNAPSHOT_CONTENT = 'page/snapshot/content',
-  SNAPSHOT_CSS = 'page/snapshot/css'
+  SNAPSHOT = 'snapshot',
+  SNAPSHOT_CONTENT = 'snapshot/content',
+  SNAPSHOT_CSS = 'snapshot/css'
 }
 
 export interface ServerChangeDto {
-  id?: number;
+  id?: string;
   path: ServerPathDto;
   type: 'download' | 'upload' | 'remove';
 }

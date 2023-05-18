@@ -23,6 +23,7 @@ import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher'
 import { fnComputeUrl } from '../../common/fn/compute-url.fn';
 import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnFetchImage } from '../../common/fn/fetch-image.fn';
+import { fnUid } from '../../common/fn/uid.fn';
 
 type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule & CSSSupportsRule;
 
@@ -55,8 +56,9 @@ export class CssFactory {
           let data = cssFetchData.res.replace(CSS_IMPORT_REG, '').trim();
           data = await this.fetchUrls(data, url.href, skipUrlCache);
           css.push(...imports);
-
+          if (!data) continue;
           css.push({
+            id: fnUid(),
             href: s.href,
             media: s.media.mediaText,
             data
@@ -64,6 +66,7 @@ export class CssFactory {
         } else {
           skipUrlCache?.add(s.href);
           css.push({
+            id: fnUid(),
             href: s.href,
             media: s.media.mediaText,
             data: undefined
@@ -74,6 +77,8 @@ export class CssFactory {
         css.push(...selectors);
       }
     }
+    fnConsoleLog('CssFactory->computeCssContent', css);
+    // TODO merge small ones to one
     return {
       css
     };
@@ -107,7 +112,9 @@ export class CssFactory {
         fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
     }
+    if (!out) return [];
     css.push({
+      id: fnUid(),
       data: out,
       media: stylesheet.media.mediaText
     });
@@ -157,7 +164,10 @@ export class CssFactory {
         out.push(...imports);
         // Now fetch urls to save offline
         const urlData = await this.fetchUrls(data, baseUrl);
+        // TODO check if should skip this one
+        if (!urlData) continue;
         out.push({
+          id: fnUid(),
           href: result.url,
           media: '',
           data: urlData

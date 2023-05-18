@@ -48,6 +48,7 @@ export interface CssStyleListDto {
 }
 
 export interface CssStyleDto {
+  id: string;
   href?: string;
   data?: string;
   media?: string;

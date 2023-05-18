@@ -31,6 +31,7 @@ export class SyncSendChangesCommand implements ICommand<Promise<void>> {
     const changes = this.obj.server.changes;
     while (changes.length > 0) {
       switch (changes[0].path) {
+        case ServerPathDto.OBJ:
         case ServerPathDto.HASHTAGS:
         case ServerPathDto.WORDS:
         case ServerPathDto.COMMENT:

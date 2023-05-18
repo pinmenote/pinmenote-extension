@@ -59,7 +59,7 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     const comments = this.commentChanges(pageObj.comments.data);
     changes.push(...comments);
 
-    const draw = this.drawChanges(pageObj.draw);
+    const draw = this.drawChanges(pageObj.draw.data);
     changes.push(...draw);
     return changes;
   };
@@ -67,7 +67,7 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
   private drawChanges = (data: ObjDrawDto[]): ServerChangeDto[] => {
     const changes: ServerChangeDto[] = [];
     for (let i = 0; i < data.length; i++) {
-      changes.push({ path: ServerPathDto.DRAW, type: 'upload', id: i });
+      changes.push({ path: ServerPathDto.DRAW, type: 'upload', id: data[i].id });
     }
     return changes;
   };
@@ -75,7 +75,7 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
   private commentChanges = (data: ObjCommentDto[]): ServerChangeDto[] => {
     const changes: ServerChangeDto[] = [];
     for (let i = 0; i < data.length; i++) {
-      changes.push({ path: ServerPathDto.COMMENT, type: 'upload', id: i });
+      changes.push({ path: ServerPathDto.COMMENT, type: 'upload', id: data[i].id });
     }
     return changes;
   };
@@ -89,13 +89,13 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     // content
     const content = snapshotContent.snapshot.content;
     for (let i = 0; i < content.length; i++) {
-      changes.push({ path: ServerPathDto.SNAPSHOT_CONTENT, type: 'upload', id: i });
+      changes.push({ path: ServerPathDto.SNAPSHOT_CONTENT, type: 'upload', id: content[i].id });
     }
 
     // css
     const css = snapshotContent.snapshot.css.css;
     for (let i = 0; i < css.length; i++) {
-      changes.push({ path: ServerPathDto.SNAPSHOT_CSS, type: 'upload', id: i });
+      changes.push({ path: ServerPathDto.SNAPSHOT_CSS, type: 'upload', id: css[i].id });
     }
     return changes;
   };
