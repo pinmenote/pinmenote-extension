@@ -232,6 +232,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
           renderTemplate(child);
         }
       }
+      template.remove();
     }
   };
 

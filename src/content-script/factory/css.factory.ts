@@ -25,8 +25,6 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 import { fnFetchImage } from '../../common/fn/fetch-image.fn';
 import { fnUid } from '../../common/fn/uid.fn';
 
-type ComputeCssRule = CSSStyleRule & CSSRule & CSSGroupingRule & CSSConditionRule & CSSImportRule & CSSSupportsRule;
-
 export const CSS_URL_REG = new RegExp('url\\(.*?\\)', 'ig');
 export const CSS_IMPORT_REG = new RegExp(
   '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
@@ -90,7 +88,8 @@ export class CssFactory {
   ): Promise<CssStyleDto[]> => {
     const css: CssStyleDto[] = [];
     let out = '';
-    const cssRules = Array.from(stylesheet.cssRules) as ComputeCssRule[];
+    const cssRules = Array.from(stylesheet.cssRules) as any[];
+    /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-plus-operands */
     for (const r of cssRules) {
       if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
@@ -105,13 +104,14 @@ export class CssFactory {
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out += data + '\n';
-      } else if (r instanceof CSSSupportsRule) {
+      } else if (r instanceof CSSSupportsRule || r instanceof CSSContainerRule) {
         out += r.cssText + '\n';
       } else {
         // TODO parse other rules ex CSSKeyFrameRules
-        fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
+        // fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
     }
+    /* eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-plus-operands */
     if (!out) return [];
     css.push({
       id: fnUid(),

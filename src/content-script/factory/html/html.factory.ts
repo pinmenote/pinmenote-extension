@@ -72,7 +72,7 @@ export class HtmlFactory {
 
   static computeHtmlIntermediateData = async (params: HtmlComputeParams): Promise<HtmlIntermediateData> => {
     const tagName = params.ref.tagName.toLowerCase();
-    if (['script', 'link', 'noscript'].includes(tagName)) return HtmlAttrFactory.EMPTY_RESULT;
+    if (['script', 'link', 'noscript', 'style'].includes(tagName)) return HtmlAttrFactory.EMPTY_RESULT;
 
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !params.skipTagCache.has(tagName)) {
       const shadow = BrowserApi.shadowRoot(params.ref);
