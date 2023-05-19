@@ -56,23 +56,9 @@ export class ShadowFactory {
     };
   };
 
-  private static computeAdoptedStyleSheets = (ref: ShadowRoot): string => {
-    // TODO - probably we need javascript for that so we don't override styles ??? At least it's now working for m$n.com - micro$oft as always breaks web
-    // better than chrome once again ^^
-    let out = '';
-    for (let i = 0; i < ref.adoptedStyleSheets.length; i++) {
-      const sheet = ref.adoptedStyleSheets[i];
-      for (let j = 0; j < sheet.cssRules.length; j++) {
-        //eslint-disable-next-line @typescript-eslint/restrict-plus-operands, @typescript-eslint/no-unsafe-call
-        out += sheet.cssRules[j].cssText + '\n';
-      }
-    }
-    return out;
-  };
-
   private static computeShadowHtml = async (ref: ShadowRoot, skipUrlCache?: Set<string>): Promise<string> => {
     const html = await this.computeChildren(Array.from(ref.childNodes), skipUrlCache);
-    const css = this.computeAdoptedStyleSheets(ref);
+    const css = CssFactory.computeAdoptedStyleSheets(ref.adoptedStyleSheets);
     return `<template data-mode="${ref.mode}"><style>${css}</style>${html}</template>`;
   };
 

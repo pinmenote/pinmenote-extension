@@ -23,6 +23,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnUid } from '../../../common/fn/uid.fn';
 
 interface SnapshotResult {
   id: number;
@@ -49,6 +50,10 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const htmlAttr = HtmlFactory.computeHtmlAttr();
     fnConsoleLog('HTML DONE');
     const css = await CssFactory.computeCssContent(urlCache);
+
+    const adopted = CssFactory.computeAdoptedStyleSheets(document.adoptedStyleSheets);
+    if (adopted) css.css.unshift({ id: fnUid(), data: adopted });
+
     fnConsoleLog('CSS DONE');
     const words = AutoTagMediator.computeTags(this.element);
     fnConsoleLog('TAGS DONE');

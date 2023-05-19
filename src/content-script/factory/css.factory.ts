@@ -121,6 +121,20 @@ export class CssFactory {
     return css;
   };
 
+  static computeAdoptedStyleSheets = (adoptedStyleSheets: CSSStyleSheet[]): string => {
+    // TODO - probably we need javascript for that so we don't override styles ??? At least it's now working for m$n.com - micro$oft as always breaks web
+    // better than chrome once again ^^
+    let out = '';
+    for (let i = 0; i < adoptedStyleSheets.length; i++) {
+      const sheet = adoptedStyleSheets[i];
+      for (let j = 0; j < sheet.cssRules.length; j++) {
+        //eslint-disable-next-line @typescript-eslint/restrict-plus-operands, @typescript-eslint/no-unsafe-call
+        out += sheet.cssRules[j].cssText + '\n';
+      }
+    }
+    return out;
+  };
+
   static fetchImports = async (css: string, rel?: string, skipUrlCache?: Set<string>): Promise<CssStyleDto[]> => {
     const importList = css.match(CSS_IMPORT_REG);
     if (!importList) return [];

@@ -37,7 +37,7 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
       type: ObjTypeDto.PageSnapshot,
       createdAt: dt,
       updatedAt: dt,
-      data: { snapshot: this.dto, draw: [], comments: { data: [] } },
+      data: { snapshot: this.dto, draw: { data: [] }, comments: { data: [] } },
       version: OBJ_DTO_VERSION,
       local: {
         visible: true

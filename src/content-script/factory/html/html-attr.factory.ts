@@ -28,15 +28,6 @@ export class HtmlAttrFactory {
     content: []
   };
 
-  static computeShadowAttributes = (attributes: Attr[]): string[][] => {
-    const out = [];
-    for (const attr of attributes) {
-      if (!attr.value) continue;
-      out.push([attr.name, attr.value]);
-    }
-    return out;
-  };
-
   static computeAttrValues = async (tagName: string, attributes: Attr[]): Promise<string> => {
     let html = '';
     let hrefFilled = false;
@@ -85,13 +76,11 @@ export class HtmlAttrFactory {
       } else if (attr.name === 'style') {
         // style can have background-image:url('')
         const urlList = attrValue.match(CSS_URL_REG);
-        attrValue = attrValue.replaceAll('&quot;', '"');
         if (urlList) {
-          const value = await CssFactory.fetchUrls(attrValue);
-          html += `${attr.name}="${value}" `;
-        } else {
-          html += `${attr.name}="${attrValue.replaceAll('"', '&quot;')}" `;
+          attrValue = await CssFactory.fetchUrls(attrValue);
         }
+        attrValue = attrValue.replaceAll('"', '&quot;');
+        html += `${attr.name}="${attrValue}" `;
       } else if (attrValue) {
         html += `${attr.name}="${attrValue}" `;
       } else {

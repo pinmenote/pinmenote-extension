@@ -17,9 +17,11 @@
 import { ObjCommentDto, ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { ServerChangeDto, ServerPathDto } from '../../../../common/model/obj/obj-server.dto';
+import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
 import { ObjGetSnapshotContentCommand } from '../../../../common/command/obj/content/obj-get-snapshot-content.command';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 
 export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDto[]>> {
   constructor(private obj: ObjDto) {}
@@ -36,6 +38,10 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
       }
       case ObjTypeDto.PageElementPin: {
         const pageObj = this.obj.data as ObjPageDto;
+        if (!pageObj.draw.data) {
+          pageObj.draw = { data: [] };
+          await BrowserStorageWrapper.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
+        }
         changes = await this.pageChanges(pageObj);
         changes.push({ type: 'upload', path: ServerPathDto.PIN });
         break;
@@ -58,7 +64,6 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
 
     const comments = this.commentChanges(pageObj.comments.data);
     changes.push(...comments);
-
     const draw = this.drawChanges(pageObj.draw.data);
     changes.push(...draw);
     return changes;
