@@ -37,22 +37,83 @@ export interface HtmlComputeParams {
   isPartial: boolean;
 }
 
+type CtxName = '2d' | 'webgl' | 'webgl2';
+
+const findContext = (ref: HTMLCanvasElement): { ctx: RenderingContext | null; name: CtxName } => {
+  let name: CtxName = '2d';
+  let ctx: RenderingContext | null = ref.getContext(name);
+  if (!ctx) name = 'webgl';
+  ctx = ref.getContext(name, { preserveDrawingBuffer: true });
+  if (!ctx) name = 'webgl2';
+  ctx = ref.getContext(name, { preserveDrawingBuffer: true });
+  return { ctx, name };
+};
+
 export class HtmlFactory {
   static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
     fnConsoleLog('HtmlFactory->computeCanvas');
-    const imgData = ref.toDataURL('image/png', 80);
-    let width = ref.getAttribute('width') || '100%';
-    let height = ref.getAttribute('height') || '100%';
-    const rect = ref.parentElement?.getBoundingClientRect();
-    if (rect) {
-      width = `${rect.width}px`;
-      height = `${rect.height}px`;
-    }
-    const style = ref.getAttribute('style') || '';
-    const clazz = ref.getAttribute('class') || '';
     const uid = fnUid();
+    let html = `<img data-pin-id="${uid}" `;
+
+    let imgData = '';
+    const render = findContext(ref);
+
+    if (render.ctx) {
+      switch (render.name) {
+        case '2d':
+          imgData = ref.toDataURL('image/png', 80);
+          break;
+        case 'webgl':
+        case 'webgl2': {
+          const gl = render.ctx as WebGLRenderingContext;
+          if (gl.getContextAttributes()?.preserveDrawingBuffer) {
+            imgData = ref.toDataURL('image/png', 80);
+          } else {
+            /* TODO capture webgl texture without preserveDrawingBuffer
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            const empty1x1 = new Uint8Array([1, 1, 1, 1]);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, empty1x1);
+            gl.framebufferTexture2D(
+                gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+                gl.TEXTURE_2D, texture, 0);
+            if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
+
+            }*/
+            const can = document.createElement('canvas');
+            const empty1x1 = new Uint8Array([1, 1, 1, 1]);
+            const img = new ImageData(Uint8ClampedArray.from(empty1x1), 1, 1);
+            const ctx = can.getContext('2d');
+            if (ctx) {
+              ctx.putImageData(img, 0, 0);
+            }
+            imgData = can.toDataURL('image/png', 80);
+          }
+        }
+      }
+    }
+
+    let width = ref.getAttribute('width');
+    let height = ref.getAttribute('height');
+
+    if (!width || !height) {
+      const rect1 = ref.parentElement?.getBoundingClientRect();
+      const rect2 = ref.getBoundingClientRect();
+      width = Math.max(rect1?.width || 0, rect2.width).toString() || '100%';
+      height = Math.max(rect1?.height || 0, rect2.height).toString() || '100%';
+    }
+    html += `width="${width}" height="${height}" `;
+
+    const style = ref.getAttribute('style') || '';
+    if (style) html += `style="${style}" `;
+
+    const clazz = ref.getAttribute('class') || '';
+    if (clazz) html += `class="${clazz}" `;
+
+    html += `/>`;
+
     return {
-      html: `<img data-pin-id="${uid}" width="${width}" height="${height}" style="${style}" class="${clazz}" />`,
+      html,
       video: [],
       content: [
         {
