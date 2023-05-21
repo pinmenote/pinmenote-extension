@@ -17,7 +17,6 @@
 import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import ClearIcon from '@mui/icons-material/Clear';
-import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import { StyledInputBlack } from '../../../../common/components/react/styled.input';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
@@ -50,10 +49,8 @@ export const BoardInputSearch: FunctionComponent<BoardInputSearchParams> = ({ se
         value={searchValue}
         onChange={handleSearchChange}
         endAdornment={
-          BoardStore.getSearch() ? (
-            <IconButton onClick={handleClearSearch}>
-              <ClearIcon />
-            </IconButton>
+          searchValue ? (
+            <ClearIcon style={{ userSelect: 'none', cursor: 'pointer' }} onClick={handleClearSearch} />
           ) : undefined
         }
       />
