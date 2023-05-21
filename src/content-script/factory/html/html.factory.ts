@@ -68,7 +68,9 @@ export class HtmlFactory {
           const gl = render.ctx as WebGLRenderingContext;
           if (gl.getContextAttributes()?.preserveDrawingBuffer) {
             imgData = ref.toDataURL('image/png', 80);
+            fnConsoleLog('HtmlFactory->computeCanvas->preserveDrawingBuffer', true);
           } else {
+            fnConsoleLog('HtmlFactory->computeCanvas->preserveDrawingBuffer', false);
             /* TODO capture webgl texture without preserveDrawingBuffer
             const texture = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, texture);

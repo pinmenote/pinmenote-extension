@@ -33,6 +33,13 @@ npm run dev
 
 ### Known issues
 
+#### Canvas
+When `preserveDrawingBuffer` is set to false, we save 1x1 empty image because problems with access to drawing buffer.
+see [https://stackoverflow.com/a/27747016](https://stackoverflow.com/a/27747016)
+```
+can.getContext("webgl2", { preserveDrawingBuffer: true })
+```
+
 #### Shadow root  
 Open shadow root is not always displayed or parsed correctly - but at least it matches mht quality or sometimes it's better.  
 Saving fragment / adding pin to shadow root is not working right now.

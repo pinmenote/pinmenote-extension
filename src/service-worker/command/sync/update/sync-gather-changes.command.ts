@@ -64,6 +64,10 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
 
     const comments = this.commentChanges(pageObj.comments.data);
     changes.push(...comments);
+    if (!pageObj.draw.data) {
+      pageObj.draw = { data: [] };
+      await BrowserStorageWrapper.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
+    }
     const draw = this.drawChanges(pageObj.draw.data);
     changes.push(...draw);
     return changes;
