@@ -15,10 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
-import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CircularProgress from '@mui/material/CircularProgress';
 import FunctionsIcon from '@mui/icons-material/Functions';
 import List from '@mui/material/List';

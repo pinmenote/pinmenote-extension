@@ -17,16 +17,11 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardItem } from '../board-item';
 import { BoardStore } from '../../../store/board.store';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
+import { BoardTitle } from '../board/board-title';
 import Link from '@mui/material/Link';
-import { NoteUpdateCommand } from '../../../../common/command/note/note-update.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
-import { TitleEditComponent } from '../edit/title-edit.component';
 import Typography from '@mui/material/Typography';
-import { WordIndex } from '../../../../common/text/index/word.index';
 import { marked } from 'marked';
 
 interface PinElementParams {
@@ -35,7 +30,7 @@ interface PinElementParams {
 }
 
 export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshBoardCallback }) => {
-  const [editTitle, setEditTitle] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,30 +38,14 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
     ref.current.innerHTML = marked(dto.data.description);
   }, []);
 
-  const handleEditTitle = () => {
-    setEditTitle(true);
+  const handleEdit = () => {
+    setEdit(true);
   };
 
   const handleRemove = async () => {
     if (await BoardStore.removeObj(dto)) {
       refreshBoardCallback();
     }
-  };
-
-  const titleSaveCallback = async (value: string) => {
-    if (dto.data.title !== value) {
-      dto.data.title = value;
-      dto.updatedAt = Date.now();
-      const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(dto.data.description)]);
-      const oldWords = dto.data.words.slice();
-      dto.data.words = Array.from(words);
-      await new NoteUpdateCommand(dto, oldWords).execute();
-    }
-    setEditTitle(false);
-  };
-
-  const titleCancelCallback = () => {
-    setEditTitle(false);
   };
 
   const title = dto.data.title.length > 50 ? `${dto.data.title.substring(0, 50)}...` : dto.data.title;
@@ -77,26 +56,9 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
         ? decodeURI(dto.data.url.href).substring(0, 50)
         : decodeURI(dto.data.url.href);
   }
-
-  const titleElement = editTitle ? (
-    <TitleEditComponent value={dto.data.title} saveCallback={titleSaveCallback} cancelCallback={titleCancelCallback} />
-  ) : (
-    <h2 style={{ wordWrap: 'break-word', width: '80%' }}>{title}</h2>
-  );
-
   return (
     <BoardItem>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        {titleElement}
-        <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row' }}>
-          <IconButton onClick={handleEditTitle}>
-            <EditIcon />
-          </IconButton>
-          <IconButton title="Remove" onClick={handleRemove}>
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      </div>
+      <BoardTitle title={title} dto={dto} editCallback={handleEdit} removeCallback={handleRemove} />
       <div>
         <div ref={ref}></div>
       </div>

@@ -22,25 +22,26 @@ import { NoteElement } from './note/note.element';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
 import { PinElement } from './pin/pin.element';
-import Stack from '@mui/material/Stack';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const BoardComponent: FunctionComponent = () => {
   const [objData, setObjData] = useState<ObjDto[]>(BoardStore.objList);
 
-  const stackRef = useRef<HTMLDivElement>();
+  const ref = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     // Infinite scroll
     if (objData.length == 0 && !BoardStore.isLast) {
       setTimeout(async () => {
-        fnConsoleLog('initPinBoardStore');
         BoardStore.setRefreshCallback(refreshBoardCallback);
         await BoardStore.clearSearch();
         await BoardStore.getObjRange();
       }, 0);
     }
-    stackRef.current?.addEventListener('scroll', handleScroll);
+    ref.current?.addEventListener('scroll', handleScroll);
+    return () => {
+      ref.current?.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const refreshBoardCallback = () => {
@@ -49,10 +50,10 @@ export const BoardComponent: FunctionComponent = () => {
 
   const handleScroll = () => {
     fnConsoleLog('handleScroll');
-    if (!stackRef.current) return;
+    if (!ref.current) return;
     if (BoardStore.isLast) return; // last element so return
-    const bottom = stackRef.current.scrollHeight - stackRef.current.clientHeight;
-    if (bottom - stackRef.current.scrollTop > 100) return; // too much up
+    const bottom = ref.current.scrollHeight - ref.current.clientHeight;
+    if (bottom - ref.current.scrollTop > 100) return; // too much up
     if (BoardStore.isLoading) return; // already loading
 
     BoardStore.setLoading(true);
@@ -100,16 +101,21 @@ export const BoardComponent: FunctionComponent = () => {
   }
 
   return (
-    <div style={{ width: '100%', marginTop: 10 }}>
-      <Stack
-        direction="row"
-        flexWrap="wrap"
-        justifyContent="center"
-        ref={stackRef}
-        style={{ overflow: 'auto', height: 'calc(100vh - 65px)', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px' }}
+    <div style={{ marginTop: 10, display: 'flex', justifyContent: 'center' }}>
+      <ul
+        ref={ref}
+        style={{
+          width: '100%',
+          display: 'flex',
+          overflow: 'auto',
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          height: 'calc(100vh - 65px)',
+          gap: '5px'
+        }}
       >
         {boardElements}
-      </Stack>
+      </ul>
     </div>
   );
 };

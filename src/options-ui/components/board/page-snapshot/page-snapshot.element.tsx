@@ -17,18 +17,13 @@
 import React, { FunctionComponent, useState } from 'react';
 import { BoardItem } from '../board-item';
 import { BoardStore } from '../../../store/board.store';
+import { BoardTitle } from '../board/board-title';
 import { BusMessageType } from '../../../../common/model/bus.model';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import HtmlIcon from '@mui/icons-material/Html';
-import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
-import { PageSnapshotUpdateCommand } from '../../../../common/command/snapshot/page-snapshot-update.command';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
-import { TitleEditComponent } from '../edit/title-edit.component';
 import Typography from '@mui/material/Typography';
 
 interface PageSnapshotElementParams {
@@ -37,10 +32,10 @@ interface PageSnapshotElementParams {
 }
 
 export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> = ({ dto, refreshBoardCallback }) => {
-  const [editTitle, setEditTitle] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
 
-  const handleEditTitle = () => {
-    setEditTitle(true);
+  const handleEdit = () => {
+    setEdit(true);
   };
 
   const handleHtml = () => {
@@ -53,51 +48,22 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
     }
   };
 
-  const titleSaveCallback = async (value: string) => {
-    if (dto.data.snapshot.title !== value) {
-      dto.data.snapshot.title = value;
-      dto.updatedAt = Date.now();
-      await new PageSnapshotUpdateCommand(dto).execute();
-    }
-    setEditTitle(false);
-  };
-
-  const titleCancelCallback = () => {
-    setEditTitle(false);
-  };
-
   const title =
     dto.data.snapshot.title.length > 50 ? `${dto.data.snapshot.title.substring(0, 50)}...` : dto.data.snapshot.title;
   const url =
     decodeURI(dto.data.snapshot.url.href).length > 50
       ? decodeURI(dto.data.snapshot.url.href).substring(0, 50)
       : decodeURI(dto.data.snapshot.url.href);
-  const titleElement = editTitle ? (
-    <TitleEditComponent
-      value={dto.data.snapshot.title}
-      saveCallback={titleSaveCallback}
-      cancelCallback={titleCancelCallback}
-    />
-  ) : (
-    <h2 style={{ overflowWrap: 'anywhere', width: '80%' }}>{title}</h2>
-  );
 
   return (
     <BoardItem>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        {titleElement}
-        <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton title="HTML view" onClick={handleHtml}>
-            <HtmlIcon />
-          </IconButton>
-          <IconButton onClick={handleEditTitle}>
-            <EditIcon />
-          </IconButton>
-          <IconButton title="Remove" onClick={handleRemove}>
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      </div>
+      <BoardTitle
+        title={title}
+        dto={dto}
+        editCallback={handleEdit}
+        htmlCallback={handleHtml}
+        removeCallback={handleRemove}
+      />
       <div>
         <img width={window.innerWidth / 4} src={dto.data.snapshot.screenshot} />
       </div>
