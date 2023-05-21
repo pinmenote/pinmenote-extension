@@ -46,12 +46,13 @@ export class BoardStore {
   }
 
   static set search(value: string) {
-    if (this.rangeRequest.search.length < 2) {
+    if (this.rangeRequest.search.length > 1) {
       this.rangeRequest.from = -1;
       this.rangeRequest.listId = -1;
       this.objData = [];
     }
     this.rangeRequest.search = value;
+    this.isLastValue = false;
   }
 
   static removeObj = async (value: ObjDto): Promise<boolean> => {
@@ -78,8 +79,8 @@ export class BoardStore {
     this.isLastValue = false;
     this.rangeRequest.search = '';
     this.rangeRequest.from = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
-    this.rangeRequest.listId =
-      (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
+    this.rangeRequest.listId = -1;
+    this.objData = [];
   }
 
   static setLoading(value: boolean): void {

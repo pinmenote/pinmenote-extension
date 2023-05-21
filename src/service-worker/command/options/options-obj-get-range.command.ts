@@ -29,9 +29,13 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
 
   async execute(): Promise<ObjRangeResponse | undefined> {
     try {
-      const { from, listId, search, limit } = this.data;
+      const { from, search, limit } = this.data;
+      let listId = this.data.listId;
       if (search) {
         return await this.getSearch(from, search);
+      }
+      if (listId === -1) {
+        listId = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
       }
       return await this.getRange(from, listId, limit);
     } catch (e) {
@@ -51,6 +55,9 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
 
     const data: ObjDto[] = [];
 
+    const idSet = new Set<number>();
+
+    // gather ids
     for (const word of words) {
       const wordKey = `${ObjectStoreKeys.SEARCH_INDEX}:${word}`;
       const wordIndex = await BrowserStorageWrapper.get<number[] | undefined>(wordKey);
@@ -58,17 +65,29 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
       if (!wordIndex) continue;
 
       for (const objId of wordIndex) {
-        const objKey = `${ObjectStoreKeys.OBJECT_ID}:${objId}`;
-        const obj = await BrowserStorageWrapper.get<ObjDto>(objKey);
-        if (!obj) {
-          fnConsoleLog('Empty object !!!!!!!!!!!', objId, wordKey);
-          continue;
-        }
-        data.push(obj);
+        idSet.add(objId);
       }
     }
 
-    return { listId: 0, data };
+    // skip from for scrolling
+    let skip = true;
+    for (const objId of Array.from(idSet)) {
+      // dirty but works - assume that javascript set preserves order
+      if (from > -1 && skip && objId !== from) {
+        continue;
+      } else if (objId === from) {
+        skip = false;
+      }
+      const objKey = `${ObjectStoreKeys.OBJECT_ID}:${objId}`;
+      const obj = await BrowserStorageWrapper.get<ObjDto>(objKey);
+      if (!obj) {
+        fnConsoleLog('Empty object !!!!!!!!!!!', objId);
+        continue;
+      }
+      data.push(obj);
+    }
+
+    return { listId: -1, data };
   }
 
   private async getRange(from: number, listId: number, limit: number): Promise<ObjRangeResponse> {
