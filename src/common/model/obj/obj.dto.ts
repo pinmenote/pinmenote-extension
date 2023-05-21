@@ -42,6 +42,7 @@ export enum ObjTypeDto {
   PageElementSnapshot = 'ELEMENT_SNAPSHOT',
   PageSnapshot = 'PAGE_SNAPSHOT',
   PageNote = 'PAGE_NOTE',
+  Note = 'Note',
   PageTask = 'PAGE_TASK',
   PageEvent = 'PAGE_EVENT'
 }

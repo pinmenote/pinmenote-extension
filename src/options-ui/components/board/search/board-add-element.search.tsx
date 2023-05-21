@@ -1,20 +1,21 @@
 import React, { FunctionComponent } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 interface AddMenuItem {
   title: string;
   type: ObjTypeDto;
+  icon: React.ReactNode;
 }
 
-const addMenuItemList: AddMenuItem[] = [
-  { title: 'Note', type: ObjTypeDto.PageNote },
-  { title: 'Todo', type: ObjTypeDto.PageTask }
-];
+const addMenuItemList: AddMenuItem[] = [{ title: 'Note', type: ObjTypeDto.Note, icon: <NoteOutlinedIcon /> }];
 
 export const BoardAddElementSearch: FunctionComponent = () => {
   const [anchorEl, setAnchorEl] = React.useState<undefined | HTMLElement>();
@@ -36,12 +37,13 @@ export const BoardAddElementSearch: FunctionComponent = () => {
   return (
     <div>
       <IconButton onClick={handleAddClick}>
-        <AddIcon />
+        <AddIcon sx={{ color: '#ffffff' }} />
       </IconButton>
       <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
         {addMenuItemList.map((item, index) => (
           <MenuItem key={index} onClick={() => handleMenuClick(item.type)}>
-            {item.title}
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.title} />
           </MenuItem>
         ))}
       </Menu>

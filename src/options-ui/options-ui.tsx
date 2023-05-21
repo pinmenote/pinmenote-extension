@@ -18,8 +18,8 @@ import '../css/prosemirror.css';
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BoardComponent } from './components/board/board.component';
+import { BoardMenu } from './components/menu/board-menu';
 import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
-import { LeftSideMenu } from './components/menu/left-side.menu';
 import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
 import { OptionsMessageHandler } from './options-message.handler';
 import { SettingsComponent } from './components/settings/settings.component';
@@ -50,8 +50,8 @@ const App: FunctionComponent = () => {
   return (
     <div>
       <ThemeProvider theme={theme}>
+        <BoardMenu />
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <LeftSideMenu />
           <div style={{ width: '100%' }}>{mainComponent}</div>
         </div>
         <HtmlPreviewComponent />

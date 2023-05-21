@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
+import { BoardItem } from '../board-item';
 import { BoardStore } from '../../../store/board.store';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -82,16 +83,7 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
   );
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: window.innerWidth / 4,
-        margin: 5,
-        padding: 5,
-        border: '1px solid #eeeeee'
-      }}
-    >
+    <BoardItem>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         {titleElement}
         <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -114,8 +106,8 @@ export const PageSnapshotElement: FunctionComponent<PageSnapshotElementParams> =
           <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
         </Link>
         <p>page snapshot {dto.createdAt}</p>
-        <p>{dto.data.snapshot.words.join(', ')}</p>
+        <p style={{ wordBreak: 'break-all' }}>{dto.data.snapshot.words.join(', ')}</p>
       </div>
-    </div>
+    </BoardItem>
   );
 };

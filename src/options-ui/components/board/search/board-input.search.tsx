@@ -18,49 +18,33 @@ import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import { BoardStore } from '../../../store/board.store';
 import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
 import SearchIcon from '@mui/icons-material/Search';
+import { StyledInputBlack } from '../../../../common/components/react/styled.input';
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 interface BoardInputSearchParams {
-  refreshBoardCallback: () => void;
+  searchCallback: (value: string) => void;
 }
 
-export const BoardInputSearch: FunctionComponent<BoardInputSearchParams> = ({ refreshBoardCallback }) => {
+export const BoardInputSearch: FunctionComponent<BoardInputSearchParams> = ({ searchCallback }) => {
   const [searchValue, setSearchValue] = useState<string>(BoardStore.getSearch() || '');
 
-  const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
-    fnConsoleLog('handleSearchChange');
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     clearTimeout(BoardStore.timeout);
     setSearchValue(e.target.value);
-
-    await BoardStore.clearSearch();
-
-    // setPinData([]);
-    if (e.target.value.length <= 2) {
-      BoardStore.timeout = window.setTimeout(async () => {
-        await BoardStore.getObjRange(refreshBoardCallback);
-      }, 1000);
-      return;
-    } else {
-      BoardStore.setSearch(e.target.value);
-    }
-    BoardStore.timeout = window.setTimeout(async () => {
-      await BoardStore.sendSearch(refreshBoardCallback);
-    }, 1000);
+    searchCallback(e.target.value);
   };
 
-  const handleClearSearch = async () => {
+  const handleClearSearch = () => {
     fnConsoleLog('handleClearSearch');
     setSearchValue('');
-    await BoardStore.clearSearch();
-    await BoardStore.getObjRange(refreshBoardCallback);
+    searchCallback('');
   };
   return (
-    <div style={{ width: '50%' }}>
-      <Input
-        startAdornment={<SearchIcon />}
-        placeholder="Find object"
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+      <StyledInputBlack
+        startAdornment={<SearchIcon style={{ marginRight: 10 }} />}
+        placeholder="Search"
         style={{ width: '100%' }}
         type="text"
         value={searchValue}

@@ -29,3 +29,19 @@ export const StyledInput = styled(Input)({
     borderBottom: 'none !important' // not working without !important cause @mui sucks
   }
 });
+
+export const StyledInputBlack = styled(Input)({
+  marginTop: '2px',
+  width: '100%',
+  color: '#ffffff',
+  backgroundColor: '#000000',
+  ':before': {
+    borderBottom: '1px solid #ffffff'
+  },
+  ':after': {
+    borderBottom: '1px solid #ffffff'
+  },
+  '&:hover:before': {
+    borderBottom: '1px solid #ffffff !important' // not working without !important cause @mui sucks
+  }
+});

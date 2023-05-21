@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
+import { BoardItem } from '../board-item';
 import { BoardStore } from '../../../store/board.store';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -82,16 +83,7 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
   );
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: window.innerWidth / 4,
-        margin: 5,
-        padding: 5,
-        border: '1px solid #eeeeee'
-      }}
-    >
+    <BoardItem>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         {titleElement}
         <div style={{ display: editTitle ? 'none' : 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -116,6 +108,6 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
         <p>page pin {dto.createdAt}</p>
         <p>{dto.data.snapshot.words.join(', ')}</p>
       </div>
-    </div>
+    </BoardItem>
   );
 };

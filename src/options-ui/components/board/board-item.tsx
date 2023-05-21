@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentExtensionData, ExtensionThemeDto } from '../../../common/model/settings.model';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { appLightIcons } from '../../../common/components/app-icons';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import React, { FunctionComponent } from 'react';
 
-export class ContentThemeCommand implements ICommand<void> {
-  constructor(private data: ContentExtensionData) {}
-  async execute(): Promise<void> {
-    try {
-      if (this.data.theme === ExtensionThemeDto.DARK) {
-        await BrowserApi.browserAction.setIcon(appLightIcons());
-      }
-    } catch (e) {
-      fnConsoleLog('Error', this.data.theme, e);
-    }
-  }
-}
+export const BoardItem: FunctionComponent<React.PropsWithChildren> = (props) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        maxWidth: '400px',
+        margin: 5,
+        border: '1px solid #eeeeee',
+        padding: 5
+      }}
+    >
+      {props.children}
+    </div>
+  );
+};

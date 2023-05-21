@@ -17,10 +17,7 @@
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { ObjPageDto, ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { BoardAddElementSearch } from './search/board-add-element.search';
-import { BoardInputSearch } from './search/board-input.search';
 import { BoardStore } from '../../store/board.store';
-import Box from '@mui/material/Box';
 import { NoteElement } from './note/note.element';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
@@ -111,12 +108,14 @@ export const BoardComponent: FunctionComponent = () => {
   }
 
   return (
-    <div style={{ width: '100%', marginLeft: 20, marginTop: 10 }}>
-      <Box style={{ margin: 10, display: 'flex', flexDirection: 'row' }}>
-        <BoardInputSearch refreshBoardCallback={refreshBoardCallback}></BoardInputSearch>
-        <BoardAddElementSearch></BoardAddElementSearch>
-      </Box>
-      <Stack direction="row" flexWrap="wrap" ref={stackRef} style={{ overflow: 'auto', height: 'calc(100vh - 65px)' }}>
+    <div style={{ width: '100%', marginTop: 10 }}>
+      <Stack
+        direction="row"
+        flexWrap="wrap"
+        justifyContent="center"
+        ref={stackRef}
+        style={{ overflow: 'auto', height: 'calc(100vh - 65px)', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px' }}
+      >
         {boardElements}
       </Stack>
     </div>

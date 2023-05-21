@@ -17,7 +17,6 @@
 import { BusMessage } from '../model/bus.model';
 import { environmentConfig } from '../environment';
 import { fnConsoleLog } from '../fn/console.fn';
-import { fnGetKey } from '../fn/kv.utils';
 
 export type BrowserGlobal = typeof chrome | typeof browser;
 export type BrowserRuntime = typeof chrome.runtime | typeof browser.runtime;
@@ -94,13 +93,6 @@ export class BrowserApi {
       return `chrome-extension://${chrome.runtime.id}`;
     }
     return 'moz-extension://';
-  }
-
-  static get logoIconPath(): string {
-    if (this.isChromeValue) {
-      return fnGetKey(chrome.runtime.getManifest().icons, '32');
-    }
-    return fnGetKey(browser.runtime.getManifest().browser_action?.default_icon, '32');
   }
 
   static openOptionsPage(subpage = ''): void {
