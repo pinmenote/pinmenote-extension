@@ -15,13 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { BoardItem } from '../board-item';
+import { BoardItem } from '../board/board-item';
+import { BoardItemFooter } from '../board/board-item-footer';
+import { BoardItemTitle } from '../board/board-item-title';
 import { BoardStore } from '../../../store/board.store';
-import { BoardTitle } from '../board/board-title';
-import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
-import Typography from '@mui/material/Typography';
 import { marked } from 'marked';
 
 interface PinElementParams {
@@ -48,31 +47,14 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
     }
   };
 
-  const title = dto.data.title.length > 50 ? `${dto.data.title.substring(0, 50)}...` : dto.data.title;
-  let url = '';
-  if (dto.data.url) {
-    url =
-      decodeURI(dto.data.url.href).length > 50
-        ? decodeURI(dto.data.url.href).substring(0, 50)
-        : decodeURI(dto.data.url.href);
-  }
   return (
     <BoardItem>
-      <BoardTitle title={title} dto={dto} editCallback={handleEdit} removeCallback={handleRemove} />
+      <BoardItemTitle title={dto.data.title} dto={dto} editCallback={handleEdit} removeCallback={handleRemove} />
       <div>
         <div ref={ref}></div>
       </div>
-      <Link
-        target="_blank"
-        style={{ marginTop: 5, display: dto.data.url ? 'inline-block' : 'none' }}
-        href={dto.data.url?.href}
-      >
-        <Typography fontSize="0.9em">{url}</Typography>
-      </Link>
-      <div>
-        <p>page note {dto.createdAt}</p>
-        <p>{dto.data.words.join(', ')}</p>
-      </div>
+      <div style={{ display: 'flex', flexGrow: 1 }}></div>
+      <BoardItemFooter title="page note" createdAt={dto.createdAt} words={dto.data.words} url={dto.data.url?.href} />
     </BoardItem>
   );
 };

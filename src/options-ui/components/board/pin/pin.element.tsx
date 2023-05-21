@@ -15,16 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
-import { BoardItem } from '../board-item';
+import { BoardItem } from '../board/board-item';
+import { BoardItemFooter } from '../board/board-item-footer';
+import { BoardItemTitle } from '../board/board-item-title';
 import { BoardStore } from '../../../store/board.store';
-import { BoardTitle } from '../board/board-title';
 import { BusMessageType } from '../../../../common/model/bus.model';
-import Link from '@mui/material/Link';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
-import Typography from '@mui/material/Typography';
 
 interface PinElementParams {
   dto: ObjDto<ObjPagePinDto>;
@@ -48,32 +47,24 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
     }
   };
 
-  const title =
-    dto.data.snapshot.title.length > 50 ? `${dto.data.snapshot.title.substring(0, 50)}...` : dto.data.snapshot.title;
-  const url =
-    decodeURI(dto.data.snapshot.url.href).length > 50
-      ? decodeURI(dto.data.snapshot.url.href).substring(0, 50)
-      : decodeURI(dto.data.snapshot.url.href);
-
   return (
     <BoardItem>
-      <BoardTitle
-        title={title}
+      <BoardItemTitle
+        title={dto.data.snapshot.title}
         dto={dto}
         editCallback={handleEdit}
         htmlCallback={handleHtml}
         removeCallback={handleRemove}
       />
-      <div>
-        <img src={dto.data.snapshot.screenshot} />
-      </div>
-      <div>
-        <Link target="_blank" href={dto.data.snapshot.url.href}>
-          <Typography sx={{ fontSize: '0.9em' }}>{url}</Typography>
-        </Link>
-        <p>page pin {dto.createdAt}</p>
-        <p>{dto.data.snapshot.words.join(', ')}</p>
-      </div>
+      <div></div>
+      <img src={dto.data.snapshot.screenshot} />
+      <div style={{ display: 'flex', flexGrow: 1 }}></div>
+      <BoardItemFooter
+        title="page pin"
+        createdAt={dto.createdAt}
+        words={dto.data.snapshot.words}
+        url={dto.data.snapshot.url?.href}
+      />
     </BoardItem>
   );
 };

@@ -15,20 +15,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent } from 'react';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 
-export const BoardItem: FunctionComponent<React.PropsWithChildren> = (props) => {
+interface Props {
+  title: string;
+  createdAt: number;
+  words: string[];
+  url?: string;
+}
+
+export const BoardItemFooter: FunctionComponent<Props> = (props) => {
+  let url = '';
+  if (props.url) {
+    url = decodeURI(props.url).length > 50 ? decodeURI(props.url).substring(0, 50) : decodeURI(props.url);
+  }
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: '400px',
-        margin: 5,
-        border: '1px solid #eeeeee',
-        padding: 5
-      }}
-    >
-      {props.children}
+    <div>
+      <p>{props.words.join(', ')}</p>
+      <Link target="_blank" style={{ marginTop: 5, display: props.url ? 'inline-block' : 'none' }} href={props.url}>
+        <Typography fontSize="0.9em" style={{ wordBreak: 'break-all' }}>
+          {url}
+        </Typography>
+      </Link>
+      <div>
+        <p>
+          {props.title} {props.createdAt}
+        </p>
+      </div>
     </div>
   );
 };

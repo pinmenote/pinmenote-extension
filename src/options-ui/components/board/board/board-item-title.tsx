@@ -21,7 +21,7 @@ import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 
-interface BoardTitleProps {
+interface Props {
   title: string;
   dto: ObjDto;
   editCallback: (dto: ObjDto) => void;
@@ -29,15 +29,20 @@ interface BoardTitleProps {
   htmlCallback?: (dto: ObjDto) => void;
 }
 
-export const BoardTitle: FunctionComponent<BoardTitleProps> = (props) => {
+export const BoardItemTitle: FunctionComponent<Props> = (props) => {
+  const title = props.title.length > 50 ? `${props.title.substring(0, 50)}...` : props.title;
+
   const htmlEdit = props.htmlCallback ? (
     <IconButton title="HTML view" onClick={() => props.htmlCallback()}>
       <HtmlIcon />
     </IconButton>
   ) : undefined;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-      <h2 style={{ overflowWrap: 'anywhere', width: '80%' }}>{props.title}</h2>
+      <h2 style={{ overflowWrap: 'anywhere', width: '80%' }} title={props.title}>
+        {title}
+      </h2>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         {htmlEdit}
         <IconButton onClick={() => props.editCallback(props.dto)}>
