@@ -18,6 +18,7 @@ import React, { FunctionComponent } from 'react';
 import AppBar from '@mui/material/AppBar';
 import { BoardAddElementSearch } from '../board/search/board-add-element.search';
 import { BoardInputSearch } from '../board/search/board-input.search';
+import { BoardStore } from '../../store/board.store';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -34,6 +35,11 @@ export const BoardMenu: FunctionComponent = () => {
 
   const handleSearch = (value: string) => {
     fnConsoleLog('BoardMenu->handleSearch', value);
+    BoardStore.search = value;
+    BoardStore.setLoading(true);
+    window.setTimeout(async () => {
+      await BoardStore.getObjRange();
+    }, 500);
   };
   return (
     <AppBar position="static">
@@ -48,7 +54,7 @@ export const BoardMenu: FunctionComponent = () => {
           </Typography>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 10, flexGrow: 1 }}>
-          <BoardInputSearch searchCallback={handleSearch}></BoardInputSearch>
+          <BoardInputSearch value={BoardStore.search} searchCallback={handleSearch}></BoardInputSearch>
           <BoardAddElementSearch></BoardAddElementSearch>
         </div>
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

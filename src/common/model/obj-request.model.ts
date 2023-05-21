@@ -25,7 +25,7 @@ export interface ObjRangeRequest {
   from: number;
   listId: number;
   limit: number;
-  search?: string;
+  search: string;
 }
 
 export interface ObjRangeResponse {

@@ -20,7 +20,6 @@ import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrap
 import { ObjRangeRequest } from 'src/common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
-import { OptionsObjSearchCommand } from '../../service-worker/command/options/options-obj-search.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { PinRemoveCommand } from '../../common/command/pin/pin-remove.command';
 import { fnConsoleLog } from '../../common/fn/console.fn';
@@ -30,14 +29,29 @@ export class BoardStore {
 
   private static loading = false;
   private static isLastValue = false;
-  private static readonly search: ObjRangeRequest = {
+  private static readonly rangeRequest: ObjRangeRequest = {
     from: -1,
     limit: 10,
-    listId: -1
+    listId: -1,
+    search: ''
   };
+  private static refreshBoardCallback?: () => void;
 
   static get objList(): ObjDto[] {
     return this.objData;
+  }
+
+  static get search(): string {
+    return this.rangeRequest.search;
+  }
+
+  static set search(value: string) {
+    if (this.rangeRequest.search.length < 2) {
+      this.rangeRequest.from = -1;
+      this.rangeRequest.listId = -1;
+      this.objData = [];
+    }
+    this.rangeRequest.search = value;
   }
 
   static removeObj = async (value: ObjDto): Promise<boolean> => {
@@ -62,9 +76,10 @@ export class BoardStore {
 
   static async clearSearch(): Promise<void> {
     this.isLastValue = false;
-    this.search.from = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
-    this.search.search = undefined;
-    this.search.listId = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
+    this.rangeRequest.search = '';
+    this.rangeRequest.from = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
+    this.rangeRequest.listId =
+      (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
   }
 
   static setLoading(value: boolean): void {
@@ -77,18 +92,14 @@ export class BoardStore {
 
   static timeout?: number;
 
-  static setSearch(search?: string): void {
-    this.search.search = search;
-  }
+  static setRefreshCallback = (refreshBoardCallback: () => void) => {
+    this.refreshBoardCallback = refreshBoardCallback;
+  };
 
-  static getSearch(): string | undefined {
-    return this.search.search;
-  }
-
-  static async getObjRange(refreshBoardCallback: () => void): Promise<void> {
-    fnConsoleLog('PinBoardStore->getRange', this.search);
+  static async getObjRange(): Promise<void> {
+    fnConsoleLog('PinBoardStore->getRange', this.rangeRequest);
     this.loading = true;
-    const result = await new OptionsObjGetRangeCommand(this.search).execute();
+    const result = await new OptionsObjGetRangeCommand(this.rangeRequest).execute();
     if (result && result.data.length > 0) {
       const lastResultObj = result.data[result.data.length - 1];
       const firstResultObj = result.data[0];
@@ -104,24 +115,15 @@ export class BoardStore {
         return;
       }
 
-      this.search.listId = result.listId;
-      this.search.from = lastResultObj.id;
+      this.rangeRequest.listId = result.listId;
+      this.rangeRequest.from = lastResultObj.id;
 
       this.objData.push(...result.data);
 
-      refreshBoardCallback();
+      if (this.refreshBoardCallback) this.refreshBoardCallback();
     } else {
       this.isLastValue = true;
     }
     this.loading = false;
-  }
-
-  static async sendSearch(refreshBoardCallback: () => void): Promise<void> {
-    fnConsoleLog('PinBoardStore->getSearch', this.search);
-    const result = await new OptionsObjSearchCommand(this.search).execute();
-    if (result) {
-      this.objData.push(...result);
-      refreshBoardCallback();
-    }
   }
 }

@@ -35,12 +35,13 @@ export const BoardComponent: FunctionComponent = () => {
     if (objData.length == 0 && !BoardStore.isLast) {
       setTimeout(async () => {
         fnConsoleLog('initPinBoardStore');
+        BoardStore.setRefreshCallback(refreshBoardCallback);
         await BoardStore.clearSearch();
-        await BoardStore.getObjRange(refreshBoardCallback);
+        await BoardStore.getObjRange();
       }, 0);
     }
     stackRef.current?.addEventListener('scroll', handleScroll);
-  });
+  }, []);
 
   const refreshBoardCallback = () => {
     setObjData(BoardStore.objList.concat());
@@ -48,24 +49,15 @@ export const BoardComponent: FunctionComponent = () => {
 
   const handleScroll = () => {
     fnConsoleLog('handleScroll');
-    if (BoardStore.isLast) return;
     if (!stackRef.current) return;
+    if (BoardStore.isLast) return; // last element so return
     const bottom = stackRef.current.scrollHeight - stackRef.current.clientHeight;
-    // This is how offensive programming looks like - escape early instead of wrapping code with conditions
     if (bottom - stackRef.current.scrollTop > 100) return; // too much up
     if (BoardStore.isLoading) return; // already loading
 
     BoardStore.setLoading(true);
-
-    // Search for value from last one
-    if (BoardStore.getSearch()) {
-      BoardStore.timeout = window.setTimeout(async () => {
-        await BoardStore.sendSearch(refreshBoardCallback);
-      }, 1000);
-      return;
-    }
     window.setTimeout(async () => {
-      await BoardStore.getObjRange(refreshBoardCallback);
+      await BoardStore.getObjRange();
     }, 250);
   };
 

@@ -22,22 +22,23 @@ import { StyledInputBlack } from '../../../../common/components/react/styled.inp
 import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
 interface BoardInputSearchParams {
+  value: string;
   searchCallback: (value: string) => void;
 }
 
-export const BoardInputSearch: FunctionComponent<BoardInputSearchParams> = ({ searchCallback }) => {
-  const [searchValue, setSearchValue] = useState<string>(BoardStore.getSearch() || '');
+export const BoardInputSearch: FunctionComponent<BoardInputSearchParams> = (props) => {
+  const [searchValue, setSearchValue] = useState<string>(props.value);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     clearTimeout(BoardStore.timeout);
     setSearchValue(e.target.value);
-    searchCallback(e.target.value);
+    props.searchCallback(e.target.value);
   };
 
   const handleClearSearch = () => {
     fnConsoleLog('handleClearSearch');
     setSearchValue('');
-    searchCallback('');
+    props.searchCallback('');
   };
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
