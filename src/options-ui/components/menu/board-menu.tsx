@@ -30,7 +30,11 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 export const BoardMenu: FunctionComponent = () => {
   const handleSettingsClick = () => {
-    window.location.hash = 'settings';
+    if (window.location.hash === '#settings') {
+      window.location.hash = '';
+    } else {
+      window.location.hash = 'settings';
+    }
   };
 
   const handleSearch = (value: string) => {

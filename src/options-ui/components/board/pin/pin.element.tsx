@@ -25,12 +25,12 @@ import { ObjPagePinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
 import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 
-interface PinElementParams {
+interface Props {
   dto: ObjDto<ObjPagePinDto>;
   refreshBoardCallback: () => void;
 }
 
-export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBoardCallback }) => {
+export const PinElement: FunctionComponent<Props> = ({ dto, refreshBoardCallback }) => {
   const [edit, setEdit] = useState<boolean>(false);
 
   const handleEdit = () => {
@@ -51,7 +51,6 @@ export const PinElement: FunctionComponent<PinElementParams> = ({ dto, refreshBo
     <BoardItem>
       <BoardItemTitle
         title={dto.data.snapshot.title}
-        dto={dto}
         editCallback={handleEdit}
         htmlCallback={handleHtml}
         removeCallback={handleRemove}

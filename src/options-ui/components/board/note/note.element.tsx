@@ -23,12 +23,12 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { marked } from 'marked';
 
-interface PinElementParams {
+interface Props {
   dto: ObjDto<ObjNoteDto>;
   refreshBoardCallback: () => void;
 }
 
-export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshBoardCallback }) => {
+export const NoteElement: FunctionComponent<Props> = ({ dto, refreshBoardCallback }) => {
   const [edit, setEdit] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -49,7 +49,7 @@ export const NoteElement: FunctionComponent<PinElementParams> = ({ dto, refreshB
 
   return (
     <BoardItem>
-      <BoardItemTitle title={dto.data.title} dto={dto} editCallback={handleEdit} removeCallback={handleRemove} />
+      <BoardItemTitle title={dto.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
       <div>
         <div ref={ref}></div>
       </div>

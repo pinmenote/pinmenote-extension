@@ -37,7 +37,7 @@ const App: FunctionComponent = () => {
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
-  });
+  }, []);
   const handleHashChange = () => {
     if (window.location.hash === '#settings') {
       setShowSettings(true);
@@ -45,14 +45,27 @@ const App: FunctionComponent = () => {
       setShowSettings(false);
     }
   };
-
-  const mainComponent = showSettings ? <SettingsComponent /> : <BoardComponent />;
   return (
     <div>
       <ThemeProvider theme={theme}>
         <BoardMenu />
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ width: '100%' }}>{mainComponent}</div>
+          <div style={{ width: '100%' }}>
+            <BoardComponent />
+          </div>
+        </div>
+        <div
+          style={{
+            display: showSettings ? 'inline-block' : 'none',
+            position: 'absolute',
+            top: 65,
+            left: 0,
+            width: '100%',
+            height: '100vh',
+            backgroundColor: '#ffffff'
+          }}
+        >
+          <SettingsComponent />
         </div>
         <HtmlPreviewComponent />
       </ThemeProvider>

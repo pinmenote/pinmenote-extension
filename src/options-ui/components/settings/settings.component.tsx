@@ -15,11 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { CSSProperties, FunctionComponent } from 'react';
-import ClearIcon from '@mui/icons-material/Clear';
 import { ContentSettingsComponent } from './content/content-settings.component';
 import { CryptoSettingsComponent } from './crypto/crypto-settings.component';
 import { DEFAULT_BORDER_RADIUS } from '../../../common/components/colors';
-import IconButton from '@mui/material/IconButton';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import { ServerSettingsComponent } from './server/server-settings.component';
 import Typography from '@mui/material/Typography';
@@ -33,21 +31,14 @@ const containerStyle: CSSProperties = {
 };
 
 export const SettingsComponent: FunctionComponent = () => {
-  const handleCloseClick = () => {
-    window.location.hash = '';
-  };
-
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography fontSize="3em" style={{ margin: 20 }}>
           Settings
         </Typography>
-        <IconButton onClick={handleCloseClick}>
-          <ClearIcon />
-        </IconButton>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto', height: '90vh', marginBottom: 50 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto', height: 'calc(100vh - 160px)' }}>
         <div style={containerStyle}>
           <ScreenshotSettingsComponent></ScreenshotSettingsComponent>
         </div>
