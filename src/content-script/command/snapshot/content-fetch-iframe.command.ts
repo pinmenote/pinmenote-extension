@@ -36,7 +36,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       isPartial: false
     });
     fnConsoleLog('ContentFetchIframeCommand->html->done');
-    const css = await CssFactory.computeCssContent();
+    const css = await CssFactory.computeCssContent(document);
     fnConsoleLog('ContentFetchIframeCommand->css->done');
     const dto: ObjIFrameContentDto = {
       html: htmlContent.html,

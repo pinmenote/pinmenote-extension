@@ -49,7 +49,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html, this.isPartial);
     const htmlAttr = HtmlFactory.computeHtmlAttr();
     fnConsoleLog('HTML DONE');
-    const css = await CssFactory.computeCssContent(urlCache);
+    const css = await CssFactory.computeCssContent(document, urlCache);
 
     const adopted = CssFactory.computeAdoptedStyleSheets(document.adoptedStyleSheets);
     if (adopted) css.css.unshift({ id: fnUid(), data: adopted });

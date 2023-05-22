@@ -34,7 +34,7 @@ export const CSS_IMPORT_REG = new RegExp(
 export class CssFactory {
   private static readonly urlImportStripRegex = new RegExp('[()\'";]', 'g');
 
-  static computeCssContent = async (skipUrlCache?: Set<string>): Promise<CssStyleListDto> => {
+  static computeCssContent = async (document: Document, skipUrlCache?: Set<string>): Promise<CssStyleListDto> => {
     const css: CssStyleDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
     fnConsoleLog('CssFactory->computeCssContent', styleSheets.length);

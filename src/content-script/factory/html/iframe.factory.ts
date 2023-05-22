@@ -122,9 +122,6 @@ export class IFrameFactory {
     ref: HTMLIFrameElement,
     depth: number
   ): Promise<IFrameFetchMessage | undefined> => {
-    // TODO fix this by sometimes pulling styles from parent ? - return undefined for now
-    // eslint-disable-next-line no-constant-condition
-    if (1 === 1) return undefined;
     if (!ref.contentDocument) return undefined;
 
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
@@ -135,7 +132,7 @@ export class IFrameFactory {
       isPartial: false
     });
     fnConsoleLog('ContentFetchAccessibleIframeCommand->html->done');
-    const css = await CssFactory.computeCssContent();
+    const css = await CssFactory.computeCssContent(ref.contentDocument);
     fnConsoleLog('ContentFetchAccessibleIframeCommand->css->done');
     const data = {
       html: htmlContent.html,
