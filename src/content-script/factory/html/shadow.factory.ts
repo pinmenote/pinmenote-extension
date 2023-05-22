@@ -38,6 +38,11 @@ export class ShadowFactory {
     let html = `<${tagName} data-pin-id="${uid}" `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
+
+    // @vane shadow element can have normal children - those are probably rendered from slots
+    // - don't fully understand no time and money left for that - it renders correctly and that's enough
+    html += await this.computeChildren(Array.from(ref.childNodes), skipUrlCache);
+
     html += `</${tagName}>`;
 
     const shadowHtml = await this.computeShadowHtml(shadow, skipUrlCache);
@@ -83,7 +88,8 @@ export class ShadowFactory {
 
   private static computeShadowChild = async (ref: Element, skipUrlCache?: Set<string>): Promise<string> => {
     const tagName = ref.tagName.toLowerCase();
-    if (['script', 'noscript'].includes(tagName)) return '';
+    // REMEMBER to not skip slot !!!
+    if (['script', 'noscript', 'template'].includes(tagName)) return '';
 
     let htmlPrefilled = false;
 

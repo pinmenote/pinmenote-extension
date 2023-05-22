@@ -75,6 +75,7 @@ export class HtmlAttrFactory {
         }
       } else if (attr.name === 'style') {
         // style can have background-image:url('')
+        attrValue = attrValue.replaceAll('&quot;', '"');
         const urlList = attrValue.match(CSS_URL_REG);
         if (urlList) {
           attrValue = await CssFactory.fetchUrls(attrValue);
