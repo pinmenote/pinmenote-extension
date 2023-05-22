@@ -14,14 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { FetchResponse, ResponseType } from '../model/api.model';
 import { BrowserApi } from '../service/browser.api.wrapper';
 import { BusMessageType } from '../model/bus.model';
 import { FetchImageRequest } from '../model/obj-request.model';
-import { FetchResponse } from '../model/api.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
+import { fnConsoleLog } from './console.fn';
 
 export const fnFetchImage = (url: string): Promise<FetchResponse<string>> => {
   return new Promise<FetchResponse<string>>((resolve, reject) => {
+    if (!url) {
+      fnConsoleLog('fnFetchImage->EMPTY_URL !!!');
+      resolve({
+        url,
+        ok: false,
+        status: 500,
+        res: '',
+        type: ResponseType.BLOB
+      });
+      return;
+    }
     TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_IMAGE, (event, key, value) => {
       if (value.url === url) {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);

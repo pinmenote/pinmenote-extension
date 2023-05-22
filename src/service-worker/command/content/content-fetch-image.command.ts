@@ -30,7 +30,11 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
       const blob = await FetchService.get<Blob>(this.req.url, false, ResponseType.BLOB);
       const data = await UrlFactory.toDataUri(blob.res);
       let ok = blob.ok;
-      if (data.startsWith('data:text/html')) {
+      if (
+        data.startsWith('data:text/html') ||
+        data.startsWith('data:text/javascript') ||
+        data.startsWith('data:text/css')
+      ) {
         fnConsoleLog('ContentFetchImageCommand->problem', this.req.url);
         ok = false;
       }

@@ -30,10 +30,11 @@ export const CSS_IMPORT_REG = new RegExp(
   '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
   'gi'
 );
+export const STRIP_MASK_REG = new RegExp('(-webkit-mask:|mask:)(.*?;)', 'g');
+export const STRIP_FONT_REG = new RegExp('(@font-face)(.*?})', 'g');
+export const STRIP_URL_IMPORT_REG = new RegExp('[()\'";]', 'g');
 
 export class CssFactory {
-  private static readonly urlImportStripRegex = new RegExp('[()\'";]', 'g');
-
   static computeCssContent = async (document: Document, skipUrlCache?: Set<string>): Promise<CssStyleListDto> => {
     const css: CssStyleDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
@@ -150,7 +151,7 @@ export class CssFactory {
         if (!urlMatch) continue;
         url = urlMatch[0].substring(3, urlMatch[0].length - 1);
       }
-      url = url.replaceAll(this.urlImportStripRegex, '');
+      url = url.replaceAll(STRIP_URL_IMPORT_REG, '');
 
       if (rel && !url.startsWith('http')) {
         const a = rel.split('/');
@@ -209,14 +210,14 @@ export class CssFactory {
       if (url.endsWith(';')) url = url.substring(0, url.length - 1);
       // TODO not working svg+xml - but we skip svg anyway so ignore now
       if (url.startsWith('data:image/svg+xml;charset=utf8')) {
-        css = css.replace(urlMatch, 'url()');
+        css = css.replace(urlMatch, '');
         continue;
       }
       // skip data elements
       if (url.startsWith('data:')) continue;
       // skip url with #
       if (url.startsWith('#')) continue;
-      // skip multiple urls
+      // skip multiple urls - remove if not bug found
       if (url.split('url(').length > 2) continue;
       if (
         !(
@@ -252,6 +253,11 @@ export class CssFactory {
         break;
       }
     }
+    // Remove masks because I don't have time and money for now to parse all css types of urls
+    // Invalid url inside mask results with empty image
+    css = css.replaceAll(STRIP_MASK_REG, '');
+    // Strip font face because we don't load it - fonts are big
+    css = css.replaceAll(STRIP_FONT_REG, '');
     return css;
   };
 

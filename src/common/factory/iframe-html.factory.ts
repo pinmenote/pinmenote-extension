@@ -30,9 +30,11 @@ export class IframeHtmlFactory {
         style += '<style';
         css.media ? (style += ` media="${css.media}">`) : (style += '>');
         style += css.data + '</style>';
-      } else if (css.href) {
-        style += `<link rel="stylesheet" href="${css.href}" />`;
       }
+      /* just ignore links because can't render them inside extension
+      else if (css.href) {
+        style += `<link rel="stylesheet" href="${css.href}" />`;
+      }*/
     }
     // funny people -> workaround for -> <noscript> html {opacity: 1} </noscript>
     // and <style> html { display: 'none' } </style>

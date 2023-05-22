@@ -18,7 +18,7 @@ import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnFetchImage } from '../../../common/fn/fetch-image.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
 
 export class HtmlPictureFactory {
@@ -27,38 +27,45 @@ export class HtmlPictureFactory {
     forShadow: boolean,
     skipUrlCache?: Set<string>
   ): Promise<HtmlIntermediateData> => {
-    fnConsoleLog('HtmlPictureFactory->computePicture');
+    // fnConsoleLog('HtmlPictureFactory->computePicture');
     if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
 
-    const children = Array.from(ref.children);
-    // TODO use source - pick best one - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
-    const img = children.filter((c) => c.tagName.toLowerCase() === 'img').pop();
-    if (!img) return HtmlAttrFactory.EMPTY_RESULT;
+    const img = ref.querySelector('img');
+    let imgValue = undefined;
+    if (img && img.currentSrc) {
+      // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
+      // Compute picture as img to cache source as base64 encoded string inside img tag
+      const imageData = await fnFetchImage(img.currentSrc);
+      if (imageData.ok) {
+        imgValue = imageData.res;
+      }
+    } else if (!img) {
+      return HtmlAttrFactory.EMPTY_RESULT;
+    }
+
+    if (!imgValue) imgValue = await HtmlImgFactory.computeImgValue(img, skipUrlCache);
 
     const content: ObjContentDto[] = [];
     let html = `<picture `;
-    html += await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes));
-    html = html.substring(0, html.length - 1);
+    const picAttrs = await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes));
+    html += picAttrs.substring(0, picAttrs.length - 1) + '>';
 
-    html += '>';
-    const value = await HtmlImgFactory.computeImgValue(img as HTMLImageElement, skipUrlCache);
     if (forShadow) {
-      html += `<img src="${value}" `;
+      html += `<img src="${imgValue}" `;
     } else {
       const uid = fnUid();
       html += `<img data-pin-id=${uid} `;
       content.push({
         id: uid,
         type: ObjContentTypeDto.IMG,
-        content: value
+        content: imgValue
       });
     }
-    if (img) {
-      const imgAttr = Array.from(img.attributes);
-      html += await HtmlAttrFactory.computeAttrValues('img', imgAttr);
-    }
-    html = html.substring(0, html.length - 1) + '/>';
-    html += '</picture>';
+
+    const imgAttr = await HtmlAttrFactory.computeAttrValues('img', Array.from(img.attributes));
+    html += imgAttr.substring(0, html.length - 1);
+    html += '/></picture>';
+
     return {
       html,
       video: [],
