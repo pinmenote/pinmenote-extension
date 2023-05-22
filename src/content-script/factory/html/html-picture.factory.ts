@@ -35,6 +35,7 @@ export class HtmlPictureFactory {
     if (img && img.currentSrc) {
       // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
       // Compute picture as img to cache source as base64 encoded string inside img tag
+      // TODO still need fix for not rendered images - this is half baked
       const imageData = await fnFetchImage(img.currentSrc);
       if (imageData.ok) {
         imgValue = imageData.res;
@@ -62,9 +63,8 @@ export class HtmlPictureFactory {
       });
     }
 
-    const imgAttr = await HtmlAttrFactory.computeAttrValues('img', Array.from(img.attributes));
-    html += imgAttr.substring(0, html.length - 1);
-    html += '/></picture>';
+    html += await HtmlAttrFactory.computeAttrValues('img', Array.from(img.attributes));
+    html += ' /></picture>';
 
     return {
       html,

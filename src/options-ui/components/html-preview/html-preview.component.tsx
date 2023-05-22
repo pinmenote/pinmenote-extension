@@ -200,7 +200,9 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
               }
             }
           } else if (dto.type === ObjContentTypeDto.IMG) {
-            (el as HTMLImageElement).src = dto.content as string;
+            const img = el as HTMLImageElement;
+            img.src = dto.content as string;
+            if (img.parentElement?.tagName === 'picture') img.style.maxWidth = `${window.innerWidth}px`;
           } else if (dto.type === ObjContentTypeDto.SHADOW) {
             const content = dto.content as ObjShadowContentDto;
             renderShadow(el, content);

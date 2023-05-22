@@ -39,7 +39,7 @@ export class IframeHtmlFactory {
     // funny people -> workaround for -> <noscript> html {opacity: 1} </noscript>
     // and <style> html { display: 'none' } </style>
     return `<!doctype html>
-<html style="opacity: 1;display: inline-block;" ${snapshot.htmlAttr}>
+<html style="opacity: 1;display: inline-block;max-width: ${window.innerWidth}" ${snapshot.htmlAttr}>
   <head>
     ${titleTag}
     <meta charset="utf-8">
@@ -104,6 +104,9 @@ export class IframeHtmlFactory {
             }
           } else if (dto.type === 2) {
             el.src = dto.content;
+            if (el.parentElement && el.parentElement.tagName === 'picture') {
+                el.style.maxWidth = window.innerWidth + 'px';
+            }            
           } else if (dto.type === 3) {
             renderShadow(el, dto.content);
           }
