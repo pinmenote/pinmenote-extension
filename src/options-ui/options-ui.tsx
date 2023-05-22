@@ -17,20 +17,22 @@
 import '../css/prosemirror.css';
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
 import { BoardComponent } from './components/board/board.component';
-import { BoardMenu } from './components/menu/board-menu';
+import { BoardDrawer } from './components/board/board/board-drawer';
+import { BoardMenu } from './components/board/board/board-menu';
 import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
 import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
 import { OptionsMessageHandler } from './options-message.handler';
 import { SettingsComponent } from './components/settings/settings.component';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { createRoot } from 'react-dom/client';
-import { fnConsoleError } from '../common/fn/console.fn';
 
 const theme = MuiThemeFactory.createTheme();
 
-const App: FunctionComponent = () => {
+const OptionsUI: FunctionComponent = () => {
   const [showSettings, setShowSettings] = useState<boolean>(window.location.hash === '#settings');
+  const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
   useEffect(() => {
     window.addEventListener('hashchange', handleHashChange);
@@ -38,6 +40,7 @@ const App: FunctionComponent = () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
+
   const handleHashChange = () => {
     if (window.location.hash === '#settings') {
       setShowSettings(true);
@@ -45,14 +48,27 @@ const App: FunctionComponent = () => {
       setShowSettings(false);
     }
   };
+
+  const handleDrawer = () => {
+    setShowDrawer(!showDrawer);
+    fnConsoleLog('App->handleDrawer', !showDrawer);
+  };
+
   return (
     <div>
       <ThemeProvider theme={theme}>
-        <BoardMenu />
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ width: '100%' }}>
-            <BoardComponent />
-          </div>
+        <BoardMenu drawerHandler={handleDrawer} />
+        <BoardDrawer showDrawer={showDrawer} />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            marginTop: 65,
+            width: showDrawer ? 'calc(100% - 200px)' : '100%',
+            marginLeft: showDrawer ? 200 : 0
+          }}
+        >
+          <BoardComponent />
         </div>
         <div
           style={{
@@ -60,7 +76,7 @@ const App: FunctionComponent = () => {
             position: 'absolute',
             top: 65,
             left: 0,
-            width: '100%',
+            width: showDrawer ? 'calc(100% - 50px)' : '100%',
             height: '100vh',
             backgroundColor: '#ffffff'
           }}
@@ -80,4 +96,4 @@ try {
 }
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
-root.render(<App />);
+root.render(<OptionsUI />);

@@ -16,19 +16,23 @@
  */
 import React, { FunctionComponent } from 'react';
 import AppBar from '@mui/material/AppBar';
-import { BoardAddElementSearch } from '../board/search/board-add-element.search';
-import { BoardInputSearch } from '../board/search/board-input.search';
-import { BoardStore } from '../../store/board.store';
+import { BoardAddElementSearch } from '../search/board-add-element.search';
+import { BoardInputSearch } from '../search/board-input.search';
+import { BoardStore } from '../../../store/board.store';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { appLight32Icon } from '../../../common/components/app-icons';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { appLight32Icon } from '../../../../common/components/app-icons';
+import { fnConsoleLog } from '../../../../common/fn/console.fn';
 
-export const BoardMenu: FunctionComponent = () => {
+interface Props {
+  drawerHandler: () => void;
+}
+
+export const BoardMenu: FunctionComponent<Props> = (props) => {
   const handleSettingsClick = () => {
     if (window.location.hash === '#settings') {
       window.location.hash = '';
@@ -43,12 +47,16 @@ export const BoardMenu: FunctionComponent = () => {
     BoardStore.setLoading(true);
     window.setTimeout(async () => {
       await BoardStore.getObjRange();
-    }, 500);
+    }, 1000);
+  };
+
+  const handleDrawer = () => {
+    props.drawerHandler();
   };
   return (
-    <AppBar position="static">
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar variant="dense" sx={{ flexGrow: 1 }}>
-        <IconButton size="small" edge="start" color="inherit" aria-label="open drawer">
+        <IconButton size="small" edge="start" color="inherit" aria-label="open drawer" onClick={handleDrawer}>
           <MenuIcon />
         </IconButton>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: '10px' }}>
@@ -62,7 +70,13 @@ export const BoardMenu: FunctionComponent = () => {
           <BoardAddElementSearch></BoardAddElementSearch>
         </div>
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <IconButton size="small" aria-label="show 4 new mails" color="inherit" onClick={handleSettingsClick}>
+          <IconButton
+            size="small"
+            aria-label="show 4 new mails"
+            color="inherit"
+            title="settings"
+            onClick={handleSettingsClick}
+          >
             <SettingsIcon />
           </IconButton>
         </Box>

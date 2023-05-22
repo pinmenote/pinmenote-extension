@@ -15,20 +15,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent } from 'react';
+import Box from '@mui/material/Box';
+import { Drawer } from '@mui/material';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 
-export const BoardItem: FunctionComponent<React.PropsWithChildren> = (props) => {
+interface Props {
+  showDrawer: boolean;
+}
+
+export const BoardDrawer: FunctionComponent<Props> = (props) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: '380px',
-        minWidth: '380px',
-        border: '1px solid #eeeeee',
-        padding: 5
-      }}
-    >
-      {props.children}
-    </div>
+    <Drawer open={props.showDrawer} anchor="left" variant="persistent">
+      <Toolbar />
+      <Box sx={{ overflow: 'auto', width: 200, maxWidth: 200 }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography variant="h6" fontWeight="bold" style={{ wordBreak: 'break-all', wordWrap: 'break-word' }}>
+            Tags
+          </Typography>
+        </div>
+      </Box>
+    </Drawer>
   );
 };

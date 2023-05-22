@@ -27,7 +27,7 @@ import { fnConsoleLog } from '../../../common/fn/console.fn';
 export const BoardComponent: FunctionComponent = () => {
   const [objData, setObjData] = useState<ObjDto[]>(BoardStore.objList);
 
-  const ref = useRef<HTMLUListElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Infinite scroll
@@ -101,21 +101,22 @@ export const BoardComponent: FunctionComponent = () => {
   }
 
   return (
-    <div style={{ marginTop: 10, display: 'flex', justifyContent: 'center' }}>
-      <ul
+    <div>
+      <div
         ref={ref}
         style={{
           width: '100%',
           display: 'flex',
           overflow: 'auto',
           flexWrap: 'wrap',
+          justifyContent: 'center',
           flexDirection: 'row',
           height: 'calc(100vh - 65px)',
           gap: '5px'
         }}
       >
         {boardElements}
-      </ul>
+      </div>
     </div>
   );
 };

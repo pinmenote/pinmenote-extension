@@ -41,7 +41,7 @@ export const BoardAddElementSearch: FunctionComponent = () => {
       </IconButton>
       <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
         {addMenuItemList.map((item, index) => (
-          <MenuItem key={index} onClick={() => handleMenuClick(item.type)}>
+          <MenuItem key={index} onClick={() => handleMenuClick(item.type)} style={{ padding: 10, minWidth: 150 }}>
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.title} />
           </MenuItem>

@@ -17,12 +17,15 @@
 import { IFrameFetchMessage, IFrameIndexMessage } from '../../../common/model/iframe-message.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
+import { HtmlFactory } from './html.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { IFrameStore } from '../../store/iframe.store';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnUid } from '../../../common/fn/uid.fn';
 
 export class IFrameFactory {
   static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
@@ -53,8 +56,15 @@ export class IFrameFactory {
     return new Promise<IFrameFetchMessage | undefined>((resolve) => {
       const msg = IFrameStore.findIndex(ref);
       if (!msg) {
-        fnConsoleLog('IFrameFactory->fetchIframe->findIndex->NOT_FOUND', 'src', ref.src);
-        resolve(undefined);
+        if (ref.contentDocument) {
+          setTimeout(async () => {
+            const result = await this.fetchLocalIframe(ref, depth);
+            resolve(result);
+          }, 0);
+        } else {
+          fnConsoleLog('IFrameFactory->fetchIframe->findIndex->NOT_FOUND', 'src', ref.src);
+          resolve(undefined);
+        }
         return;
       }
       fnConsoleLog('IFrameFactory->fetchIframe->index', msg.index, msg.uid, 'src', ref.src);
@@ -106,5 +116,37 @@ export class IFrameFactory {
           /* IGNORE */
         });
     });
+  };
+
+  private static fetchLocalIframe = async (
+    ref: HTMLIFrameElement,
+    depth: number
+  ): Promise<IFrameFetchMessage | undefined> => {
+    // TODO fix this by sometimes pulling styles from parent ? - return undefined for now
+    // eslint-disable-next-line no-constant-condition
+    if (1 === 1) return undefined;
+    if (!ref.contentDocument) return undefined;
+
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+      ref: ref.contentDocument.body,
+      depth: depth + 1,
+      skipUrlCache: new Set<string>(),
+      skipTagCache: new Set<string>(),
+      isPartial: false
+    });
+    fnConsoleLog('ContentFetchAccessibleIframeCommand->html->done');
+    const css = await CssFactory.computeCssContent();
+    fnConsoleLog('ContentFetchAccessibleIframeCommand->css->done');
+    const data = {
+      html: htmlContent.html,
+      htmlAttr: HtmlFactory.computeHtmlAttr(),
+      css,
+      content: htmlContent.content
+    };
+    return {
+      uid: fnUid(),
+      href: '',
+      data
+    };
   };
 }
