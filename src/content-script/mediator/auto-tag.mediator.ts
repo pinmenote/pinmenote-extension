@@ -34,7 +34,8 @@ export class AutoTagMediator {
     if (element instanceof HTMLBodyElement) {
       keywords = this.captureKeywordData();
     } else {
-      keywords = [...element.innerText.split(' '), document.title, ...window.location.origin.split('.')];
+      const link = [...window.location.host.split('.'), ...decodeURI(window.location.pathname).split('/')];
+      keywords = [...element.innerText.split(' '), document.title, ...link];
     }
     const tagList = this.calculateTags(keywords);
     fnConsoleLog('CLEAN WORD LIST', tagList);
@@ -61,13 +62,9 @@ export class AutoTagMediator {
   }
 
   private static captureKeywordData(): string[] {
+    const link = [...window.location.host.split('.'), ...decodeURI(window.location.pathname).split('/')];
     return Array.from(
-      new Set([
-        ...Array.from(this.captureMeta()),
-        ...Array.from(this.captureLdJson()),
-        document.title,
-        ...window.location.origin.split('.')
-      ])
+      new Set([...Array.from(this.captureMeta()), ...Array.from(this.captureLdJson()), document.title, ...link])
     );
   }
 

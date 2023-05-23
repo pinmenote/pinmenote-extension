@@ -33,6 +33,7 @@ export class WordIndex {
       }
       word += key;
     }
+    words.push(word);
     return words;
   }
 
