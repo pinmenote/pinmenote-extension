@@ -19,11 +19,8 @@ import { BoardItem } from '../board/board-item';
 import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
 import { BoardStore } from '../../../store/board.store';
-import { BusMessageType } from '../../../../common/model/bus.model';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
-import { ObjSnapshotDto } from '../../../../common/model/obj/obj-snapshot.dto';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 
 interface Props {
   dto: ObjDto<ObjPageDto>;
@@ -38,7 +35,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = ({ dto, refreshBoar
   };
 
   const handleHtml = () => {
-    TinyEventDispatcher.dispatch<ObjSnapshotDto>(BusMessageType.OPT_SHOW_HTML, dto.data.snapshot);
+    window.location.hash = `obj/${dto.id}`;
   };
 
   const handleRemove = async () => {

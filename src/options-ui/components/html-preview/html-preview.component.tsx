@@ -26,14 +26,16 @@ import {
 } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnSleep } from '../../../common/fn/sleep.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
@@ -43,12 +45,18 @@ const fnByteToMb = (value?: number): number => {
   return Math.floor(value / 10000) / 100;
 };
 
-export const HtmlPreviewComponent: FunctionComponent = () => {
+interface Props {
+  visible: boolean;
+}
+
+export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const htmlRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const urlRef = useRef<HTMLDivElement>(null);
   const sizeRef = useRef<HTMLDivElement>(null);
+
+  const [visible, setVisible] = useState<boolean>(props.visible);
 
   const [snapshotData, setSnapshotData] = useState<ObjSnapshotData | undefined>();
   const [snapshot, setSnapshot] = useState<ObjSnapshotDto | undefined>();
@@ -56,36 +64,42 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   const [isPreLoading, setIsPreLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const htmlKey = TinyEventDispatcher.addListener<ObjSnapshotDto>(
-      BusMessageType.OPT_SHOW_HTML,
-      async (event, key, value) => {
-        setIsPreLoading(true);
-        setIsLoading(true);
-        setSnapshot(value);
-        let c: ObjSnapshotData | undefined = undefined;
-        if (value.contentId > 0) {
-          c = await new ObjGetSnapshotContentCommand(value.contentId).execute();
-          setSnapshotData(c);
-        }
-        if (value.canvas) {
-          renderCanvas(value, c);
-        } else {
-          await renderSnapshot(value, c);
-        }
+    setVisible(props.visible);
+    if (props.visible !== visible && props.visible) {
+      const idhash = window.location.hash.split('/')[1];
+      try {
+        fnConsoleLog('HtmlPreviewComponent->useEffect->render', props.visible, visible);
+        render(parseInt(idhash));
+      } catch (e) {
+        fnConsoleLog('Error render or parseInt', e);
       }
-    );
-
-    return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.OPT_SHOW_HTML, htmlKey);
-    };
+    }
   });
+
+  const render = (id: number) => {
+    setTimeout(async () => {
+      setIsPreLoading(true);
+      setIsLoading(true);
+      const obj = await BrowserStorageWrapper.get<ObjDto<ObjPageDto>>(`${ObjectStoreKeys.OBJECT_ID}:${id}`);
+      setSnapshot(obj.data.snapshot);
+      let c: ObjSnapshotData | undefined = undefined;
+      if (obj.data.snapshot.contentId > 0) {
+        c = await new ObjGetSnapshotContentCommand(obj.data.snapshot.contentId).execute();
+        setSnapshotData(c);
+      }
+      if (obj.data.snapshot.canvas) {
+        renderCanvas(obj.data.snapshot, c);
+      } else {
+        await renderSnapshot(obj.data.snapshot, c);
+      }
+    });
+  };
 
   const renderCanvas = (s: ObjSnapshotDto, c?: ObjSnapshotData) => {
     renderHeader(s, c?.size);
 
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
-    containerRef.current.style.display = 'flex';
     const iframe = document.createElement('iframe');
     iframe.width = '100%';
     iframe.height = '100%';
@@ -249,11 +263,11 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
   };
 
   const handleClose = () => {
+    window.location.hash = '';
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
     if (htmlRef.current.childNodes.length === 1) return;
     if (htmlRef.current.lastChild) htmlRef.current.removeChild(htmlRef.current.lastChild);
-    containerRef.current.style.display = 'none';
   };
   return (
     <div
@@ -262,7 +276,7 @@ export const HtmlPreviewComponent: FunctionComponent = () => {
         width: '100%',
         height: '100%',
         flexDirection: 'column',
-        display: 'none',
+        display: visible ? 'flex' : 'none',
         position: 'absolute',
         zIndex: 'calc(9e999)',
         top: '0px',

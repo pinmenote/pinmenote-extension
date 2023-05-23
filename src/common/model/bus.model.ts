@@ -29,8 +29,6 @@ export interface BusDownloadMessage {
 export enum BusMessageType {
   // Internal content script
   CNT_SETTINGS = 'cnt.settings',
-  // Internal options tab
-  OPT_SHOW_HTML = 'opt.show.html',
   // Internal popup
   POP_CONSOLE_LOG = 'pop.console.log',
   POP_IS_ADDING = 'pop.is.adding',

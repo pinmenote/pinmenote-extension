@@ -30,11 +30,26 @@ import { createRoot } from 'react-dom/client';
 
 const theme = MuiThemeFactory.createTheme();
 
+enum CurrentView {
+  SETTINGS,
+  BOARD,
+  OBJ_DETAILS
+}
+
+const getView = () => {
+  const hash = window.location.hash.substring(1);
+  if (hash === 'settings') return CurrentView.SETTINGS;
+  if (hash.startsWith('obj')) return CurrentView.OBJ_DETAILS;
+  return CurrentView.BOARD;
+};
+
 const OptionsUI: FunctionComponent = () => {
-  const [showSettings, setShowSettings] = useState<boolean>(window.location.hash === '#settings');
+  const [currentView, setCurrentView] = useState<CurrentView>(getView());
+  const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
   useEffect(() => {
+    if (currentView === CurrentView.OBJ_DETAILS) setShowPreview(true);
     window.addEventListener('hashchange', handleHashChange);
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
@@ -42,11 +57,9 @@ const OptionsUI: FunctionComponent = () => {
   }, []);
 
   const handleHashChange = () => {
-    if (window.location.hash === '#settings') {
-      setShowSettings(true);
-    } else {
-      setShowSettings(false);
-    }
+    const view = getView();
+    setCurrentView(view);
+    setShowPreview(view === CurrentView.OBJ_DETAILS);
   };
 
   const handleDrawer = () => {
@@ -72,7 +85,7 @@ const OptionsUI: FunctionComponent = () => {
         </div>
         <div
           style={{
-            display: showSettings ? 'inline-block' : 'none',
+            display: currentView === CurrentView.SETTINGS ? 'inline-block' : 'none',
             position: 'absolute',
             top: 65,
             left: 0,
@@ -83,7 +96,7 @@ const OptionsUI: FunctionComponent = () => {
         >
           <SettingsComponent />
         </div>
-        <HtmlPreviewComponent />
+        <HtmlPreviewComponent visible={showPreview} />
       </ThemeProvider>
     </div>
   );
