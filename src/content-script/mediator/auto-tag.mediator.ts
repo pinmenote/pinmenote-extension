@@ -54,7 +54,7 @@ export class AutoTagMediator {
     tagList = Array.from(new Set(tagList));
 
     const language = DetectLanguage.detect(document.body.innerText);
-    fnConsoleLog('LANGUAGE', language);
+    fnConsoleLog('LANGUAGE', language, 'WITH STOPWORDS', tagList);
     // TODO maybe check if anything removed - if not maybe take second guess from detected language
     if (language) tagList = StopWordRemove.execute(language, tagList);
 
