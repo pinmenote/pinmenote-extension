@@ -24,6 +24,7 @@ import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
 import { SnapshotListExpandComponent } from './snapshot-list-expand.component';
 import Typography from '@mui/material/Typography';
@@ -92,6 +93,13 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
             justifyContent: 'flex-end'
           }}
         >
+          <IconButton
+            title="Show on pin board"
+            size="small"
+            onClick={() => BrowserApi.openOptionsPage(`#obj/${props.obj.id}`)}
+          >
+            <PushPinIcon sx={{ fontSize: '12px' }} />
+          </IconButton>
           <IconButton title="Go to page" size="small" onClick={() => handleNavigate(props.obj)}>
             <ArrowForwardIcon sx={{ fontSize: '12px' }} />
           </IconButton>
