@@ -33,6 +33,7 @@ interface Props {
 }
 
 export const BoardMenu: FunctionComponent<Props> = (props) => {
+  let timeoutId = -1;
   const handleSettingsClick = () => {
     if (window.location.hash === '#settings') {
       window.location.hash = '';
@@ -42,10 +43,10 @@ export const BoardMenu: FunctionComponent<Props> = (props) => {
   };
 
   const handleSearch = (value: string) => {
+    clearTimeout(timeoutId);
     fnConsoleLog('BoardMenu->handleSearch', value);
     BoardStore.search = value;
-    BoardStore.setLoading(true);
-    window.setTimeout(async () => {
+    timeoutId = window.setTimeout(async () => {
       await BoardStore.getObjRange();
     }, 1000);
   };

@@ -54,9 +54,7 @@ export const BoardComponent: FunctionComponent = () => {
     if (BoardStore.isLast) return; // last element so return
     const bottom = ref.current.scrollHeight - ref.current.clientHeight;
     if (bottom - ref.current.scrollTop > 100) return; // too much up
-    if (BoardStore.isLoading) return; // already loading
 
-    BoardStore.setLoading(true);
     window.setTimeout(async () => {
       await BoardStore.getObjRange();
     }, 250);

@@ -88,10 +88,6 @@ export class BoardStore {
     this.keySet.clear();
   }
 
-  static setLoading(value: boolean): void {
-    this.loading = value;
-  }
-
   static get isLoading(): boolean {
     return this.loading;
   }
@@ -103,17 +99,12 @@ export class BoardStore {
   };
 
   static async getObjRange(): Promise<void> {
-    fnConsoleLog('PinBoardStore->getRange', this.rangeRequest);
+    if (this.loading) return;
     this.loading = true;
     const result = await new OptionsObjGetRangeCommand(this.rangeRequest).execute();
+    fnConsoleLog('PinBoardStore->getRange', this.rangeRequest, this.isLastValue, result?.data);
     if (result && result.data.length > 0) {
       const lastResultObj = result.data[result.data.length - 1];
-
-      if (result.data.length === 0) {
-        this.isLastValue = true;
-        fnConsoleLog('PinBoardStore->getRange->STOP', lastResultObj.id);
-        return;
-      }
 
       this.rangeRequest.listId = result.listId;
       this.rangeRequest.from = lastResultObj.id;

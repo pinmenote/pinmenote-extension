@@ -63,7 +63,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
         skip = false;
       }
       out.push(objId);
-      if (out.length === this.limit) break;
+      if (out.length >= this.limit) break;
     }
     return out;
   }
