@@ -20,6 +20,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { OptionsSearchIdsCommand } from './options-search-ids.command';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 
 const emptyResult = { listId: -1, data: [] };
@@ -32,7 +33,7 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
       const { from, search, limit } = this.data;
       let listId = this.data.listId;
       if (search) {
-        return await this.getSearch(from, search);
+        return await this.getSearch(from, limit, search);
       }
       if (listId === -1) {
         listId = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
@@ -43,41 +44,13 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
     }
   }
 
-  private async getSearch(from: number, search: string): Promise<ObjRangeResponse> {
+  private async getSearch(from: number, limit: number, search: string): Promise<ObjRangeResponse> {
     if (search.length < 2) return emptyResult;
-    const start = search.substring(0, 2);
 
-    const key = `${ObjectStoreKeys.SEARCH_WORD}:${start}`;
-    const words = await BrowserStorageWrapper.get<string[] | undefined>(key);
-
-    fnConsoleLog('OptionsObjSearchCommand->words', from, words);
-    if (!words) return emptyResult;
+    const ids = await new OptionsSearchIdsCommand(search, from, limit).execute();
 
     const data: ObjDto[] = [];
-
-    const idSet = new Set<number>();
-
-    // gather ids
-    for (const word of words) {
-      const wordKey = `${ObjectStoreKeys.SEARCH_INDEX}:${word}`;
-      const wordIndex = await BrowserStorageWrapper.get<number[] | undefined>(wordKey);
-      fnConsoleLog('wordIndex', wordIndex);
-      if (!wordIndex) continue;
-
-      for (const objId of wordIndex) {
-        idSet.add(objId);
-      }
-    }
-
-    // skip from for scrolling
-    let skip = true;
-    for (const objId of Array.from(idSet)) {
-      // dirty but works - assume that javascript set preserves order
-      if (from > -1 && skip && objId !== from) {
-        continue;
-      } else if (objId === from) {
-        skip = false;
-      }
+    for (const objId of ids) {
       const objKey = `${ObjectStoreKeys.OBJECT_ID}:${objId}`;
       const obj = await BrowserStorageWrapper.get<ObjDto>(objKey);
       if (!obj) {

@@ -26,6 +26,7 @@ import { fnConsoleLog } from '../../common/fn/console.fn';
 
 export class BoardStore {
   static objData: ObjDto[] = [];
+  static keySet = new Set<number>();
 
   private static loading = false;
   private static isLastValue = false;
@@ -46,10 +47,12 @@ export class BoardStore {
   }
 
   static set search(value: string) {
-    if (this.rangeRequest.search.length > 1) {
+    if (this.rangeRequest.search.length > 0) {
       this.rangeRequest.from = -1;
       this.rangeRequest.listId = -1;
       this.objData = [];
+      this.keySet.clear();
+      if (this.refreshBoardCallback) this.refreshBoardCallback();
     }
     this.rangeRequest.search = value;
     this.isLastValue = false;
@@ -58,6 +61,7 @@ export class BoardStore {
   static removeObj = async (value: ObjDto): Promise<boolean> => {
     for (let i = 0; i < this.objData.length; i++) {
       if (this.objData[i].id == value.id) {
+        this.keySet.delete(value.id);
         this.objData.splice(i, 1);
         if (value.type === ObjTypeDto.PageElementPin) {
           const pin = value as ObjDto<ObjPagePinDto>;
@@ -81,6 +85,7 @@ export class BoardStore {
     this.rangeRequest.from = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
     this.rangeRequest.listId = -1;
     this.objData = [];
+    this.keySet.clear();
   }
 
   static setLoading(value: boolean): void {
@@ -103,12 +108,6 @@ export class BoardStore {
     const result = await new OptionsObjGetRangeCommand(this.rangeRequest).execute();
     if (result && result.data.length > 0) {
       const lastResultObj = result.data[result.data.length - 1];
-      const firstResultObj = result.data[0];
-      const lastObj = this.objData[this.objData.length - 1];
-      if (lastObj?.id === firstResultObj.id) {
-        result.data.shift();
-        fnConsoleLog('PinBoardStore->getRange->UNSHIFT', result.data);
-      }
 
       if (result.data.length === 0) {
         this.isLastValue = true;
@@ -119,7 +118,14 @@ export class BoardStore {
       this.rangeRequest.listId = result.listId;
       this.rangeRequest.from = lastResultObj.id;
 
-      this.objData.push(...result.data);
+      let added = false;
+      for (const obj of result.data) {
+        if (this.keySet.has(obj.id)) continue;
+        added = true;
+        this.objData.push(obj);
+        this.keySet.add(obj.id);
+      }
+      if (!added) this.isLastValue = true;
 
       if (this.refreshBoardCallback) this.refreshBoardCallback();
     } else {
