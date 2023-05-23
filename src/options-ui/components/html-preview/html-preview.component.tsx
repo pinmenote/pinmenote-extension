@@ -26,16 +26,14 @@ import {
 } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/console.fn';
 import { fnSleep } from '../../../common/fn/sleep.fn';
 import { fnUid } from '../../../common/fn/uid.fn';
@@ -80,7 +78,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setTimeout(async () => {
       setIsPreLoading(true);
       setIsLoading(true);
-      const obj = await BrowserStorageWrapper.get<ObjDto<ObjPageDto>>(`${ObjectStoreKeys.OBJECT_ID}:${id}`);
+      const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
       setSnapshot(obj.data.snapshot);
       let c: ObjSnapshotData | undefined = undefined;
       if (obj.data.snapshot.contentId > 0) {

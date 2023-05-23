@@ -15,13 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjPageDataDto, ObjTypeDto, ObjUrlDto } from '../../../model/obj/obj.dto';
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../../store/link-href-origin.store';
+import { ObjGetCommand } from '../obj-get.command';
 import { ObjNoteDto } from '../../../model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../model/obj/obj-pin.dto';
 import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
-import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
 export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
   constructor(private data: ObjUrlDto) {}
@@ -30,8 +29,7 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
     const pinIds = (await LinkHrefOriginStore.originIds(this.data.origin)).reverse();
     const out: ObjDto<ObjPageDataDto>[] = [];
     for (const id of pinIds) {
-      const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
-      const obj = await BrowserStorageWrapper.get<ObjDto<ObjPageDataDto>>(key);
+      const obj = await new ObjGetCommand<ObjPageDataDto>(id).execute();
       if (!obj) {
         await LinkHrefOriginStore.delHrefOriginId(this.data, id);
         continue;

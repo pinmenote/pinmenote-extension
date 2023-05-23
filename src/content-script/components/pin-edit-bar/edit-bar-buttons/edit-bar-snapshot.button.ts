@@ -59,7 +59,7 @@ export class EditBarSnapshotButton implements HtmlComponent<HTMLElement> {
     const o = this.model.object;
     const obj: ObjDto<ObjPageDto> = {
       ...o,
-      data: { snapshot: o.data.snapshot, draw: [], comments: { data: [] } }
+      data: { snapshot: o.data.snapshot, draw: { data: [] }, comments: { data: [] } }
     };
     obj.type = ObjTypeDto.PageElementSnapshot;
 

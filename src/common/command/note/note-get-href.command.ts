@@ -15,11 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { ObjGetCommand } from '../obj/obj-get.command';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
 
 export class NoteGetHrefCommand implements ICommand<Promise<ObjDto<ObjNoteDto>[]>> {
@@ -31,8 +30,7 @@ export class NoteGetHrefCommand implements ICommand<Promise<ObjDto<ObjNoteDto>[]
     const out: ObjDto<ObjNoteDto>[] = [];
 
     for (const id of ids) {
-      const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
-      const obj = await BrowserStorageWrapper.get<ObjDto<ObjNoteDto>>(key);
+      const obj = await new ObjGetCommand<ObjNoteDto>(id).execute();
       out.push(obj);
     }
     return out;

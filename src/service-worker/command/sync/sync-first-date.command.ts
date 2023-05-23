@@ -16,7 +16,7 @@
  */
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
+import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 
 export class SyncFirstDateCommand implements ICommand<Promise<number>> {
@@ -31,7 +31,7 @@ export class SyncFirstDateCommand implements ICommand<Promise<number>> {
       i++;
     }
     // get object timestamp
-    const obj = await BrowserStorageWrapper.get<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${id}`);
+    const obj = await new ObjGetCommand(id).execute();
     return obj.createdAt;
   }
 }

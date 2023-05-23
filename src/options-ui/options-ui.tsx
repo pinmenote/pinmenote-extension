@@ -23,6 +23,9 @@ import { BoardDrawer } from './components/board/board/board-drawer';
 import { BoardMenu } from './components/board/board/board-menu';
 import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
 import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
+import { ObjGetCommand } from '../common/command/obj/obj-get.command';
+import { ObjPageDto } from '../common/model/obj/obj-pin.dto';
+import { ObjTypeDto } from '../common/model/obj/obj.dto';
 import { OptionsMessageHandler } from './options-message.handler';
 import { SettingsComponent } from './components/settings/settings.component';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
@@ -56,10 +59,32 @@ const OptionsUI: FunctionComponent = () => {
     };
   }, []);
 
-  const handleHashChange = () => {
+  const handleHashChange = async () => {
     const view = getView();
     setCurrentView(view);
-    setShowPreview(view === CurrentView.OBJ_DETAILS);
+    if (view === CurrentView.OBJ_DETAILS) {
+      await renderDetails();
+    } else {
+      setShowPreview(false);
+    }
+  };
+
+  const renderDetails = async () => {
+    try {
+      const idhash = window.location.hash.split('/')[1];
+      const id = parseInt(idhash);
+      // TODO optimize - don't get it twice once here, second inside object
+      const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
+      if ([ObjTypeDto.PageElementPin, ObjTypeDto.PageElementSnapshot, ObjTypeDto.PageSnapshot].includes(obj.type)) {
+        setShowPreview(true);
+      } else {
+        fnConsoleLog('TODO Implement !!!!');
+        window.location.hash = '';
+      }
+    } catch (e) {
+      fnConsoleLog('handleHashChange->error', e);
+      window.location.hash = '';
+    }
   };
 
   const handleDrawer = () => {

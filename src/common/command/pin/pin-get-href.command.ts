@@ -15,11 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { ObjGetCommand } from '../obj/obj-get.command';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/console.fn';
 
 export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>[]>> {
@@ -31,8 +30,7 @@ export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>
     const out: ObjDto<ObjPagePinDto>[] = [];
 
     for (const id of pinIds) {
-      const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
-      const obj = await BrowserStorageWrapper.get<ObjDto<ObjPagePinDto>>(key);
+      const obj = await new ObjGetCommand<ObjPagePinDto>(id).execute();
       // TODO revisit visible flag in pin.manager.ts in content scripts
       if (!obj.local?.visible) continue;
       out.push(obj);

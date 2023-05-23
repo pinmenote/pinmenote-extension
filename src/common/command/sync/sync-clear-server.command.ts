@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDataDto, ObjDto } from '../../model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { LogManager } from '../../popup/log.manager';
-import { ObjDto } from '../../model/obj/obj.dto';
+import { ObjGetCommand } from '../obj/obj-get.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 
 export class SyncClearServerCommand implements ICommand<Promise<void>> {
@@ -37,7 +38,7 @@ export class SyncClearServerCommand implements ICommand<Promise<void>> {
   private async clearList(list: number[]): Promise<void> {
     for (const id of list) {
       LogManager.log(`SyncClearServerCommand->clearList ${id}`);
-      const obj = await this.getObject(id);
+      const obj = await new ObjGetCommand<ObjDataDto>(id).execute();
       if (!obj) {
         LogManager.log(`Problem reading object ${id}`);
         continue;
@@ -49,10 +50,6 @@ export class SyncClearServerCommand implements ICommand<Promise<void>> {
 
   private async setObject(id: number, obj: ObjDto): Promise<void> {
     await BrowserStorageWrapper.set(`${ObjectStoreKeys.OBJECT_ID}:${id}`, obj);
-  }
-
-  private async getObject(id: number): Promise<ObjDto | undefined> {
-    return BrowserStorageWrapper.get<ObjDto | undefined>(`${ObjectStoreKeys.OBJECT_ID}:${id}`);
   }
 
   private async getListId(): Promise<number> {
