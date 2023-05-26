@@ -44,7 +44,8 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
       depth: 1,
       skipTagCache: new Set<string>(),
       skipUrlCache: urlCache,
-      isPartial: this.isPartial
+      isPartial: this.isPartial,
+      insideLink: this.element.tagName.toLowerCase() === 'a'
     });
     const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html, this.isPartial);
     const htmlAttr = HtmlFactory.computeHtmlAttr();

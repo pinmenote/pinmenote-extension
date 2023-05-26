@@ -70,7 +70,8 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
         depth: 1,
         skipTagCache: new Set<string>(),
         skipUrlCache: new Set<string>(),
-        isPartial: true
+        isPartial: true,
+        insideLink: this.model.ref.tagName.toLowerCase() === 'a'
       });
       const html = HtmlFactory.computeHtmlParent(this.model.ref.parentElement, htmlContent.html, true);
 

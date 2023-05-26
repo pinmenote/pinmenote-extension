@@ -36,6 +36,7 @@ export interface HtmlComputeParams {
   skipTagCache: Set<string>;
   skipUrlCache: Set<string>;
   isPartial: boolean;
+  insideLink: boolean; // detect and mitigate link inside link hacks inside html generators
 }
 
 type CtxName = '2d' | 'webgl' | 'webgl2';
@@ -135,8 +136,12 @@ export class HtmlFactory {
   };
 
   static computeHtmlIntermediateData = async (params: HtmlComputeParams): Promise<HtmlIntermediateData> => {
-    const tagName = params.ref.tagName.toLowerCase();
+    let tagName = params.ref.tagName.toLowerCase();
     if (['script', 'link', 'noscript'].includes(tagName)) return HtmlAttrFactory.EMPTY_RESULT;
+    // @vane wasted whole day fixing html rendering problem
+    // just because some most popular markdown to documentation
+    // company that has git version control system in their name followed by book breaks html specification
+    if (tagName === 'a' && params.insideLink) tagName = 'div';
 
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !params.skipTagCache.has(tagName)) {
       const shadow = BrowserApi.shadowRoot(params.ref);
@@ -212,7 +217,7 @@ export class HtmlFactory {
     }
 
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes));
-    html = html.substring(0, html.length - 1) + '>';
+    html = html.trimEnd() + '>';
 
     const nodes = Array.from(params.ref.childNodes);
 
@@ -228,7 +233,8 @@ export class HtmlFactory {
           depth: params.depth,
           skipTagCache: params.skipTagCache,
           skipUrlCache: params.skipUrlCache,
-          isPartial: params.isPartial
+          isPartial: params.isPartial,
+          insideLink: tagName === 'a' || params.insideLink
         });
         html += computed.html;
         video.push(...computed.video);
@@ -250,7 +256,8 @@ export class HtmlFactory {
             depth: params.depth,
             skipTagCache: params.skipTagCache,
             skipUrlCache: params.skipUrlCache,
-            isPartial: params.isPartial
+            isPartial: params.isPartial,
+            insideLink: tagName === 'a' || params.insideLink
           });
           html += computed.html;
         }

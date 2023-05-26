@@ -33,7 +33,8 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       depth: this.depth + 1,
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
-      isPartial: false
+      isPartial: false,
+      insideLink: false
     });
     fnConsoleLog('ContentFetchIframeCommand->html->done');
     const css = await CssFactory.computeCssContent(document);

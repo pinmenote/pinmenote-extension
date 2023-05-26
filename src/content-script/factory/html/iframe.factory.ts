@@ -129,7 +129,8 @@ export class IFrameFactory {
       depth: depth + 1,
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
-      isPartial: false
+      isPartial: false,
+      insideLink: false
     });
     fnConsoleLog('ContentFetchAccessibleIframeCommand->html->done');
     const css = await CssFactory.computeCssContent(ref.contentDocument);
