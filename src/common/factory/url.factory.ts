@@ -99,7 +99,7 @@ const trimParams = (host: string, queryParams: QueryParam[]): string => {
     if (param.key.startsWith('ref_')) continue;
     // fb
     if (param.key.startsWith('fbclid')) continue;
-    if (!toDelete.includes(param.key)) {
+    if (!toDelete.includes(param.key) && !!param.key && param.value !== 'undefined') {
       out += `&${param.key}=${encodeURIComponent(param.value)}`;
     }
   }

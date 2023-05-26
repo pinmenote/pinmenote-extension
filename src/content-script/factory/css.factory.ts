@@ -30,7 +30,7 @@ export const CSS_IMPORT_REG = new RegExp(
   '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)',
   'gi'
 );
-export const STRIP_MASK_REG = new RegExp('(-webkit-mask:|mask:)(.*?;)', 'g');
+export const STRIP_MASK_REG = new RegExp('(-webkit-mask:url|mask:url)(.*?;)', 'g');
 export const STRIP_FONT_REG = new RegExp('(@font-face)(.*?})', 'g');
 export const STRIP_URL_IMPORT_REG = new RegExp('[()\'";]', 'g');
 

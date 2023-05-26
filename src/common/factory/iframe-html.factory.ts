@@ -38,8 +38,19 @@ export class IframeHtmlFactory {
     }
     // funny people -> workaround for -> <noscript> html {opacity: 1} </noscript>
     // and <style> html { display: 'none' } </style>
+    // ugly truth if you can modify something - someone will modify it
+    const r = new RegExp('(style=")(.*?")');
+    const m = snapshot.htmlAttr.match(r);
+    if (m) {
+      snapshot.htmlAttr = snapshot.htmlAttr.replaceAll(
+        m[0],
+        `${m[0].substring(0, m[0].length - 1)};opacity:1;display:inline-block;"`
+      );
+    } else {
+      snapshot.htmlAttr += ' style="opacity: 1;display: inline-block;"';
+    }
     return `<!doctype html>
-<html style="opacity: 1;display: inline-block;max-width: ${window.innerWidth}" ${snapshot.htmlAttr}>
+<html ${snapshot.htmlAttr}>
   <head>
     ${titleTag}
     <meta charset="utf-8">
@@ -57,8 +68,6 @@ export class IframeHtmlFactory {
         style += '<style';
         css.media ? (style += ` media="${css.media}">`) : (style += '>');
         style += css.data + '</style>';
-      } else if (css.href) {
-        style += `<link rel="stylesheet" href="${css.href}" />`;
       }
     }
     return `<!doctype html>
@@ -104,7 +113,7 @@ export class IframeHtmlFactory {
             }
           } else if (dto.type === 2) {
             el.src = dto.content;
-            if (el.parentElement && el.parentElement.tagName === 'picture') {
+            if (el.parentElement && el.parentElement.tagName.toLowerCase() === 'picture') {
                 el.style.maxWidth = window.innerWidth + 'px';
             }            
           } else if (dto.type === 3) {
@@ -139,8 +148,6 @@ export class IframeHtmlFactory {
                 style += '<style';
                 css.media ? (style += \` media="\${css.media}">\`) : (style += '>');
                 style += css.data + '</style>';
-              } else if (css.href) {
-                style += \`<link rel="stylesheet" href="\${css.href}" />\`;
               }
             }
             return \`<!doctype html>

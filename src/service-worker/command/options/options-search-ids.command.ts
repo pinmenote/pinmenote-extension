@@ -37,6 +37,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
     const wordsIds: DistanceIds[] = [];
     for (const search of searchWords) {
       const s = await this.getWordSet(search);
+      // TODO add set intersections here before push so we can display intersections first
       if (s) wordsIds.push(...s);
     }
     wordsIds.sort((a, b) => {
@@ -95,7 +96,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
       if (dw.distance > 3) continue;
       const ids = await BrowserStorageWrapper.get<number[] | undefined>(wordKey);
       if (!ids) continue;
-      distances.push({ distance: dw.distance, ids });
+      distances.push({ distance: dw.distance, ids: ids.reverse() });
     }
     return distances;
   }

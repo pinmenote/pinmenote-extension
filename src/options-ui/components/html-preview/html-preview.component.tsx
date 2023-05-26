@@ -165,7 +165,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       titleRef.current.innerHTML = s.title;
     }
     if (urlRef.current) {
-      urlRef.current.innerHTML = `<a href="${s.url.href}">${s.url.href}</a>`;
+      urlRef.current.innerHTML = `<a href="${s.url.href}" style="word-break: break-all">${s.url.href}</a>`;
     }
   };
 
@@ -214,7 +214,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           } else if (dto.type === ObjContentTypeDto.IMG) {
             const img = el as HTMLImageElement;
             img.src = dto.content as string;
-            if (img.parentElement?.tagName === 'picture') img.style.maxWidth = `${window.innerWidth}px`;
+            if (img.parentElement?.tagName.toLowerCase() === 'picture') img.style.maxWidth = `${window.innerWidth}px`;
           } else if (dto.type === ObjContentTypeDto.SHADOW) {
             const content = dto.content as ObjShadowContentDto;
             renderShadow(el, content);
