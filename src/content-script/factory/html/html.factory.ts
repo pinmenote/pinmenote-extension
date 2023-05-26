@@ -16,6 +16,7 @@
  */
 import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';
@@ -135,7 +136,7 @@ export class HtmlFactory {
 
   static computeHtmlIntermediateData = async (params: HtmlComputeParams): Promise<HtmlIntermediateData> => {
     const tagName = params.ref.tagName.toLowerCase();
-    if (['script', 'link', 'noscript', 'style'].includes(tagName)) return HtmlAttrFactory.EMPTY_RESULT;
+    if (['script', 'link', 'noscript'].includes(tagName)) return HtmlAttrFactory.EMPTY_RESULT;
 
     if (!HtmlConstraints.KNOWN_ELEMENTS.includes(tagName) && !params.skipTagCache.has(tagName)) {
       const shadow = BrowserApi.shadowRoot(params.ref);
@@ -153,39 +154,61 @@ export class HtmlFactory {
     let html = `<${tagName} `;
 
     // IFRAME POC
-    if (tagName === 'iframe') {
-      return await IFrameFactory.computeIframe(params.ref as HTMLIFrameElement, params.depth);
-    } else if (tagName === 'canvas') {
-      try {
-        return this.computeCanvas(params.ref as HTMLCanvasElement);
-      } catch (e) {
-        fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
-        return HtmlAttrFactory.EMPTY_RESULT;
+    switch (tagName) {
+      case 'iframe': {
+        return await IFrameFactory.computeIframe(params.ref as HTMLIFrameElement, params.depth);
       }
-    } else if (tagName === 'video') {
-      // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
-      video.push({
-        xpath: XpathFactory.newXPathString(params.ref as HTMLElement),
-        currentTime: (params.ref as HTMLVideoElement).currentTime,
-        displayTime: environmentConfig.settings.videoDisplayTime
-      });
-    } else if (tagName === 'picture') {
-      return await HtmlPictureFactory.computePicture(params.ref as HTMLPictureElement, false, params.skipUrlCache);
-    } else if (tagName === 'img') {
-      const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params.skipUrlCache);
-      const uid = fnUid();
-      content.push({
-        id: uid,
-        type: ObjContentTypeDto.IMG,
-        content: value
-      });
-      html += `data-pin-id=${uid} `;
-    } else if (tagName === 'textarea') {
-      const value = (params.ref as HTMLTextAreaElement).value.replaceAll('"', '&quot;');
-      html += `value="${value}" `;
-    } else if (tagName === 'input' && (params.ref as HTMLInputElement).type !== 'password') {
-      const value = (params.ref as HTMLInputElement).value.replaceAll('"', '&quot;');
-      html += `value="${value}" `;
+      case 'canvas': {
+        try {
+          return this.computeCanvas(params.ref as HTMLCanvasElement);
+        } catch (e) {
+          fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
+          return HtmlAttrFactory.EMPTY_RESULT;
+        }
+      }
+      case 'video': {
+        // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
+        video.push({
+          xpath: XpathFactory.newXPathString(params.ref as HTMLElement),
+          currentTime: (params.ref as HTMLVideoElement).currentTime,
+          displayTime: environmentConfig.settings.videoDisplayTime
+        });
+        break;
+      }
+      case 'picture': {
+        return await HtmlPictureFactory.computePicture(params.ref as HTMLPictureElement, false, params.skipUrlCache);
+      }
+      case 'img': {
+        const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params.skipUrlCache);
+        const uid = fnUid();
+        content.push({
+          id: uid,
+          type: ObjContentTypeDto.IMG,
+          content: value
+        });
+        html += `data-pin-id=${uid} `;
+        break;
+      }
+      case 'textarea': {
+        const value = (params.ref as HTMLTextAreaElement).value.replaceAll('"', '&quot;');
+        html += `value="${value}" `;
+        break;
+      }
+      case 'input': {
+        if ((params.ref as HTMLInputElement).type !== 'password') {
+          const value = (params.ref as HTMLInputElement).value.replaceAll('"', '&quot;');
+          html += `value="${value}" `;
+        }
+        break;
+      }
+      case 'style': {
+        const css = await CssFactory.fetchUrls((params.ref as HTMLStyleElement).innerText);
+        return {
+          html: `<style>${css}</style>`,
+          video: [],
+          content: []
+        };
+      }
     }
 
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes));

@@ -108,7 +108,7 @@ export class CssFactory {
       } else if (r instanceof CSSSupportsRule || r instanceof CSSContainerRule) {
         out += r.cssText + '\n';
       } else {
-        // TODO parse other rules ex CSSKeyFrameRules
+        // TODO parse other rules ex CSSKeyframesRule
         // fnConsoleLog('CssFactory->computeSelectorRules->SKIP', r);
       }
     }

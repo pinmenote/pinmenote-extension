@@ -99,7 +99,6 @@ export class HtmlConstraints {
     's',
     'samp',
     'script',
-    'section',
     'select',
     'small',
     'source',

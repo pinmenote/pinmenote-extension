@@ -79,6 +79,7 @@ export class WordIndex {
   };
 
   private static saveWord = async (word: string): Promise<void> => {
+    // TODO this limitation needs review
     if (word.length < 3) return;
     const start = word.substring(0, 2);
     await this.saveStartIndex(start);
