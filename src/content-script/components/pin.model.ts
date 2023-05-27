@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasDto, ObjSnapshotDto, ObjVideoDataDto } from '../../common/model/obj/obj-snapshot.dto';
-import { ObjCommentListDto, ObjPagePinDto, PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
+import { ObjCanvasDto, ObjVideoDataDto } from '../../common/model/obj/obj-snapshot.dto';
+import { ObjCommentListDto, ObjPinDto, PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjDto, ObjLocalDto, ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { DrawModel } from './draw.model';
 import { ObjDrawDto } from '../../common/model/obj/obj-draw.dto';
@@ -24,7 +24,7 @@ import { PinMouseManager } from './pin-mouse.manager';
 import { PinPointFactory } from '../factory/pin-point.factory';
 
 export class PinModel {
-  private readonly obj: ObjDto<ObjPagePinDto>;
+  private readonly obj: ObjDto<ObjPinDto>;
   private refValue: HTMLElement;
   private rectValue: ObjRectangleDto;
 
@@ -32,7 +32,7 @@ export class PinModel {
   readonly draw: DrawModel;
 
   constructor(
-    object: ObjDto<ObjPagePinDto>,
+    object: ObjDto<ObjPinDto>,
     refValue: HTMLElement,
     readonly top: HTMLDivElement,
     readonly bottom: HTMLDivElement,
@@ -41,7 +41,7 @@ export class PinModel {
     this.obj = object;
     this.refValue = refValue;
     this.rectValue = this.canvas ? this.canvas.rect : PinPointFactory.calculateRect(refValue);
-    this.draw = new DrawModel();
+    this.draw = new DrawModel(this.obj.data.draw);
   }
 
   get rect(): ObjRectangleDto {
@@ -73,11 +73,7 @@ export class PinModel {
   }
 
   get url(): ObjUrlDto {
-    return this.obj.data.snapshot.url;
-  }
-
-  get snapshot(): ObjSnapshotDto {
-    return this.obj.data.snapshot;
+    return this.obj.data.url;
   }
 
   get border(): PinBorderDataDto {
@@ -88,23 +84,23 @@ export class PinModel {
     return this.obj.data.comments;
   }
 
-  get drawData(): ObjDrawDto[] {
-    return this.obj.data.draw.data;
+  get drawData(): ObjDrawDto {
+    return this.draw.data;
   }
 
   get canvas(): ObjCanvasDto | undefined {
-    return this.obj.data.snapshot.canvas;
+    return this.obj.data.canvas;
   }
 
   get video(): ObjVideoDataDto[] | undefined {
-    return this.obj.data.snapshot.video;
+    return this.obj.data.video;
   }
 
   get local(): ObjLocalDto {
     return this.obj.local;
   }
 
-  get object(): ObjDto<ObjPagePinDto> {
+  get object(): ObjDto<ObjPinDto> {
     return this.obj;
   }
 }

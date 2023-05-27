@@ -21,7 +21,6 @@ import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
 import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
-import { ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -29,7 +28,6 @@ import { fnSha256 } from '../../../common/fn/fn-sha256';
 interface SnapshotResult {
   id: number;
   words: string[];
-  video: ObjVideoDataDto[];
 }
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
@@ -71,6 +69,6 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
       content: htmlContent.content
     });
 
-    return { id, words, video: htmlContent.video };
+    return { id, words };
   }
 }

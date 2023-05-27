@@ -17,20 +17,20 @@
 import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
-import { ObjGetCommand } from '../obj/obj-get.command';
-import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../model/obj/obj-pin.dto';
+import { ObjPinGetCommand } from '../obj/obj-pin-get.command';
 import { fnConsoleLog } from '../../fn/fn-console';
 
-export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>[]>> {
+export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPinDto>[]>> {
   constructor(private data: ObjUrlDto) {}
 
-  async execute(): Promise<ObjDto<ObjPagePinDto>[]> {
+  async execute(): Promise<ObjDto<ObjPinDto>[]> {
     const pinIds = (await LinkHrefOriginStore.pinIds(this.data.href)).reverse();
     fnConsoleLog('PinGetHrefCommand->execute', this.data.href, 'ids->', pinIds);
-    const out: ObjDto<ObjPagePinDto>[] = [];
+    const out: ObjDto<ObjPinDto>[] = [];
 
     for (const id of pinIds) {
-      const obj = await new ObjGetCommand<ObjPagePinDto>(id).execute();
+      const obj = await new ObjPinGetCommand<ObjPinDto>(id).execute();
       // TODO revisit visible flag in pin.manager.ts in content scripts
       if (!obj.local?.visible) continue;
       out.push(obj);

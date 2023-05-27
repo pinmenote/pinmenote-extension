@@ -17,16 +17,16 @@
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjDto } from '../../model/obj/obj.dto';
-import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../model/obj/obj-pin.dto';
 import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinUpdateCommand implements ICommand<void> {
-  constructor(private obj: ObjDto<ObjPagePinDto>, private changes?: string[]) {}
+  constructor(private obj: ObjDto<ObjPinDto>) {}
   async execute(): Promise<void> {
     fnConsoleLog('PinUpdateCommand->execute', this.obj);
-    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
+    const key = `${ObjectStoreKeys.PIN_ID}:${this.obj.id}`;
 
     this.obj.updatedAt = Date.now();
 

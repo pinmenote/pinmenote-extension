@@ -23,7 +23,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinListExpandComponent } from './pin-list-expand.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
@@ -33,36 +33,36 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface PinListElementProps {
-  obj: ObjDto<ObjPagePinDto>;
-  removeCallback: (pin: ObjDto<ObjPagePinDto>) => void;
+  obj: ObjDto<ObjPinDto>;
+  removeCallback: (pin: ObjDto<ObjPinDto>) => void;
 }
 
 export const PinListElement: FunctionComponent<PinListElementProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(props.obj.local?.visible);
-  const handleNavigate = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
+  const handleNavigate = async (data: ObjDto<ObjPinDto>): Promise<void> => {
     if (!isVisible) {
       data.local.visible = true;
       await new PinUpdateCommand(data).execute();
       setIsVisible(true);
     }
 
-    if (PopupActiveTabStore.url?.href !== data.data.snapshot.url.href) {
-      await BrowserApi.setActiveTabUrl(data.data.snapshot.url.href);
+    if (PopupActiveTabStore.url?.href !== data.data.url.href) {
+      await BrowserApi.setActiveTabUrl(data.data.url.href);
     } else {
-      await BrowserApi.sendTabMessage<ObjDto<ObjPagePinDto>>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
+      await BrowserApi.sendTabMessage<ObjDto<ObjPinDto>>({ type: BusMessageType.CONTENT_PIN_NAVIGATE, data });
     }
     window.close();
   };
 
-  const handlePinVisible = async (data: ObjDto<ObjPagePinDto>): Promise<void> => {
+  const handlePinVisible = async (data: ObjDto<ObjPinDto>): Promise<void> => {
     data.local.visible = !data.local.visible;
     await new PinUpdateCommand(data).execute();
     setIsVisible(data.local.visible);
-    await BrowserApi.sendTabMessage<ObjDto<ObjPagePinDto>>({ type: BusMessageType.CONTENT_PIN_VISIBLE, data });
+    await BrowserApi.sendTabMessage<ObjDto<ObjPinDto>>({ type: BusMessageType.CONTENT_PIN_VISIBLE, data });
   };
 
-  const handlePinRemove = (data: ObjDto<ObjPagePinDto>): void => {
+  const handlePinRemove = (data: ObjDto<ObjPinDto>): void => {
     props.removeCallback(data);
   };
 
@@ -82,7 +82,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
       {isVisible ? <VisibilityIcon sx={{ fontSize: '12px' }} /> : <VisibilityOffIcon sx={{ fontSize: '12px' }} />}
     </IconButton>
   );
-  const value = props.obj.data.snapshot.title;
+  const value = props.obj.data.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (

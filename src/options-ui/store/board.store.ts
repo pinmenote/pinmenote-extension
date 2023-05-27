@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
-import { ObjPageDto, ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
+import { ObjPageDto, ObjPinDto } from '../../common/model/obj/obj-pin.dto';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { ObjRangeRequest } from '../../common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
@@ -64,7 +64,7 @@ export class BoardStore {
         this.keySet.delete(value.id);
         this.objData.splice(i, 1);
         if (value.type === ObjTypeDto.PageElementPin) {
-          const pin = value as ObjDto<ObjPagePinDto>;
+          const pin = value as ObjDto<ObjPinDto>;
           await new PinRemoveCommand(pin.id, pin.data.snapshot, pin.server?.id).execute();
         } else if (value.type === ObjTypeDto.PageSnapshot || value.type === ObjTypeDto.PageElementSnapshot) {
           await new PageSnapshotRemoveCommand(value as ObjDto<ObjPageDto>).execute();

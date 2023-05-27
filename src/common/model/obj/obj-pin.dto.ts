@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjCanvasDto, ObjSnapshotDto, ObjVideoDataDto } from './obj-snapshot.dto';
 import { ObjDrawDto } from './obj-draw.dto';
-import { ObjSnapshotDto } from './obj-snapshot.dto';
+import { ObjUrlDto } from './obj.dto';
 
 export interface ObjCommentDto {
   value: string;
@@ -35,12 +36,19 @@ export interface ObjDrawListDto {
 export interface ObjPageDto {
   snapshot: ObjSnapshotDto;
   comments: ObjCommentListDto;
-  draw: ObjDrawListDto;
 }
 
-export interface ObjPagePinDto extends ObjPageDto {
+export interface ObjPinDto {
+  hash: string;
+  url: ObjUrlDto;
   xpath: string;
   border: PinBorderDataDto;
+  title: string;
+  screenshot: string;
+  draw: ObjDrawListDto;
+  comments: ObjCommentListDto;
+  canvas?: ObjCanvasDto;
+  video?: ObjVideoDataDto[];
 }
 
 export interface PinBorderDataDto {

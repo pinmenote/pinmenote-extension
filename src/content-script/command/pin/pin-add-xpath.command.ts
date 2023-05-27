@@ -16,7 +16,7 @@
  */
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from './pin-component-add.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
@@ -24,7 +24,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
 
 export class PinAddXpathCommand implements ICommand<boolean> {
-  constructor(private data: ObjDto<ObjPagePinDto>) {}
+  constructor(private data: ObjDto<ObjPinDto>) {}
   execute(): boolean {
     const pin = this.data.data;
     const value = XpathFactory.newXPathResult(pin.xpath);

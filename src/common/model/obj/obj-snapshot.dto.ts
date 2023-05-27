@@ -30,7 +30,6 @@ export interface ObjSnapshotDto {
   screenshot?: string;
   contentId: number; // ObjSnapshotContentDto
   canvas?: ObjCanvasDto;
-  video?: ObjVideoDataDto[];
 }
 
 export interface ObjVideoDataDto {

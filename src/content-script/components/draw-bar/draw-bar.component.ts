@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../model/html.model';
+import { ContentButton } from '../base/content-button';
 import { DrawBrushSizeButton } from './draw-buttons/draw-brush-size.button';
 import { DrawColorPickerButton } from './draw-buttons/draw-color-picker.button';
 import { DrawEraseButton } from './draw-buttons/draw-erase.button';
@@ -60,6 +61,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
   private readonly drawTest: DrawTestButton;
 
+  private readonly saveButton: ContentButton;
+
   constructor(private model: PinModel) {
     this.pencil = new DrawPencilButton(this);
     this.line = new DrawLineButton(this);
@@ -77,7 +80,13 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.model.draw.setRedoButton(this.redoButton);
 
     this.drawTest = new DrawTestButton(model);
+
+    this.saveButton = new ContentButton('save', this.handleSaveClick);
   }
+
+  handleSaveClick = async (): Promise<void> => {
+    await this.model.draw.saveDraw(this.model);
+  };
 
   setTool(tool: DrawToolDto): void {
     switch (tool) {
@@ -109,9 +118,9 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.model.draw.tool = tool;
   }
 
-  async undo(): Promise<void> {
+  undo(): void {
     if (!this.model.draw.area) return;
-    await this.model.draw.area.undo();
+    this.model.draw.area.undo();
     if (this.model.draw.area.canUndo()) {
       this.undoButton.select();
     } else {
@@ -122,9 +131,9 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     }
   }
 
-  async redo(): Promise<void> {
+  redo(): void {
     if (!this.model.draw.area) return;
-    await this.model.draw.area.redo();
+    this.model.draw.area.redo();
     if (this.model.draw.area.canRedo()) {
       this.redoButton.select();
     } else {
@@ -192,6 +201,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.placeComponent(this.redoButton.render(), 193);
 
     // this.placeComponent(this.drawTest.render(), 220);
+    this.placeComponent(this.saveButton.render(), this.model.rect.width - 35);
 
     this.adjustTop();
 

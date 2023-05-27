@@ -52,7 +52,7 @@ export class DrawRedoButton implements HtmlComponent<HTMLElement> {
     (this.el.firstChild as SVGElement).setAttribute('fill', '#000000');
   }
 
-  private handleClick = async () => {
-    await this.drawBar.redo();
+  private handleClick = () => {
+    this.drawBar.redo();
   };
 }

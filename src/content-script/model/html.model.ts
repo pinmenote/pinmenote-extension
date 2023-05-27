@@ -15,12 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjContentDto } from '../../common/model/obj/obj-content.dto';
-import { ObjVideoDataDto } from '../../common/model/obj/obj-snapshot.dto';
 import { PinModel } from '../components/pin.model';
 
 export interface HtmlIntermediateData {
   html: string;
-  video: ObjVideoDataDto[];
   content: ObjContentDto[];
 }
 

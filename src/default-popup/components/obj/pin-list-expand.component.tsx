@@ -16,10 +16,10 @@
  */
 import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 
 interface PinExpandProps {
-  pin: ObjDto<ObjPagePinDto>;
+  pin: ObjDto<ObjPinDto>;
 }
 
 export const PinListExpandComponent: FunctionComponent<PinExpandProps> = ({ pin }) => {
@@ -32,7 +32,7 @@ export const PinListExpandComponent: FunctionComponent<PinExpandProps> = ({ pin 
         position: 'relative'
       }}
     >
-      <img src={pin.data.snapshot.screenshot} width="280" />
+      <img src={pin.data.screenshot} width="280" />
     </div>
   );
 };

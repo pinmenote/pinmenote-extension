@@ -24,7 +24,7 @@ import {
   ObjGetSnapshotContentCommand,
   ObjSnapshotData
 } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
-import { ObjPageDto, ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPageDto, ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -94,7 +94,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         fnConsoleLog('DOM !!!', dom, 'in', Date.now() - a);
         fnConsoleLog('obj', obj, 'snapshot', c);
         if (obj.type === ObjTypeDto.PageElementPin) {
-          const pin = obj.data as ObjPagePinDto;
+          const pin = obj.data as ObjPinDto;
           fnConsoleLog('XPATH SUBTREE', XpathFactory.evaluateTree(pin.xpath, dom));
         }
         setSnapshotData(c);

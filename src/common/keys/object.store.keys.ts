@@ -18,6 +18,7 @@ export class ObjectStoreKeys {
   // ID
   static readonly OBJECT_ID = 'o:id';
   static readonly CONTENT_ID = 'o:c:id';
+  static readonly PIN_ID = 'o:p:id';
   static readonly OBJECT_LIST_ID = 'o:list:id';
   static readonly OBJECT_LIST = 'o:list';
 

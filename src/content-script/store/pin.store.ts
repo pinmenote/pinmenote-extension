@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto } from '../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../common/model/obj/obj-pin.dto';
 import { PageComponent } from '../model/html.model';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 
@@ -60,7 +60,7 @@ export class PinStore {
     this.pinData.forEach(fn);
   }
 
-  public static focusPin(obj: ObjDto<ObjPagePinDto>): void {
+  public static focusPin(obj: ObjDto<ObjPinDto>): void {
     const comp = this.getByUid(obj.id);
     fnConsoleLog('PinStore->focusPin', comp);
     if (!comp) return;

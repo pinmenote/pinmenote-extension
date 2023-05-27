@@ -15,7 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
+import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BusMessageType } from '../../model/bus.model';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
@@ -26,7 +28,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';
 
 export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
-  constructor(private dto: ObjSnapshotDto) {}
+  constructor(private dto: ObjSnapshotDto, private type: ObjTypeDto) {}
 
   async execute(): Promise<void> {
     const id = await new ObjNextIdCommand(ObjectStoreKeys.OBJECT_ID).execute();
@@ -34,10 +36,10 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
 
     const dto: ObjDto<ObjPageDto> = {
       id,
-      type: ObjTypeDto.PageSnapshot,
+      type: this.type,
       createdAt: dt,
       updatedAt: dt,
-      data: { snapshot: this.dto, draw: { data: [] }, comments: { data: [] } },
+      data: { snapshot: this.dto, comments: { data: [] } },
       version: OBJ_DTO_VERSION,
       local: {
         visible: true
@@ -51,8 +53,10 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
     await BrowserStorageWrapper.set(key, dto);
 
+    await LinkHrefOriginStore.addHrefOriginId(this.dto.url, id);
+
     await new ObjAddIdCommand({ id, dt }).execute();
 
-    await LinkHrefOriginStore.addHrefOriginId(this.dto.url, id);
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_STOP_LISTENERS });
   }
 }

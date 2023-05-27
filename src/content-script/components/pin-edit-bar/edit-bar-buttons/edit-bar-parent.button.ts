@@ -14,22 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
-import { BusMessageType } from '../../../../common/model/bus.model';
-import { ContentSettingsStore } from '../../../store/content-settings.store';
 import { HtmlComponent } from '../../../model/html.model';
-import { HtmlFactory } from '../../../factory/html/html.factory';
-import { ImageResizeFactory } from '../../../../common/factory/image-resize.factory';
-import { ObjSnapshotContentDto } from '../../../../common/model/obj/obj-content.dto';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { PinModel } from '../../pin.model';
 import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
-import { TinyEventDispatcher } from '../../../../common/service/tiny.event.dispatcher';
 import { XpathFactory } from '../../../../common/factory/xpath.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { fnSleep } from '../../../../common/fn/fn-sleep';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class EditBarParentButton implements HtmlComponent<HTMLElement> {
@@ -63,59 +53,11 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
     }
     if (this.model.ref.parentElement) {
       this.model.ref = this.model.ref.parentElement;
-      await fnSleep(100);
-
-      const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
-        ref: this.model.ref,
-        depth: 1,
-        skipElements: [],
-        skipTagCache: new Set<string>(),
-        skipUrlCache: new Set<string>(),
-        isPartial: true,
-        insideLink: this.model.ref.tagName.toLowerCase() === 'a'
-      });
-      const html = HtmlFactory.computeHtmlParent(this.model.ref.parentElement, htmlContent.html, true);
-
-      // snapshot content
-      const key = `${ObjectStoreKeys.CONTENT_ID}:${this.model.object.data.snapshot.contentId}`;
-      const snapshot = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
-      snapshot.html = html;
-      snapshot.content = htmlContent.content;
-      await BrowserStorageWrapper.set(key, snapshot);
 
       this.model.object.data.xpath = XpathFactory.newXPathString(this.model.ref);
-      const rect = XpathFactory.computeRect(this.model.ref);
 
-      return new Promise((resolve, reject) => {
-        BrowserApi.sendRuntimeMessage<undefined>({
-          type: BusMessageType.CONTENT_TAKE_SCREENSHOT
-        })
-          .then(() => {
-            // We handle it above, inside dispatcher
-          })
-          .catch((e) => {
-            fnConsoleLog('PROBLEM contentSwapPin !!!', e);
-            // pinData.container.style.display = 'inline-block';
-            reject('PROBLEM !!!');
-          });
-        TinyEventDispatcher.addListener<string>(BusMessageType.CONTENT_TAKE_SCREENSHOT, async (event, key, value) => {
-          TinyEventDispatcher.removeListener(event, key);
-
-          // After taking screenshot let's go back to note styles
-          // pinData.container.style.display = 'inline-block';
-          if (this.model.ref) {
-            this.model.ref.style.border = ContentSettingsStore.borderStyle;
-            this.model.ref.style.borderRadius = ContentSettingsStore.borderRadius;
-          }
-
-          this.model.object.data.snapshot.screenshot = await ImageResizeFactory.resize(rect, value);
-
-          await new PinUpdateCommand(this.model.object).execute();
-          this.resizeCallback();
-
-          resolve();
-        });
-      });
+      await new PinUpdateCommand(this.model.object).execute();
+      this.resizeCallback();
     }
   };
 }

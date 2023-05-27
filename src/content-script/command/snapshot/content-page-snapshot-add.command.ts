@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjTypeDto, ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { PageSnapshotAddCommand } from '../../../common/command/snapshot/page-snapshot-add.command';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
@@ -39,7 +39,7 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
       words: res.words,
       hashtags: []
     };
-    await new PageSnapshotAddCommand(dto).execute();
+    await new PageSnapshotAddCommand(dto, ObjTypeDto.PageSnapshot).execute();
 
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
   }

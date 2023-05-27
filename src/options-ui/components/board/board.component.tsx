@@ -15,13 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
-import { ObjPageDto, ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardStore } from '../../store/board.store';
 import { NoteElement } from './note/note.element';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
-import { PinElement } from './pin/pin.element';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export const BoardComponent: FunctionComponent = () => {
@@ -76,9 +75,7 @@ export const BoardComponent: FunctionComponent = () => {
         break;
       }
       case ObjTypeDto.PageElementPin: {
-        boardElements.push(
-          <PinElement refreshBoardCallback={refreshBoardCallback} dto={obj as ObjDto<ObjPagePinDto>} key={obj.id} />
-        );
+        fnConsoleLog('PIN !!!!!!!!!!!!!!');
         break;
       }
       case ObjTypeDto.PageNote: {

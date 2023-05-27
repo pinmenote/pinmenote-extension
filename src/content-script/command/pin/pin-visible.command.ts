@@ -16,13 +16,13 @@
  */
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
 
 export class PinVisibleCommand implements ICommand<void> {
-  constructor(private obj: ObjDto<ObjPagePinDto>) {}
+  constructor(private obj: ObjDto<ObjPinDto>) {}
   execute(): void {
     if (!this.obj.local?.visible) {
       PinStore.delByUid(this.obj.id);

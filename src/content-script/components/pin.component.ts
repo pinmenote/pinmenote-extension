@@ -22,7 +22,7 @@ import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../common/model/obj/obj-draw.dto';
 import { ObjDto } from '../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../common/model/obj/obj-pin.dto';
 import { PinEditBarComponent } from './pin-edit-bar/pin-edit-bar.component';
 import { PinEditManager } from './pin-edit.manager';
 import { PinModel } from './pin.model';
@@ -57,7 +57,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly model: PinModel;
 
-  constructor(ref: HTMLElement, object: ObjDto<ObjPagePinDto>) {
+  constructor(ref: HTMLElement, object: ObjDto<ObjPinDto>) {
     this.mouseManager = new PinMouseManager(this.top, this.bottom, this.handleMouseOver, this.handleMouseOut);
     this.model = new PinModel(object, ref, this.top, this.bottom, this.mouseManager);
     this.edit = new PinEditManager(this);

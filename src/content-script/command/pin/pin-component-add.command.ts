@@ -17,12 +17,12 @@
 import { HtmlComponent } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinComponent } from '../../components/pin.component';
 import { PinStore } from '../../store/pin.store';
 
 export class PinComponentAddCommand implements ICommand<HtmlComponent<HTMLElement> | undefined> {
-  constructor(private ref: HTMLElement, private dto: ObjDto<ObjPagePinDto>, private focus = false) {}
+  constructor(private ref: HTMLElement, private dto: ObjDto<ObjPinDto>, private focus = false) {}
   execute(): HtmlComponent<HTMLElement> | undefined {
     const pinComponent = new PinComponent(this.ref, this.dto);
     pinComponent.render();

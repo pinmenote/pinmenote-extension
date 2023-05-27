@@ -21,8 +21,8 @@ import { IFrameIndexMessage } from '../../common/model/iframe-message.model';
 import { IFrameStore } from '../store/iframe.store';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjTypeDto } from '../../common/model/obj/obj.dto';
-import { PageElementSnapshotAddCommand } from '../../common/command/snapshot/page-element-snapshot-add.command';
-import { PinAddCommand } from '../../common/command/pin/pin-add.command';
+import { PageSnapshotAddCommand } from '../../common/command/snapshot/page-snapshot-add.command';
+import { PinAddCommand } from '../command/pin/pin-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
 import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
@@ -279,10 +279,9 @@ export class DocumentMediator {
     PinAddFactory.clearStyles();
 
     await this.sleepUntilClearStyles();
-    const skipUid = this.showPreloader();
     const url = UrlFactory.newUrl();
-    const snapshot = await new SnapshotCreateCommand(url, document.body, [skipUid], canvas).execute();
-    const pagePin = PinFactory.objPagePinNew(element, snapshot, border);
+
+    const pagePin = await PinFactory.objPagePinNew(url, element, border, canvas);
     const obj = await new PinAddCommand(pagePin).execute();
     new PinComponentAddCommand(element, obj, true).execute();
   };
@@ -296,7 +295,7 @@ export class DocumentMediator {
 
       const url = UrlFactory.newUrl();
       const dto = await new SnapshotCreateCommand(url, element, [skipUid], canvas).execute();
-      await new PageElementSnapshotAddCommand(dto).execute();
+      await new PageSnapshotAddCommand(dto, ObjTypeDto.PageElementSnapshot).execute();
       await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_ELEMENT_SNAPSHOT_ADD });
     }
   };

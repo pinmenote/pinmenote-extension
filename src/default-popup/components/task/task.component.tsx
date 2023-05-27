@@ -18,6 +18,7 @@ import React, { FunctionComponent, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import { TaskListComponent } from './task-list.component';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 enum CurrentView {
   TASK_LIST = 'TASK_LIST',
@@ -30,7 +31,13 @@ export const TaskComponent: FunctionComponent = () => {
   const getComponent = (state: CurrentView) => {
     switch (state) {
       case CurrentView.TASK_LIST:
-        return <TaskListComponent />;
+        return (
+          <TaskListComponent
+            editCallback={() => {
+              fnConsoleLog('editCallback');
+            }}
+          />
+        );
       case CurrentView.TASK_ADD:
         return 'TODO';
     }

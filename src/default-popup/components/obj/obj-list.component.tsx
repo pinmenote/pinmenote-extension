@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjPageDataDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
-import { ObjPageDto, ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPageDto, ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
@@ -35,8 +35,8 @@ interface ObjListComponentProps {
 export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props) => {
   const [reRender, setReRender] = useState(false);
 
-  const handlePinRemove = async (data: ObjDto<ObjPagePinDto>) => {
-    await new PinRemoveCommand(data.id, data.data.snapshot, data.server?.id).execute();
+  const handlePinRemove = async (data: ObjDto<ObjPinDto>) => {
+    await new PinRemoveCommand(data.id, data.data.url, data.server?.id).execute();
     await BrowserApi.sendTabMessage<number>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: data.id });
     handleRemove(data.id);
   };
@@ -67,7 +67,7 @@ export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props
   for (const obj of props.objList) {
     switch (obj.type) {
       case ObjTypeDto.PageElementPin:
-        objs.push(<PinListElement key={obj.id} obj={obj as ObjDto<ObjPagePinDto>} removeCallback={handlePinRemove} />);
+        objs.push(<PinListElement key={obj.id} obj={obj as ObjDto<ObjPinDto>} removeCallback={handlePinRemove} />);
         break;
       case ObjTypeDto.PageElementSnapshot:
       case ObjTypeDto.PageSnapshot:

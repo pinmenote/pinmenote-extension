@@ -23,10 +23,7 @@ import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { IFrameFactory } from './iframe.factory';
-import { ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ShadowFactory } from './shadow.factory';
-import { XpathFactory } from '../../../common/factory/xpath.factory';
-import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -119,7 +116,6 @@ export class HtmlFactory {
     html += `/>`;
     return {
       html,
-      video: [],
       content: [
         {
           hash,
@@ -156,7 +152,6 @@ export class HtmlFactory {
       }
     }
 
-    const video: ObjVideoDataDto[] = [];
     const content: ObjContentDto[] = [];
 
     let html = `<${tagName} `;
@@ -173,15 +168,6 @@ export class HtmlFactory {
           fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
           return HtmlAttrFactory.EMPTY_RESULT;
         }
-      }
-      case 'video': {
-        // fnConsoleLog('VIDEO !!!', (el as HTMLVideoElement).currentTime);
-        video.push({
-          xpath: XpathFactory.newXPathString(params.ref as HTMLElement),
-          currentTime: (params.ref as HTMLVideoElement).currentTime,
-          displayTime: environmentConfig.settings.videoDisplayTime
-        });
-        break;
       }
       case 'picture': {
         return await HtmlPictureFactory.computePicture(params.ref as HTMLPictureElement, false, params.skipUrlCache);
@@ -213,7 +199,6 @@ export class HtmlFactory {
         const css = await CssFactory.fetchUrls((params.ref as HTMLStyleElement).innerText);
         return {
           html: `<style>${css}</style>`,
-          video: [],
           content: []
         };
       }
@@ -241,7 +226,6 @@ export class HtmlFactory {
           insideLink: tagName === 'a' || params.insideLink
         });
         html += computed.html;
-        video.push(...computed.video);
         content.push(...computed.content);
       } else if (node.nodeType === Node.COMMENT_NODE) {
         html += '<!---->';
@@ -273,7 +257,6 @@ export class HtmlFactory {
 
     return {
       html,
-      video,
       content
     };
   };

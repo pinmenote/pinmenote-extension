@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasDto, ObjSnapshotDto, ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { ObjCanvasDto, ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
@@ -34,12 +34,10 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
     let contentId = -1;
     let words: string[] = [];
-    let video: ObjVideoDataDto[] = [];
     if (!this.canvas) {
       const res = await new SnapshotContentSaveCommand(this.element, this.skipElements).execute();
       contentId = res.id;
       words = res.words;
-      video = res.video;
     } else if (this.element instanceof HTMLImageElement) {
       contentId = await new SnapshotSaveImageCommand(this.element).execute();
     }
@@ -50,7 +48,6 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       url: this.url,
       words,
       hashtags: [],
-      video,
       canvas: this.canvas,
       screenshot,
       contentId

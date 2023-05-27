@@ -77,6 +77,12 @@ export class LinkHrefOriginStore {
     await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, hrefIds);
   }
 
+  static async hasPageSnapshot(href: string): Promise<boolean> {
+    const key = `${this.OBJ_HREF}:${href}`;
+    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    return !!value;
+  }
+
   static async pinDel(url: ObjUrlDto, id: number): Promise<void> {
     const hrefIds = await this.pinIds(url.href);
     const newHref = hrefIds.filter((i) => i !== id);

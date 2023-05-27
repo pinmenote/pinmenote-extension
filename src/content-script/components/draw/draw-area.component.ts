@@ -21,10 +21,8 @@ import { LineDraw } from './tool/line.draw';
 import { ObjPointDto } from '../../../common/model/obj/obj-utils.dto';
 import { PencilDraw } from './tool/pencil.draw';
 import { PinModel } from '../pin.model';
-import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 const canvasStyles = {
   position: 'absolute',
@@ -46,19 +44,16 @@ export class DrawAreaComponent {
   constructor(private model: PinModel) {
     this.drawCtx = this.drawCanvas.getContext('2d');
     this.rasterCtx = this.rasterCanvas.getContext('2d');
-    if (model.drawData.length > 0) {
-      const draw = model.drawData[0];
-      this.drawData = draw.data;
-      this.initDrawCanvas(draw.size.width, draw.size.height);
-      this.initRasterCanvas(draw.size.width, draw.size.height);
-      for (let i = 0; i < this.drawData.length; i++) {
-        this.drawOne(this.drawData[i]);
-      }
-    } else {
+    if (!model.drawData) {
       const width = Math.min(model.rect.width, window.innerWidth);
       const height = Math.min(model.rect.height, window.innerHeight);
-      this.initDrawCanvas(width, height);
-      this.initRasterCanvas(width, height);
+      model.draw.addDraw(width, height);
+    }
+    this.drawData = model.drawData.data.concat();
+    this.initDrawCanvas(model.drawData.size.width, model.drawData.size.height);
+    this.initRasterCanvas(model.drawData.size.width, model.drawData.size.height);
+    for (let i = 0; i < model.drawData.data.length; i++) {
+      this.drawOne(model.drawData.data[i]);
     }
   }
 
@@ -99,7 +94,7 @@ no javascript enabled - drawing not working</h1>`;
     return this.drawRedoData.length > 0;
   }
 
-  async undo(): Promise<boolean> {
+  undo(): boolean {
     if (!this.rasterCtx) return false;
     const data = this.drawData.pop();
     if (data) {
@@ -108,18 +103,18 @@ no javascript enabled - drawing not working</h1>`;
       for (let i = 0; i < this.drawData.length; i++) {
         this.drawOne(this.drawData[i]);
       }
-      await this.saveOrUpdateDraw();
+      this.model.draw.updateDraw(this.drawData);
       return true;
     }
     return false;
   }
 
-  async redo(): Promise<boolean> {
+  redo(): boolean {
     const data = this.drawRedoData.pop();
     if (data) {
       this.drawData.push(data);
       this.drawOne(data);
-      await this.saveOrUpdateDraw();
+      this.model.draw.updateDraw(this.drawData);
       return true;
     }
     return false;
@@ -164,7 +159,7 @@ no javascript enabled - drawing not working</h1>`;
     this.drawCanvas.removeEventListener('mousemove', this.handleMouseMove);
   }
 
-  private handleMouseUp = async (e: MouseEvent): Promise<void> => {
+  private handleMouseUp = (e: MouseEvent): void => {
     if (!this.canDraw) return;
     if (!this.drawing) return;
     if (!this.drawCtx || !this.rasterCtx) return;
@@ -202,7 +197,7 @@ no javascript enabled - drawing not working</h1>`;
       color: this.model.draw.color,
       points
     });
-    await this.saveOrUpdateDraw();
+    this.model.draw.updateDraw(this.drawData);
   };
 
   private handleMouseMove = (e: MouseEvent) => {
@@ -245,27 +240,6 @@ no javascript enabled - drawing not working</h1>`;
       case DrawToolDto.Erase:
         EraserDraw.startDraw({ x: e.offsetX, y: e.offsetY }, this.model.draw.size, this.drawCtx);
         break;
-    }
-  };
-  // TODO save by user action not automatically so we calculate hash once
-  private saveOrUpdateDraw = async () => {
-    if (this.model.drawData.length === 0) {
-      const dt = Date.now();
-      this.model.drawData.push({
-        hash: fnSha256(JSON.stringify(this.drawData)),
-        data: this.drawData,
-        size: {
-          width: this.rasterCanvas.width,
-          height: this.rasterCanvas.height
-        },
-        updatedAt: dt,
-        createdAt: dt
-      });
-      await new PinUpdateCommand(this.model.object).execute();
-    } else {
-      this.model.drawData[0].data = this.drawData;
-      this.model.drawData[0].updatedAt = Date.now();
-      await new PinUpdateCommand(this.model.object).execute();
     }
   };
 }

@@ -16,7 +16,7 @@
  */
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
@@ -43,7 +43,7 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     for (const pin of pinList) {
       switch (pin.type) {
         case ObjTypeDto.PageElementPin:
-          if (new PinAddXpathCommand(pin as ObjDto<ObjPagePinDto>).execute()) {
+          if (new PinAddXpathCommand(pin as ObjDto<ObjPinDto>).execute()) {
             PinPendingStore.remove(pin.id);
           }
           break;
