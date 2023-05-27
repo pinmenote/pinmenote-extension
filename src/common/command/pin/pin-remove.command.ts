@@ -21,7 +21,7 @@ import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjRemoveSnapshotContentCommand } from '../obj/content/obj-remove-snapshot-content.command';
 import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinRemoveCommand implements ICommand<void> {
   constructor(private id: number, private snapshot: ObjSnapshotDto, private serverId?: number) {}

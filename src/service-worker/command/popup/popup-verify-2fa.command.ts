@@ -20,7 +20,7 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchResponse } from '../../../common/model/api.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PopupVerify2faCommand implements ICommand<void> {
   constructor(private data: VerifyTokenDto) {}

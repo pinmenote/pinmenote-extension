@@ -18,7 +18,7 @@ import { BoolDto, ICommand } from '../../../../common/model/shared/common.dto';
 import { ApiHelper } from '../../../api/api-helper';
 import { FetchResponse } from '../../../../common/model/api.model';
 import { FetchService } from '../../../service/fetch.service';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiStoreRemoveObjectCommand implements ICommand<Promise<FetchResponse<BoolDto> | undefined>> {
   constructor(private id: number) {}

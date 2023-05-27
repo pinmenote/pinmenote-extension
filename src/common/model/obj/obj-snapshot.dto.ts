@@ -15,8 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
-import { CssStyleListDto } from './obj-pin.dto';
-import { ObjContentDto } from './obj-content.dto';
 import { ObjUrlDto } from './obj.dto';
 
 export interface ObjCanvasDto {
@@ -39,12 +37,4 @@ export interface ObjVideoDataDto {
   currentTime: number;
   displayTime: number;
   xpath: string;
-}
-
-export interface ObjSnapshotContentDto {
-  id: number;
-  html: string;
-  htmlAttr: string;
-  css: CssStyleListDto;
-  content: ObjContentDto[];
 }

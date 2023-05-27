@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
-import { fnSleep } from '../../../../common/fn/sleep.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { fnSleep } from '../../../../common/fn/fn-sleep';
 
 export class SyncRemoteCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

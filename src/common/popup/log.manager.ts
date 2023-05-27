@@ -16,7 +16,7 @@
  */
 import { BusMessageType } from '../model/bus.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../fn/console.fn';
+import { fnConsoleLog } from '../fn/fn-console';
 
 export class LogManager {
   private static logValue = '';

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/date.fn';
+import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/fn-date';
 import { ApiHelper } from '../../api/api-helper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
@@ -24,8 +24,8 @@ import { SyncProgress } from './sync.model';
 import { SyncRemoteCommand } from './remote/sync-remote.command';
 import { SyncRemoveListCommand } from './remove/sync-remove-list.command';
 import { SyncUpdateListCommand } from './update/sync-update-list.command';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnTimestampKeyFormat } from '../../../common/fn/date.format.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnTimestampKeyFormat } from '../../../common/fn/fn-date-format';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;

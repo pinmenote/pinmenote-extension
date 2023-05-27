@@ -19,7 +19,7 @@ import { FetchResponse } from '../../../../common/model/api.model';
 import { FetchService } from '../../../service/fetch.service';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<ObjDto> | undefined>> {
   constructor(private id: number) {}

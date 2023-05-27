@@ -17,12 +17,12 @@
 import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { ObjPageDto, ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
-import { ObjRangeRequest } from 'src/common/model/obj-request.model';
+import { ObjRangeRequest } from '../../common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { PinRemoveCommand } from '../../common/command/pin/pin-remove.command';
-import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class BoardStore {
   static objData: ObjDto[] = [];

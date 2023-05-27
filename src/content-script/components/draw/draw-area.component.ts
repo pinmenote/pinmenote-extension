@@ -23,8 +23,8 @@ import { PencilDraw } from './tool/pencil.draw';
 import { PinModel } from '../pin.model';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../common/style.utils';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 const canvasStyles = {
   position: 'absolute',
@@ -247,12 +247,12 @@ no javascript enabled - drawing not working</h1>`;
         break;
     }
   };
-
+  // TODO save by user action not automatically so we calculate hash once
   private saveOrUpdateDraw = async () => {
     if (this.model.drawData.length === 0) {
       const dt = Date.now();
       this.model.drawData.push({
-        id: fnUid(),
+        hash: fnSha256(JSON.stringify(this.drawData)),
         data: this.drawData,
         size: {
           width: this.rasterCanvas.width,

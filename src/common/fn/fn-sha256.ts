@@ -14,20 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjSnapshotContentDto } from './obj/obj-content.dto';
-import { ObjTypeDto } from './obj/obj.dto';
+import { sha256 } from 'js-sha256';
 
-export interface IFrameIndexMessage {
-  index: string;
-  uid: string;
-}
-
-export interface IFrameListenerMessage extends IFrameIndexMessage {
-  type: ObjTypeDto;
-}
-
-export interface IFrameFetchMessage {
-  uid: string;
-  href: string;
-  data: ObjSnapshotContentDto;
-}
+export const fnSha256 = (value: string) => {
+  return sha256(value);
+};

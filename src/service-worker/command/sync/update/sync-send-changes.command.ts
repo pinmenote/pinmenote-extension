@@ -19,8 +19,8 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { ServerPathDto } from '../../../../common/model/obj/obj-server.dto';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
-import { fnSleep } from '../../../../common/fn/sleep.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { fnSleep } from '../../../../common/fn/fn-sleep';
 
 export class SyncSendChangesCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto) {}

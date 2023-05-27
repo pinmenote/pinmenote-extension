@@ -19,7 +19,7 @@ import { ObjSnapshotDto } from './obj-snapshot.dto';
 
 export interface ObjCommentDto {
   value: string;
-  id: string;
+  hash: string;
   createdAt: number;
   updatedAt: number;
 }
@@ -41,17 +41,6 @@ export interface ObjPageDto {
 export interface ObjPagePinDto extends ObjPageDto {
   xpath: string;
   border: PinBorderDataDto;
-}
-
-export interface CssStyleListDto {
-  css: CssStyleDto[];
-}
-
-export interface CssStyleDto {
-  id: string;
-  href?: string;
-  data?: string;
-  media?: string;
 }
 
 export interface PinBorderDataDto {

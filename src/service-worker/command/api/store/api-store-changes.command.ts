@@ -18,7 +18,7 @@ import { ApiHelper } from '../../../api/api-helper';
 import { FetchResponse } from '../../../../common/model/api.model';
 import { FetchService } from '../../../service/fetch.service';
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface ChangesDto {
   data: number[];

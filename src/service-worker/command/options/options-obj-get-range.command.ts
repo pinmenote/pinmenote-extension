@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDataDto, ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjRangeRequest, ObjRangeResponse } from 'src/common/model/obj-request.model';
+import { ObjRangeRequest, ObjRangeResponse } from '../../../common/model/obj-request.model';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjRangeIdCommand } from '../../../common/command/obj/id/obj-range-id.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { OptionsSearchIdsCommand } from './options-search-ids.command';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 const emptyResult = { listId: -1, data: [] };
 

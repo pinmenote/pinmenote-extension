@@ -18,7 +18,7 @@ import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../common/fn/console.fn';
+import { fnConsoleLog } from '../common/fn/fn-console';
 
 export class OptionsMessageHandler {
   static init(): void {

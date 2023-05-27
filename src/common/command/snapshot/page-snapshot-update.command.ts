@@ -20,7 +20,7 @@ import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPageDto } from '../../model/obj/obj-pin.dto';
 import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PageSnapshotUpdateCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto<ObjPageDto>) {}

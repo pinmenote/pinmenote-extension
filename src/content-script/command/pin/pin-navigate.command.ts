@@ -18,7 +18,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinStore } from '../../store/pin.store';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PinNavigateCommand implements ICommand<void> {
   constructor(private data: ObjDto<ObjPagePinDto>) {}

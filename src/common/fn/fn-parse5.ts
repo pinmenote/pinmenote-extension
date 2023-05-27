@@ -14,21 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export const fnImgToBase64 = (src: string): Promise<string> => {
-  const img = new Image();
-  return new Promise<string>((resolve) => {
-    img.onload = () => {
-      const can = document.createElement('canvas');
-      can.width = img.naturalWidth;
-      can.height = img.naturalHeight;
-      const ctx = can.getContext('2d');
-      ctx?.drawImage(img, 0, 0);
-      resolve(can.toDataURL('image/jpeg', 0.8));
-    };
-    img.onerror = () => {
-      resolve('');
-    };
-    img.crossOrigin = '';
-    img.src = src;
-  });
+import { DefaultTreeAdapterMap } from 'parse5/dist/tree-adapters/default';
+import { parse } from 'parse5';
+export const fnParse5 = (value: string): DefaultTreeAdapterMap => {
+  return parse(value) as unknown as DefaultTreeAdapterMap;
 };

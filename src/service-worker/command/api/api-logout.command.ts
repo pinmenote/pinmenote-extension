@@ -18,7 +18,7 @@ import { BoolDto, ICommand, ServerErrorDto } from '../../../common/model/shared/
 import { FetchResponse, ResponseType } from '../../../common/model/api.model';
 import { ApiHelper } from '../../api/api-helper';
 import { FetchService } from '../../service/fetch.service';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ApiLogoutCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
   async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {

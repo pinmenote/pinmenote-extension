@@ -26,7 +26,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { appLight32Icon } from '../../../../common/components/app-icons';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface Props {
   drawerHandler: () => void;

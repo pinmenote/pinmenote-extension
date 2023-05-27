@@ -18,7 +18,7 @@ import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper'
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnTimestampKeyFormat } from '../../../fn/date.format.fn';
+import { fnTimestampKeyFormat } from '../../../fn/fn-date-format';
 
 export class ObjUpdateIndexDelCommand implements ICommand<Promise<void>> {
   constructor(private index: ObjDateIndex) {}

@@ -18,8 +18,9 @@ import { BrowserStorageWrapper } from '../../../common/service/browser.storage.w
 import { HtmlImgFactory } from '../../factory/html/html-img.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
-import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
   constructor(private element: HTMLElement) {}
@@ -29,10 +30,11 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
     const value = await HtmlImgFactory.computeImgValue(this.element as HTMLImageElement);
-
+    const html = `<img src="${value}" />`;
+    const hash = fnSha256(html);
     await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {
-      id,
-      html: `<img src="${value}" />`,
+      hash,
+      html,
       htmlAttr: '',
       css: {
         css: []

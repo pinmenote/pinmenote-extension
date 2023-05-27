@@ -18,7 +18,7 @@ import { ContentExtensionData, ExtensionThemeDto } from '../../../common/model/s
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { appLightIcons } from '../../../common/components/app-icons';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentThemeCommand implements ICommand<void> {
   constructor(private data: ContentExtensionData) {}

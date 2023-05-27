@@ -17,7 +17,7 @@
 import { Message, createMessage, readSignature, verify } from 'openpgp';
 import { CryptoStore } from '../../store/crypto.store';
 import { ICommand } from '../../model/shared/common.dto';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class CryptoVerifySignatureCommand implements ICommand<void> {
   constructor(private text: string, private armoredSignature: string) {}

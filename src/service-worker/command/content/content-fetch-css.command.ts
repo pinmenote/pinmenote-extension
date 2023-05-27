@@ -20,7 +20,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchCssRequest } from '../../../common/model/obj-request.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}

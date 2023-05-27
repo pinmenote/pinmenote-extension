@@ -42,6 +42,10 @@ export class ContentSettingsStore {
     return this.settings.screenshotFormat;
   }
 
+  static get skipCssImageSize(): number {
+    return this.settings.skipCssImageSizeMB;
+  }
+
   static initSettings = async (): Promise<void> => {
     this.settings = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
   };

@@ -16,7 +16,7 @@
  */
 import { ApiStoreRemoveObjectCommand } from '../../api/store/api-store-remove-object.command';
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class SyncRemoveObjectCommand implements ICommand<Promise<void>> {
   constructor(private id: number) {}

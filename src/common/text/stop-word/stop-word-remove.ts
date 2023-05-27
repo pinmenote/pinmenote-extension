@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { StopWordProfile } from './stop-word-profile';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 import stopWords from '../../../vendor/stopwords-iso/stopwords-iso.json';
 
 // skipping those from url

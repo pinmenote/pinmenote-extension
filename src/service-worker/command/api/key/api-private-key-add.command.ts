@@ -19,7 +19,7 @@ import { FetchResponse, ResponseType } from '../../../../common/model/api.model'
 import { ApiHelper } from '../../../api/api-helper';
 import { CryptoStore } from '../../../../common/store/crypto.store';
 import { FetchService } from '../../../service/fetch.service';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiPrivateKeyAddCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
   private error = {

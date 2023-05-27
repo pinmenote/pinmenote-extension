@@ -27,12 +27,13 @@ import { ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ShadowFactory } from './shadow.factory';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { environmentConfig } from '../../../common/environment';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export interface HtmlComputeParams {
   ref: Element;
   depth: number;
+  skipElements: string[];
   skipTagCache: Set<string>;
   skipUrlCache: Set<string>;
   isPartial: boolean;
@@ -54,8 +55,6 @@ const findContext = (ref: HTMLCanvasElement): { ctx: RenderingContext | null; na
 export class HtmlFactory {
   static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
     fnConsoleLog('HtmlFactory->computeCanvas');
-    const uid = fnUid();
-    let html = `<img data-pin-id="${uid}" `;
 
     let imgData = '';
     const render = findContext(ref);
@@ -106,7 +105,10 @@ export class HtmlFactory {
       width = Math.max(rect1?.width || 0, rect2.width).toString() || '100%';
       height = Math.max(rect1?.height || 0, rect2.height).toString() || '100%';
     }
-    html += `width="${width}" height="${height}" `;
+
+    const hash = fnSha256(imgData);
+
+    let html = `<img data-pin-hash="${hash}" width="${width}" height="${height}" `;
 
     const style = ref.getAttribute('style') || '';
     if (style) html += `style="${style}" `;
@@ -115,13 +117,12 @@ export class HtmlFactory {
     if (clazz) html += `class="${clazz}" `;
 
     html += `/>`;
-
     return {
       html,
       video: [],
       content: [
         {
-          id: uid,
+          hash,
           type: ObjContentTypeDto.IMG,
           content: imgData
         }
@@ -138,6 +139,8 @@ export class HtmlFactory {
   static computeHtmlIntermediateData = async (params: HtmlComputeParams): Promise<HtmlIntermediateData> => {
     let tagName = params.ref.tagName.toLowerCase();
     if (['script', 'link', 'noscript'].includes(tagName)) return HtmlAttrFactory.EMPTY_RESULT;
+    if (params.skipElements.filter((attr) => params.ref.hasAttribute(attr)).length > 0)
+      return HtmlAttrFactory.EMPTY_RESULT;
     // @vane wasted whole day fixing html rendering problem
     // just because some most popular markdown to documentation
     // company that has git version control system in their name followed by book breaks html specification
@@ -185,13 +188,13 @@ export class HtmlFactory {
       }
       case 'img': {
         const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params.skipUrlCache);
-        const uid = fnUid();
+        const hash = fnSha256(value);
         content.push({
-          id: uid,
+          hash,
           type: ObjContentTypeDto.IMG,
           content: value
         });
-        html += `data-pin-id=${uid} `;
+        html += `data-pin-hash="${hash}" `;
         break;
       }
       case 'textarea': {
@@ -231,6 +234,7 @@ export class HtmlFactory {
         const computed = await this.computeHtmlIntermediateData({
           ref: node as Element,
           depth: params.depth,
+          skipElements: params.skipElements,
           skipTagCache: params.skipTagCache,
           skipUrlCache: params.skipUrlCache,
           isPartial: params.isPartial,
@@ -254,6 +258,7 @@ export class HtmlFactory {
           const computed = await this.computeHtmlIntermediateData({
             ref: node as Element,
             depth: params.depth,
+            skipElements: params.skipElements,
             skipTagCache: params.skipTagCache,
             skipUrlCache: params.skipUrlCache,
             isPartial: params.isPartial,

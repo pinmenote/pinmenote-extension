@@ -26,6 +26,7 @@ export interface SettingsConfig {
   borderRadius: string;
   themeColor: string;
   videoDisplayTime: number;
+  skipCssImageSizeMB: number;
 }
 
 interface EnvironmentConfig {
@@ -48,7 +49,8 @@ export const environmentConfig: EnvironmentConfig = {
     newElementStyle: '2px solid #ff0000',
     borderRadius: '5px',
     themeColor: '#ff0000',
-    videoDisplayTime: 5
+    videoDisplayTime: 5,
+    skipCssImageSizeMB: 2
   },
   objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
 };

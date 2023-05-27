@@ -21,7 +21,7 @@ import { FetchImageRequest } from '../../../common/model/obj-request.model';
 import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { UrlFactory } from '../../../common/factory/url.factory';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}

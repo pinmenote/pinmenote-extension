@@ -24,7 +24,7 @@ import '@fontsource/roboto/700.css';
 import '../css/prosemirror.css';
 
 import { ContentExtensionData, ExtensionThemeDto } from '../common/model/settings.model';
-import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
+import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../common/model/bus.model';
@@ -36,7 +36,7 @@ import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
-import { fnUid } from '../common/fn/uid.fn';
+import { fnUid } from '../common/fn/fn-uid';
 
 class PinMeScript {
   private href: string;

@@ -16,7 +16,7 @@
  */
 import { BusMessage } from '../model/bus.model';
 import { environmentConfig } from '../environment';
-import { fnConsoleLog } from '../fn/console.fn';
+import { fnConsoleLog } from '../fn/fn-console';
 
 export type BrowserGlobal = typeof chrome | typeof browser;
 export type BrowserRuntime = typeof chrome.runtime | typeof browser.runtime;

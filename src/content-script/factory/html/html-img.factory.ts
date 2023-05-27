@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnFetchImage } from '../../../common/fn/fetch-image.fn';
+import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
 
 export class HtmlImgFactory {
   static computeImgValue = async (ref: HTMLImageElement, skipUrlCache?: Set<string>): Promise<string> => {

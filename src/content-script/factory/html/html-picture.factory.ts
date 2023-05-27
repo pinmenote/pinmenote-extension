@@ -18,8 +18,8 @@ import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
-import { fnFetchImage } from '../../../common/fn/fetch-image.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
+import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class HtmlPictureFactory {
   static computePicture = async (
@@ -54,10 +54,10 @@ export class HtmlPictureFactory {
     if (forShadow) {
       html += `<img src="${imgValue}" `;
     } else {
-      const uid = fnUid();
-      html += `<img data-pin-id=${uid} `;
+      const hash = fnSha256(imgValue);
+      html += `<img data-pin-hash="${hash}" `;
       content.push({
-        id: uid,
+        hash,
         type: ObjContentTypeDto.IMG,
         content: imgValue
       });

@@ -17,7 +17,7 @@
 import '../css/prosemirror.css';
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
+import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BoardComponent } from './components/board/board.component';
 import { BoardDrawer } from './components/board/board/board-drawer';
 import { BoardMenu } from './components/board/board/board-menu';

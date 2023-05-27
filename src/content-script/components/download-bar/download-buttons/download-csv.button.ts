@@ -18,7 +18,7 @@ import { BusDownloadMessage, BusMessageType } from '../../../../common/model/bus
 import { BrowserApi } from '../../../../common/service/browser.api.wrapper';
 import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { fnUid } from '../../../../common/fn/uid.fn';
+import { fnUid } from '../../../../common/fn/fn-uid';
 
 const elStyles = {
   'margin-right': '10px',

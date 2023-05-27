@@ -18,7 +18,7 @@ import { FetchResponse, ResponseType } from '../../common/model/api.model';
 import { ApiHelper } from '../api/api-helper';
 import { TokenStorageRemoveCommand } from '../../common/command/server/token/token-storage-remove.command';
 import { TokenStorageSetCommand } from '../../common/command/server/token/token-storage-set.command';
-import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class FetchService {
   static async post<T>(

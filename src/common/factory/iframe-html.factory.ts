@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjSnapshotContentDto, ObjSnapshotDto } from '../model/obj/obj-snapshot.dto';
-import { ObjIFrameContentDto } from '../model/obj/obj-content.dto';
+import { ObjSnapshotContentDto } from '../model/obj/obj-content.dto';
 import { ObjSnapshotData } from '../command/obj/content/obj-get-snapshot-content.command';
+import { ObjSnapshotDto } from '../model/obj/obj-snapshot.dto';
 
 export class IframeHtmlFactory {
-  static computeHtml = (snapshot: ObjSnapshotContentDto | ObjIFrameContentDto, title?: string): string => {
+  static computeHtml = (snapshot: ObjSnapshotContentDto, title?: string): string => {
     let style = '';
     let titleTag = '';
     if (title) {
@@ -83,7 +83,7 @@ export class IframeHtmlFactory {
         
         const renderContent = () => {
             content.forEach((c) => {
-              const elList = document.querySelectorAll(\`[data-pin-id="\${c.id}"]\`);
+              const elList = document.querySelectorAll(\`[data-pin-hash="\${c.hash}"]\`);
                   const el = elList[0];
                   try {
                     if (el) embedContent(c, el);
@@ -102,7 +102,7 @@ export class IframeHtmlFactory {
               iframeDoc.write(iframeHtml);
               iframeDoc.close();
               for (const content of iframe.content) {
-                const elList = iframeDoc.querySelectorAll(\`[data-pin-id="\${content.id}"]\`);
+                const elList = iframeDoc.querySelectorAll(\`[data-pin-hash="\${content.hash}"]\`);
                 const iel = elList[0];
                 try {
                   if (iel) embedContent(content, iel)

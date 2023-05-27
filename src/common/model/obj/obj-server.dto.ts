@@ -29,7 +29,7 @@ export enum ServerPathDto {
 }
 
 export interface ServerChangeDto {
-  id?: string;
+  hash?: string;
   path: ServerPathDto;
   type: 'download' | 'upload' | 'remove';
 }

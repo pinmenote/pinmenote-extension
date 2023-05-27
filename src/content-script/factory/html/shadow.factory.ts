@@ -22,9 +22,9 @@ import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
-import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
+import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class ShadowFactory {
   static computeShadow = async (
@@ -33,9 +33,10 @@ export class ShadowFactory {
     shadow: ShadowRoot,
     skipUrlCache: Set<string>
   ): Promise<HtmlIntermediateData> => {
-    const uid = fnUid();
+    const shadowHtml = await this.computeShadowHtml(shadow, skipUrlCache);
+    const hash = fnSha256(shadowHtml);
 
-    let html = `<${tagName} data-pin-id="${uid}" `;
+    let html = `<${tagName} data-pin-hash="${hash}" `;
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(ref.attributes));
     html = html.substring(0, html.length - 1) + '>';
 
@@ -45,13 +46,12 @@ export class ShadowFactory {
 
     html += `</${tagName}>`;
 
-    const shadowHtml = await this.computeShadowHtml(shadow, skipUrlCache);
     return {
       html,
       video: [],
       content: [
         {
-          id: uid,
+          hash,
           type: ObjContentTypeDto.SHADOW,
           content: {
             html: shadowHtml

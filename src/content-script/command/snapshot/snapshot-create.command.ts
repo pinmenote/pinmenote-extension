@@ -23,7 +23,12 @@ import { SnapshotSaveImageCommand } from './snapshot-save-image.command';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 
 export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> {
-  constructor(private url: ObjUrlDto, private element: HTMLElement, private canvas?: ObjCanvasDto) {}
+  constructor(
+    private url: ObjUrlDto,
+    private element: HTMLElement,
+    private skipElements: string[],
+    private canvas?: ObjCanvasDto
+  ) {}
 
   async execute(): Promise<ObjSnapshotDto> {
     const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
@@ -31,7 +36,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     let words: string[] = [];
     let video: ObjVideoDataDto[] = [];
     if (!this.canvas) {
-      const res = await new SnapshotContentSaveCommand(this.element).execute();
+      const res = await new SnapshotContentSaveCommand(this.element, this.skipElements).execute();
       contentId = res.id;
       words = res.words;
       video = res.video;

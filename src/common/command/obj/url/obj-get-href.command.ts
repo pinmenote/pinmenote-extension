@@ -18,7 +18,7 @@ import { ObjDto, ObjPageDataDto, ObjUrlDto } from '../../../model/obj/obj.dto';
 import { ICommand } from '../../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../../store/link-href-origin.store';
 import { ObjGetCommand } from '../obj-get.command';
-import { fnConsoleLog } from '../../../fn/console.fn';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class ObjGetHrefCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
   constructor(private data: ObjUrlDto) {}

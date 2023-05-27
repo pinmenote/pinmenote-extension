@@ -18,7 +18,7 @@ import { ApiKeyStatusGetCommand } from '../api/key/api-key-status-get.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PopupLoginSuccessCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

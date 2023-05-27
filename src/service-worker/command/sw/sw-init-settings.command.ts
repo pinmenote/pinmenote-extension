@@ -19,7 +19,7 @@ import { BrowserStorageWrapper } from '../../../common/service/browser.storage.w
 import { CryptoGenerateKeyPairCommand } from '../../../common/command/crypto/crypto-generate-key-pair.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class SwInitSettingsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

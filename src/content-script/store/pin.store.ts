@@ -17,7 +17,7 @@
 import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPagePinDto } from '../../common/model/obj/obj-pin.dto';
 import { PageComponent } from '../model/html.model';
-import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class PinStore {
   private static pinData: PageComponent[] = [];

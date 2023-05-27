@@ -19,7 +19,7 @@ import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper'
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
-import { fnConsoleLog } from '../../../fn/console.fn';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class TokenStorageSetCommand implements ICommand<Promise<void>> {
   constructor(private value: AccessTokenDto) {}

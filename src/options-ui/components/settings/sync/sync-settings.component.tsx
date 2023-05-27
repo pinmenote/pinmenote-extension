@@ -17,7 +17,7 @@
 import React, { FunctionComponent } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export const SyncSettingsComponent: FunctionComponent = () => {
   const handleSynchronize = () => {

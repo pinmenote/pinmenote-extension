@@ -18,7 +18,7 @@ import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper'
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjIdRangeResponse } from '../../../model/obj-request.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnConsoleLog } from '../../../fn/console.fn';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class ObjRangeIdCommand implements ICommand<Promise<ObjIdRangeResponse>> {
   constructor(private listId: number, private from: number, private limit: number, private reverse = false) {}

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnUid } from '../fn/uid.fn';
+import { fnUid } from '../fn/fn-uid';
 
 export class TinyEventDispatcher {
   private static listeners: { [key: string]: { [key: string]: any } } = {};

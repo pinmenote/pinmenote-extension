@@ -22,7 +22,7 @@ import { NoteElement } from './note/note.element';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
 import { PinElement } from './pin/pin.element';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export const BoardComponent: FunctionComponent = () => {
   const [objData, setObjData] = useState<ObjDto[]>(BoardStore.objList);

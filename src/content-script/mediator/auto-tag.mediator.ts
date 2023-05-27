@@ -17,7 +17,7 @@
 import { DetectLanguage } from '../../common/text/detect-language';
 import { StopWordRemove } from '../../common/text/stop-word/stop-word-remove';
 import { WordIndex } from '../../common/text/index/word.index';
-import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class AutoTagMediator {
   private static readonly META_PROPERTIES = [

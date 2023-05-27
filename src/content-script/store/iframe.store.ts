@@ -18,7 +18,7 @@ import { IFrameIndexMessage, IFrameListenerMessage } from '../../common/model/if
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { DocumentMediator } from '../mediator/document.mediator';
-import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class IFrameStore {
   private static iframeMap: { [key: string]: IFrameIndexMessage } = {};

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import * as LanguageDetect from 'languagedetect';
-import { fnConsoleLog } from '../fn/console.fn';
+import { fnConsoleLog } from '../fn/fn-console';
 
 export class DetectLanguage {
   private static lang = new LanguageDetect();

@@ -25,7 +25,7 @@ import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../common/fn/console.fn';
+import { fnConsoleLog } from '../common/fn/fn-console';
 
 export class ContentMessageHandler {
   private static href?: string;

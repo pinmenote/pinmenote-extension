@@ -14,16 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjSnapshotContentDto, ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
+import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
+import { ObjVideoDataDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 interface SnapshotResult {
   id: number;
@@ -32,7 +33,7 @@ interface SnapshotResult {
 }
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
-  constructor(private element: HTMLElement, private isPartial = true) {}
+  constructor(private element: HTMLElement, private skipElements: string[], private isPartial = true) {}
   async execute(): Promise<SnapshotResult> {
     const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
@@ -42,6 +43,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: this.element,
       depth: 1,
+      skipElements: this.skipElements,
       skipTagCache: new Set<string>(),
       skipUrlCache: urlCache,
       isPartial: this.isPartial,
@@ -53,7 +55,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const css = await CssFactory.computeCssContent(document, urlCache);
 
     const adopted = CssFactory.computeAdoptedStyleSheets(document.adoptedStyleSheets);
-    if (adopted) css.css.unshift({ id: fnUid(), data: adopted });
+    if (adopted) css.css.unshift({ hash: fnSha256(adopted), data: adopted });
 
     fnConsoleLog('CSS DONE');
     const words = AutoTagMediator.computeTags(this.element);
@@ -62,7 +64,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     fnConsoleLog('END');
 
     await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {
-      id,
+      hash: fnSha256(html),
       html,
       htmlAttr,
       css,

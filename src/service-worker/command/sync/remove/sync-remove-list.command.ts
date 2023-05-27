@@ -21,7 +21,7 @@ import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from '../progress/sync-get-progress.command';
 import { SyncRemoveObjectCommand } from './sync-remove-object.command';
 import { SyncSetProgressCommand } from '../progress/sync-set-progress.command';
-import { fnSleep } from '../../../../common/fn/sleep.fn';
+import { fnSleep } from '../../../../common/fn/fn-sleep';
 
 export class SyncRemoveListCommand implements ICommand<Promise<void>> {
   constructor(private yearMonth: string) {}

@@ -25,7 +25,7 @@ import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>>> {
   constructor(private pin: ObjPagePinDto) {}

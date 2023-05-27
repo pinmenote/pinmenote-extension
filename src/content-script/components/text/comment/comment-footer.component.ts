@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCommentDto } from '../../../../common/model/obj/obj-pin.dto';
-import { fnDateFormat } from '../../../../common/fn/date.format.fn';
+import { fnDateFormat } from '../../../../common/fn/fn-date-format';
 
 export class CommentFooterComponent {
   private el = document.createElement('div');

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { IFrameIndexMessage, IFrameListenerMessage } from '../common/model/iframe-message.model';
-import { fnConsoleError, fnConsoleLog } from '../common/fn/console.fn';
+import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../common/model/bus.model';
@@ -26,7 +26,7 @@ import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
 import { fnIframeIndex } from '../common/fn/fn-iframe-index';
 import { fnIsIframe } from '../common/fn/fn-is-iframe';
-import { fnUid } from '../common/fn/uid.fn';
+import { fnUid } from '../common/fn/fn-uid';
 
 /**
  * IframeScript runs at document_idle -> all_frames

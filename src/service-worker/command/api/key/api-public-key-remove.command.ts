@@ -18,7 +18,7 @@ import { BoolDto, ICommand, ServerErrorDto } from '../../../../common/model/shar
 import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
 import { ApiHelper } from '../../../api/api-helper';
 import { FetchService } from '../../../service/fetch.service';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiPublicKeyRemoveCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
   async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {

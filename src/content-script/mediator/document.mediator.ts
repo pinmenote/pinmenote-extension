@@ -31,8 +31,9 @@ import { SnapshotCreateCommand } from '../command/snapshot/snapshot-create.comma
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
 import { applyStylesToElement } from '../../common/style.utils';
-import { fnConsoleLog } from '../../common/fn/console.fn';
-import { fnSleep } from '../../common/fn/sleep.fn';
+import { fnConsoleLog } from '../../common/fn/fn-console';
+import { fnSleep } from '../../common/fn/fn-sleep';
+import { fnUid } from '../../common/fn/fn-uid';
 import { pinStyles } from '../components/styles/pin.styles';
 
 export class DocumentMediator {
@@ -278,9 +279,9 @@ export class DocumentMediator {
     PinAddFactory.clearStyles();
 
     await this.sleepUntilClearStyles();
-    this.showPreloader();
+    const skipUid = this.showPreloader();
     const url = UrlFactory.newUrl();
-    const snapshot = await new SnapshotCreateCommand(url, element, canvas).execute();
+    const snapshot = await new SnapshotCreateCommand(url, document.body, [skipUid], canvas).execute();
     const pagePin = PinFactory.objPagePinNew(element, snapshot, border);
     const obj = await new PinAddCommand(pagePin).execute();
     new PinComponentAddCommand(element, obj, true).execute();
@@ -291,10 +292,10 @@ export class DocumentMediator {
       PinAddFactory.clearStyles();
 
       await this.sleepUntilClearStyles();
-      this.showPreloader();
+      const skipUid = this.showPreloader();
 
       const url = UrlFactory.newUrl();
-      const dto = await new SnapshotCreateCommand(url, element, canvas).execute();
+      const dto = await new SnapshotCreateCommand(url, element, [skipUid], canvas).execute();
       await new PageElementSnapshotAddCommand(dto).execute();
       await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_ELEMENT_SNAPSHOT_ADD });
     }
@@ -316,15 +317,20 @@ export class DocumentMediator {
     await fnSleep(100);
   };
 
-  private static showPreloader = (): void => {
+  private static showPreloader = (): string => {
+    const uid = fnUid();
     this.preloader.innerHTML = CIRCLE_PRELOADER_SVG;
+    this.preloader.setAttribute(uid, 'true');
     this.preloader.style.zIndex = 'calc(9e999)';
     this.preloader.style.position = 'absolute';
     this.preloader.style.top = `${window.scrollY}px`;
     this.preloader.style.right = '0px';
     this.preloader.style.minWidth = '50px';
+    this.preloader.style.maxWidth = '50px';
     this.preloader.style.minHeight = '50px';
+    this.preloader.style.maxHeight = '50px';
     document.body.appendChild(this.preloader);
+    return uid;
   };
 
   private static hidePreloader = (): void => {

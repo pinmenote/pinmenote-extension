@@ -17,13 +17,14 @@
 import {
   ObjContentDto,
   ObjContentTypeDto,
-  ObjIFrameContentDto,
-  ObjShadowContentDto
+  ObjShadowContentDto,
+  ObjSnapshotContentDto
 } from '../../../common/model/obj/obj-content.dto';
 import {
   ObjGetSnapshotContentCommand,
   ObjSnapshotData
 } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
+import { ObjPageDto, ObjPagePinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -32,11 +33,13 @@ import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
-import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnSleep } from '../../../common/fn/sleep.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
+import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnParse5 } from '../../../common/fn/fn-parse5';
+import { fnSleep } from '../../../common/fn/fn-sleep';
+import { fnUid } from '../../../common/fn/fn-uid';
 
 const fnByteToMb = (value?: number): number => {
   if (!value) return 0;
@@ -75,6 +78,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   });
 
   const render = (id: number) => {
+    if (titleRef.current) titleRef.current.innerHTML = '';
+    if (sizeRef.current) sizeRef.current.innerHTML = '';
+    if (urlRef.current) urlRef.current.innerHTML = '';
     setTimeout(async () => {
       setIsPreLoading(true);
       setIsLoading(true);
@@ -83,6 +89,14 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       let c: ObjSnapshotData | undefined = undefined;
       if (obj.data.snapshot.contentId > 0) {
         c = await new ObjGetSnapshotContentCommand(obj.data.snapshot.contentId).execute();
+        const a = Date.now();
+        const dom = fnParse5(c.snapshot.html);
+        fnConsoleLog('DOM !!!', dom, 'in', Date.now() - a);
+        fnConsoleLog('obj', obj, 'snapshot', c);
+        if (obj.type === ObjTypeDto.PageElementPin) {
+          const pin = obj.data as ObjPagePinDto;
+          fnConsoleLog('XPATH SUBTREE', XpathFactory.evaluateTree(pin.xpath, dom));
+        }
         setSnapshotData(c);
       }
       if (obj.data.snapshot.canvas) {
@@ -120,7 +134,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const renderSnapshot = async (s: ObjSnapshotDto, c?: ObjSnapshotData): Promise<void> => {
-    fnConsoleLog('SHOW HTML !!!', s, c, c?.snapshot.css.css.length);
     renderHeader(s, c?.size);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
@@ -144,7 +157,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (c.snapshot.content) {
       fnConsoleLog('RENDER CONTENT', c.snapshot.content.length);
       for (const content of c.snapshot.content) {
-        const elList = doc.querySelectorAll(`[data-pin-id="${content.id}"]`);
+        const elList = doc.querySelectorAll(`[data-pin-hash="${content.hash}"]`);
         const el = elList[0];
         try {
           if (el) await asyncEmbedContent(content, el);
@@ -188,14 +201,14 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       fnSleep(5)
         .then(() => {
           if (dto.type === ObjContentTypeDto.IFRAME) {
-            const iframe: ObjIFrameContentDto = dto.content as ObjIFrameContentDto;
+            const iframe: ObjSnapshotContentDto = dto.content as ObjSnapshotContentDto;
             const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
             if (iframeDoc) {
               const iframeHtml = IframeHtmlFactory.computeHtml(iframe);
               iframeDoc.write(iframeHtml);
               iframeDoc.close();
               for (const content of iframe.content) {
-                const elList = iframeDoc.querySelectorAll(`[data-pin-id="${content.id}"]`);
+                const elList = iframeDoc.querySelectorAll(`[data-pin-hash="${content.hash}"]`);
                 const iel = elList[0];
                 try {
                   if (iel)
@@ -214,7 +227,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           } else if (dto.type === ObjContentTypeDto.IMG) {
             const img = el as HTMLImageElement;
             img.src = dto.content as string;
-            if (img.parentElement?.tagName.toLowerCase() === 'picture') img.style.maxWidth = `${window.innerWidth}px`;
+            if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
+              img.style.maxWidth = `${window.innerWidth}px`;
           } else if (dto.type === ObjContentTypeDto.SHADOW) {
             const content = dto.content as ObjShadowContentDto;
             renderShadow(el, content);

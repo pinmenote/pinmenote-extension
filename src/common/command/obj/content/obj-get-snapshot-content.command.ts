@@ -16,9 +16,9 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjSnapshotContentDto } from '../../../model/obj/obj-snapshot.dto';
+import { ObjSnapshotContentDto } from '../../../model/obj/obj-content.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnConsoleLog } from '../../../fn/console.fn';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 export interface ObjSnapshotData {
   size: number;

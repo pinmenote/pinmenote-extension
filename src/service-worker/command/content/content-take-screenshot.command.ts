@@ -20,7 +20,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SettingsConfig } from '../../../common/environment';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentTakeScreenshotCommand implements ICommand<void> {
   constructor(private url: string) {}

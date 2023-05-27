@@ -20,8 +20,9 @@ import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
-import { ObjIFrameContentDto } from '../../../common/model/obj/obj-content.dto';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   constructor(private href: string, private uid: string, private depth: number) {}
@@ -31,6 +32,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: document.body,
       depth: this.depth + 1,
+      skipElements: [],
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false,
@@ -39,7 +41,8 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     fnConsoleLog('ContentFetchIframeCommand->html->done');
     const css = await CssFactory.computeCssContent(document);
     fnConsoleLog('ContentFetchIframeCommand->css->done');
-    const dto: ObjIFrameContentDto = {
+    const dto: ObjSnapshotContentDto = {
+      hash: fnSha256(htmlContent.html),
       html: htmlContent.html,
       htmlAttr: HtmlFactory.computeHtmlAttr(),
       css,

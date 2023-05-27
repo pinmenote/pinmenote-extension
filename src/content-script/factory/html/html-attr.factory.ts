@@ -16,8 +16,8 @@
  */
 import { CSS_URL_REG, CssFactory } from '../css.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
-import { fnComputeUrl } from '../../../common/fn/compute-url.fn';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 const TRANSLATE_REG = new RegExp('(transform: translateY\\()([0-9.px]+)(\\);)', 'g');
 

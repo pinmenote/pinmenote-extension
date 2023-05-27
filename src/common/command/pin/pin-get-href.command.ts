@@ -19,7 +19,7 @@ import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjGetCommand } from '../obj/obj-get.command';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPagePinDto>[]>> {
   constructor(private data: ObjUrlDto) {}

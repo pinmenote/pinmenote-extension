@@ -7,7 +7,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface AddMenuItem {
   title: string;

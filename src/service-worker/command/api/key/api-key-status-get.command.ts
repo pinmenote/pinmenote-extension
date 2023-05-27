@@ -18,7 +18,7 @@ import { FetchResponse, KeyStatusResponse, ResponseType } from '../../../../comm
 import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { ApiHelper } from '../../../api/api-helper';
 import { FetchService } from '../../../service/fetch.service';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiKeyStatusGetCommand implements ICommand<Promise<FetchResponse<KeyStatusResponse | ServerErrorDto>>> {
   async execute(): Promise<FetchResponse<KeyStatusResponse | ServerErrorDto>> {

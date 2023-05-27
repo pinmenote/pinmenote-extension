@@ -19,7 +19,7 @@ import { ApiLogoutCommand } from '../api/api-logout.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchResponse } from '../../../common/model/api.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PopupLogoutCommand implements ICommand<void> {
   async execute(): Promise<void> {

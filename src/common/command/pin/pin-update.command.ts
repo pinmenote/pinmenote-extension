@@ -20,7 +20,7 @@ import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPagePinDto } from '../../model/obj/obj-pin.dto';
 import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinUpdateCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPagePinDto>, private changes?: string[]) {}

@@ -21,6 +21,8 @@ interface XPathElement {
   tagName: string;
 }
 
+const XPATH_INDEX_REGEX = new RegExp('(\\[)(.*?])', 'g');
+
 export class XpathFactory {
   static newXPathString(element: HTMLElement): string {
     let child = element;
@@ -53,8 +55,33 @@ export class XpathFactory {
     return index;
   }
 
-  static newXPathResult(xpath: string): XPathResult {
-    return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE);
+  static evaluateTree(path: string, tree: any): object | undefined {
+    const a = path.split('/');
+    let subtree = tree;
+    a.shift();
+    for (const p of a) {
+      const m = p.match(XPATH_INDEX_REGEX);
+      let tag = p.toLowerCase();
+      let index = 0;
+      if (m) {
+        tag = p.replaceAll(XPATH_INDEX_REGEX, '').toLowerCase();
+        index = parseInt(m[0].substring(1, m[0].length - 1)) - 1;
+      }
+      let found = false;
+      for (const child of subtree.childNodes) {
+        if (child.tagName === tag) {
+          index === 0 ? (subtree = child) : index--;
+          found = true;
+          break;
+        }
+      }
+      if (!found) return undefined;
+    }
+    return subtree;
+  }
+
+  static newXPathResult(path: string): XPathResult {
+    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE);
   }
 
   static computeRect = (ref: HTMLElement): ObjRectangleDto => {

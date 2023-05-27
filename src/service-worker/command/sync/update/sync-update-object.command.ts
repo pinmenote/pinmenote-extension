@@ -24,7 +24,7 @@ import { ObjUpdateIndexDelCommand } from '../../../../common/command/obj/date-in
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncGatherChangesCommand } from './sync-gather-changes.command';
 import { SyncSendChangesCommand } from './sync-send-changes.command';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
   constructor(private index: ObjDateIndex) {}

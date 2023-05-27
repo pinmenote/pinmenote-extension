@@ -14,16 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssStyleDto, CssStyleListDto } from '../../common/model/obj/obj-pin.dto';
+import { CssStyleDto, CssStyleListDto } from '../../common/model/obj/obj-css.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
-import { fnComputeUrl } from '../../common/fn/compute-url.fn';
-import { fnConsoleLog } from '../../common/fn/console.fn';
-import { fnFetchImage } from '../../common/fn/fetch-image.fn';
-import { fnUid } from '../../common/fn/uid.fn';
+import { fnComputeUrl } from '../../common/fn/fn-compute-url';
+import { fnConsoleLog } from '../../common/fn/fn-console';
+import { fnFetchImage } from '../../common/fn/fn-fetch-image';
+import { fnSha256 } from '../../common/fn/fn-sha256';
 
 export const CSS_URL_REG = new RegExp('url\\(.*?\\)', 'ig');
 export const CSS_IMPORT_REG = new RegExp(
@@ -57,7 +58,7 @@ export class CssFactory {
           css.push(...imports);
           if (!data) continue;
           css.push({
-            id: fnUid(),
+            hash: fnSha256(data),
             href: s.href,
             media: s.media.mediaText,
             data
@@ -65,7 +66,7 @@ export class CssFactory {
         } else {
           skipUrlCache?.add(s.href);
           css.push({
-            id: fnUid(),
+            hash: '',
             href: s.href,
             media: s.media.mediaText,
             data: undefined
@@ -115,7 +116,7 @@ export class CssFactory {
     /* eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-plus-operands */
     if (!out) return [];
     css.push({
-      id: fnUid(),
+      hash: fnSha256(out),
       data: out,
       media: stylesheet.media.mediaText
     });
@@ -140,7 +141,7 @@ export class CssFactory {
     const importList = css.match(CSS_IMPORT_REG);
     if (!importList) return [];
 
-    const out = [];
+    const out: CssStyleDto[] = [];
 
     for (const importUrl of importList) {
       if (importUrl.startsWith('http')) continue;
@@ -173,19 +174,19 @@ export class CssFactory {
 
       if (result.ok) {
         // !important recurrence of getting imports inside imports here
-        let data = result.res;
+        let res = result.res;
         const imports = await this.fetchImports(result.res);
-        data = data.replaceAll(CSS_IMPORT_REG, '').trim();
+        res = res.replaceAll(CSS_IMPORT_REG, '').trim();
         out.push(...imports);
         // Now fetch urls to save offline
-        const urlData = await this.fetchUrls(data, baseUrl);
+        const data = await this.fetchUrls(res, baseUrl);
         // TODO check if should skip this one
-        if (!urlData) continue;
+        if (!data) continue;
         out.push({
-          id: fnUid(),
+          hash: fnSha256(data),
           href: result.url,
           media: '',
-          data: urlData
+          data
         });
       } else {
         skipUrlCache?.add(url);
@@ -242,7 +243,7 @@ export class CssFactory {
 
       if (skipUrlCache?.has(url)) continue;
 
-      const result = await fnFetchImage(url);
+      const result = await fnFetchImage(url, ContentSettingsStore.skipCssImageSize);
 
       if (result.ok) {
         const newUrl = `url(${result.res})`;

@@ -21,7 +21,7 @@ import { ObjNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class NoteUpdateCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjNoteDto>, private oldWords: string[]) {}

@@ -16,7 +16,7 @@
  */
 import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
 import { ObjUrlDto } from '../model/obj/obj.dto';
-import { fnConsoleLog } from '../fn/console.fn';
+import { fnConsoleLog } from '../fn/fn-console';
 
 export class LinkHrefOriginStore {
   private static NOTE_HREF = 'note:href';

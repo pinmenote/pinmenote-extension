@@ -18,7 +18,7 @@ import { HtmlComponent } from '../../../model/html.model';
 import MathMLToLaTeX from '../../../../vendor/mathml-to-latex/src/index';
 import { PinModel } from '../../pin.model';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
 export class ActionCopyButton implements HtmlComponent<HTMLElement> {

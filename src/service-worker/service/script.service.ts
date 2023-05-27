@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
-import { fnConsoleLog } from '../../common/fn/console.fn';
+import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class ScriptService {
   static reloadScripts = async (): Promise<void> => {

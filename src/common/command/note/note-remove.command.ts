@@ -22,7 +22,7 @@ import { ObjNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';
-import { fnConsoleLog } from '../../fn/console.fn';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class NoteRemoveCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjNoteDto>) {}

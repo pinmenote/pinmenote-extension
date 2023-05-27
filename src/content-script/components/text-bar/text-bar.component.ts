@@ -23,7 +23,7 @@ import { TextBulletListButton } from './text-bar-buttons/text-bullet-list.button
 import { TextItalicButton } from './text-bar-buttons/text-italic.button';
 import { TextNumericListButton } from './text-bar-buttons/text-numeric-list.button';
 import { applyStylesToElement } from '../../../common/style.utils';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 const elStyles = {
   display: 'flex',

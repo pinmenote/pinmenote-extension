@@ -32,7 +32,7 @@ import { PopupVerify2faCommand } from './command/popup/popup-verify-2fa.command'
 import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
 import { SyncServerCommand } from './command/sync/sync-server.command';
-import { fnConsoleLog } from '../common/fn/console.fn';
+import { fnConsoleLog } from '../common/fn/fn-console';
 
 const handleMessage = async (
   msg: BusMessage<any>,

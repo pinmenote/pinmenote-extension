@@ -20,7 +20,7 @@ import { ApiLoginCommand } from '../api/api-login.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchResponse } from '../../../common/model/api.model';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PopupLoginCommand implements ICommand<void> {
   constructor(private data: LoginDto) {}

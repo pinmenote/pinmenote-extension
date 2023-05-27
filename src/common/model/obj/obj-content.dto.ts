@@ -14,9 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssStyleListDto } from './obj-pin.dto';
+import { CssStyleListDto } from './obj-css.dto';
 
 export interface ObjIFrameContentDto {
+  hash: string;
+  html: string;
+  htmlAttr: string;
+  css: CssStyleListDto;
+  content: ObjContentDto[];
+}
+
+export interface ObjSnapshotContentDto {
+  hash: string;
   html: string;
   htmlAttr: string;
   css: CssStyleListDto;
@@ -37,6 +46,6 @@ type ObjContent = ObjIFrameContentDto | ObjShadowContentDto | string;
 
 export interface ObjContentDto {
   type: ObjContentTypeDto;
-  id: string;
+  hash: string;
   content: ObjContent;
 }

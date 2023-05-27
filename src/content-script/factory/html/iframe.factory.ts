@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { IFrameFetchMessage, IFrameIndexMessage } from '../../../common/model/iframe-message.model';
+import { ObjContentTypeDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../css.factory';
@@ -22,10 +23,10 @@ import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlFactory } from './html.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { IFrameStore } from '../../store/iframe.store';
-import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
-import { fnUid } from '../../../common/fn/uid.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnSha256 } from '../../../common/fn/fn-sha256';
+import { fnUid } from '../../../common/fn/fn-uid';
 
 export class IFrameFactory {
   static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
@@ -46,9 +47,9 @@ export class IFrameFactory {
       })
       .join(' ');
     return {
-      html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-id="${msg.uid}"></iframe>`,
+      html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-hash="${msg.data.hash}"></iframe>`,
       video: [],
-      content: [{ id: msg.uid, type: ObjContentTypeDto.IFRAME, content: msg.data }]
+      content: [{ hash: msg.data.hash, type: ObjContentTypeDto.IFRAME, content: msg.data }]
     };
   };
 
@@ -127,6 +128,7 @@ export class IFrameFactory {
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: ref.contentDocument.body,
       depth: depth + 1,
+      skipElements: [],
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false,
@@ -135,7 +137,8 @@ export class IFrameFactory {
     fnConsoleLog('ContentFetchAccessibleIframeCommand->html->done');
     const css = await CssFactory.computeCssContent(ref.contentDocument);
     fnConsoleLog('ContentFetchAccessibleIframeCommand->css->done');
-    const data = {
+    const data: ObjSnapshotContentDto = {
+      hash: fnSha256(htmlContent.html),
       html: htmlContent.html,
       htmlAttr: HtmlFactory.computeHtmlAttr(),
       css,

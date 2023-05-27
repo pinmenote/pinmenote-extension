@@ -19,7 +19,7 @@ import { BoardStore } from '../../../store/board.store';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import { StyledInputBlack } from '../../../../common/components/react/styled.input';
-import { fnConsoleLog } from '../../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface BoardInputSearchParams {
   value: string;

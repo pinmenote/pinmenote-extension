@@ -19,9 +19,9 @@ import { BrowserApi } from '../service/browser.api.wrapper';
 import { BusMessageType } from '../model/bus.model';
 import { FetchImageRequest } from '../model/obj-request.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
-import { fnConsoleLog } from './console.fn';
+import { fnConsoleLog } from './fn-console';
 
-export const fnFetchImage = (url: string): Promise<FetchResponse<string>> => {
+export const fnFetchImage = (url: string, skipSize = 0): Promise<FetchResponse<string>> => {
   return new Promise<FetchResponse<string>>((resolve, reject) => {
     if (!url) {
       fnConsoleLog('fnFetchImage->EMPTY_URL !!!');
@@ -37,7 +37,19 @@ export const fnFetchImage = (url: string): Promise<FetchResponse<string>> => {
     TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_IMAGE, (event, key, value) => {
       if (value.url === url) {
         TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
-        resolve(value);
+        const size = Math.floor(value.res.length / 10000) / 100;
+        if (skipSize > 0 && size > skipSize) {
+          fnConsoleLog(`Skipping image url (${url}) of size ${size}MB exceeding skip size ${skipSize}MB`);
+          resolve({
+            url,
+            ok: false,
+            status: 500,
+            res: '',
+            type: ResponseType.BLOB
+          });
+        } else {
+          resolve(value);
+        }
       }
     });
     BrowserApi.sendRuntimeMessage<FetchImageRequest>({

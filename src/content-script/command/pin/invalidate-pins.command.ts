@@ -23,7 +23,7 @@ import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
 import { RuntimePinGetHrefCommand } from '../runtime/runtime-pin-get-href.command';
 import { UrlFactory } from '../../../common/factory/url.factory';
-import { fnConsoleLog } from '../../../common/fn/console.fn';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class InvalidatePinsCommand implements ICommand<Promise<void>> {
   constructor(private href: string) {}

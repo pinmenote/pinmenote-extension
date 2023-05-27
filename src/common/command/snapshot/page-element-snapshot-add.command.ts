@@ -42,7 +42,7 @@ export class PageElementSnapshotAddCommand implements ICommand<Promise<void>> {
       data: {
         snapshot: this.dto,
         comments: { data: [] },
-        draw: []
+        draw: { data: [] }
       },
       version: OBJ_DTO_VERSION,
       local: {

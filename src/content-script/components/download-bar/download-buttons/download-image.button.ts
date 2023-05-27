@@ -22,8 +22,8 @@ import { PinEditManager } from '../../pin-edit.manager';
 import { PinModel } from '../../pin.model';
 import { ScreenshotFactory } from '../../../../common/factory/screenshot.factory';
 import { applyStylesToElement } from '../../../../common/style.utils';
-import { fnB64toBlob } from '../../../../common/fn/b64.to.blob.fn';
-import { fnUid } from '../../../../common/fn/uid.fn';
+import { fnB64toBlob } from '../../../../common/fn/fn-b64-to-blob';
+import { fnUid } from '../../../../common/fn/fn-uid';
 
 const elStyles = {
   'margin-right': '10px',
