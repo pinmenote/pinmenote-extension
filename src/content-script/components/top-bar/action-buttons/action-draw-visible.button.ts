@@ -16,22 +16,24 @@
  */
 import { HtmlComponent } from '../../../model/html.model';
 import { PinEditManager } from '../../pin-edit.manager';
+import { PinModel } from '../../pin.model';
+import { PinUpdateCommand } from '../../../../common/command/pin/pin-update.command';
 import { applyStylesToElement } from '../../../../common/style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class ActionDrawButton implements HtmlComponent<HTMLElement> {
+export class ActionDrawVisibleButton implements HtmlComponent<HTMLElement> {
   private readonly el = document.createElement('div');
 
-  private visible = false;
+  private fillColor: string;
 
-  private fillColor = '#000000';
-
-  constructor(private edit: PinEditManager) {}
+  constructor(private edit: PinEditManager, private model: PinModel) {
+    this.fillColor = model.local.drawVisible ? '#ff0000' : '#000000';
+  }
 
   render(): HTMLElement {
     this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" height="24" viewBox="0 0 24 24" width="24">
-        <path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/>
-    </svg>`;
+    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+</svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
     return this.el;
@@ -41,21 +43,25 @@ export class ActionDrawButton implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  turnoff(): void {
-    this.visible = false;
-    this.fillColor = '#000000';
-    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+  show(): void {
+    this.el.style.display = 'inline-block';
   }
 
-  handleClick = () => {
-    this.visible = !this.visible;
-    if (this.visible) {
-      this.edit.startDraw();
-      this.fillColor = '#ff0000';
-    } else {
-      this.edit.stopDraw();
+  hide(): void {
+    this.el.style.display = 'none';
+  }
+
+  handleClick = async () => {
+    if (this.model.local.drawVisible) {
       this.fillColor = '#000000';
+      this.model.local.drawVisible = false;
+      this.edit.hideDraw();
+    } else {
+      this.fillColor = '#ff0000';
+      this.model.local.drawVisible = true;
+      this.edit.showDraw();
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+    await new PinUpdateCommand(this.model.object).execute();
   };
 }

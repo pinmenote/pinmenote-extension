@@ -64,14 +64,6 @@ export class DrawAreaComponent {
     this.rasterCanvas.style.height = `${height}px`;
     applyStylesToElement(this.rasterCanvas, canvasStyles);
 
-    /*if (this.parent.object.data.html.screenshot) {
-      const img = new Image();
-      img.src = this.parent.object.data.html.screenshot;
-      img.addEventListener('load', () => {
-        this.rasterCtx?.drawImage(img, 0, 0);
-      });
-    }*/
-
     if (this.rasterCtx) this.rasterCtx.imageSmoothingEnabled = false;
   }
 

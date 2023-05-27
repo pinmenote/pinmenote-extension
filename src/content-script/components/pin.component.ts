@@ -44,7 +44,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly topBar: TopBarComponent;
   readonly bottomBar: BottomBarComponent;
-  private text: TextContainerComponent;
+  readonly text: TextContainerComponent;
 
   readonly drawComponent: DrawContainerComponent;
   readonly drawBar: DrawBarComponent;

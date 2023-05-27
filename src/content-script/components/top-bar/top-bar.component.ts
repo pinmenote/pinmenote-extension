@@ -18,6 +18,7 @@ import { HtmlComponent, HtmlComponentFocusable } from '../../model/html.model';
 import { ActionCopyButton } from './action-buttons/action-copy.button';
 import { ActionDownloadButton } from './action-buttons/action-download.button';
 import { ActionDrawButton } from './action-buttons/action-draw.button';
+import { ActionDrawVisibleButton } from './action-buttons/action-draw-visible.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
 import { PinEditManager } from '../pin-edit.manager';
@@ -60,6 +61,12 @@ const drawIconStyles = {
   'background-color': '#ffffff00'
 };
 
+const drawVisibleIconStyles = {
+  left: '24px',
+  position: 'absolute',
+  'background-color': '#ffffff00'
+};
+
 export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el = document.createElement('div');
 
@@ -69,6 +76,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   private readonly downloadIcon: ActionDownloadButton;
 
   private readonly drawIcon: ActionDrawButton;
+  readonly drawVisibleIcon: ActionDrawVisibleButton;
 
   private topMargin = '-24px';
 
@@ -78,7 +86,8 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.copyIcon = new ActionCopyButton(model);
     this.downloadIcon = new ActionDownloadButton(edit);
 
-    this.drawIcon = new ActionDrawButton(edit, model);
+    this.drawIcon = new ActionDrawButton(edit);
+    this.drawVisibleIcon = new ActionDrawVisibleButton(edit, model);
   }
 
   focusin(): void {
@@ -127,9 +136,13 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     applyStylesToElement(downloadComponent, downloadIconStyles);
 
     // left side
-    const drawComponent = this.drawIcon.render();
-    this.el.appendChild(drawComponent);
-    applyStylesToElement(drawComponent, drawIconStyles);
+    const draw = this.drawIcon.render();
+    this.el.appendChild(draw);
+    applyStylesToElement(draw, drawIconStyles);
+
+    const drawVisible = this.drawVisibleIcon.render();
+    this.el.appendChild(drawVisible);
+    applyStylesToElement(drawVisible, drawVisibleIconStyles);
 
     this.adjustTop();
 

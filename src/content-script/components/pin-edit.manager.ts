@@ -37,12 +37,22 @@ export class PinEditManager {
 
   startDraw = () => {
     this.parent.drawComponent.drawArea.canDraw = true;
+    this.parent.topBar.drawVisibleIcon.hide();
     this.changeVisibleBar(VisibleState.DrawBar);
   };
 
   stopDraw = () => {
     this.parent.drawComponent.drawArea.canDraw = false;
     this.stopEdit();
+    this.parent.topBar.drawVisibleIcon.show();
+  };
+
+  showDraw = () => {
+    this.parent.drawComponent.focusin();
+  };
+
+  hideDraw = () => {
+    this.parent.drawComponent.focusout();
   };
 
   startDownload = () => {
@@ -100,7 +110,7 @@ export class PinEditManager {
     switch (nextState) {
       case VisibleState.None:
         this.parent.topBar.movedown();
-        this.parent.drawComponent.focusout();
+        if (!this.parent.model.local.drawVisible) this.parent.drawComponent.focusout();
         break;
       case VisibleState.PinEditBar:
         this.parent.topBar.moveup();
