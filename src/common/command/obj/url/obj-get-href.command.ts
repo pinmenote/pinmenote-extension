@@ -27,7 +27,7 @@ export class ObjGetHrefCommand implements ICommand<Promise<ObjDto<ObjPageDataDto
     const out: ObjDto<ObjPageDataDto>[] = [];
     const pinIds = (await LinkHrefOriginStore.pinIds(this.data.href)).reverse();
     for (const id of pinIds) {
-      const obj = await new ObjPinGetCommand<ObjPageDataDto>(id).execute();
+      const obj = await new ObjPinGetCommand(id).execute();
       out.push(obj);
     }
     const ids = (await LinkHrefOriginStore.hrefIds(this.data.href)).reverse();

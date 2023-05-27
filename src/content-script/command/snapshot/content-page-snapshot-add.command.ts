@@ -21,13 +21,22 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { PageSnapshotAddCommand } from '../../../common/command/snapshot/page-snapshot-add.command';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
+import { SettingsConfig } from '../../../common/environment';
 import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
 
 export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
-  constructor(private url: ObjUrlDto) {}
+  constructor(private settings: SettingsConfig, private url: ObjUrlDto) {}
 
   async execute(): Promise<void> {
-    const screenshot = await ScreenshotFactory.takeScreenshot(undefined, this.url);
+    const screenshot = await ScreenshotFactory.takeScreenshot(
+      {
+        document,
+        window,
+        settings: this.settings
+      },
+      undefined,
+      this.url
+    );
 
     const res = await new SnapshotContentSaveCommand(document.body, [], false).execute();
 

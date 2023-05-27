@@ -24,7 +24,6 @@ import {
   ObjGetSnapshotContentCommand,
   ObjSnapshotData
 } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
-import { ObjPageDto, ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -32,9 +31,14 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
+import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
+import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPinGetCommand } from '../../../common/command/obj/obj-pin-get.command';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { PinComponent } from '../../../common/components/pin/pin.component';
+import { SettingsStore } from '../../store/settings.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnParse5 } from '../../../common/fn/fn-parse5';
@@ -93,10 +97,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         const dom = fnParse5(c.snapshot.html);
         fnConsoleLog('DOM !!!', dom, 'in', Date.now() - a);
         fnConsoleLog('obj', obj, 'snapshot', c);
-        if (obj.type === ObjTypeDto.PageElementPin) {
-          const pin = obj.data as ObjPinDto;
-          fnConsoleLog('XPATH SUBTREE', XpathFactory.evaluateTree(pin.xpath, dom));
-        }
         setSnapshotData(c);
       }
       if (obj.data.snapshot.canvas) {
@@ -104,7 +104,37 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       } else {
         await renderSnapshot(obj.data.snapshot, c);
       }
+      if (obj.type === ObjTypeDto.PageSnapshot) {
+        const pinIds = await LinkHrefOriginStore.pinIds(obj.data.snapshot.url.href);
+        await renderPins(pinIds);
+      }
     });
+  };
+
+  const renderPins = async (ids: number[]) => {
+    if (!htmlRef.current?.lastElementChild) return;
+
+    const el = htmlRef.current?.lastElementChild as HTMLIFrameElement;
+    if (!el.contentDocument || !el.contentWindow) return;
+
+    await SettingsStore.fetchData();
+    if (!SettingsStore.settings) return;
+
+    fnConsoleLog('PIN IDS !!!!', ids, 'iframe', el);
+
+    for (const id of ids) {
+      const pin = await new ObjPinGetCommand(id).execute();
+      const value = XpathFactory.newXPathResult(el.contentDocument, pin.data.xpath);
+      const node = value.singleNodeValue as HTMLElement;
+      if (!node) continue;
+      const pinComponent = new PinComponent(node, pin, {
+        settings: SettingsStore.settings,
+        document: el.contentDocument,
+        window: el.contentWindow
+      });
+      pinComponent.render();
+      fnConsoleLog('PIN !!!', id, pin, value);
+    }
   };
 
   const renderCanvas = (s: ObjSnapshotDto, c?: ObjSnapshotData) => {

@@ -14,39 +14,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { SettingsConfig, environmentConfig } from '../../common/environment';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
+import { SettingsConfig } from '../../common/environment';
 
 export class ContentSettingsStore {
-  private static settings: SettingsConfig;
-  static readonly borderNone = 'none';
+  private static settingsData: SettingsConfig;
 
-  static get borderStyle(): string {
-    return this.settings.borderStyle;
+  static get settings(): SettingsConfig {
+    return this.settingsData;
   }
 
   static get newElementStyle(): string {
-    return environmentConfig.settings.newElementStyle;
+    return this.settingsData.newElementStyle;
   }
 
   static get borderRadius(): string {
-    return this.settings.borderRadius;
+    return this.settingsData.borderRadius;
   }
 
   static get screenshotQuality(): number {
-    return this.settings.screenshotQuality;
+    return this.settingsData.screenshotQuality;
   }
 
   static get screenshotFormat(): string {
-    return this.settings.screenshotFormat;
+    return this.settingsData.screenshotFormat;
   }
 
   static get skipCssImageSize(): number {
-    return this.settings.skipCssImageSizeMB;
+    return this.settingsData.skipCssImageSizeMB;
   }
 
   static initSettings = async (): Promise<void> => {
-    this.settings = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
+    this.settingsData = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
   };
 }

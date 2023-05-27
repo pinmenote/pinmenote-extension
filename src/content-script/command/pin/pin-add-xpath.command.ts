@@ -21,16 +21,16 @@ import { PinComponentAddCommand } from './pin-component-add.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { isElementHiddenFn } from '../../fn/is-element-hidden.fn';
+import { fnIsElementHidden } from '../../../common/fn/fn-is-element-hidden';
 
 export class PinAddXpathCommand implements ICommand<boolean> {
   constructor(private data: ObjDto<ObjPinDto>) {}
   execute(): boolean {
     const pin = this.data.data;
-    const value = XpathFactory.newXPathResult(pin.xpath);
+    const value = XpathFactory.newXPathResult(document, pin.xpath);
     fnConsoleLog('PinAddXpathCommand->xpath', pin.xpath, 'singleNodeValue', value.singleNodeValue);
     const node = value.singleNodeValue as HTMLElement;
-    if (!this.data.local?.visible || !node || isElementHiddenFn(node)) {
+    if (!this.data.local?.visible || !node || fnIsElementHidden(node)) {
       // will be created on invalidate
       PinPendingStore.add(this.data);
       return false;

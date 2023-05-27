@@ -19,6 +19,7 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentPageSnapshotAddCommand } from '../snapshot/content-page-snapshot-add.command';
+import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
@@ -58,7 +59,7 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
 
     const hasSnapshot = await LinkHrefOriginStore.hasPageSnapshot(this.pin.url.href);
     if (!hasSnapshot) {
-      await new ContentPageSnapshotAddCommand(this.pin.url).execute();
+      await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, this.pin.url).execute();
     }
 
     // Send stop - iframe loads own content scripts

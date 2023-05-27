@@ -17,6 +17,7 @@
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ContentPageSnapshotAddCommand } from './command/snapshot/content-page-snapshot-add.command';
+import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { IFrameMessageHandler } from './iframe-message.handler';
@@ -63,7 +64,7 @@ export class ContentMessageHandler {
     });
     switch (msg.type) {
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
-        if (!this.iframe) await new ContentPageSnapshotAddCommand(msg.data).execute();
+        if (!this.iframe) await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, msg.data).execute();
         break;
       case BusMessageType.IFRAME_INDEX:
       case BusMessageType.IFRAME_PING:

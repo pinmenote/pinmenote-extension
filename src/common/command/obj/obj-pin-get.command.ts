@@ -17,11 +17,12 @@
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjDto } from '../../model/obj/obj.dto';
+import { ObjPinDto } from '../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 
-export class ObjPinGetCommand<T> implements ICommand<Promise<ObjDto<T>>> {
+export class ObjPinGetCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
   constructor(private id: number) {}
-  async execute(): Promise<ObjDto<T>> {
-    return await BrowserStorageWrapper.get<ObjDto<T>>(`${ObjectStoreKeys.PIN_ID}:${this.id}`);
+  async execute(): Promise<ObjDto<ObjPinDto>> {
+    return await BrowserStorageWrapper.get<ObjDto<ObjPinDto>>(`${ObjectStoreKeys.PIN_ID}:${this.id}`);
   }
 }

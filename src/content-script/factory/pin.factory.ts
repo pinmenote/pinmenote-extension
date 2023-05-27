@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjPinDto, PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
@@ -30,7 +31,15 @@ export class PinFactory {
     canvas?: ObjCanvasDto
   ): Promise<ObjPinDto> => {
     const rect = canvas ? canvas.rect : XpathFactory.computeRect(ref);
-    const screenshot = await ScreenshotFactory.takeScreenshot(rect, url);
+    const screenshot = await ScreenshotFactory.takeScreenshot(
+      {
+        settings: ContentSettingsStore.settings,
+        document,
+        window
+      },
+      rect,
+      url
+    );
     const xpath = XpathFactory.newXPathString(ref);
     return {
       xpath,

@@ -19,18 +19,19 @@ import { BusMessageType } from '../model/bus.model';
 import { ImageResizeFactory } from './image-resize.factory';
 import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../model/obj/obj.dto';
+import { PinDocument } from '../components/pin/model/pin-view.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../fn/fn-console';
 
 export class ScreenshotFactory {
-  static takeScreenshot = async (rect?: ObjRectangleDto, url?: ObjUrlDto): Promise<string> => {
+  static takeScreenshot = async (doc: PinDocument, rect?: ObjRectangleDto, url?: ObjUrlDto): Promise<string> => {
     return new Promise((resolve, reject) => {
       // Crop screenshot function
       TinyEventDispatcher.addListener<string>(
         BusMessageType.CONTENT_TAKE_SCREENSHOT,
         async (event: string, key: string, screenshot: string) => {
           TinyEventDispatcher.removeListener(event, key);
-          if (rect) screenshot = await ImageResizeFactory.resize(rect, screenshot);
+          if (rect) screenshot = await ImageResizeFactory.resize(doc, rect, screenshot);
           resolve(screenshot);
         }
       );

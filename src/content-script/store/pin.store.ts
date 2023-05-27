@@ -16,7 +16,7 @@
  */
 import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPinDto } from '../../common/model/obj/obj-pin.dto';
-import { PageComponent } from '../model/html.model';
+import { PageComponent } from '../../common/components/pin/model/pin-view.model';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class PinStore {

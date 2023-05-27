@@ -18,12 +18,14 @@ import { ObjCanvasDto, ObjSnapshotDto } from '../../../common/model/obj/obj-snap
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
+import { SettingsConfig } from '../../../common/environment';
 import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
 import { SnapshotSaveImageCommand } from './snapshot-save-image.command';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 
 export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> {
   constructor(
+    private settings: SettingsConfig,
     private url: ObjUrlDto,
     private element: HTMLElement,
     private skipElements: string[],
@@ -41,7 +43,11 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     } else if (this.element instanceof HTMLImageElement) {
       contentId = await new SnapshotSaveImageCommand(this.element).execute();
     }
-    const screenshot = await ScreenshotFactory.takeScreenshot(rect, this.url);
+    const screenshot = await ScreenshotFactory.takeScreenshot(
+      { settings: this.settings, document, window },
+      rect,
+      this.url
+    );
     const title = this.element.innerText.substring(0, 100) || document.title;
     return {
       title,

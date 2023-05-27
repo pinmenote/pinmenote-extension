@@ -30,7 +30,7 @@ export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPinDto>[]>>
     const out: ObjDto<ObjPinDto>[] = [];
 
     for (const id of pinIds) {
-      const obj = await new ObjPinGetCommand<ObjPinDto>(id).execute();
+      const obj = await new ObjPinGetCommand(id).execute();
       // TODO revisit visible flag in pin.manager.ts in content scripts
       if (!obj.local?.visible) continue;
       out.push(obj);

@@ -17,6 +17,7 @@
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
+import { ContentSettingsStore } from '../store/content-settings.store';
 import { IFrameIndexMessage } from '../../common/model/iframe-message.model';
 import { IFrameStore } from '../store/iframe.store';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
@@ -34,7 +35,7 @@ import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 import { fnSleep } from '../../common/fn/fn-sleep';
 import { fnUid } from '../../common/fn/fn-uid';
-import { pinStyles } from '../components/styles/pin.styles';
+import { pinStyles } from '../../common/components/pin/styles/pin.styles';
 
 export class DocumentMediator {
   static type?: ObjTypeDto;
@@ -294,7 +295,13 @@ export class DocumentMediator {
       const skipUid = this.showPreloader();
 
       const url = UrlFactory.newUrl();
-      const dto = await new SnapshotCreateCommand(url, element, [skipUid], canvas).execute();
+      const dto = await new SnapshotCreateCommand(
+        ContentSettingsStore.settings,
+        url,
+        element,
+        [skipUid],
+        canvas
+      ).execute();
       await new PageSnapshotAddCommand(dto, ObjTypeDto.PageElementSnapshot).execute();
       await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_ELEMENT_SNAPSHOT_ADD });
     }

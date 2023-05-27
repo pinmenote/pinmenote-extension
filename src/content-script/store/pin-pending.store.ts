@@ -15,16 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto } from '../../common/model/obj/obj.dto';
+import { ObjPinDto } from '../../common/model/obj/obj-pin.dto';
 
 export class PinPendingStore {
   // Map of pending pins
-  private static pendingPins: { [id: number]: ObjDto } = {};
+  private static pendingPins: { [id: number]: ObjDto<ObjPinDto> } = {};
 
-  static get values(): ObjDto[] {
+  static get values(): ObjDto<ObjPinDto>[] {
     return Object.values(PinPendingStore.pendingPins);
   }
 
-  static add(pin: ObjDto): void {
+  static add(pin: ObjDto<ObjPinDto>): void {
     this.pendingPins[pin.id] = pin;
   }
 
