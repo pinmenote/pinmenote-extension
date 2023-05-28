@@ -20,9 +20,6 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 */
-
-import '../css/prosemirror.css';
-
 import { ContentExtensionData, ExtensionThemeDto } from '../common/model/settings.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BrowserApi } from '../common/service/browser.api.wrapper';

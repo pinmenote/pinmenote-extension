@@ -57,13 +57,13 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
 
     await LinkHrefOriginStore.pinAdd(this.pin.url, id);
 
-    const hasSnapshot = await LinkHrefOriginStore.hasPageSnapshot(this.pin.url.href);
-    if (!hasSnapshot) {
+    const pinIds = await LinkHrefOriginStore.pinIds(this.pin.url.href);
+    if (pinIds.length === 0) {
       await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, this.pin.url).execute();
     }
 
     // Send stop - iframe loads own content scripts
-    await BrowserApi.sendRuntimeMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_STOP_LISTENERS });
     return dto;
   }
 }

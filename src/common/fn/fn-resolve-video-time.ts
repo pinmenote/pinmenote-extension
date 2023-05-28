@@ -17,13 +17,11 @@
 import { ObjVideoDataDto } from '../model/obj/obj-snapshot.dto';
 import { XpathFactory } from '../factory/xpath.factory';
 
-export const fnResolveVideoTime = (videoTime?: ObjVideoDataDto[]): void => {
-  if (!videoTime) return;
-  for (const video of videoTime) {
-    const value = XpathFactory.newXPathResult(document, video.xpath);
-    const node = value.singleNodeValue as HTMLVideoElement;
-    if (!node) continue;
-    node.currentTime = video.currentTime;
-    node.pause();
-  }
+export const fnResolveVideoTime = (video?: ObjVideoDataDto): void => {
+  if (!video) return;
+  const value = XpathFactory.newXPathResult(document, video.xpath);
+  const node = value.singleNodeValue as HTMLVideoElement;
+  if (!node) return;
+  node.currentTime = video.time[0].currentTime;
+  node.pause();
 };

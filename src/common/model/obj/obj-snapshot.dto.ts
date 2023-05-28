@@ -33,7 +33,11 @@ export interface ObjSnapshotDto {
 }
 
 export interface ObjVideoDataDto {
+  xpath: string;
+  time: ObjVideoTimeDto[];
+}
+
+export interface ObjVideoTimeDto {
   currentTime: number;
   displayTime: number;
-  xpath: string;
 }

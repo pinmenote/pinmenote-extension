@@ -102,7 +102,7 @@ export class PinEditModel {
     return this.obj.data.canvas;
   }
 
-  get video(): ObjVideoDataDto[] | undefined {
+  get video(): ObjVideoDataDto | undefined {
     return this.obj.data.video;
   }
 

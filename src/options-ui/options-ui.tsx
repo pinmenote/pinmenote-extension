@@ -14,8 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import '../css/prosemirror.css';
-
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BoardComponent } from './components/board/board.component';

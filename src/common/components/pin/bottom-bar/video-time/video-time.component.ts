@@ -40,9 +40,7 @@ export class VideoTimeComponent {
 
   constructor(private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
-    if (model.video) {
-      this.video = model.video[0];
-    }
+    if (model.video) this.video = model.video;
   }
 
   renderVideo = () => {
@@ -53,7 +51,7 @@ export class VideoTimeComponent {
     title.innerText = 'video';
     this.el.appendChild(title);
     const from = this.model.doc.document.createElement('div');
-    from.innerText = fnVideoSecondsTime(this.video.currentTime);
+    from.innerText = fnVideoSecondsTime(this.video.time[0].currentTime);
 
     this.el.appendChild(from);
 
@@ -79,6 +77,6 @@ export class VideoTimeComponent {
     const value = XpathFactory.newXPathResult(document, this.video.xpath);
     const node = value.singleNodeValue as HTMLVideoElement;
     if (!node) return;
-    node.currentTime = this.video.currentTime;
+    node.currentTime = this.video.time[0].currentTime;
   };
 }

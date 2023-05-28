@@ -18,9 +18,12 @@ import { ContentButton } from '../base/content-button';
 import { HtmlComponent } from '../model/pin-view.model';
 import { PinEditModel } from '../model/pin-edit.model';
 import { TextEditorComponent } from './text-editor.component';
+import prosemirrorCss from 'bundle-text:../../../../css/prosemirror.css';
 
 export class TextCommentEditorComponent implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;
+  private readonly shadow: ShadowRoot;
+  private readonly prosemirrorStyle: HTMLStyleElement;
 
   private textEditor: TextEditorComponent;
   private readonly saveButton: ContentButton;
@@ -35,6 +38,9 @@ export class TextCommentEditorComponent implements HtmlComponent<HTMLElement> {
     initialValue = ''
   ) {
     this.el = model.doc.document.createElement('div');
+    this.prosemirrorStyle = model.doc.document.createElement('style');
+    this.prosemirrorStyle.textContent = prosemirrorCss;
+    this.shadow = this.el.attachShadow({ mode: 'closed' });
     this.textEditor = new TextEditorComponent(initialValue, model);
     this.saveButton = new ContentButton(model.doc, saveLabel, this.handleSaveClick);
     if (cancelLabel && cancelCallback) this.cancelButton = new ContentButton(model.doc, cancelLabel, cancelCallback);
@@ -42,8 +48,9 @@ export class TextCommentEditorComponent implements HtmlComponent<HTMLElement> {
 
   render(): HTMLElement {
     const text = this.textEditor.render();
-    this.el.appendChild(text);
-    this.el.appendChild(this.saveButton.render());
+    this.shadow.appendChild(this.prosemirrorStyle);
+    this.shadow.appendChild(text);
+    this.shadow.appendChild(this.saveButton.render());
     if (this.cancelButton) this.el.appendChild(this.cancelButton.render());
     return this.el;
   }

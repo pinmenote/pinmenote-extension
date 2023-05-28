@@ -48,7 +48,7 @@ export interface ObjPinDto {
   draw: ObjDrawListDto;
   comments: ObjCommentListDto;
   canvas?: ObjCanvasDto;
-  video?: ObjVideoDataDto[];
+  video?: ObjVideoDataDto;
 }
 
 export interface PinBorderDataDto {
