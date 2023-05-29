@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
 import { ObjSnapshotContentDto } from './obj/obj-content.dto';
-import { ObjTypeDto } from './obj/obj.dto';
 
 export interface IFrameIndexMessage {
   index: string;
@@ -24,6 +24,7 @@ export interface IFrameIndexMessage {
 
 export interface IFrameListenerMessage extends IFrameIndexMessage {
   type: ObjTypeDto;
+  url: ObjUrlDto;
 }
 
 export interface IFrameFetchMessage {

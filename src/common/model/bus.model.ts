@@ -64,10 +64,13 @@ export enum BusMessageType {
   CONTENT_THEME = 'content.theme',
   // Iframe content script
   IFRAME_INDEX = 'iframe.index',
+  IFRAME_INDEX_REGISTER = 'iframe.index.register',
   IFRAME_START_LISTENERS = 'iframe.start.listeners',
   IFRAME_START_LISTENERS_RESULT = 'iframe.start.listeners.result',
   IFRAME_STOP_LISTENERS = 'iframe.stop.listeners',
   IFRAME_MOUSE_OUT = 'iframe.mouse.out',
+  IFRAME_PIN_SEND = 'iframe.pin.send',
+  IFRAME_PIN_SHOW = 'iframe.pin.show',
   IFRAME_PING = 'iframe.ping',
   IFRAME_PING_RESULT = 'iframe.ping.result',
   IFRAME_FETCH = 'iframe.fetch',

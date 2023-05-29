@@ -84,10 +84,13 @@ const handleMessage = async (
       await new PopupTakeScreenshotCommand().execute();
       break;
     case BusMessageType.IFRAME_INDEX:
+    case BusMessageType.IFRAME_INDEX_REGISTER:
     case BusMessageType.IFRAME_START_LISTENERS:
     case BusMessageType.IFRAME_START_LISTENERS_RESULT:
     case BusMessageType.IFRAME_STOP_LISTENERS:
     case BusMessageType.IFRAME_MOUSE_OUT:
+    case BusMessageType.IFRAME_PIN_SEND:
+    case BusMessageType.IFRAME_PIN_SHOW:
     case BusMessageType.IFRAME_PING:
     case BusMessageType.IFRAME_PING_RESULT:
     case BusMessageType.IFRAME_FETCH:

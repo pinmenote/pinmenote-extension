@@ -68,7 +68,6 @@ export class HtmlPictureFactory {
 
     return {
       html,
-      video: [],
       content
     };
   };

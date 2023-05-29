@@ -23,9 +23,9 @@ export const fnIframeIndex = (win?: any): string => {
 };
 
 const findIndex = (win: any): number => {
-  if (win.parent != win) {
+  if (win.parent !== win) {
     for (let i = 0; i < win.parent.frames.length; i++) {
-      if (win.parent.frames[i] == win) {
+      if (win.parent.frames[i] === win) {
         return i;
       }
     }

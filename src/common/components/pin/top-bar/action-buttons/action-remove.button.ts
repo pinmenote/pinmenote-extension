@@ -41,7 +41,7 @@ export class ActionRemoveButton implements HtmlComponent<HTMLElement> {
 
   private handleClick = async () => {
     this.el.removeEventListener('click', this.handleClick);
-    await new PinRemoveCommand(this.model.id, this.model.url).execute();
+    await new PinRemoveCommand(this.model.id, this.model.url, this.model.iframe).execute();
     this.model.remove();
     // PinStore.delByUid(this.model.id);
   };

@@ -48,7 +48,6 @@ export class ShadowFactory {
 
     return {
       html,
-      video: [],
       content: [
         {
           hash,

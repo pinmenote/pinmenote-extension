@@ -19,13 +19,15 @@ import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
 import { ObjUrlDto } from '../../model/obj/obj.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { PinIframeDto } from '../../model/obj/obj-pin.dto';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinRemoveCommand implements ICommand<void> {
-  constructor(private id: number, private url: ObjUrlDto, private serverId?: number) {}
+  constructor(private id: number, private url: ObjUrlDto, private iframe?: PinIframeDto) {}
   async execute(): Promise<void> {
     fnConsoleLog('PinRemoveCommand->execute', this.id);
     await BrowserStorageWrapper.remove(`${ObjectStoreKeys.PIN_ID}:${this.id}`);
     await LinkHrefOriginStore.pinDel(this.url, this.id);
+    if (this.iframe) await LinkHrefOriginStore.pinDel(this.iframe.url, this.id);
   }
 }

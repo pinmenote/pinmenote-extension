@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
-import { ObjPageDto, ObjPinDto } from '../../common/model/obj/obj-pin.dto';
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { ObjDto } from '../../common/model/obj/obj.dto';
+import { ObjPageDto } from '../../common/model/obj/obj-pin.dto';
 import { ObjRangeRequest } from '../../common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
-import { PinRemoveCommand } from '../../common/command/pin/pin-remove.command';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class BoardStore {
@@ -63,12 +62,7 @@ export class BoardStore {
       if (this.objData[i].id == value.id) {
         this.keySet.delete(value.id);
         this.objData.splice(i, 1);
-        if (value.type === ObjTypeDto.PageElementPin) {
-          const pin = value as ObjDto<ObjPinDto>;
-          await new PinRemoveCommand(pin.id, pin.data.snapshot, pin.server?.id).execute();
-        } else if (value.type === ObjTypeDto.PageSnapshot || value.type === ObjTypeDto.PageElementSnapshot) {
-          await new PageSnapshotRemoveCommand(value as ObjDto<ObjPageDto>).execute();
-        }
+        await new PageSnapshotRemoveCommand(value as ObjDto<ObjPageDto>).execute();
         return true;
       }
     }
@@ -86,10 +80,6 @@ export class BoardStore {
     this.rangeRequest.listId = -1;
     this.objData = [];
     this.keySet.clear();
-  }
-
-  static get isLoading(): boolean {
-    return this.loading;
   }
 
   static timeout?: number;

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjTypeDto, ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
@@ -21,7 +22,6 @@ import { ContentSettingsStore } from '../store/content-settings.store';
 import { IFrameIndexMessage } from '../../common/model/iframe-message.model';
 import { IFrameStore } from '../store/iframe.store';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
-import { ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { PageSnapshotAddCommand } from '../../common/command/snapshot/page-snapshot-add.command';
 import { PinAddCommand } from '../command/pin/pin-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
@@ -40,7 +40,8 @@ import { pinStyles } from '../../common/components/pin/styles/pin.styles';
 export class DocumentMediator {
   static type?: ObjTypeDto;
   static active = false;
-  private static baseUrl?: string;
+  private static baseUrl?: ObjUrlDto;
+  private static iframe = false;
   private static overlay?: HTMLDivElement;
   private static overlayCanvas?: HTMLCanvasElement;
 
@@ -48,19 +49,19 @@ export class DocumentMediator {
 
   private static preloader = document.createElement('div');
 
-  static startListeners(type: ObjTypeDto, baseUrl?: string): void {
+  static startListeners(type: ObjTypeDto, baseUrl?: ObjUrlDto, iframe = false): void {
+    fnConsoleLog('DocumentMediator->startListeners', type, baseUrl, iframe);
     if (this.active) return;
     this.type = type;
     this.baseUrl = baseUrl;
-    fnConsoleLog(
-      'DocumentMediator->startListeners->activeElement',
-      document.activeElement,
-      'lock',
-      document.pointerLockElement
-    );
+    this.iframe = iframe;
     if (this.isIFrameActive) this.startIframeListeners(document.activeElement as HTMLIFrameElement);
     this.startOverlay();
     this.active = true;
+  }
+
+  static resumeListeners(type: ObjTypeDto) {
+    this.startListeners(type, this.baseUrl, this.iframe);
   }
 
   private static startIframeListeners(ref: HTMLIFrameElement) {
@@ -71,7 +72,7 @@ export class DocumentMediator {
       this.startingIframeListeners = false;
       return;
     }
-    fnConsoleLog('DocumentMediator->startIframeListeners', msg);
+    fnConsoleLog('DocumentMediator->startIframeListeners', msg, this.baseUrl, this.iframe);
 
     const key = TinyEventDispatcher.addListener<IFrameIndexMessage>(
       BusMessageType.IFRAME_START_LISTENERS_RESULT,
@@ -86,8 +87,10 @@ export class DocumentMediator {
         }
       }
     );
-
-    BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_START_LISTENERS, data: { ...msg, type: this.type } })
+    BrowserApi.sendRuntimeMessage({
+      type: BusMessageType.IFRAME_START_LISTENERS,
+      data: { ...msg, type: this.type, url: this.baseUrl }
+    })
       .then(() => {
         /* IGNORE */
       })
@@ -281,8 +284,7 @@ export class DocumentMediator {
 
     await this.sleepUntilClearStyles();
     const url = UrlFactory.newUrl();
-
-    const pagePin = await PinFactory.objPagePinNew(url, element, border, canvas);
+    const pagePin = await PinFactory.objPagePinNew(url, element, border, this.iframe, this.baseUrl, canvas);
     const obj = await new PinAddCommand(pagePin).execute();
     new PinComponentAddCommand(element, obj, true).execute();
   };

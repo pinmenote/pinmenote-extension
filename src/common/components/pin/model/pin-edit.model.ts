@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCanvasDto, ObjVideoDataDto } from '../../../model/obj/obj-snapshot.dto';
-import { ObjCommentListDto, ObjPinDto, PinBorderDataDto } from '../../../model/obj/obj-pin.dto';
+import { ObjCommentListDto, ObjPinDto, PinBorderDataDto, PinIframeDto } from '../../../model/obj/obj-pin.dto';
 import { ObjDto, ObjLocalDto, ObjUrlDto } from '../../../model/obj/obj.dto';
 import { DrawModel } from './draw.model';
 import { ObjDrawDto } from '../../../model/obj/obj-draw.dto';
@@ -84,6 +84,10 @@ export class PinEditModel {
 
   get url(): ObjUrlDto {
     return this.obj.data.url;
+  }
+
+  get iframe(): PinIframeDto | undefined {
+    return this.obj.data.iframe;
   }
 
   get border(): PinBorderDataDto {

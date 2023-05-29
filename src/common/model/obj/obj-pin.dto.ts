@@ -38,9 +38,15 @@ export interface ObjPageDto {
   comments: ObjCommentListDto;
 }
 
+export interface PinIframeDto {
+  index: string;
+  url: ObjUrlDto;
+}
+
 export interface ObjPinDto {
   hash: string;
   url: ObjUrlDto;
+  iframe?: PinIframeDto;
   xpath: string;
   border: PinBorderDataDto;
   title: string;

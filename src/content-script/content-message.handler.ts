@@ -63,10 +63,10 @@ export class ContentMessageHandler {
       type: BusMessageType.CONTENT_ACK
     });
     switch (msg.type) {
-      case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
-        if (!this.iframe) await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, msg.data).execute();
-        break;
       case BusMessageType.IFRAME_INDEX:
+      case BusMessageType.IFRAME_INDEX_REGISTER:
+      case BusMessageType.IFRAME_PIN_SEND:
+      case BusMessageType.IFRAME_PIN_SHOW:
       case BusMessageType.IFRAME_PING:
       case BusMessageType.IFRAME_START_LISTENERS:
       case BusMessageType.IFRAME_START_LISTENERS_RESULT:
@@ -75,14 +75,19 @@ export class ContentMessageHandler {
       case BusMessageType.IFRAME_FETCH:
         await IFrameMessageHandler.handleMessage(msg, this.iframe, this.uid, this.href);
         break;
+      case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
+        if (!this.iframe) {
+          await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, msg.data).execute();
+        }
+        break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PIN_START:
         if (this.href !== msg.data.url.href) {
           // fnConsoleLog('SKIP', href);
           return;
         }
-        fnConsoleLog('DocumentMediator->startListeners', this.href);
-        DocumentMediator.startListeners(msg.data.type);
+        fnConsoleLog('DocumentMediator->startListeners', this.href, msg.data.url);
+        DocumentMediator.startListeners(msg.data.type, msg.data.url, this.iframe);
         break;
       case BusMessageType.CONTENT_STOP_LISTENERS:
         DocumentMediator.stopListeners();
@@ -107,6 +112,7 @@ export class ContentMessageHandler {
       isAdding: !!PinAddFactory.currentElement
     };
     fnConsoleLog('ContentMessageHandler->handlePopupOpen', data);
+    if (!this.iframe) await BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_INDEX_REGISTER });
     await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };
 }

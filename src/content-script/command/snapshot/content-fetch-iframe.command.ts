@@ -28,7 +28,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   constructor(private href: string, private uid: string, private depth: number) {}
 
   async execute(): Promise<void> {
-    fnConsoleLog('ContentFetchIframeCommand->execute', this.href, this.uid);
+    fnConsoleLog('ContentFetchIframeCommand->execute', this.href, this.uid, this.depth);
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: document.body,
       depth: this.depth + 1,

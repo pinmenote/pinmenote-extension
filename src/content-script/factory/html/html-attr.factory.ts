@@ -24,7 +24,6 @@ const TRANSLATE_REG = new RegExp('(transform: translateY\\()([0-9.px]+)(\\);)', 
 export class HtmlAttrFactory {
   static readonly EMPTY_RESULT: HtmlIntermediateData = {
     html: '',
-    video: [],
     content: []
   };
 

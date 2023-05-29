@@ -54,7 +54,6 @@ export class IframeScript {
     TinyEventDispatcher.removeListener(event, key);
 
     await ContentSettingsStore.initSettings();
-    await this.sendIframeIndex(BusMessageType.IFRAME_INDEX);
   };
 
   private handleVisibilityChange = async (): Promise<void> => {
@@ -77,17 +76,16 @@ export class IframeScript {
     if (DocumentMediator.active) {
       fnConsoleLog('IframeScript->handleMouseOut', this.id);
       DocumentMediator.stopListeners();
-      await this.sendIframeIndex(BusMessageType.IFRAME_MOUSE_OUT);
+      await this.iframeMouseOut();
     }
   };
 
-  private sendIframeIndex = async (type: BusMessageType): Promise<void> => {
+  private iframeMouseOut = async (): Promise<void> => {
     const index = fnIframeIndex();
     await BrowserApi.sendRuntimeMessage<IFrameIndexMessage | IFrameListenerMessage>({
-      type,
+      type: BusMessageType.IFRAME_MOUSE_OUT,
       data: { index, uid: this.id, type: DocumentMediator.type }
     });
-    fnConsoleLog('IframeScript->sendIframeIndex->NOT_FOUND', window.document);
   };
 
   private cleanup(): void {

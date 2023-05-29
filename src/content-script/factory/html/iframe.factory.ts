@@ -30,7 +30,7 @@ import { fnUid } from '../../../common/fn/fn-uid';
 
 export class IFrameFactory {
   static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
-    fnConsoleLog('IFrameFactory->computeIframe');
+    fnConsoleLog('IFrameFactory->computeIframe->START');
     // Skip iframe->iframe->skip
     if (depth > 3) return HtmlAttrFactory.EMPTY_RESULT;
     const msg = await this.fetchIframe(ref, depth);
@@ -46,9 +46,9 @@ export class IFrameFactory {
         return a.nodeName;
       })
       .join(' ');
+    fnConsoleLog('IFrameFactory->computeIframe->END');
     return {
       html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-hash="${msg.data.hash}"></iframe>`,
-      video: [],
       content: [{ hash: msg.data.hash, type: ObjContentTypeDto.IFRAME, content: msg.data }]
     };
   };
@@ -63,7 +63,7 @@ export class IFrameFactory {
             resolve(result);
           }, 0);
         } else {
-          fnConsoleLog('IFrameFactory->fetchIframe->findIndex->NOT_FOUND', 'src', ref.src);
+          fnConsoleLog('IFrameFactory->fetchIframe->findIndex->NOT_FOUND', ref, 'src', ref.src);
           resolve(undefined);
         }
         return;

@@ -56,9 +56,10 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
     await BrowserStorageWrapper.set(key, dto);
 
     await LinkHrefOriginStore.pinAdd(this.pin.url, id);
+    if (this.pin.iframe) await LinkHrefOriginStore.pinAdd(this.pin.iframe.url, id);
 
     const pinIds = await LinkHrefOriginStore.pinIds(this.pin.url.href);
-    if (pinIds.length === 0) {
+    if (pinIds.length === 0 && !this.pin.iframe) {
       await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, this.pin.url).execute();
     }
 

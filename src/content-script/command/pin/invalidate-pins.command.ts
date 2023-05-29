@@ -14,8 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinAddXpathCommand } from './pin-add-xpath.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { PinStore } from '../../store/pin.store';
@@ -35,18 +38,39 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
       await new RuntimePinGetHrefCommand().execute();
       return;
     }
+    const iframePins = this.invalidatePending();
+    await this.propagateIframePins(iframePins);
+    this.invalidateVisible();
+  }
+
+  private invalidatePending = (): ObjDto<ObjPinDto>[] => {
     // Check for pending pins that should be on page but are not displayed
     // might be deferred rendering and stuff like that
     const pinList = PinPendingStore.values;
+    const iframePins = [];
     for (const pin of pinList) {
       switch (pin.type) {
         case ObjTypeDto.PageElementPin:
-          if (new PinAddXpathCommand(pin).execute()) {
+          if (pin.data.iframe) {
+            iframePins.push(pin);
+          } else if (new PinAddXpathCommand(pin).execute()) {
             PinPendingStore.remove(pin.id);
           }
           break;
       }
     }
+    return iframePins;
+  };
+
+  private propagateIframePins = async (pins: ObjDto<ObjPinDto>[]) => {
+    if (pins.length === 0) return;
+    fnConsoleLog('InvalidatePinsCommand->propagateIframePins', pins);
+    for (let i = 0; i < pins.length; i++) {
+      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_PIN_SEND, data: pins[i] });
+    }
+  };
+
+  private invalidateVisible = () => {
     // Ok so check if we displayed on some elements that are not visible
     PinStore.each((pinData) => {
       if (pinData.isHidden()) {
@@ -55,5 +79,5 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
       }
       pinData.resize();
     });
-  }
+  };
 }
