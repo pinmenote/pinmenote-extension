@@ -14,20 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
+import { ObjPinDto, PinIframeDto } from '../../model/obj/obj-pin.dto';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
-import { ObjUrlDto } from '../../model/obj/obj.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { PinIframeDto } from '../../model/obj/obj-pin.dto';
+import { PinRemoveCommentListCommand } from './comment/pin-remove-comment-list.command';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinRemoveCommand implements ICommand<void> {
   constructor(private id: number, private url: ObjUrlDto, private iframe?: PinIframeDto) {}
   async execute(): Promise<void> {
     fnConsoleLog('PinRemoveCommand->execute', this.id);
-    await BrowserStorageWrapper.remove(`${ObjectStoreKeys.PIN_ID}:${this.id}`);
+
+    const key = `${ObjectStoreKeys.PIN_ID}:${this.id}`;
+    const pin = await BrowserStorageWrapper.get<ObjDto<ObjPinDto> | undefined>(key);
+    if (!pin) return;
+
+    await BrowserStorageWrapper.remove(key);
+
     await LinkHrefStore.pinDel(this.url, this.id);
+
+    await new PinRemoveCommentListCommand(pin).execute();
+
     if (this.iframe) await LinkHrefStore.pinDel(this.iframe.url, this.id);
   }
 }

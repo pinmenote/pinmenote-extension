@@ -114,7 +114,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
           {responseError?.code} {responseError?.message}
         </Typography>
       </div>
-      {/* ADVANCED OPTIONS */}
+      {/* Settings */}
       <div style={{ position: 'absolute', bottom: 0, width: 300 }}>
         <Button
           sx={{ width: '100%' }}
@@ -122,7 +122,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
           variant="outlined"
           onClick={() => BrowserApi.openOptionsPage('#settings')}
         >
-          Advanced options
+          Settings
         </Button>
       </div>
     </div>

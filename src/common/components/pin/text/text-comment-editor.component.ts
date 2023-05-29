@@ -51,7 +51,7 @@ export class TextCommentEditorComponent implements HtmlComponent<HTMLElement> {
     this.shadow.appendChild(this.prosemirrorStyle);
     this.shadow.appendChild(text);
     this.shadow.appendChild(this.saveButton.render());
-    if (this.cancelButton) this.el.appendChild(this.cancelButton.render());
+    if (this.cancelButton) this.shadow.appendChild(this.cancelButton.render());
     return this.el;
   }
 

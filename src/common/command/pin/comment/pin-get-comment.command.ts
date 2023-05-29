@@ -14,22 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCommentDto } from '../../../../model/obj/obj-pin.dto';
-import { PinEditModel } from '../../model/pin-edit.model';
-import { fnDateFormat } from '../../../../fn/fn-date-format';
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjCommentDto } from '../../../model/obj/obj-pin.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
-export class CommentFooterComponent {
-  private readonly el: HTMLDivElement;
+export class PinGetCommentCommand implements ICommand<Promise<ObjCommentDto | undefined>> {
+  constructor(private hash: string) {}
 
-  constructor(private model: PinEditModel, private comment: ObjCommentDto) {
-    this.el = model.doc.document.createElement('div');
-  }
-
-  render(): HTMLElement {
-    this.el.style.fontSize = '0.7em';
-    let value = 'updated ' + fnDateFormat(new Date(this.comment.updatedAt));
-    if (this.comment.prev) value += ` (edited)`;
-    this.el.innerHTML = value;
-    return this.el;
+  async execute(): Promise<ObjCommentDto | undefined> {
+    fnConsoleLog('PinGetCommentCommand', this.hash);
+    const key = `${ObjectStoreKeys.PIN_COMMENT}:${this.hash}`;
+    return await BrowserStorageWrapper.get<ObjCommentDto | undefined>(key);
   }
 }

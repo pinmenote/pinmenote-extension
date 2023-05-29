@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCommentDto } from '../../../../model/obj/obj-pin.dto';
-import { PinEditModel } from '../../model/pin-edit.model';
-import { fnDateFormat } from '../../../../fn/fn-date-format';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjDto } from '../../../model/obj/obj.dto';
+import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
+import { PinRemoveCommentCommand } from './pin-remove-comment.command';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
-export class CommentFooterComponent {
-  private readonly el: HTMLDivElement;
+export class PinRemoveCommentListCommand implements ICommand<Promise<void>> {
+  constructor(private pin: ObjDto<ObjPinDto>) {}
 
-  constructor(private model: PinEditModel, private comment: ObjCommentDto) {
-    this.el = model.doc.document.createElement('div');
-  }
-
-  render(): HTMLElement {
-    this.el.style.fontSize = '0.7em';
-    let value = 'updated ' + fnDateFormat(new Date(this.comment.updatedAt));
-    if (this.comment.prev) value += ` (edited)`;
-    this.el.innerHTML = value;
-    return this.el;
+  async execute(): Promise<void> {
+    fnConsoleLog('PinRemoveCommentListCommand', this.pin.data.comments.data);
+    for (const hash of this.pin.data.comments.data) {
+      await new PinRemoveCommentCommand(this.pin, hash, false).execute();
+    }
   }
 }

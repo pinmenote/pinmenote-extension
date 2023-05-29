@@ -17,6 +17,7 @@
 import { CommentComponent } from './comment/comment.component';
 import { HtmlComponent } from '../model/pin-view.model';
 import { PinEditModel } from '../model/pin-edit.model';
+import { PinGetCommentCommand } from '../../../command/pin/comment/pin-get-comment.command';
 import { applyStylesToElement } from '../../../style.utils';
 
 const elStyles = {
@@ -38,9 +39,12 @@ export class TextCommentListComponent implements HtmlComponent<HTMLElement> {
 
   renderComments = (): void => {
     this.el.innerHTML = '';
-    this.model.comments.data.forEach((comment, index) => {
-      const c = new CommentComponent(this.model, comment, index, this.renderComments);
-      this.el.appendChild(c.render());
+    this.model.comments.data.forEach(async (hash, index) => {
+      const comment = await new PinGetCommentCommand(hash).execute();
+      if (comment) {
+        const c = new CommentComponent(this.model, comment, index, this.renderComments);
+        this.el.appendChild(c.render());
+      }
     });
   };
 }

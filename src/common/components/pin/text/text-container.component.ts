@@ -15,13 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent } from '../model/pin-view.model';
-import { ObjAddHashtagsCommand } from '../../../command/obj/hashtag/obj-add-hashtags.command';
+import { PinAddCommentCommand } from '../../../command/pin/comment/pin-add-comment.command';
 import { PinEditModel } from '../model/pin-edit.model';
-import { PinUpdateCommand } from '../../../command/pin/pin-update.command';
 import { TextCommentEditorComponent } from './text-comment-editor.component';
 import { TextCommentListComponent } from './text-comment-list.component';
 import { applyStylesToElement } from '../../../style.utils';
-import { fnSha256 } from '../../../fn/fn-sha256';
 
 const elStyles = {
   'min-height': '40px',
@@ -78,12 +76,7 @@ export class TextContainerComponent implements HtmlComponent<HTMLElement> {
 
   private addCommentCallback = async (value: string): Promise<void> => {
     if (!value) return;
-    await new ObjAddHashtagsCommand(this.model.id, value).execute();
-    const dt = Date.now();
-
-    this.model.comments.data.push({ hash: fnSha256(value), value, createdAt: dt, updatedAt: dt });
-
-    await new PinUpdateCommand(this.model.object).execute();
+    await new PinAddCommentCommand(this.model.object, value).execute();
     this.reloadComments();
   };
 }

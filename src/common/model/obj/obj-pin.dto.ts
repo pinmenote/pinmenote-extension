@@ -21,12 +21,13 @@ import { ObjUrlDto } from './obj.dto';
 export interface ObjCommentDto {
   value: string;
   hash: string;
+  prev?: string;
   createdAt: number;
   updatedAt: number;
 }
 
 export interface ObjCommentListDto {
-  data: ObjCommentDto[];
+  data: string[];
 }
 
 export interface ObjDrawListDto {

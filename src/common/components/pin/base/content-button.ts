@@ -23,7 +23,8 @@ const elStyles = {
   border: 'none',
   margin: '2px',
   padding: '2px',
-  display: 'inline-block'
+  display: 'inline-block',
+  cursor: 'pointer'
 };
 
 export class ContentButton {
