@@ -20,10 +20,12 @@ import {
   ObjShadowContentDto,
   ObjSnapshotContentDto
 } from '../../../common/model/obj/obj-content.dto';
+import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import {
   ObjGetSnapshotContentCommand,
   ObjSnapshotData
 } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
+import { ObjPageDto, ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -33,10 +35,8 @@ import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
 import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
-import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjPinGetCommand } from '../../../common/command/obj/obj-pin-get.command';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
 import { SettingsStore } from '../../store/settings.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
@@ -118,23 +118,50 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (!el.contentDocument || !el.contentWindow) return;
 
     await SettingsStore.fetchData();
-    if (!SettingsStore.settings) return;
-
     fnConsoleLog('PIN IDS !!!!', ids, 'iframe', el);
 
     for (const id of ids) {
       const pin = await new ObjPinGetCommand(id).execute();
-      const value = XpathFactory.newXPathResult(el.contentDocument, pin.data.xpath);
-      const node = value.singleNodeValue as HTMLElement;
-      if (!node) continue;
-      const pinComponent = new PinComponent(node, pin, {
-        settings: SettingsStore.settings,
-        document: el.contentDocument,
-        window: el.contentWindow
-      });
-      pinComponent.render();
-      fnConsoleLog('PIN !!!', id, pin, value);
+      if (pin.data.iframe) {
+        renderIframePin(el, pin);
+      } else {
+        renderHtmlPin(el, pin);
+      }
     }
+  };
+
+  const renderIframePin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>, depth = 1) => {
+    if (!el.contentDocument || !el.contentWindow) return false;
+    if (!pin.data.iframe) return;
+    let index = pin.data.iframe.index;
+    const a = index.split('.');
+    if (index.length === depth + 1) {
+      renderHtmlPin(el, pin);
+    } else {
+      // Remove elements and recurrent find iframe for current depth
+      a.splice(depth + 1);
+      index = a.join('.');
+      const iframe = el.contentDocument.querySelector(`[data-pin-iframe-index="${index}"]`);
+      if (!iframe) return;
+      fnConsoleLog('IFRAME FOUND !!!', index);
+      renderIframePin(iframe as HTMLIFrameElement, pin, depth + 1);
+    }
+  };
+
+  const renderHtmlPin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>) => {
+    if (!el.contentDocument || !el.contentWindow) return false;
+    if (!SettingsStore.settings) return false;
+    const value = XpathFactory.newXPathResult(el.contentDocument, pin.data.xpath);
+    const node = value.singleNodeValue as HTMLElement;
+    if (!node) return false;
+    const pinComponent = new PinComponent(node, pin, {
+      settings: SettingsStore.settings,
+      document: el.contentDocument,
+      window: el.contentWindow
+    });
+    pinComponent.render();
+    fnConsoleLog('PIN !!!', pin.id, pin.data, value);
+    return true;
   };
 
   const renderCanvas = (s: ObjSnapshotDto, c?: ObjSnapshotData) => {

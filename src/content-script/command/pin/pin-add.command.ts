@@ -18,8 +18,6 @@ import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../../common/model/obj/o
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ContentPageSnapshotAddCommand } from '../snapshot/content-page-snapshot-add.command';
-import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
@@ -54,11 +52,6 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
 
     await LinkHrefStore.pinAdd(this.pin.url, id);
     if (this.pin.iframe) await LinkHrefStore.pinAdd(this.pin.iframe.url, id);
-
-    const pinIds = await LinkHrefStore.pinIds(this.pin.url.href);
-    if (pinIds.length === 0 && !this.pin.iframe) {
-      await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, this.pin.url).execute();
-    }
 
     // Send stop - iframe loads own content scripts
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_STOP_LISTENERS });

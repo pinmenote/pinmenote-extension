@@ -26,7 +26,6 @@ import { IFrameStore } from '../../store/iframe.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
-import { fnUid } from '../../../common/fn/fn-uid';
 
 export class IFrameFactory {
   static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
@@ -48,7 +47,8 @@ export class IFrameFactory {
       .join(' ');
     fnConsoleLog('IFrameFactory->computeIframe->END');
     return {
-      html: `<iframe width="${width}" height="${height}" ${iframeAttr} data-pin-hash="${msg.data.hash}"></iframe>`,
+      html: `<iframe width="${width}" height="${height}" ${iframeAttr} 
+data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-iframe-href="${msg.href}"></iframe>`,
       content: [{ hash: msg.data.hash, type: ObjContentTypeDto.IFRAME, content: msg.data }]
     };
   };
@@ -145,7 +145,8 @@ export class IFrameFactory {
       content: htmlContent.content
     };
     return {
-      uid: fnUid(),
+      index: '-',
+      uid: fnSha256(htmlContent.html),
       href: '',
       data
     };

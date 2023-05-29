@@ -28,6 +28,7 @@ export interface IFrameListenerMessage extends IFrameIndexMessage {
 }
 
 export interface IFrameFetchMessage {
+  index: string;
   uid: string;
   href: string;
   data: ObjSnapshotContentDto;

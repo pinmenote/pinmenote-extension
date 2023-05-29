@@ -22,6 +22,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
 import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
@@ -48,9 +49,11 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       css,
       content: htmlContent.content
     };
+    const index = fnIframeIndex();
     await BrowserApi.sendRuntimeMessage<IFrameFetchMessage>({
       type: BusMessageType.IFRAME_FETCH_RESULT,
       data: {
+        index,
         uid: this.uid,
         href: this.href,
         data: dto

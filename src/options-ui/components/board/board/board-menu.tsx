@@ -60,7 +60,10 @@ export const BoardMenu: FunctionComponent<Props> = (props) => {
         <IconButton size="small" edge="start" color="inherit" aria-label="open drawer" onClick={handleDrawer}>
           <MenuIcon />
         </IconButton>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: '10px' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: '10px', cursor: 'pointer' }}
+          onClick={() => (window.location.hash = '')}
+        >
           <img src={appLight32Icon()} width="24" height="24" style={{ marginRight: 10 }} />
           <Typography variant="h6" style={{ userSelect: 'none' }}>
             pinmenote
