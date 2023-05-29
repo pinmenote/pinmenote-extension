@@ -14,18 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
-import { ICommand } from '../../../model/shared/common.dto';
-import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
-import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnConsoleLog } from '../../../fn/fn-console';
+export interface ObjCommentDto {
+  value: string;
+  hash: string;
+  prev?: string;
+  createdAt: number;
+  updatedAt: number;
+}
 
-export class PinGetCommentCommand implements ICommand<Promise<ObjCommentDto | undefined>> {
-  constructor(private hash: string) {}
-
-  async execute(): Promise<ObjCommentDto | undefined> {
-    fnConsoleLog('PinGetCommentCommand', this.hash);
-    const key = `${ObjectStoreKeys.PIN_COMMENT}:${this.hash}`;
-    return await BrowserStorageWrapper.get<ObjCommentDto | undefined>(key);
-  }
+export interface ObjCommentListDto {
+  data: string[];
 }

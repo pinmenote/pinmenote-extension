@@ -22,7 +22,7 @@ import { BoardMenu } from './components/board/board/board-menu';
 import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
 import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
 import { ObjGetCommand } from '../common/command/obj/obj-get.command';
-import { ObjPageDto } from '../common/model/obj/obj-pin.dto';
+import { ObjPageDto } from '../common/model/obj/obj-page.dto';
 import { ObjTypeDto } from '../common/model/obj/obj.dto';
 import { OptionsMessageHandler } from './options-message.handler';
 import { SettingsComponent } from './components/settings/settings.component';

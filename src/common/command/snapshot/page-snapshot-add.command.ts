@@ -22,7 +22,7 @@ import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
-import { ObjPageDto } from '../../model/obj/obj-pin.dto';
+import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';

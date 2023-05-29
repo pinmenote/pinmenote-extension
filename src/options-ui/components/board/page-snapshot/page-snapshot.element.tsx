@@ -20,7 +20,7 @@ import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
 import { BoardStore } from '../../../store/board.store';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
+import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 
 interface Props {
   dto: ObjDto<ObjPageDto>;

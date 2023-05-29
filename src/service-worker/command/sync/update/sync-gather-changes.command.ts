@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCommentDto, ObjPageDto } from '../../../../common/model/obj/obj-pin.dto';
 import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { ServerChangeDto, ServerPathDto } from '../../../../common/model/obj/obj-server.dto';
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
 import { ObjGetSnapshotContentCommand } from '../../../../common/command/obj/content/obj-get-snapshot-content.command';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
+import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
+import { PinGetCommentListCommand } from '../../../../common/command/pin/comment/pin-get-comment-list.command';
 
 export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDto[]>> {
   constructor(private obj: ObjDto) {}
@@ -37,12 +37,10 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
         break;
       }
       case ObjTypeDto.PageElementPin: {
-        const pageObj = this.obj.data as ObjPageDto;
-        if (!pageObj.draw.data) {
-          pageObj.draw = { data: [] };
-          await BrowserStorageWrapper.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
-        }
-        changes = await this.pageChanges(pageObj);
+        const pin = this.obj.data as ObjPinDto;
+        changes = await this.commentChanges(pin.comments.data);
+        const drawChanges = this.drawChanges(pin.draw.data);
+        changes.push(...drawChanges);
         changes.push({ type: 'upload', path: ServerPathDto.PIN });
         break;
       }
@@ -62,14 +60,8 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     const snapshot = await this.snapshotChanges(pageObj.snapshot.contentId);
     changes.push(...snapshot);
 
-    const comments = this.commentChanges(pageObj.comments.data);
+    const comments = await this.commentChanges(pageObj.comments.data);
     changes.push(...comments);
-    if (!pageObj.draw.data) {
-      pageObj.draw = { data: [] };
-      await BrowserStorageWrapper.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
-    }
-    const draw = this.drawChanges(pageObj.draw.data);
-    changes.push(...draw);
     return changes;
   };
 
@@ -81,10 +73,11 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     return changes;
   };
 
-  private commentChanges = (data: ObjCommentDto[]): ServerChangeDto[] => {
+  private commentChanges = async (hashList: string[]): Promise<ServerChangeDto[]> => {
+    const commentList = await new PinGetCommentListCommand(hashList).execute();
     const changes: ServerChangeDto[] = [];
-    for (let i = 0; i < data.length; i++) {
-      changes.push({ path: ServerPathDto.COMMENT, type: 'upload', hash: data[i].hash });
+    for (let i = 0; i < commentList.length; i++) {
+      changes.push({ path: ServerPathDto.COMMENT, type: 'upload', hash: commentList[i].hash });
     }
     return changes;
   };

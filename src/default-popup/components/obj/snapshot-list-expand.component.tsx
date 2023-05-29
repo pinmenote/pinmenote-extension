@@ -16,7 +16,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 
 interface SnapshotExpandProps {
   obj: ObjDto<ObjPageDto>;

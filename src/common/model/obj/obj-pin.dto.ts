@@ -14,29 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasDto, ObjSnapshotDto, ObjVideoDataDto } from './obj-snapshot.dto';
+import { ObjCanvasDto, ObjVideoDataDto } from './obj-snapshot.dto';
+import { ObjCommentListDto } from './obj-comment.dto';
 import { ObjDrawDto } from './obj-draw.dto';
 import { ObjUrlDto } from './obj.dto';
 
-export interface ObjCommentDto {
-  value: string;
-  hash: string;
-  prev?: string;
-  createdAt: number;
-  updatedAt: number;
-}
-
-export interface ObjCommentListDto {
-  data: string[];
-}
-
 export interface ObjDrawListDto {
   data: ObjDrawDto[];
-}
-
-export interface ObjPageDto {
-  snapshot: ObjSnapshotDto;
-  comments: ObjCommentListDto;
 }
 
 export interface PinIframeDto {

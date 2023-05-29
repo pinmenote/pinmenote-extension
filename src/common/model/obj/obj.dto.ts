@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPageDto, ObjPinDto } from './obj-pin.dto';
 import { ObjNoteDto } from './obj-note.dto';
+import { ObjPageDto } from './obj-page.dto';
+import { ObjPinDto } from './obj-pin.dto';
 import { ObjServerDto } from './obj-server.dto';
 import { ObjTaskDto } from './obj-task.dto';
 
@@ -43,7 +44,7 @@ export enum ObjTypeDto {
   PageEvent = 'PAGE_EVENT'
 }
 
-export type ObjDataDto = ObjPageDto | ObjNoteDto;
+export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto;
 export type ObjPageDataDto = ObjPinDto | ObjPageDto | ObjNoteDto | ObjTaskDto;
 
 export interface ObjDto<T = ObjDataDto> {

@@ -22,7 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
+import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';

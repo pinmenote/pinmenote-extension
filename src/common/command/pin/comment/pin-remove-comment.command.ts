@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCommentDto, ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
+import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
 import { ObjDto } from '../../../model/obj/obj.dto';
+import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { PinGetCommentCommand } from './pin-get-comment.command';
 import { fnConsoleLog } from '../../../fn/fn-console';

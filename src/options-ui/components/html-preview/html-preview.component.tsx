@@ -25,7 +25,6 @@ import {
   ObjGetSnapshotContentCommand,
   ObjSnapshotData
 } from '../../../common/command/obj/content/obj-get-snapshot-content.command';
-import { ObjPageDto, ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -35,6 +34,8 @@ import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
 import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
+import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjPinGetCommand } from '../../../common/command/obj/obj-pin-get.command';
 import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';

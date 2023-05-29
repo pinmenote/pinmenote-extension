@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCommentDto } from '../../../../model/obj/obj-pin.dto';
+import { ObjCommentDto } from '../../../../model/obj/obj-comment.dto';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { fnDateFormat } from '../../../../fn/fn-date-format';
 

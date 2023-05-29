@@ -17,7 +17,7 @@
 import { CommentActionBar } from './comment-action-bar';
 import { CommentFooterComponent } from './comment-footer.component';
 import { HtmlComponent } from '../../model/pin-view.model';
-import { ObjCommentDto } from '../../../../model/obj/obj-pin.dto';
+import { ObjCommentDto } from '../../../../model/obj/obj-comment.dto';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { PinRemoveCommentCommand } from '../../../../command/pin/comment/pin-remove-comment.command';
 import { PinUpdateCommentCommand } from '../../../../command/pin/comment/pin-update-comment.command';

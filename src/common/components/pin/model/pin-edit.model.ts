@@ -15,9 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCanvasDto, ObjVideoDataDto } from '../../../model/obj/obj-snapshot.dto';
-import { ObjCommentListDto, ObjPinDto, PinBorderDataDto, PinIframeDto } from '../../../model/obj/obj-pin.dto';
 import { ObjDto, ObjLocalDto, ObjUrlDto } from '../../../model/obj/obj.dto';
+import { ObjPinDto, PinBorderDataDto, PinIframeDto } from '../../../model/obj/obj-pin.dto';
 import { DrawModel } from './draw.model';
+import { ObjCommentListDto } from '../../../model/obj/obj-comment.dto';
 import { ObjDrawDto } from '../../../model/obj/obj-draw.dto';
 import { ObjRectangleDto } from '../../../model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';

@@ -15,13 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjDto, ObjPageDataDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
-import { ObjPageDto, ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import React, { FunctionComponent, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { NoteListElementComponent } from './note-list-element.component';
 import { NoteRemoveCommand } from '../../../common/command/note/note-remove.command';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PageSnapshotRemoveCommand } from '../../../common/command/snapshot/page-snapshot-remove.command';
 import { PinListElement } from './pin-list-element.component';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';

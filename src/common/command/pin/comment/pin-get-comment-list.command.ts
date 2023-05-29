@@ -14,18 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
-import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { PinGetCommentCommand } from './pin-get-comment.command';
 import { fnConsoleLog } from '../../../fn/fn-console';
 
-export class PinGetCommentCommand implements ICommand<Promise<ObjCommentDto | undefined>> {
-  constructor(private hash: string) {}
+export class PinGetCommentListCommand implements ICommand<Promise<ObjCommentDto[]>> {
+  constructor(private hashList: string[]) {}
 
-  async execute(): Promise<ObjCommentDto | undefined> {
-    fnConsoleLog('PinGetCommentCommand', this.hash);
-    const key = `${ObjectStoreKeys.PIN_COMMENT}:${this.hash}`;
-    return await BrowserStorageWrapper.get<ObjCommentDto | undefined>(key);
+  async execute(): Promise<ObjCommentDto[]> {
+    fnConsoleLog('PinGetCommentListCommand', this.hashList);
+    const hashList = this.hashList.concat();
+    const comments: ObjCommentDto[] = [];
+    while (hashList.length > 0) {
+      const hash = hashList[0];
+      const comment = await new PinGetCommentCommand(hash).execute();
+      if (comment) comments.push(comment);
+      if (comment?.prev) hashList.push(comment.prev);
+    }
+    return comments;
   }
 }

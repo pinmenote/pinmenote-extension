@@ -16,7 +16,7 @@
  */
 import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
 import { ObjDto } from '../../common/model/obj/obj.dto';
-import { ObjPageDto } from '../../common/model/obj/obj-pin.dto';
+import { ObjPageDto } from '../../common/model/obj/obj-page.dto';
 import { ObjRangeRequest } from '../../common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';

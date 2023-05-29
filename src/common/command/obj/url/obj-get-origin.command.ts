@@ -20,7 +20,7 @@ import { LinkHrefStore } from '../../../store/link-href.store';
 import { LinkOriginStore } from '../../../store/link-origin.store';
 import { ObjGetCommand } from '../obj-get.command';
 import { ObjNoteDto } from '../../../model/obj/obj-note.dto';
-import { ObjPageDto } from '../../../model/obj/obj-pin.dto';
+import { ObjPageDto } from '../../../model/obj/obj-page.dto';
 import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
 
 export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
