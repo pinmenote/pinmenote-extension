@@ -37,3 +37,7 @@ export interface ObjDrawDataDto {
   color: string;
   tool: DrawToolDto;
 }
+
+export interface ObjDrawListDto {
+  data: ObjDrawDto[];
+}

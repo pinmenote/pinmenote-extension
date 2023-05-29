@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { DrawToolDto, ObjDrawDataDto, ObjDrawDto } from '../../../model/obj/obj-draw.dto';
+import { DrawToolDto, ObjDrawDataDto, ObjDrawDto, ObjDrawListDto } from '../../../model/obj/obj-draw.dto';
 import { DrawAreaComponent } from '../draw/draw-area.component';
 import { DrawRedoButton } from '../draw-bar/draw-buttons/draw-redo.button';
 import { DrawUndoButton } from '../draw-bar/draw-buttons/draw-undo.button';
-import { ObjDrawListDto } from '../../../model/obj/obj-pin.dto';
 import { PinEditModel } from './pin-edit.model';
 import { PinUpdateCommand } from '../../../command/pin/pin-update.command';
 import { fnSha256 } from '../../../fn/fn-sha256';

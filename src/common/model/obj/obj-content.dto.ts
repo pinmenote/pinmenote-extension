@@ -16,14 +16,6 @@
  */
 import { CssStyleListDto } from './obj-css.dto';
 
-export interface ObjIFrameContentDto {
-  hash: string;
-  html: string;
-  htmlAttr: string;
-  css: CssStyleListDto;
-  content: ObjContentDto[];
-}
-
 export interface ObjSnapshotContentDto {
   hash: string;
   html: string;
@@ -42,7 +34,7 @@ export enum ObjContentTypeDto {
   SHADOW
 }
 
-type ObjContent = ObjIFrameContentDto | ObjShadowContentDto | string;
+type ObjContent = ObjShadowContentDto | string;
 
 export interface ObjContentDto {
   type: ObjContentTypeDto;

@@ -16,12 +16,8 @@
  */
 import { ObjCanvasDto, ObjVideoDataDto } from './obj-snapshot.dto';
 import { ObjCommentListDto } from './obj-comment.dto';
-import { ObjDrawDto } from './obj-draw.dto';
+import { ObjDrawListDto } from './obj-draw.dto';
 import { ObjUrlDto } from './obj.dto';
-
-export interface ObjDrawListDto {
-  data: ObjDrawDto[];
-}
 
 export interface PinIframeDto {
   index: string;
