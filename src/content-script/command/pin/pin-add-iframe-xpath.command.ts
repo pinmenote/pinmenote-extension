@@ -26,8 +26,8 @@ export class PinAddIframeXpathCommand implements ICommand<boolean> {
   constructor(private data: ObjDto<ObjPinDto>) {}
   execute(): boolean {
     const pin = this.data.data;
-    const value = XpathFactory.newXPathResult(document, pin.xpath);
-    fnConsoleLog('PinAddIframeXpathCommand->xpath', pin.xpath, 'singleNodeValue', value.singleNodeValue);
+    const value = XpathFactory.newXPathResult(document, pin.data.xpath);
+    fnConsoleLog('PinAddIframeXpathCommand->xpath', pin.data.xpath, 'singleNodeValue', value.singleNodeValue);
     const node = value.singleNodeValue as HTMLElement;
     if (!this.data.local?.visible || !node || fnIsElementHidden(node)) {
       // will be created on invalidate

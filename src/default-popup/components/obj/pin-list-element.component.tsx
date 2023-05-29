@@ -66,7 +66,7 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
       {isVisible ? <VisibilityIcon sx={{ fontSize: '12px' }} /> : <VisibilityOffIcon sx={{ fontSize: '12px' }} />}
     </IconButton>
   );
-  const value = props.obj.data.title;
+  const value = props.obj.data.description.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (

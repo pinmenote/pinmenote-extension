@@ -123,7 +123,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
     for (const id of ids) {
       const pin = await new ObjPinGetCommand(id).execute();
-      if (pin.data.iframe) {
+      if (pin.data.data.iframe) {
         renderIframePin(el, pin);
       } else {
         renderHtmlPin(el, pin);
@@ -133,8 +133,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const renderIframePin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>, depth = 1) => {
     if (!el.contentDocument || !el.contentWindow) return false;
-    if (!pin.data.iframe) return;
-    let index = pin.data.iframe.index;
+    if (!pin.data.data.iframe) return;
+    let index = pin.data.data.iframe.index;
     const a = index.split('.');
     if (index.length === depth + 1) {
       renderHtmlPin(el, pin);
@@ -152,7 +152,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   const renderHtmlPin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>) => {
     if (!el.contentDocument || !el.contentWindow) return false;
     if (!SettingsStore.settings) return false;
-    const value = XpathFactory.newXPathResult(el.contentDocument, pin.data.xpath);
+    const value = XpathFactory.newXPathResult(el.contentDocument, pin.data.data.xpath);
     const node = value.singleNodeValue as HTMLElement;
     if (!node) return false;
     const pinComponent = new PinComponent(node, pin, {

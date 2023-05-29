@@ -37,7 +37,7 @@ export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props
   const [reRender, setReRender] = useState(false);
 
   const handlePinRemove = async (data: ObjDto<ObjPinDto>) => {
-    await new PinRemoveCommand(data.id, data.data.url, data.data.iframe).execute();
+    await new PinRemoveCommand(data.id, data.data.data.url, data.data.data.iframe).execute();
     await BrowserApi.sendTabMessage<number>({ type: BusMessageType.CONTENT_PIN_REMOVE, data: data.id });
     handleRemove(data.id);
   };

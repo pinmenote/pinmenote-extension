@@ -51,7 +51,7 @@ export class InvalidatePinsCommand implements ICommand<Promise<void>> {
     for (const pin of pinList) {
       switch (pin.type) {
         case ObjTypeDto.PageElementPin:
-          if (pin.data.iframe) {
+          if (pin.data.data.iframe) {
             iframePins.push(pin);
           } else if (new PinAddXpathCommand(pin).execute()) {
             PinPendingStore.remove(pin.id);

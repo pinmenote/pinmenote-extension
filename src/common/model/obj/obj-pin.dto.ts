@@ -28,17 +28,26 @@ export interface PinIframeDto {
   url: ObjUrlDto;
 }
 
-export interface ObjPinDto {
+interface ObjPinDataDto {
   hash: string;
   url: ObjUrlDto;
-  iframe?: PinIframeDto;
   xpath: string;
-  border: PinBorderDataDto;
-  title: string;
   screenshot: string;
+  border: PinBorderDataDto;
+  iframe?: PinIframeDto;
+  canvas?: ObjCanvasDto;
+}
+
+interface ObjPinDescription {
+  hash: string;
+  title: string;
+}
+
+export interface ObjPinDto {
+  description: ObjPinDescription;
+  data: ObjPinDataDto;
   draw: ObjDrawListDto;
   comments: ObjCommentListDto;
-  canvas?: ObjCanvasDto;
   video?: ObjVideoDataDto;
 }
 

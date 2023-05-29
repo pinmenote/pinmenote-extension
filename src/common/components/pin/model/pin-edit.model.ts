@@ -84,15 +84,15 @@ export class PinEditModel {
   }
 
   get url(): ObjUrlDto {
-    return this.obj.data.url;
+    return this.obj.data.data.url;
   }
 
   get iframe(): PinIframeDto | undefined {
-    return this.obj.data.iframe;
+    return this.obj.data.data.iframe;
   }
 
   get border(): PinBorderDataDto {
-    return this.obj.data.border;
+    return this.obj.data.data.border;
   }
 
   get comments(): ObjCommentListDto {
@@ -104,7 +104,7 @@ export class PinEditModel {
   }
 
   get canvas(): ObjCanvasDto | undefined {
-    return this.obj.data.canvas;
+    return this.obj.data.data.canvas;
   }
 
   get video(): ObjVideoDataDto | undefined {

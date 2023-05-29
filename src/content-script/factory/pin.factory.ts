@@ -45,15 +45,22 @@ export class PinFactory {
     );
     const xpath = XpathFactory.newXPathString(ref);
     const iframe: PinIframeDto | undefined = isIframe && baseUrl ? { index: fnIframeIndex(), url: baseUrl } : undefined;
+    const hash = fnSha256(url.href + xpath);
+    const title = ref.innerText.substring(0, 20) || ref.getAttribute('alt') || document.title;
     return {
-      xpath,
-      screenshot,
-      hash: fnSha256(url.href + xpath),
-      iframe,
-      url,
-      border,
-      canvas,
-      title: ref.innerText.substring(0, 20) || ref.getAttribute('alt') || document.title,
+      data: {
+        hash,
+        url,
+        xpath,
+        screenshot,
+        iframe,
+        border,
+        canvas
+      },
+      description: {
+        hash: fnSha256(title),
+        title
+      },
       comments: {
         data: []
       },

@@ -32,7 +32,7 @@ export const PinListExpandComponent: FunctionComponent<PinExpandProps> = ({ pin 
         position: 'relative'
       }}
     >
-      <img src={pin.data.screenshot} width="280" />
+      <img src={pin.data.data.screenshot} width="280" />
     </div>
   );
 };

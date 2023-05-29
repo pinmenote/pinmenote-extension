@@ -50,8 +50,8 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
 
     await BrowserStorageWrapper.set(key, dto);
 
-    await LinkHrefStore.pinAdd(this.pin.url, id);
-    if (this.pin.iframe) await LinkHrefStore.pinAdd(this.pin.iframe.url, id);
+    await LinkHrefStore.pinAdd(this.pin.data.url, id);
+    if (this.pin.data.iframe) await LinkHrefStore.pinAdd(this.pin.data.iframe.url, id);
 
     // Send stop - iframe loads own content scripts
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_STOP_LISTENERS });
