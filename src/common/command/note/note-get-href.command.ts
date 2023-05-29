@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { ICommand } from '../../model/shared/common.dto';
-import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjGetCommand } from '../obj/obj-get.command';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../fn/fn-console';
@@ -25,7 +25,7 @@ export class NoteGetHrefCommand implements ICommand<Promise<ObjDto<ObjNoteDto>[]
   constructor(private data: ObjUrlDto) {}
 
   async execute(): Promise<ObjDto<ObjNoteDto>[]> {
-    const ids = (await LinkHrefOriginStore.noteIds(this.data.href)).reverse();
+    const ids = (await LinkHrefStore.noteIds(this.data.href)).reverse();
     fnConsoleLog('NoteGetHrefCommand->execute', this.data.href, 'ids->', ids);
     const out: ObjDto<ObjNoteDto>[] = [];
 

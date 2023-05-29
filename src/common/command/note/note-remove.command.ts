@@ -16,7 +16,7 @@
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
-import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
@@ -31,8 +31,8 @@ export class NoteRemoveCommand implements ICommand<void> {
     await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
 
     if (this.obj.data.url) {
-      await LinkHrefOriginStore.delHrefOriginId(this.obj.data.url, this.obj.id);
-      await LinkHrefOriginStore.noteDel(this.obj.data.url, this.obj.id);
+      await LinkHrefStore.del(this.obj.data.url, this.obj.id);
+      await LinkHrefStore.noteDel(this.obj.data.url, this.obj.id);
     }
 
     await WordIndex.removeFlat(this.obj.data.words, this.obj.id);

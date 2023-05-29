@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { ICommand } from '../../model/shared/common.dto';
-import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjPinDto } from '../../model/obj/obj-pin.dto';
 import { ObjPinGetCommand } from '../obj/obj-pin-get.command';
 import { fnConsoleLog } from '../../fn/fn-console';
@@ -25,7 +25,7 @@ export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPinDto>[]>>
   constructor(private data: ObjUrlDto) {}
 
   async execute(): Promise<ObjDto<ObjPinDto>[]> {
-    const pinIds = (await LinkHrefOriginStore.pinIds(this.data.href)).reverse();
+    const pinIds = (await LinkHrefStore.pinIds(this.data.href)).reverse();
     fnConsoleLog('PinGetHrefCommand->execute', this.data.href, 'ids->', pinIds);
     const out: ObjDto<ObjPinDto>[] = [];
 

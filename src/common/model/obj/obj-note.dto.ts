@@ -17,6 +17,7 @@
 import { ObjUrlDto } from './obj.dto';
 
 export interface ObjNoteDto {
+  hash: string;
   title: string;
   description: string;
   url?: ObjUrlDto;

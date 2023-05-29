@@ -22,12 +22,14 @@ import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/index/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
+import { fnSha256 } from '../../fn/fn-sha256';
 
 export class NoteUpdateCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjNoteDto>, private oldWords: string[]) {}
   async execute(): Promise<void> {
     fnConsoleLog('NoteUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
+    this.obj.data.hash = fnSha256(this.obj.data.title + this.obj.data.description);
 
     this.obj.updatedAt = Date.now();
 

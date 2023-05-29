@@ -15,29 +15,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
+import { LinkOriginStore } from './link-origin.store';
 import { ObjUrlDto } from '../model/obj/obj.dto';
 import { fnConsoleLog } from '../fn/fn-console';
 
-export class LinkHrefOriginStore {
+export class LinkHrefStore {
   private static NOTE_HREF = 'note:href';
   private static PIN_HREF = 'pin:href';
   private static OBJ_HREF = 'obj:href';
-  private static OBJ_ORIGIN = 'obj:origin';
 
-  static async addHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
+  static async add(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
-    fnConsoleLog('LinkHrefOriginStore->addHrefOriginId', url.href);
+    fnConsoleLog('LinkHrefStore->addHrefOriginId', url.href);
     const hrefIds = await this.hrefIds(url.href);
     hrefIds.push(id);
     await BrowserStorageWrapper.set(`${this.OBJ_HREF}:${url.href}`, hrefIds);
 
-    // Update origin
-    const originIds = await this.originIds(url.origin);
-    originIds.push(id);
-    await BrowserStorageWrapper.set(`${this.OBJ_ORIGIN}:${url.origin}`, originIds);
+    await LinkOriginStore.add(LinkOriginStore.OBJ_ORIGIN, id, url.origin);
   }
 
-  static async delHrefOriginId(url: ObjUrlDto, id: number): Promise<void> {
+  static async del(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
     fnConsoleLog('LinkHrefOriginStore->delHrefOriginId', url.href);
     const hrefIds = await this.hrefIds(url.href);
@@ -47,26 +44,12 @@ export class LinkHrefOriginStore {
     } else {
       await BrowserStorageWrapper.set(`${this.OBJ_HREF}:${url.href}`, newHref);
     }
-    // Update origin
-    const originIds = await this.originIds(url.origin);
-    const newOrigin = originIds.filter((i) => i !== id);
-    if (newOrigin.length === 0) {
-      await BrowserStorageWrapper.remove(`${this.OBJ_ORIGIN}:${url.origin}`);
-    } else {
-      await BrowserStorageWrapper.set(`${this.OBJ_ORIGIN}:${url.origin}`, newOrigin);
-    }
+    await LinkOriginStore.del(LinkOriginStore.OBJ_ORIGIN, id, url.origin);
   }
 
   static async hrefIds(url: string): Promise<number[]> {
-    fnConsoleLog('LinkHrefOriginStore->hrefIds', url);
+    fnConsoleLog('LinkHrefStore->hrefIds', url);
     const key = `${this.OBJ_HREF}:${url}`;
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
-    return value || [];
-  }
-
-  static async originIds(url: string): Promise<number[]> {
-    fnConsoleLog('LinkHrefOriginStore->originIds', url);
-    const key = `${this.OBJ_ORIGIN}:${url}`;
     const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
     return value || [];
   }
@@ -75,6 +58,8 @@ export class LinkHrefOriginStore {
     const hrefIds = await this.pinIds(url.href);
     hrefIds.push(id);
     await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, hrefIds);
+
+    await LinkOriginStore.add(LinkOriginStore.PIN_ORIGIN, id, url.origin);
   }
 
   static async pinDel(url: ObjUrlDto, id: number): Promise<void> {
@@ -85,6 +70,8 @@ export class LinkHrefOriginStore {
     } else {
       await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, newHref);
     }
+
+    await LinkOriginStore.del(LinkOriginStore.PIN_ORIGIN, id, url.origin);
   }
 
   static async pinIds(url: string): Promise<number[]> {
@@ -97,6 +84,8 @@ export class LinkHrefOriginStore {
     const hrefIds = await this.noteIds(url.href);
     hrefIds.push(id);
     await BrowserStorageWrapper.set(`${this.NOTE_HREF}:${url.href}`, hrefIds);
+
+    await LinkOriginStore.add(LinkOriginStore.NOTE_ORIGIN, id, url.origin);
   }
 
   static async noteDel(url: ObjUrlDto, id: number): Promise<void> {
@@ -107,6 +96,8 @@ export class LinkHrefOriginStore {
     } else {
       await BrowserStorageWrapper.set(`${this.NOTE_HREF}:${url.href}`, newHref);
     }
+
+    await LinkOriginStore.del(LinkOriginStore.NOTE_ORIGIN, id, url.origin);
   }
 
   static async noteIds(url: string): Promise<number[]> {

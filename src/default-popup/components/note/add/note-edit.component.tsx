@@ -26,6 +26,7 @@ import { StyledInput } from '../../../../common/components/react/styled.input';
 import { WordIndex } from '../../../../common/text/index/word.index';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
+import { fnSha256 } from '../../../../common/fn/fn-sha256';
 
 interface NoteEditComponentProps {
   obj?: ObjDto<ObjNoteDto>;
@@ -81,6 +82,7 @@ export const NoteEditComponent: FunctionComponent<NoteEditComponentProps> = (pro
     note.title = title;
     note.description = description;
     note.words = Array.from(words);
+    note.hash = fnSha256(title + description + (note.url?.href || ''));
     LogManager.log(`Note->handleUpdate->${props.obj.id}`);
     await new NoteUpdateCommand(props.obj, oldWords).execute();
     props.saveCallback();

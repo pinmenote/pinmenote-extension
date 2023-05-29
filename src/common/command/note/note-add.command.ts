@@ -17,7 +17,7 @@
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { ICommand } from '../../model/shared/common.dto';
-import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
@@ -41,10 +41,7 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
       updatedAt: dt,
       data: this.note,
       version: OBJ_DTO_VERSION,
-      local: {},
-      encryption: {
-        encrypted: false
-      }
+      local: {}
     };
 
     await WordIndex.indexFlat(this.note.words, id);
@@ -53,8 +50,8 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
 
     await BrowserStorageWrapper.set(key, dto);
     if (this.note.url) {
-      await LinkHrefOriginStore.addHrefOriginId(this.note.url, id);
-      await LinkHrefOriginStore.noteAdd(this.note.url, id);
+      await LinkHrefStore.add(this.note.url, id);
+      await LinkHrefStore.noteAdd(this.note.url, id);
     }
 
     await new ObjAddIdCommand({ id, dt }).execute();

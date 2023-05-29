@@ -33,10 +33,6 @@ export interface ObjUrlDto {
   search: string;
 }
 
-export interface ObjEncryptionDto {
-  encrypted: boolean;
-}
-
 export enum ObjTypeDto {
   PageElementPin = 'ELEMENT_PIN',
   PageElementSnapshot = 'ELEMENT_SNAPSHOT',
@@ -58,6 +54,5 @@ export interface ObjDto<T = ObjDataDto> {
   updatedAt: number;
   createdAt: number;
   local: ObjLocalDto;
-  encryption: ObjEncryptionDto;
   data: T;
 }

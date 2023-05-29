@@ -25,6 +25,7 @@ import { StyledInput } from '../../../../common/components/react/styled.input';
 import { WordIndex } from '../../../../common/text/index/word.index';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
+import { fnSha256 } from '../../../../common/fn/fn-sha256';
 
 interface NoteAddComponentProps {
   addCallback: () => void;
@@ -73,7 +74,9 @@ export const NoteAddComponent: FunctionComponent<NoteAddComponentProps> = (props
     const url = PopupActiveTabStore.url;
     const description = LocalModel.description;
     const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(description)]);
+    const hash = fnSha256(title + description + (url?.href || ''));
     const note: ObjNoteDto = {
+      hash,
       title,
       description,
       url,

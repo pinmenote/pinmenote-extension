@@ -19,7 +19,7 @@ import { BrowserApi } from '../../service/browser.api.wrapper';
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
 import { BusMessageType } from '../../model/bus.model';
 import { ICommand } from '../../model/shared/common.dto';
-import { LinkHrefOriginStore } from '../../store/link-href-origin.store';
+import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPageDto } from '../../model/obj/obj-pin.dto';
@@ -41,19 +41,14 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
       updatedAt: dt,
       data: { snapshot: this.dto, comments: { data: [] } },
       version: OBJ_DTO_VERSION,
-      local: {
-        visible: true
-      },
-      encryption: {
-        encrypted: false
-      }
+      local: {}
     };
     await WordIndex.indexFlat(this.dto.words, id);
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
     await BrowserStorageWrapper.set(key, dto);
 
-    await LinkHrefOriginStore.addHrefOriginId(this.dto.url, id);
+    await LinkHrefStore.add(this.dto.url, id);
 
     await new ObjAddIdCommand({ id, dt }).execute();
 

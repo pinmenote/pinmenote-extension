@@ -16,7 +16,8 @@
  */
 import { ObjDto, ObjPageDataDto, ObjTypeDto, ObjUrlDto } from '../../../model/obj/obj.dto';
 import { ICommand } from '../../../model/shared/common.dto';
-import { LinkHrefOriginStore } from '../../../store/link-href-origin.store';
+import { LinkHrefStore } from '../../../store/link-href.store';
+import { LinkOriginStore } from '../../../store/link-origin.store';
 import { ObjGetCommand } from '../obj-get.command';
 import { ObjNoteDto } from '../../../model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../model/obj/obj-pin.dto';
@@ -26,12 +27,12 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
   constructor(private data: ObjUrlDto) {}
 
   async execute(): Promise<ObjDto<ObjPageDataDto>[]> {
-    const pinIds = (await LinkHrefOriginStore.originIds(this.data.origin)).reverse();
+    const pinIds = (await LinkOriginStore.originIds(LinkOriginStore.OBJ_ORIGIN, this.data.origin)).reverse();
     const out: ObjDto<ObjPageDataDto>[] = [];
     for (const id of pinIds) {
       const obj = await new ObjGetCommand<ObjPageDataDto>(id).execute();
       if (!obj) {
-        await LinkHrefOriginStore.delHrefOriginId(this.data, id);
+        await LinkHrefStore.del(this.data, id);
         continue;
       }
       if ([ObjTypeDto.PageSnapshot, ObjTypeDto.PageElementSnapshot, ObjTypeDto.PageElementPin].includes(obj.type)) {

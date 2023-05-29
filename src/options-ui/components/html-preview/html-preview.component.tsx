@@ -31,7 +31,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
-import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
+import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjPageDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjPinGetCommand } from '../../../common/command/obj/obj-pin-get.command';
@@ -105,7 +105,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         await renderSnapshot(obj.data.snapshot, c);
       }
       if (obj.type === ObjTypeDto.PageSnapshot) {
-        const pinIds = await LinkHrefOriginStore.pinIds(obj.data.snapshot.url.href);
+        const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.url.href);
         await renderPins(pinIds);
       }
     });

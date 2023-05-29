@@ -21,7 +21,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentPageSnapshotAddCommand } from '../snapshot/content-page-snapshot-add.command';
 import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { LinkHrefOriginStore } from '../../../common/store/link-href-origin.store';
+import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
@@ -45,9 +45,6 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
       version: OBJ_DTO_VERSION,
       local: {
         visible: true
-      },
-      encryption: {
-        encrypted: false
       }
     };
 
@@ -55,10 +52,10 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
 
     await BrowserStorageWrapper.set(key, dto);
 
-    await LinkHrefOriginStore.pinAdd(this.pin.url, id);
-    if (this.pin.iframe) await LinkHrefOriginStore.pinAdd(this.pin.iframe.url, id);
+    await LinkHrefStore.pinAdd(this.pin.url, id);
+    if (this.pin.iframe) await LinkHrefStore.pinAdd(this.pin.iframe.url, id);
 
-    const pinIds = await LinkHrefOriginStore.pinIds(this.pin.url.href);
+    const pinIds = await LinkHrefStore.pinIds(this.pin.url.href);
     if (pinIds.length === 0 && !this.pin.iframe) {
       await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, this.pin.url).execute();
     }
