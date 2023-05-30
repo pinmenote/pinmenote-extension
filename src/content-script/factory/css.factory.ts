@@ -212,7 +212,7 @@ export class CssFactory {
       if (url.endsWith(';')) url = url.substring(0, url.length - 1);
 
       // TODO verify it's ok
-      if (url.startsWith('data:image/svg+xml')) {
+      if (url.startsWith('data:image/svg+xml;charset=utf8') || url.startsWith('data:image/svg+xml;utf8')) {
         css = css.replace(urlMatch, encodeURI(url));
         continue;
       }

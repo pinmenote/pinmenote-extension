@@ -17,6 +17,13 @@
 
 export type ScreenshotFormat = 'jpeg' | 'png';
 
+export interface SettingsHistoryConfig {
+  pinComment: boolean;
+  pinDraw: boolean;
+  pageComment: boolean;
+  pageNote: boolean;
+}
+
 export interface SettingsConfig {
   version: number;
   screenshotFormat: ScreenshotFormat;
@@ -26,6 +33,7 @@ export interface SettingsConfig {
   borderRadius: string;
   themeColor: string;
   skipCssImageSizeMB: number;
+  history: SettingsHistoryConfig;
 }
 
 interface EnvironmentConfig {
@@ -48,7 +56,13 @@ export const environmentConfig: EnvironmentConfig = {
     newElementStyle: '2px solid #ff0000',
     borderRadius: '5px',
     themeColor: '#ff0000',
-    skipCssImageSizeMB: 2
+    skipCssImageSizeMB: 2,
+    history: {
+      pinComment: true,
+      pinDraw: true,
+      pageComment: true,
+      pageNote: true
+    }
   },
   objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
 };
