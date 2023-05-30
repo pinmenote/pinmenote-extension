@@ -19,7 +19,7 @@ import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../common/model/obj/obj-page.dto';
 import { ObjRangeRequest } from '../../common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
-import { OptionsObjGetRangeCommand } from '../../service-worker/command/options/options-obj-get-range.command';
+import { OptionsObjGetRangeCommand } from '../command/options-obj-get-range.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 

@@ -7,10 +7,10 @@
   "author": "Michal Szczepanski <michal@vane.pl>",
   "scripts": {
     "dev": "parcel watch src/manifest.json --host localhost --target pinmenote-dev --no-cache",
-    "dev:ff": "parcel build src/manifest.json --target pinmenote-firefox-dev --no-cache --detailed-report 0",
+    "dev:ff": "parcel build src/manifest.json --target pinmenote-firefox-dev --no-cache",
     "build": "npm run prod && npm run prod:ff",
-    "prod": "parcel build src/manifest.json --target pinmenote-prod --no-cache --detailed-report 0",
-    "prod:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --no-cache --detailed-report 0",
+    "prod": "parcel build src/manifest.json --target pinmenote-prod --no-cache",
+    "prod:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --no-cache",
     "lint": "eslint --ext .ts,.tsx  src/",
     "lint:fix": "eslint --ext .ts,.tsx  src/ --fix"
   },
@@ -32,7 +32,6 @@
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.8.2",
     "@parcel/config-webextension": "^2.8.2",
-    "@parcel/transformer-inline-string": "^2.8.2",
     "@parcel/transformer-typescript-tsc": "^2.7.0",
     "@types/chrome": "^0.0.193",
     "@types/firefox-webext-browser": "^94.0.1",

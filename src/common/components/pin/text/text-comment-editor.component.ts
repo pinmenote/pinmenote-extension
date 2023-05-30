@@ -18,7 +18,7 @@ import { ContentButton } from '../base/content-button';
 import { HtmlComponent } from '../model/pin-view.model';
 import { PinEditModel } from '../model/pin-edit.model';
 import { TextEditorComponent } from './text-editor.component';
-import prosemirrorCss from 'bundle-text:../../../../css/prosemirror.css';
+import { prosemirrorCss } from '../../../prosemirror.css';
 
 export class TextCommentEditorComponent implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;

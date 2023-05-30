@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { ICommand } from '../../common/model/shared/common.dto';
+import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { distance } from 'fastest-levenshtein';
 
 interface DistanceWord {
