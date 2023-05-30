@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-//https://github.com/parcel-bundler/parcel/issues/7941
+// https://github.com/parcel-bundler/parcel/issues/7941
+// https://github.com/parcel-bundler/parcel/issues/8375
 export const prosemirrorCss = `
 .ProseMirror p {
     font-family: Roboto, serif;
