@@ -91,16 +91,7 @@ export const NoteEditComponent: FunctionComponent<NoteEditComponentProps> = (pro
   return (
     <div style={{ marginTop: 5 }}>
       <h2>Edit Note</h2>
-      <div
-        style={{
-          border: COLOR_DEFAULT_BORDER,
-          borderRadius: DEFAULT_BORDER_RADIUS,
-          minWidth: 170,
-          padding: '0px 5px 0px 5px'
-        }}
-      >
-        <StyledInput value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
-      </div>
+
       <div
         style={{
           marginTop: 5,
@@ -112,6 +103,16 @@ export const NoteEditComponent: FunctionComponent<NoteEditComponentProps> = (pro
         }}
       >
         <div ref={ref}></div>
+      </div>
+      <div
+        style={{
+          border: COLOR_DEFAULT_BORDER,
+          borderRadius: DEFAULT_BORDER_RADIUS,
+          minWidth: 170,
+          padding: '0px 5px 0px 5px'
+        }}
+      >
+        <StyledInput value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
         <Button variant="outlined" onClick={props.cancelCallback}>

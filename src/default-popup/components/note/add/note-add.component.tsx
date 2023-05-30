@@ -92,16 +92,6 @@ export const NoteAddComponent: FunctionComponent<NoteAddComponentProps> = (props
       <h2>Add Note</h2>
       <div
         style={{
-          border: COLOR_DEFAULT_BORDER,
-          borderRadius: DEFAULT_BORDER_RADIUS,
-          minWidth: 170,
-          padding: '0px 5px 0px 5px'
-        }}
-      >
-        <StyledInput value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
-      </div>
-      <div
-        style={{
           marginTop: 5,
           marginBottom: 10,
           borderRadius: DEFAULT_BORDER_RADIUS,
@@ -111,6 +101,16 @@ export const NoteAddComponent: FunctionComponent<NoteAddComponentProps> = (props
         }}
       >
         <div ref={ref}></div>
+      </div>
+      <div
+        style={{
+          border: COLOR_DEFAULT_BORDER,
+          borderRadius: DEFAULT_BORDER_RADIUS,
+          minWidth: 170,
+          padding: '0px 5px 0px 5px'
+        }}
+      >
+        <StyledInput value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
         <Button variant="outlined" onClick={props.cancelCallback}>
