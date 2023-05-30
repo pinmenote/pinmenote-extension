@@ -22,7 +22,7 @@ import { ObjDto } from '../../../model/obj/obj.dto';
 import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnConsoleLog } from '../../../fn/fn-console';
-import { fnSha256 } from '../../../fn/fn-sha256';
+import { fnSha256Object } from '../../../fn/fn-sha256';
 
 export class PinUpdateCommentCommand implements ICommand<Promise<string | undefined>> {
   constructor(private pin: ObjDto<ObjPinDto>, private comment: ObjCommentDto, private value: string) {}
@@ -35,15 +35,17 @@ export class PinUpdateCommentCommand implements ICommand<Promise<string | undefi
     if (hashIndex === -1) return;
 
     const dt = Date.now();
-    const hash = fnSha256(`${this.value}-${dt}`);
-    fnConsoleLog('PinUpdateCommentCommand', hash, 'old', this.comment.hash);
+    const comment: Partial<ObjCommentDto> = {
+      value: this.value,
+      createdAt: this.comment.createdAt,
+      updatedAt: dt,
+      prev: this.comment.hash
+    };
+    const hash = fnSha256Object(comment);
+    fnConsoleLog('PinUpdateCommentCommand', hash, 'old', comment.prev);
+    comment.hash = hash;
 
-    this.comment.value = this.value;
-    this.comment.updatedAt = dt;
-    this.comment.prev = this.comment.hash;
-    this.comment.hash = hash;
-
-    await BrowserStorageWrapper.set(`${ObjectStoreKeys.PIN_COMMENT}:${hash}`, this.comment);
+    await BrowserStorageWrapper.set(`${ObjectStoreKeys.PIN_COMMENT}:${hash}`, comment);
 
     // replace hash
     commentList.data[hashIndex] = hash;

@@ -14,12 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { sha256 } from 'js-sha256';
-
-export const fnSha256 = (value: string) => {
-  return sha256(value);
-};
-
-export const fnSha256Object = (value: any) => {
-  return sha256(JSON.stringify(value));
+export const fnDeepCopy = (value: any) => {
+  return JSON.parse(JSON.stringify(value));
 };

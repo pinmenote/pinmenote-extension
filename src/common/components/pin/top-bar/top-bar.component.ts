@@ -17,8 +17,8 @@
 import { HtmlComponent, HtmlComponentFocusable } from '../model/pin-view.model';
 import { ActionCopyButton } from './action-buttons/action-copy.button';
 import { ActionDownloadButton } from './action-buttons/action-download.button';
-import { ActionDrawButton } from './action-buttons/action-draw.button';
-import { ActionDrawVisibleButton } from './action-buttons/action-draw-visible.button';
+import { ActionDrawButton } from './action-buttons/draw/action-draw.button';
+import { ActionDrawVisibleButton } from './action-buttons/draw/action-draw-visible.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
 import { ActionRemoveButton } from './action-buttons/action-remove.button';
 import { PinEditManager } from '../pin-edit.manager';

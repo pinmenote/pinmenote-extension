@@ -40,6 +40,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   readonly border: HTMLDivElement;
 
   private readonly mouseManager: PinMouseManager;
+  private timeoutEnabled = false;
 
   readonly topBar: TopBarComponent;
   readonly bottomBar: BottomBarComponent;
@@ -191,12 +192,13 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     if (this.doc.settings.borderStyle === 'none') {
       this.model.ref.style.border = this.doc.settings.newElementStyle;
     }
-    if (!this.model.canvas) this.timeoutId = this.doc.window.setTimeout(this.handleMouseOut, 3000);
+    if (!this.model.canvas && this.timeoutEnabled)
+      this.timeoutId = this.doc.window.setTimeout(this.handleMouseOut, 3000);
   };
 
   private handleMouseOut = () => {
     this.doc.window.clearTimeout(this.timeoutId);
-    if (this.model.canvas) return;
+    if (this.model.canvas || !this.timeoutEnabled) return;
     this.timeoutId = this.doc.window.setTimeout(() => {
       this.topBar.focusout();
       this.bottomBar.focusout();

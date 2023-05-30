@@ -16,36 +16,24 @@
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjAddHashtagsCommand } from '../../obj/hashtag/obj-add-hashtags.command';
-import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
+import { ObjDrawDto } from '../../../model/obj/obj-draw.dto';
 import { ObjDto } from '../../../model/obj/obj.dto';
 import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnConsoleLog } from '../../../fn/fn-console';
 import { fnSha256Object } from '../../../fn/fn-sha256';
 
-export class PinAddCommentCommand implements ICommand<Promise<string>> {
-  constructor(private pin: ObjDto<ObjPinDto>, private value: string) {}
-
-  async execute(): Promise<string> {
-    await new ObjAddHashtagsCommand(this.pin.id, this.value).execute();
-    const dt = Date.now();
-
-    const comment: Partial<ObjCommentDto> = {
-      value: this.value,
-      createdAt: dt,
-      updatedAt: dt
+export class PinAddDrawCommand implements ICommand<Promise<void>> {
+  constructor(private pin: ObjDto<ObjPinDto>, private draw: ObjDrawDto) {}
+  async execute(): Promise<void> {
+    fnConsoleLog('PinAddDrawCommand');
+    const draw: Omit<ObjDrawDto, 'hash'> = {
+      size: this.draw.size,
+      data: this.draw.data,
+      updatedAt: this.draw.updatedAt,
+      createdAt: this.draw.createdAt
     };
-    const hash = fnSha256Object(JSON.stringify(comment));
-    comment.hash = hash;
-    fnConsoleLog('PinAddCommentCommand', hash);
-
-    await BrowserStorageWrapper.set(`${ObjectStoreKeys.PIN_COMMENT}:${hash}`, comment);
-
-    this.pin.data.comments.data.push(hash);
-
-    const pinKey = `${ObjectStoreKeys.PIN_ID}:${this.pin.id}`;
-    await BrowserStorageWrapper.set(pinKey, this.pin);
-    return hash;
+    const hash = fnSha256Object(draw);
+    await BrowserStorageWrapper.set(`${ObjectStoreKeys.PIN_ID}:${this.pin.id}`, this.pin);
   }
 }

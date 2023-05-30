@@ -17,12 +17,11 @@
 import { ObjCanvasDto, ObjVideoDataDto } from '../../../model/obj/obj-snapshot.dto';
 import { ObjDto, ObjLocalDto, ObjUrlDto } from '../../../model/obj/obj.dto';
 import { ObjPinDto, PinBorderDataDto, PinIframeDto } from '../../../model/obj/obj-pin.dto';
-import { DrawModel } from './draw.model';
 import { ObjCommentListDto } from '../../../model/obj/obj-comment.dto';
-import { ObjDrawDto } from '../../../model/obj/obj-draw.dto';
 import { ObjRectangleDto } from '../../../model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
 import { PinDocument } from './pin-view.model';
+import { PinDrawEditModel } from './pin-draw-edit.model';
 import { PinMouseManager } from '../pin-mouse.manager';
 import { PinPointFactory } from '../../../factory/pin-point.factory';
 
@@ -32,7 +31,7 @@ export class PinEditModel {
   private rectValue: ObjRectangleDto;
 
   // TODO move draw data to this model
-  readonly draw: DrawModel;
+  readonly draw: PinDrawEditModel;
 
   constructor(
     object: ObjDto<ObjPinDto>,
@@ -44,7 +43,7 @@ export class PinEditModel {
     this.obj = object;
     this.refValue = refValue;
     this.rectValue = this.canvas ? this.canvas.rect : PinPointFactory.calculateRect(refValue);
-    this.draw = new DrawModel(this.obj.data.draw);
+    this.draw = new PinDrawEditModel(this.obj.data.draw);
   }
 
   get top(): HTMLDivElement {
@@ -97,10 +96,6 @@ export class PinEditModel {
 
   get comments(): ObjCommentListDto {
     return this.obj.data.comments;
-  }
-
-  get drawData(): ObjDrawDto {
-    return this.draw.data;
   }
 
   get canvas(): ObjCanvasDto | undefined {

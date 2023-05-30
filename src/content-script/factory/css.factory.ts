@@ -106,7 +106,7 @@ export class CssFactory {
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out += data + '\n';
-      } else if (r instanceof CSSSupportsRule || r instanceof CSSContainerRule) {
+      } else if (r instanceof CSSSupportsRule || r instanceof CSSContainerRule || r instanceof CSSKeyframesRule) {
         out += r.cssText + '\n';
       } else {
         // TODO parse other rules ex CSSKeyframesRule
@@ -207,16 +207,20 @@ export class CssFactory {
 
     for (const urlMatch of urlList) {
       let url = urlMatch.substring(4, urlMatch.length - 1);
+
       if (url.startsWith('"') || url.startsWith("'")) url = url.substring(1, url.length - 1);
       if (url.endsWith(';')) url = url.substring(0, url.length - 1);
+
+      // TODO verify it's ok
       if (url.startsWith('data:image/svg+xml')) {
-        css = css.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+        css = css.replace(urlMatch, encodeURI(url));
+        continue;
       }
       // skip data elements
       if (url.startsWith('data:')) continue;
       // skip url with #
       if (url.startsWith('#')) continue;
-      // skip multiple urls - remove if not bug found
+      // TODO fix - for now skip multiple urls
       if (url.split('url(').length > 2) continue;
       if (
         !(

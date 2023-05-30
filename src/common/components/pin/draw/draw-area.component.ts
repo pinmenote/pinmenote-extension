@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { DrawToolDto, ObjDrawDataDto } from '../../../model/obj/obj-draw.dto';
+import { DrawDataModel } from '../model/pin-draw-edit.model';
 import { EraserDraw } from './tool/eraser.draw';
 import { FillDraw } from './tool/fill.draw';
 import { LineDraw } from './tool/line.draw';
@@ -38,24 +39,29 @@ export class DrawAreaComponent {
 
   canDraw = false;
   private drawing = false;
-  private readonly drawData: ObjDrawDataDto[] = [];
   private drawRedoData: ObjDrawDataDto[] = [];
+  private drawModel: DrawDataModel;
 
   constructor(private model: PinEditModel) {
     this.rasterCanvas = model.doc.document.createElement('canvas');
     this.drawCanvas = model.doc.document.createElement('canvas');
     this.drawCtx = this.drawCanvas.getContext('2d');
     this.rasterCtx = this.rasterCanvas.getContext('2d');
-    if (!model.drawData) {
-      const width = Math.min(model.rect.width, window.innerWidth);
-      const height = Math.min(model.rect.height, window.innerHeight);
-      model.draw.addDraw(width, height);
+    this.drawModel = model.draw.data;
+
+    let width = Math.min(model.rect.width, window.innerWidth);
+    let height = Math.min(model.rect.height, window.innerHeight);
+    if (!this.drawModel.hasData()) {
+      this.drawModel.createDraw(width, height);
+    } else {
+      width = this.drawModel.size.width;
+      height = this.drawModel.size.height;
     }
-    this.drawData = model.drawData.data.concat();
-    this.initDrawCanvas(model.drawData.size.width, model.drawData.size.height);
-    this.initRasterCanvas(model.drawData.size.width, model.drawData.size.height);
-    for (let i = 0; i < model.drawData.data.length; i++) {
-      this.drawOne(model.drawData.data[i]);
+    this.initDrawCanvas(width, height);
+    this.initRasterCanvas(width, height);
+    const data = this.drawModel.currentData;
+    for (let i = 0; i < data.length; i++) {
+      this.drawOne(data[i]);
     }
   }
 
@@ -81,7 +87,7 @@ no javascript enabled - drawing not working</h1>`;
   }
 
   canUndo(): boolean {
-    return this.drawData.length > 0;
+    return this.drawModel.currentData.length > 0;
   }
 
   canRedo(): boolean {
@@ -90,14 +96,13 @@ no javascript enabled - drawing not working</h1>`;
 
   undo(): boolean {
     if (!this.rasterCtx) return false;
-    const data = this.drawData.pop();
+    const data = this.drawModel.currentData.pop();
     if (data) {
       this.drawRedoData.push(data);
       this.rasterCtx.clearRect(0, 0, this.rasterCanvas.width, this.rasterCanvas.height);
-      for (let i = 0; i < this.drawData.length; i++) {
-        this.drawOne(this.drawData[i]);
+      for (let i = 0; i < this.drawModel.currentData.length; i++) {
+        this.drawOne(this.drawModel.currentData[i]);
       }
-      this.model.draw.updateDraw(this.drawData);
       return true;
     }
     return false;
@@ -106,9 +111,8 @@ no javascript enabled - drawing not working</h1>`;
   redo(): boolean {
     const data = this.drawRedoData.pop();
     if (data) {
-      this.drawData.push(data);
+      this.drawModel.currentData.push(data);
       this.drawOne(data);
-      this.model.draw.updateDraw(this.drawData);
       return true;
     }
     return false;
@@ -185,13 +189,12 @@ no javascript enabled - drawing not working</h1>`;
     }
     // clear draw canvas
     this.drawCtx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
-    this.drawData.push({
+    this.drawModel.currentData.push({
       tool: this.model.draw.tool,
       size: this.model.draw.size,
       color: this.model.draw.color,
       points
     });
-    this.model.draw.updateDraw(this.drawData);
   };
 
   private handleMouseMove = (e: MouseEvent) => {

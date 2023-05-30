@@ -96,8 +96,7 @@ export class CommentComponent implements HtmlComponent<HTMLElement> {
 
   private saveCallback = async (value: string): Promise<void> => {
     await new PinUpdateCommentCommand(this.model.object, this.comment, value).execute();
-    this.renderView();
-    this.renderRead();
+    this.renderCallback();
   };
 
   private cancelCallback = (): void => {

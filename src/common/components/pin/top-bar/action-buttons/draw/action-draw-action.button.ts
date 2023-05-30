@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../model/pin-view.model';
-import { PinEditManager } from '../../pin-edit.manager';
-import { PinEditModel } from '../../model/pin-edit.model';
-import { PinUpdateCommand } from '../../../../command/pin/pin-update.command';
-import { applyStylesToElement } from '../../../../style.utils';
-import { iconButtonStyles } from '../../styles/icon-button.styles';
+import { HtmlComponent } from '../../../model/pin-view.model';
+import { PinEditManager } from '../../../pin-edit.manager';
+import { PinEditModel } from '../../../model/pin-edit.model';
+import { applyStylesToElement } from '../../../../../style.utils';
+import { fnConsoleLog } from '../../../../../fn/fn-console';
+import { iconButtonStyles } from '../../../styles/icon-button.styles';
 
-export class ActionDrawVisibleButton implements HtmlComponent<HTMLElement> {
+export class ActionDrawActionButton implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;
 
   private fillColor: string;
@@ -32,8 +32,8 @@ export class ActionDrawVisibleButton implements HtmlComponent<HTMLElement> {
   }
 
   render(): HTMLElement {
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="${this.fillColor}" height="24" viewBox="0 0 24 24" width="24">
-    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
 </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
@@ -52,17 +52,7 @@ export class ActionDrawVisibleButton implements HtmlComponent<HTMLElement> {
     this.el.style.display = 'none';
   }
 
-  handleClick = async () => {
-    if (this.model.local.drawVisible) {
-      this.fillColor = '#000000';
-      this.model.local.drawVisible = false;
-      this.edit.hideDraw();
-    } else {
-      this.fillColor = '#ff0000';
-      this.model.local.drawVisible = true;
-      this.edit.showDraw();
-    }
-    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
-    await new PinUpdateCommand(this.model.object).execute();
+  handleClick = () => {
+    fnConsoleLog('draw action button');
   };
 }

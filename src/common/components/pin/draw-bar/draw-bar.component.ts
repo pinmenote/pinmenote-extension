@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../model/pin-view.model';
-import { ContentButton } from '../base/content-button';
 import { DrawBrushSizeButton } from './draw-buttons/draw-brush-size.button';
 import { DrawColorPickerButton } from './draw-buttons/draw-color-picker.button';
 import { DrawEraseButton } from './draw-buttons/draw-erase.button';
@@ -23,6 +22,7 @@ import { DrawFillButton } from './draw-buttons/draw-fill.button';
 import { DrawLineButton } from './draw-buttons/draw-line.button';
 import { DrawPencilButton } from './draw-buttons/draw-pencil.button';
 import { DrawRedoButton } from './draw-buttons/draw-redo.button';
+import { DrawSaveButton } from './draw-buttons/draw-save.button';
 import { DrawTestButton } from './draw-buttons/draw-test.button';
 import { DrawToolDto } from '../../../model/obj/obj-draw.dto';
 import { DrawUndoButton } from './draw-buttons/draw-undo.button';
@@ -61,7 +61,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
   private readonly drawTest: DrawTestButton;
 
-  private readonly saveButton: ContentButton;
+  private readonly saveButton: DrawSaveButton;
 
   constructor(private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
@@ -82,11 +82,11 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
     this.drawTest = new DrawTestButton(model);
 
-    this.saveButton = new ContentButton(model.doc, 'save', this.handleSaveClick);
+    this.saveButton = new DrawSaveButton(model, this.handleSaveClick);
   }
 
   handleSaveClick = async (): Promise<void> => {
-    await this.model.draw.saveDraw(this.model);
+    await this.model.draw.data.saveDraw(this.model);
   };
 
   setTool(tool: DrawToolDto): void {
@@ -202,7 +202,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.placeComponent(this.redoButton.render(), 193);
 
     // this.placeComponent(this.drawTest.render(), 220);
-    this.placeComponent(this.saveButton.render(), this.model.rect.width - 35);
+    this.placeComponent(this.saveButton.render(), 224);
 
     this.adjustTop();
 

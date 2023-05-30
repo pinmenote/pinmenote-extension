@@ -82,15 +82,17 @@ const hueSelectorStyles = {
 
 const colorInputStyles = {
   position: 'absolute',
-  width: '200px',
+  width: '190px',
+  'max-width': '190px',
   height: '25px',
   top: '175px',
-  left: '0px',
+  left: '-1px',
   outline: 'none',
   'font-size': '1em',
   'background-color': '#ffffff',
   color: '#000000',
-  border: '2px solid #000000'
+  border: '1px solid #000000',
+  'border-radius': '0px'
 };
 
 export class DrawColorPicker implements HtmlComponent<HTMLElement> {
