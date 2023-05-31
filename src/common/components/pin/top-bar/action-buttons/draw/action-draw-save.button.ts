@@ -14,15 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../model/pin-view.model';
-import { PinEditModel } from '../../model/pin-edit.model';
-import { applyStylesToElement } from '../../../../style.utils';
-import { iconButtonStyles } from '../../styles/icon-button.styles';
+import { HtmlComponent } from '../../../model/pin-view.model';
+import { PinEditManager } from '../../../pin-edit.manager';
+import { PinEditModel } from '../../../model/pin-edit.model';
+import { applyStylesToElement } from '../../../../../style.utils';
+import { fnConsoleLog } from '../../../../../fn/fn-console';
+import { iconButtonStyles } from '../../../styles/icon-button.styles';
 
-export class DrawSaveButton implements HtmlComponent<HTMLElement> {
+export class ActionDrawSaveButton implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;
 
-  constructor(private model: PinEditModel, private saveCallback: () => void) {
+  constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
   }
 
@@ -40,6 +42,6 @@ export class DrawSaveButton implements HtmlComponent<HTMLElement> {
   }
 
   private handleClick = () => {
-    this.saveCallback();
+    fnConsoleLog('ActionDrawSaveButton->click');
   };
 }

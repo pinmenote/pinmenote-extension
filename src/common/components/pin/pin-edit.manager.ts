@@ -38,6 +38,7 @@ export class PinEditManager {
   startDraw = () => {
     this.parent.drawComponent.drawArea.canDraw = true;
     this.parent.topBar.drawVisibleIcon.hide();
+    this.parent.topBar.drawActionIcon.hide();
     this.changeVisibleBar(VisibleState.DrawBar);
   };
 
@@ -45,6 +46,7 @@ export class PinEditManager {
     this.parent.drawComponent.drawArea.canDraw = false;
     this.stopEdit();
     this.parent.topBar.drawVisibleIcon.show();
+    this.parent.topBar.drawActionIcon.show();
   };
 
   showDraw = () => {

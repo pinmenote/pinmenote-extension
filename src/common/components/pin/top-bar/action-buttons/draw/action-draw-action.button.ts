@@ -37,6 +37,7 @@ export class ActionDrawActionButton implements HtmlComponent<HTMLElement> {
 </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
+    if (!this.model.local.drawVisible) this.hide();
     return this.el;
   }
 
@@ -45,7 +46,7 @@ export class ActionDrawActionButton implements HtmlComponent<HTMLElement> {
   }
 
   show(): void {
-    this.el.style.display = 'inline-block';
+    if (this.model.local.drawVisible) this.el.style.display = 'inline-block';
   }
 
   hide(): void {

@@ -24,6 +24,7 @@ import { PinDocument } from './pin-view.model';
 import { PinDrawEditModel } from './pin-draw-edit.model';
 import { PinMouseManager } from '../pin-mouse.manager';
 import { PinPointFactory } from '../../../factory/pin-point.factory';
+import { TopBarComponent } from '../top-bar/top-bar.component';
 
 export class PinEditModel {
   private readonly obj: ObjDto<ObjPinDto>;
@@ -48,6 +49,10 @@ export class PinEditModel {
 
   get top(): HTMLDivElement {
     return this.component.top;
+  }
+
+  get topBar(): TopBarComponent {
+    return this.component.topBar;
   }
 
   get bottom(): HTMLDivElement {

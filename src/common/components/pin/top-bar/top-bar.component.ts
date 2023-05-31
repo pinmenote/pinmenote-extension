@@ -17,6 +17,7 @@
 import { HtmlComponent, HtmlComponentFocusable } from '../model/pin-view.model';
 import { ActionCopyButton } from './action-buttons/action-copy.button';
 import { ActionDownloadButton } from './action-buttons/action-download.button';
+import { ActionDrawActionButton } from './action-buttons/draw/action-draw-action.button';
 import { ActionDrawButton } from './action-buttons/draw/action-draw.button';
 import { ActionDrawVisibleButton } from './action-buttons/draw/action-draw-visible.button';
 import { ActionPinEditButton } from './action-buttons/action-pin-edit.button';
@@ -67,6 +68,12 @@ const drawVisibleIconStyles = {
   'background-color': '#ffffff00'
 };
 
+const drawActionStyles = {
+  left: '48px',
+  position: 'absolute',
+  'background-color': '#ffffff00'
+};
+
 export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el: HTMLDivElement;
 
@@ -77,6 +84,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   private readonly drawIcon: ActionDrawButton;
   readonly drawVisibleIcon: ActionDrawVisibleButton;
+  readonly drawActionIcon: ActionDrawActionButton;
 
   private topMargin = '-24px';
 
@@ -89,6 +97,7 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
     this.drawIcon = new ActionDrawButton(edit, model);
     this.drawVisibleIcon = new ActionDrawVisibleButton(edit, model);
+    this.drawActionIcon = new ActionDrawActionButton(edit, model);
   }
 
   focusin(): void {
@@ -144,6 +153,10 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     const drawVisible = this.drawVisibleIcon.render();
     this.el.appendChild(drawVisible);
     applyStylesToElement(drawVisible, drawVisibleIconStyles);
+
+    const drawAction = this.drawActionIcon.render();
+    this.el.append(drawAction);
+    applyStylesToElement(drawAction, drawActionStyles);
 
     this.adjustTop();
 

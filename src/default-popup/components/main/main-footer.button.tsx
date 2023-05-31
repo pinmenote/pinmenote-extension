@@ -27,7 +27,7 @@ export const MainFooterButton: FunctionComponent = () => {
         variant="outlined"
         onClick={() => BrowserApi.openOptionsPage()}
       >
-        Hop on board
+        go to pin board
       </Button>
     </div>
   );
