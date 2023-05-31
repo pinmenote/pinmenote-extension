@@ -165,7 +165,7 @@ export class HtmlFactory {
         try {
           return this.computeCanvas(params.ref as HTMLCanvasElement);
         } catch (e) {
-          fnConsoleLog('COMPUTE CANVAS PROBLEM', e);
+          fnConsoleLog('COMPUTE CANVAS PROBLEM', e, params);
           return HtmlAttrFactory.EMPTY_RESULT;
         }
       }
@@ -196,11 +196,14 @@ export class HtmlFactory {
         break;
       }
       case 'style': {
-        const css = await CssFactory.fetchUrls((params.ref as HTMLStyleElement).innerText);
-        return {
-          html: `<style>${css}</style>`,
-          content: []
-        };
+        if (params.ref.textContent) {
+          const css = await CssFactory.fetchUrls(params.ref.textContent);
+          return {
+            html: `<style>${css}</style>`,
+            content: []
+          };
+        }
+        return HtmlAttrFactory.EMPTY_RESULT;
       }
     }
 
