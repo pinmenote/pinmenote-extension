@@ -128,7 +128,7 @@ data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-i
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: ref.contentDocument.body,
       depth: depth + 1,
-      skipElements: [],
+      skipAttributes: [],
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false,

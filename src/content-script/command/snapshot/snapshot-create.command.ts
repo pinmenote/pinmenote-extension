@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCanvasDto, ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { HtmlSkipAttribute } from 'src/content-script/factory/html/html.constraints';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
@@ -28,7 +29,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     private settings: SettingsConfig,
     private url: ObjUrlDto,
     private element: HTMLElement,
-    private skipElements: string[],
+    private skipAttributes: HtmlSkipAttribute[],
     private canvas?: ObjCanvasDto
   ) {}
 
@@ -37,7 +38,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     let contentId = -1;
     let words: string[] = [];
     if (!this.canvas) {
-      const res = await new SnapshotContentSaveCommand(this.element, this.skipElements).execute();
+      const res = await new SnapshotContentSaveCommand(this.element, this.skipAttributes).execute();
       contentId = res.id;
       words = res.words;
     } else if (this.element instanceof HTMLImageElement) {

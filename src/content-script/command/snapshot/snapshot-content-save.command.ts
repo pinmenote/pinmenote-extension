@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlConstraints, HtmlSkipAttribute } from '../../factory/html/html.constraints';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { CssFactory } from '../../factory/css.factory';
@@ -31,17 +32,19 @@ interface SnapshotResult {
 }
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
-  constructor(private element: HTMLElement, private skipElements: string[], private isPartial = true) {}
+  constructor(private element: HTMLElement, private skipAttributes: HtmlSkipAttribute[], private isPartial = true) {}
   async execute(): Promise<SnapshotResult> {
     const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
     fnConsoleLog('START', key, window.location.href);
+    const skipAttributes = HtmlConstraints.SKIP_URLS[location.hostname] || [];
+    skipAttributes.push(...this.skipAttributes);
     const urlCache = new Set<string>();
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: this.element,
       depth: 1,
-      skipElements: this.skipElements,
+      skipAttributes,
       skipTagCache: new Set<string>(),
       skipUrlCache: urlCache,
       isPartial: this.isPartial,

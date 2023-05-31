@@ -14,6 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+export interface HtmlSkipAttribute {
+  key: string;
+  value: string;
+}
+
 export class HtmlConstraints {
   static readonly KNOWN_ELEMENTS = [
     'a',
@@ -187,4 +193,25 @@ export class HtmlConstraints {
     'use',
     'view'
   ];
+  // keep this in constraints for now
+  /* eslint-disable max-len */
+  static YOUTUBE_SKIP: HtmlSkipAttribute[] = [
+    {
+      key: 'class',
+      value: 'ytp-suggested-action-badge-expanded-content-container'
+    },
+    {
+      key: 'class',
+      value:
+        'ytp-button ytp-suggested-action-badge ytp-suggested-action-badge-with-controls ytp-suggested-action-badge-expanded'
+    },
+    {
+      key: 'class',
+      value: 'ytp-featured-product-container'
+    }
+  ];
+  static SKIP_URLS: { [key: string]: HtmlSkipAttribute[] } = {
+    'www.youtube.com': this.YOUTUBE_SKIP,
+    'youtube.com': this.YOUTUBE_SKIP
+  };
 }

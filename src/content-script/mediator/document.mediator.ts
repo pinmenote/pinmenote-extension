@@ -19,6 +19,7 @@ import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { HtmlSkipAttribute } from '../factory/html/html.constraints';
 import { IFrameIndexMessage } from '../../common/model/iframe-message.model';
 import { IFrameStore } from '../store/iframe.store';
 import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
@@ -325,7 +326,7 @@ export class DocumentMediator {
     await fnSleep(100);
   };
 
-  private static showPreloader = (): string => {
+  private static showPreloader = (): HtmlSkipAttribute => {
     const uid = fnUid();
     this.preloader.innerHTML = CIRCLE_PRELOADER_SVG;
     this.preloader.setAttribute(uid, 'true');
@@ -338,7 +339,7 @@ export class DocumentMediator {
     this.preloader.style.minHeight = '50px';
     this.preloader.style.maxHeight = '50px';
     document.body.appendChild(this.preloader);
-    return uid;
+    return { key: uid, value: 'true' };
   };
 
   private static hidePreloader = (): void => {

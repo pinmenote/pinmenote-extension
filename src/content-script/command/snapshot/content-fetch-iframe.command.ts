@@ -33,7 +33,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
       ref: document.body,
       depth: this.depth + 1,
-      skipElements: [],
+      skipAttributes: [],
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false,
