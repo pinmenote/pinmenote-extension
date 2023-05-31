@@ -327,9 +327,9 @@ export class DocumentMediator {
   };
 
   private static showPreloader = (): HtmlSkipAttribute => {
-    const uid = fnUid();
+    const key = `data-${fnUid()}`;
     this.preloader.innerHTML = CIRCLE_PRELOADER_SVG;
-    this.preloader.setAttribute(uid, 'true');
+    this.preloader.setAttribute(key, 'true');
     this.preloader.style.zIndex = 'calc(9e999)';
     this.preloader.style.position = 'absolute';
     this.preloader.style.top = `${window.scrollY}px`;
@@ -339,7 +339,7 @@ export class DocumentMediator {
     this.preloader.style.minHeight = '50px';
     this.preloader.style.maxHeight = '50px';
     document.body.appendChild(this.preloader);
-    return { key: uid, value: 'true' };
+    return { key, value: 'true' };
   };
 
   private static hidePreloader = (): void => {

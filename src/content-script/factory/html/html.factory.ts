@@ -22,6 +22,7 @@ import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { HtmlPictureFactory } from './html-picture.factory';
+import { HtmlVideoFactory } from './html-video.factory';
 import { IFrameFactory } from './iframe.factory';
 import { ShadowFactory } from './shadow.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
@@ -128,7 +129,7 @@ export class HtmlFactory {
 
   static computeHtmlAttr = (): string => {
     return Array.from(document.getElementsByTagName('html')[0].attributes)
-      .map((a) => (a.nodeValue ? `${a.nodeName}="${a.nodeValue}"` : `${a.nodeName}`))
+      .map((a) => (a.nodeValue ? `${a.nodeName}="${a.nodeValue.replaceAll('"', '&quot;')}"` : `${a.nodeName}`))
       .join(' ');
   };
 
@@ -173,6 +174,9 @@ export class HtmlFactory {
           html: `${html.trimEnd()}>${params.ref.innerHTML}</svg>`,
           content
         };
+      }
+      case 'video': {
+        return HtmlVideoFactory.captureVideo(params.ref as HTMLVideoElement);
       }
       case 'iframe': {
         return await IFrameFactory.computeIframe(params.ref as HTMLIFrameElement, params.depth);
