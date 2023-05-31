@@ -130,6 +130,7 @@ export class HtmlConstraints {
     'video',
     'wbr',
     // SVG - not in HTML
+    'svg',
     'animate',
     'animatemotion',
     'animatetransform',
@@ -184,7 +185,6 @@ export class HtmlConstraints {
     'rect',
     'set',
     'stop',
-    'svg',
     'switch',
     'symbol',
     'text',

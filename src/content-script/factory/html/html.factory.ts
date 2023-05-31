@@ -167,6 +167,7 @@ export class HtmlFactory {
     // IFRAME POC
     switch (tagName) {
       case 'svg': {
+        // TODO review it's ok
         html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes));
         return {
           html: `${html.trimEnd()}>${params.ref.innerHTML}</svg>`,
