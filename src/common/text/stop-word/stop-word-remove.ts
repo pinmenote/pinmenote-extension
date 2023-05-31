@@ -18,9 +18,6 @@ import { StopWordProfile } from './stop-word-profile';
 import { fnConsoleLog } from '../../fn/fn-console';
 import stopWords from '../../../vendor/stopwords-iso/stopwords-iso.json';
 
-// skipping those from url
-const skipWords = ['https', 'http'];
-
 export class StopWordRemove {
   static execute(iso2lang: string, inputWords: string[]): string[] {
     const profiles: string[] = StopWordProfile.profiles;
@@ -30,7 +27,6 @@ export class StopWordRemove {
       for (let i = 0; i < inputWords.length; i++) {
         const word = inputWords[i];
         if (languageProfile.includes(word)) continue;
-        if (skipWords.includes(word)) continue;
         // word not in stopword profile so add to output
         out.push(word);
       }

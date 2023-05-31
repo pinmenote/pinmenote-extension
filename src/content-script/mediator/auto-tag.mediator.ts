@@ -29,12 +29,17 @@ export class AutoTagMediator {
     'news_keywords'
   ];
 
+  private static readonly REMOVE_LINK_REGEX = new RegExp(
+    '(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)',
+    'g'
+  );
+
   static computeTags = (element: HTMLElement): string[] => {
     let keywords: string[];
     if (element instanceof HTMLBodyElement) {
       keywords = this.captureKeywordData();
     } else {
-      const link = [...window.location.host.split('.'), ...decodeURI(window.location.pathname).split('/')];
+      const link = this.getLink();
       keywords = [...element.innerText.split(' '), document.title, ...link];
     }
     const tagList = this.calculateTags(keywords);
@@ -62,7 +67,7 @@ export class AutoTagMediator {
   }
 
   private static captureKeywordData(): string[] {
-    const link = [...window.location.host.split('.'), ...decodeURI(window.location.pathname).split('/')];
+    const link = this.getLink();
     return Array.from(
       new Set([...Array.from(this.captureMeta()), ...Array.from(this.captureLdJson()), document.title, ...link])
     );
@@ -76,10 +81,10 @@ export class AutoTagMediator {
       const name = meta.getAttribute('name');
       const content = meta.getAttribute('content');
       if (property && content && this.META_PROPERTIES.includes(property)) {
-        out.add(content);
+        out.add(content.replaceAll(this.REMOVE_LINK_REGEX, ''));
       }
       if (name && content && this.META_PROPERTIES.includes(name)) {
-        out.add(content);
+        out.add(content.replaceAll(this.REMOVE_LINK_REGEX, ''));
       }
     }
     return out;
@@ -94,13 +99,24 @@ export class AutoTagMediator {
       try {
         const content = JSON.parse(script.innerText);
         if (content['@type'] === 'NewsArticle' || content['@type'] === 'Article') {
-          if (content['description']) out.add(content['description']);
-          if (content['headline']) out.add(content['headline']);
+          if (content['description'])
+            out.add((content['description'] as string).replaceAll(this.REMOVE_LINK_REGEX, ''));
+          if (content['headline']) out.add((content['headline'] as string).replaceAll(this.REMOVE_LINK_REGEX, ''));
         }
       } catch (e) {
         fnConsoleLog('captureLdJson->Error', e);
       }
     }
     return out;
+  }
+
+  private static getLink(): string[] {
+    // filter <3 letters - this will deal with prefix iso2 language and most of the suffixes
+    // not best but should mostly work
+    const hostname = window.location.host.split('.').filter((a) => a.length > 3);
+    return [
+      ...hostname,
+      ...decodeURI(window.location.pathname.replaceAll('.html', '').replaceAll('-', '/')).split('/')
+    ];
   }
 }

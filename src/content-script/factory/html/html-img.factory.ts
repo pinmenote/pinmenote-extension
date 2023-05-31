@@ -19,6 +19,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
 
 export class HtmlImgFactory {
+  // TODO fix 'data:image/jp2'
   static computeImgValue = async (ref: HTMLImageElement, skipUrlCache?: Set<string>): Promise<string> => {
     let value = ref.src || '';
 
