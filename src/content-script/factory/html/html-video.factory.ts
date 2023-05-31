@@ -40,8 +40,8 @@ export class HtmlVideoFactory {
       width = rect.width.toString() || '100%';
       height = rect.height.toString() || '100%';
     }
-
-    let html = `<img data-pin-hash="${hash}" width="${width}" height="${height}" `;
+    // @vane not img because we break pin xpath
+    let html = `<video poster="${imgData}" width="${width}" height="${height}" `;
 
     const style = ref.getAttribute('style') || '';
     if (style) html += `style="${style}" `;
