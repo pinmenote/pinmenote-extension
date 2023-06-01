@@ -216,9 +216,11 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       fnConsoleLog('RENDER CONTENT', c.snapshot.content.length);
       for (const content of c.snapshot.content) {
         const elList = doc.querySelectorAll(`[data-pin-hash="${content.hash}"]`);
-        const el = elList[0];
+        const elArray = Array.from(elList);
         try {
-          if (el) await asyncEmbedContent(content, el);
+          for (const el of elArray) {
+            await asyncEmbedContent(content, el);
+          }
         } catch (e) {
           fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, content);
         }
