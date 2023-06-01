@@ -38,7 +38,7 @@ export const CryptoSettingsComponent: FunctionComponent = () => {
         setPublicKey(CryptoStore.publicKey);
       }
     }, 0);
-  });
+  }, []);
 
   const handleShowHidePrivateKey = () => {
     setShowPrivateKey(!showPrivateKey);

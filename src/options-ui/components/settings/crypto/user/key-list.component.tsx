@@ -43,7 +43,7 @@ export const KeyListComponent: FunctionComponent = () => {
     setTimeout(async () => {
       await reloadList();
     }, 0);
-  });
+  }, []);
 
   const handleAdd = () => {
     setAddVisible(!addVisible);

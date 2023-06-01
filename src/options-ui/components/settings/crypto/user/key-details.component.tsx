@@ -18,7 +18,7 @@ export const KeyDetailsComponent: FunctionComponent<KeyDetailsComponent> = (prop
       if (!key) return;
       setPublicKey(key);
     }, 0);
-  });
+  }, []);
 
   return (
     <div>

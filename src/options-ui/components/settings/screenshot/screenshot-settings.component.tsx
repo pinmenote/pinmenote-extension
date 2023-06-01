@@ -41,7 +41,7 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
       setScreenshotQuality(SettingsStore.settings?.screenshotQuality || 0);
       setScreenshotFormat(SettingsStore.settings?.screenshotFormat || 'jpeg');
     }, 0);
-  });
+  }, []);
 
   const handleScreenshotQuality = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;

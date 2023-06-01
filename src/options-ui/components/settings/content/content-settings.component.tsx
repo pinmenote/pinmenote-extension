@@ -39,7 +39,7 @@ export const ContentSettingsComponent: FunctionComponent = () => {
       setBorderRadius(SettingsStore.settings?.borderRadius || `${DEFAULT_BORDER_RADIUS}px`);
       setBorderStyle(SettingsStore.settings?.borderStyle || '2px solid #ff0000');
     }, 0);
-  });
+  }, []);
 
   const handleBorderRadiusChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
