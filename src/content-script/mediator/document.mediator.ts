@@ -37,14 +37,6 @@ import { fnConsoleLog } from '../../common/fn/fn-console';
 import { fnSleep } from '../../common/fn/fn-sleep';
 import { fnUid } from '../../common/fn/fn-uid';
 import { pinStyles } from '../../common/components/pin/styles/pin.styles';
-/*import tinymce from 'tinymce';
-import 'tinymce/themes/silver';
-import 'tinymce/icons/default/icons';
-import 'tinymce/models/dom/model';
-import * as tablePlugin from 'tinymce/plugins/table/plugin';
-import * as quickbarsPlugin from 'tinymce/plugins/quickbars/plugin';
-import skinCss from 'url:tinymce/skins/ui/oxide/skin.min.css';
-import contentCss from 'url:tinymce/skins/ui/oxide/content.inline.min.css';*/
 
 export class DocumentMediator {
   static type?: ObjTypeDto;
@@ -232,22 +224,7 @@ export class DocumentMediator {
           break;
         }
         case ObjTypeDto.PageCustomize: {
-          /*const mce = await tinymce.init({
-            target: element,
-            content_css: contentCss,
-            skin_url: skinCss,
-            base_url: 'chrome-extension://kmbocnfnpalcondijifhoddcknflcdjf',
-            toolbar: false,
-            menubar: false,
-            inline: true,
-            promotion: false,
-            plugins: ['quickbars', 'table'], // 'autolink', 'codesample', 'link', 'lists', 'media', 'powerpaste',  'image', 'codesample', 'help'
-            fontsize_formats: '8px 10px 11px 12px 14px 16px 18px 24px 36px 48px 64px 72px 88px',
-            external_plugins: {
-              //'quickbars': 'url',
-            }
-          });
-          console.log('MCE !!!!!!!!!!', mce[0], mce[0].getContent());*/
+          element.setAttribute('contenteditable', 'true');
           element.focus();
           break;
         }
