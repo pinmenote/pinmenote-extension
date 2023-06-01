@@ -23,7 +23,8 @@ export enum MainViewEnum {
   ENCRYPT,
   DECRYPT,
   CALENDAR,
-  FUNCTION
+  FUNCTION,
+  HTML
 }
 
 export interface EncryptMessage {

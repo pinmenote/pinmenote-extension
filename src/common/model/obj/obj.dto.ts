@@ -41,7 +41,8 @@ export enum ObjTypeDto {
   PageNote = 'PAGE_NOTE',
   Note = 'Note',
   PageTask = 'PAGE_TASK',
-  PageEvent = 'PAGE_EVENT'
+  PageEvent = 'PAGE_EVENT',
+  PageCustomize = 'PAGE_CUSTOMIZE'
 }
 
 export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto;

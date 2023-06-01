@@ -223,6 +223,11 @@ export class DocumentMediator {
           await this.addElementSnapshot(element, canvas);
           break;
         }
+        case ObjTypeDto.PageCustomize: {
+          element.setAttribute('contenteditable', '');
+          element.focus();
+          break;
+        }
       }
     } catch (e) {
       fnConsoleLog('DocumentMediator->error', e);

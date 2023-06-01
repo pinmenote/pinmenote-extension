@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { PopupPageCustomizeRequest, PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import React, { FunctionComponent, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import CircularProgress from '@mui/material/CircularProgress';
 import FunctionsIcon from '@mui/icons-material/Functions';
+import HtmlIcon from '@mui/icons-material/Html';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -30,7 +32,6 @@ import { MainViewEnum } from '../component-model';
 import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
-import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
@@ -76,6 +77,19 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
     window.close();
   };
 
+  const handleCustomizePageClick = async (): Promise<void> => {
+    if (!PopupActiveTabStore.url) return;
+    await BrowserApi.sendTabMessage<PopupPageCustomizeRequest>({
+      type: BusMessageType.POPUP_PAGE_CUSTOMIZE_START,
+      data: {
+        url: PopupActiveTabStore.url,
+        type: ObjTypeDto.PageCustomize
+      }
+    });
+    props.closeListCallback(MainViewEnum.PAGE_OBJECTS);
+    window.close();
+  };
+
   return (
     <div style={{ marginTop: 10 }}>
       <List sx={zeroPad}>
@@ -99,6 +113,14 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
               <PushPinIcon />
             </ListItemIcon>
             <ListItemText primary="On This Page" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={handleCustomizePageClick}>
+            <ListItemIcon>
+              <HtmlIcon />
+            </ListItemIcon>
+            <ListItemText primary="Customize Page" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>

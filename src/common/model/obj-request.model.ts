@@ -49,3 +49,8 @@ export interface FetchImageRequest {
 export interface ExtensionPopupInitData {
   isAdding: boolean;
 }
+
+export interface PopupPageCustomizeRequest {
+  url: ObjUrlDto;
+  type: ObjTypeDto;
+}

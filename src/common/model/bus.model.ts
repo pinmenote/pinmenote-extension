@@ -49,6 +49,7 @@ export enum BusMessageType {
   POPUP_PAGE_SNAPSHOT_ADD = 'popup.page.snapshot.add',
   POPUP_PAGE_ELEMENT_SNAPSHOT_ADD = 'popup.page.element.snapshot.add',
   POPUP_PIN_START = 'popup.pin.start',
+  POPUP_PAGE_CUSTOMIZE_START = 'popup.page.customize.start',
   POPUP_TAKE_SCREENSHOT = 'popup.take.screenshot',
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
