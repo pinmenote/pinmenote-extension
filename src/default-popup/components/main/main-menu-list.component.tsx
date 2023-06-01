@@ -16,8 +16,10 @@
  */
 import { PopupPageCustomizeRequest, PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import React, { FunctionComponent, useState } from 'react';
+import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CircularProgress from '@mui/material/CircularProgress';
 import FunctionsIcon from '@mui/icons-material/Functions';
 import HtmlIcon from '@mui/icons-material/Html';
@@ -115,7 +117,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemText primary="On This Page" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: 'none' }}>
           <ListItemButton onClick={handleCustomizePageClick}>
             <ListItemIcon>
               <HtmlIcon />
@@ -131,7 +133,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemText primary="Use Function" />
           </ListItemButton>
         </ListItem>
-        {/*<ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: 'none' }}>
           <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.CALENDAR)}>
             <ListItemIcon>
               <CalendarMonthIcon />
@@ -139,14 +141,14 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemText primary="Calendar" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: 'none' }}>
           <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.TASK)}>
             <ListItemIcon>
               <AddTaskIcon />
             </ListItemIcon>
             <ListItemText primary="Task" />
           </ListItemButton>
-        </ListItem>*/}
+        </ListItem>
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.NOTE)}>
             <ListItemIcon>
