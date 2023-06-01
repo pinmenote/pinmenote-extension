@@ -25,6 +25,7 @@ interface DistanceWord {
 }
 
 interface DistanceIds {
+  word: string;
   ids: number[];
   distance: number;
 }
@@ -37,7 +38,6 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
     const wordsIds: DistanceIds[] = [];
     for (const search of searchWords) {
       const s = await this.getWordSet(search);
-      // TODO add set intersections here before push so we can display intersections first
       if (s) wordsIds.push(...s);
     }
     wordsIds.sort((a, b) => {
@@ -48,15 +48,32 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
       }
       return 0;
     });
-
-    const idsSet = new Set<number>();
+    // get stats for each word
+    const idsStats: { [key: number]: { count: number; distance: number; id: number } } = {};
     for (const obj of wordsIds) {
-      obj.ids.forEach((id) => idsSet.add(id));
+      for (const id of obj.ids) {
+        if (idsStats[id]) {
+          idsStats[id].count += 1;
+        } else {
+          idsStats[id] = { distance: obj.distance, count: 1, id };
+        }
+      }
     }
+    // sort stats results
+    const idsArray = Object.values(idsStats)
+      .sort((a, b) => {
+        if (a.count - a.distance > b.count - b.distance) {
+          return -1;
+        } else if (a.count - a.distance < b.count - b.distance) {
+          return 1;
+        }
+        return 0;
+      })
+      .map((c) => c.id);
 
     const out: number[] = [];
     let skip = true;
-    for (const objId of Array.from(idsSet)) {
+    for (const objId of idsArray) {
       // dirty but works - assume that javascript set preserves order
       if (this.from > -1 && skip && objId !== this.from) {
         continue;
@@ -96,7 +113,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
       if (dw.distance > 3) continue;
       const ids = await BrowserStorageWrapper.get<number[] | undefined>(wordKey);
       if (!ids) continue;
-      distances.push({ distance: dw.distance, ids: ids.reverse() });
+      distances.push({ distance: dw.distance, ids: ids.reverse(), word: dw.word });
     }
     return distances;
   }
