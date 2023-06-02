@@ -46,7 +46,7 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
       title: document.title || this.url.origin, // sometimes document don't have title
       url: this.url,
       screenshot,
-      contentId: res.id,
+      contentHash: res.hash,
       words: res.words,
       hashtags: []
     };

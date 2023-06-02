@@ -21,10 +21,6 @@ import {
   ContentTypeDto
 } from '../../../common/model/obj/obj-content.dto';
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
-import {
-  ObjGetSnapshotContentCommand,
-  ObjSnapshotData
-} from '../../../common/command/obj/content/obj-get-snapshot-content.command';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -65,7 +61,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const [visible, setVisible] = useState<boolean>(props.visible);
 
-  const [snapshotData, setSnapshotData] = useState<ObjSnapshotData | undefined>();
+  const [snapshotData, setSnapshotData] = useState<ContentSnapshotDto | undefined>();
   const [snapshot, setSnapshot] = useState<ObjSnapshotDto | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPreLoading, setIsPreLoading] = useState<boolean>(true);
@@ -92,19 +88,20 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       setIsLoading(true);
       const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
       setSnapshot(obj.data.snapshot);
-      let c: ObjSnapshotData | undefined = undefined;
-      if (obj.data.snapshot.contentId > 0) {
-        c = await new ObjGetSnapshotContentCommand(obj.data.snapshot.contentId).execute();
+      const pageContent = await new ContentSnapshotGetCommand<ContentSnapshotDto>(
+        obj.data.snapshot.contentHash
+      ).execute();
+      if (pageContent) {
         const a = Date.now();
-        const dom = fnParse5(c.snapshot.html.html);
+        const dom = fnParse5(pageContent.content.html.html);
         fnConsoleLog('DOM !!!', dom, 'in', Date.now() - a);
-        fnConsoleLog('obj', obj, 'snapshot', c);
-        setSnapshotData(c);
+        fnConsoleLog('obj', obj, 'snapshot', pageContent);
+        setSnapshotData(pageContent.content);
       }
       if (obj.data.snapshot.canvas) {
-        renderCanvas(obj.data.snapshot, c);
+        renderCanvas(obj.data.snapshot);
       } else {
-        await renderSnapshot(obj.data.snapshot, c);
+        await renderSnapshot(obj.data.snapshot, pageContent?.content);
       }
       if (obj.type === ObjTypeDto.PageSnapshot) {
         const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.url.href);
@@ -176,8 +173,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     return true;
   };
 
-  const renderCanvas = (s: ObjSnapshotDto, c?: ObjSnapshotData) => {
-    renderHeader(s, c?.size);
+  const renderCanvas = (snapshot: ObjSnapshotDto, content?: ContentSnapshotDto) => {
+    renderHeader(snapshot, 0);
 
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
@@ -187,10 +184,10 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
     let html = `<body>`;
-    if (c) {
-      html += `${c.snapshot.html.html}`;
+    if (content) {
+      html += `${content.html.html}`;
     } else {
-      html += `<img src="${s.screenshot || ''}" alt="screenshot" />`;
+      html += `<img src="${snapshot.screenshot || ''}" alt="screenshot" />`;
     }
 
     html += `</body>`;
@@ -202,11 +199,12 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const renderSnapshot = async (s: ObjSnapshotDto, c?: ObjSnapshotData): Promise<void> => {
-    renderHeader(s, c?.size);
+  const renderSnapshot = async (s: ObjSnapshotDto, content?: ContentSnapshotDto): Promise<void> => {
+    let size = 0;
+    renderHeader(s, size);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
-    if (!c) return;
+    if (!content) return;
 
     containerRef.current.style.display = 'flex';
     const iframe = document.createElement('iframe');
@@ -217,20 +215,20 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
 
-    const html = await IframeHtmlFactory.computeHtml(c.snapshot, s.title);
+    const html = await IframeHtmlFactory.computeHtml(content, s.title);
 
     const doc = iframe.contentWindow.document;
-    await asyncRenderIframe(html, doc);
+    await renderIframe(html, doc);
     setIsPreLoading(false);
 
-    if (c.snapshot.assets) {
-      fnConsoleLog('RENDER CONTENT', c.snapshot.assets.length);
-      for (const hash of c.snapshot.assets) {
+    if (content.assets) {
+      fnConsoleLog('RENDER CONTENT', content.assets.length);
+      for (const hash of content.assets) {
         const elList = doc.querySelectorAll(`[data-pin-hash="${hash}"]`);
         const elArray = Array.from(elList);
         try {
           for (const el of elArray) {
-            await asyncEmbedContent(hash, el);
+            size += await renderAsset(hash, el);
           }
         } catch (e) {
           fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, hash);
@@ -253,17 +251,17 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     }
   };
 
-  const asyncRenderIframe = async (html: string, doc: Document): Promise<void> => {
+  const renderIframe = async (html: string, doc: Document): Promise<void> => {
     await fnSleep(10);
     doc.write(html);
     doc.close();
   };
 
-  const asyncEmbedContent = async (hash: string, el: Element): Promise<void> => {
+  const renderAsset = async (hash: string, el: Element): Promise<number> => {
     const dto = await new ContentSnapshotGetCommand(hash).execute();
     if (!dto) {
       fnConsoleLog('asyncEmbedContent->missing->hash', hash);
-      return;
+      return 0;
     }
     await fnSleep(2);
     if (dto.type === ContentTypeDto.IFRAME) {
@@ -277,7 +275,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           const elList = iframeDoc.querySelectorAll(`[data-pin-hash="${iframeHash}"]`);
           const iel = elList[0];
           try {
-            if (iel) await asyncEmbedContent(iframeHash, iel);
+            if (iel) await renderAsset(iframeHash, iel);
           } catch (e) {
             fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, iframeHash);
           }
@@ -292,6 +290,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       const content = dto.content as ContentShadowDto;
       renderShadow(el, content);
     }
+    return 0;
   };
 
   const renderShadow = (el: Element, content: ContentShadowDto) => {

@@ -14,21 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ContentSnapshotDto } from '../../../common/model/obj/obj-content.dto';
+import { ContentTypeDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
+import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content/content-snapshot-add.command';
 import { HtmlImgFactory } from '../../factory/html/html-img.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
-export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
+export class SnapshotSaveImageCommand implements ICommand<Promise<string>> {
   constructor(private element: HTMLElement) {}
 
-  async execute(): Promise<number> {
-    const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
-    const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
-
+  async execute(): Promise<string> {
     const value = await HtmlImgFactory.computeImgValue(this.element as HTMLImageElement, {
       ref: this.element,
       depth: 1,
@@ -42,19 +37,26 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
         /*IGNORE*/
       }
     });
-    if (!value) return -1;
 
     const html = `<img src="${value}" />`;
     const hash = fnSha256(html);
-    await BrowserStorageWrapper.set<ContentSnapshotDto>(key, {
-      html: {
-        hash,
-        html,
-        htmlAttr: ''
-      },
-      css: [],
-      assets: []
+    await this.contentCallback({
+      hash,
+      type: ContentTypeDto.SNAPSHOT,
+      content: {
+        html: {
+          hash,
+          html,
+          htmlAttr: ''
+        },
+        css: [],
+        assets: []
+      }
     });
-    return id;
+    return hash;
   }
+
+  private contentCallback = async (content: PageContentDto) => {
+    await new ContentSnapshotAddCommand(content).execute();
+  };
 }

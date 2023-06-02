@@ -20,9 +20,10 @@ import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { PageContentDto } from '../../../model/obj/obj-content.dto';
 
 export class ContentSnapshotGetCommand<T> implements ICommand<Promise<PageContentDto<T> | undefined>> {
-  constructor(private hash: string) {}
+  constructor(private hash?: string) {}
 
   async execute(): Promise<PageContentDto<T> | undefined> {
+    if (!this.hash) return undefined;
     const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.hash}`;
     return await BrowserStorageWrapper.get<PageContentDto<T> | undefined>(key);
   }

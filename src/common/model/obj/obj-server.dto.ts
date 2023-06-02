@@ -24,7 +24,7 @@ export enum ServerPathDto {
   NOTE = 'note',
   PIN = 'pin',
   SNAPSHOT = 'snapshot',
-  SNAPSHOT_CONTENT = 'snapshot/content',
+  SNAPSHOT_ASSETS = 'snapshot/content',
   SNAPSHOT_CSS = 'snapshot/css'
 }
 

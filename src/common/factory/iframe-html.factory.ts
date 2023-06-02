@@ -16,7 +16,6 @@
  */
 import { ContentCssDto, ContentSnapshotDto } from '../model/obj/obj-content.dto';
 import { ContentSnapshotGetCommand } from '../command/snapshot/content/content-snapshot-get.command';
-import { ObjSnapshotData } from '../command/obj/content/obj-get-snapshot-content.command';
 import { ObjSnapshotDto } from '../model/obj/obj-snapshot.dto';
 import { fnConsoleLog } from '../fn/fn-console';
 
@@ -66,7 +65,7 @@ export class IframeHtmlFactory {
 </html>`;
   };
 
-  static computeDownload = (snapshot: ObjSnapshotDto, data: ObjSnapshotData): string => {
+  static computeDownload = (snapshot: ObjSnapshotDto, data: ContentSnapshotDto): string => {
     return '';
   };
 }

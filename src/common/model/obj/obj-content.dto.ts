@@ -45,7 +45,8 @@ export enum ContentTypeDto {
   IFRAME = 1,
   IMG,
   SHADOW,
-  CSS
+  CSS,
+  SNAPSHOT
 }
 
 type PageContent = ContentCssDto | ContentSnapshotDto | ContentShadowDto | ContentImgDto;

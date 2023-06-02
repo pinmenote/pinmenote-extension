@@ -15,9 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 export class ObjectStoreKeys {
-  // ID
-  static readonly CONTENT_ID = 'o:c:id';
-
   static readonly CONTENT_HASH = 'o:ch';
   static readonly CONTENT_HASH_COUNT = 'o:chc';
 

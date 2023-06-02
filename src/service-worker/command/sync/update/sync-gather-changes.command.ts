@@ -16,9 +16,10 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { ServerChangeDto, ServerPathDto } from '../../../../common/model/obj/obj-server.dto';
+import { ContentSnapshotDto } from '../../../../common/model/obj/obj-content.dto';
+import { ContentSnapshotGetCommand } from '../../../../common/command/snapshot/content/content-snapshot-get.command';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
-import { ObjGetSnapshotContentCommand } from '../../../../common/command/obj/content/obj-get-snapshot-content.command';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { PinGetCommentListCommand } from '../../../../common/command/pin/comment/pin-get-comment-list.command';
@@ -57,8 +58,10 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     changes.push({ path: ServerPathDto.SNAPSHOT, type: 'upload' });
     changes.push({ path: ServerPathDto.HASHTAGS, type: 'upload' });
 
-    const snapshot = await this.snapshotChanges(pageObj.snapshot.contentId);
-    changes.push(...snapshot);
+    if (pageObj.snapshot.contentHash) {
+      const snapshot = await this.snapshotChanges(pageObj.snapshot.contentHash);
+      changes.push(...snapshot);
+    }
 
     const comments = await this.commentChanges(pageObj.comments.data);
     changes.push(...comments);
@@ -82,22 +85,22 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     return changes;
   };
 
-  private snapshotChanges = async (contentId: number): Promise<ServerChangeDto[]> => {
-    if (contentId === -1) return [];
+  private snapshotChanges = async (contentHash: string): Promise<ServerChangeDto[]> => {
     const changes: ServerChangeDto[] = [];
 
-    const snapshotContent = await new ObjGetSnapshotContentCommand(contentId).execute();
+    const pageSnapshot = await new ContentSnapshotGetCommand<ContentSnapshotDto>(contentHash).execute();
+    if (!pageSnapshot) return [];
 
-    // content
-    const content = snapshotContent.snapshot.content;
-    for (let i = 0; i < content.length; i++) {
-      changes.push({ path: ServerPathDto.SNAPSHOT_CONTENT, type: 'upload', hash: content[i].hash });
+    // asserts
+    const assets = pageSnapshot.content.assets;
+    for (let i = 0; i < assets.length; i++) {
+      changes.push({ path: ServerPathDto.SNAPSHOT_ASSETS, type: 'upload', hash: assets[i] });
     }
 
     // css
-    const css = snapshotContent.snapshot.css.css;
+    const css = pageSnapshot.content.css;
     for (let i = 0; i < css.length; i++) {
-      changes.push({ path: ServerPathDto.SNAPSHOT_CSS, type: 'upload' });
+      changes.push({ path: ServerPathDto.SNAPSHOT_CSS, type: 'upload', hash: css[i] });
     }
     return changes;
   };

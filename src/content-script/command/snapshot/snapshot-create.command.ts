@@ -36,23 +36,30 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
 
   async execute(): Promise<ObjSnapshotDto> {
     PinStore.each((v) => v.hide());
+
+    const title = this.element.innerText.substring(0, 100) || document.title;
+
     const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
-    let contentId = -1;
+
     let words: string[] = [];
+    let contentHash = undefined;
+
     if (!this.canvas) {
       const res = await new SnapshotContentSaveCommand(this.element, this.skipAttributes).execute();
-      contentId = res.id;
+      contentHash = res.hash;
       words = res.words;
     } else if (this.element instanceof HTMLImageElement) {
-      contentId = await new SnapshotSaveImageCommand(this.element).execute();
+      contentHash = await new SnapshotSaveImageCommand(this.element).execute();
     }
+
     const screenshot = await ScreenshotFactory.takeScreenshot(
       { settings: this.settings, document, window },
       rect,
       this.url
     );
-    const title = this.element.innerText.substring(0, 100) || document.title;
+
     PinStore.each((v) => v.show());
+
     return {
       title,
       url: this.url,
@@ -60,7 +67,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       hashtags: [],
       canvas: this.canvas,
       screenshot,
-      contentId
+      contentHash
     };
   }
 }

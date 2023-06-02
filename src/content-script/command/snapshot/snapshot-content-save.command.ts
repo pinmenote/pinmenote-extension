@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentSnapshotDto, ContentTypeDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
+import { ContentTypeDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
 import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content/content-snapshot-add.command';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlConstraints } from '../../factory/html/html.constraints';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { HtmlSkipAttribute } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 interface SnapshotResult {
-  id: number;
+  hash: string;
   words: string[];
 }
 
@@ -38,10 +35,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
 
   constructor(private element: HTMLElement, private skipAttributes: HtmlSkipAttribute[], private isPartial = true) {}
   async execute(): Promise<SnapshotResult> {
-    const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
-    const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
-
-    fnConsoleLog('START', key, window.location.href);
+    fnConsoleLog('SnapshotContentSaveCommand->START', window.location.href);
     const skipAttributes = HtmlConstraints.SKIP_URLS[location.hostname] || [];
     skipAttributes.push(...this.skipAttributes);
     const urlCache = new Set<string>();
@@ -65,10 +59,10 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const css = await CssFactory.computeCssContent(document, params);
 
     const adopted = CssFactory.computeAdoptedStyleSheets(document.adoptedStyleSheets);
-    const hash = fnSha256(adopted);
-    css.unshift(hash);
+    const adoptedHash = fnSha256(adopted);
+    css.unshift(adoptedHash);
     await this.contentCallback({
-      hash,
+      hash: adoptedHash,
       type: ContentTypeDto.CSS,
       content: {
         data: adopted
@@ -81,17 +75,21 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     fnConsoleLog('SKIPPED', urlCache);
     fnConsoleLog('END');
 
-    await BrowserStorageWrapper.set<ContentSnapshotDto>(key, {
-      html: {
-        hash: fnSha256(html),
-        html,
-        htmlAttr
-      },
-      css,
-      assets: Array.from(new Set<string>(htmlContent.assets))
+    const hash = fnSha256(html);
+    await this.contentCallback({
+      hash,
+      type: ContentTypeDto.SNAPSHOT,
+      content: {
+        html: {
+          hash,
+          html,
+          htmlAttr
+        },
+        css,
+        assets: Array.from(new Set<string>(htmlContent.assets))
+      }
     });
-
-    return { id, words };
+    return { hash, words };
   }
 
   private contentCallback = async (content: PageContentDto) => {
