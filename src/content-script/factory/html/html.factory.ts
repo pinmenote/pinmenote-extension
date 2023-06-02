@@ -19,6 +19,7 @@ import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
+import { HtmlCanvasFactory } from './html-canvas.factory';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { HtmlPictureFactory } from './html-picture.factory';
@@ -31,6 +32,7 @@ import { fnSha256 } from '../../../common/fn/fn-sha256';
 export interface HtmlComputeParams {
   ref: Element;
   depth: number;
+  visitedUrl: { [key: string]: string };
   skipAttributes: HtmlSkipAttribute[];
   skipTagCache: Set<string>;
   skipUrlCache: Set<string>;
@@ -38,100 +40,7 @@ export interface HtmlComputeParams {
   insideLink: boolean; // detect and mitigate link inside link hacks inside html generators
 }
 
-type CtxName = '2d' | 'webgl' | 'webgl2';
-
-const findContext = (ref: HTMLCanvasElement): { ctx: RenderingContext | null; name: CtxName } => {
-  let name: CtxName = '2d';
-  let ctx: RenderingContext | null = ref.getContext(name);
-  if (!ctx) name = 'webgl';
-  ctx = ref.getContext(name, { preserveDrawingBuffer: true });
-  if (!ctx) name = 'webgl2';
-  ctx = ref.getContext(name, { preserveDrawingBuffer: true });
-  return { ctx, name };
-};
-
 export class HtmlFactory {
-  static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
-    fnConsoleLog('HtmlFactory->computeCanvas');
-
-    let imgData = '';
-    const render = findContext(ref);
-
-    if (render.ctx) {
-      switch (render.name) {
-        case '2d':
-          imgData = ref.toDataURL('image/png', 80);
-          break;
-        case 'webgl':
-        case 'webgl2': {
-          const gl = render.ctx as WebGLRenderingContext;
-          if (gl.getContextAttributes()?.preserveDrawingBuffer) {
-            imgData = ref.toDataURL('image/png', 80);
-            fnConsoleLog('HtmlFactory->computeCanvas->preserveDrawingBuffer', true);
-          } else {
-            fnConsoleLog('HtmlFactory->computeCanvas->preserveDrawingBuffer', false);
-            /* TODO capture webgl texture without preserveDrawingBuffer
-            const texture = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            const empty1x1 = new Uint8Array([1, 1, 1, 1]);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, empty1x1);
-            gl.framebufferTexture2D(
-                gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-                gl.TEXTURE_2D, texture, 0);
-            if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
-
-            }*/
-            const can = document.createElement('canvas');
-            const empty1x1 = new Uint8Array([1, 1, 1, 1]);
-            const img = new ImageData(Uint8ClampedArray.from(empty1x1), 1, 1);
-            const ctx = can.getContext('2d');
-            if (ctx) {
-              ctx.putImageData(img, 0, 0);
-            }
-            imgData = can.toDataURL('image/png', 80);
-          }
-        }
-      }
-    }
-
-    let width = ref.getAttribute('width');
-    let height = ref.getAttribute('height');
-
-    if (!width || !height) {
-      const rect1 = ref.parentElement?.getBoundingClientRect();
-      const rect2 = ref.getBoundingClientRect();
-      width = Math.max(rect1?.width || 0, rect2.width).toString() || '100%';
-      height = Math.max(rect1?.height || 0, rect2.height).toString() || '100%';
-    }
-
-    const hash = fnSha256(imgData);
-
-    let html = `<img data-pin-hash="${hash}" width="${width}" height="${height}" `;
-
-    const style = ref.getAttribute('style') || '';
-    if (style) html += `style="${style}" `;
-
-    const clazz = ref.getAttribute('class') || '';
-    if (clazz) html += `class="${clazz}" `;
-
-    html += `/>`;
-
-    const content = imgData
-      ? [
-          {
-            hash,
-            type: ObjContentTypeDto.IMG,
-            content: imgData
-          }
-        ]
-      : [];
-
-    return {
-      html,
-      content
-    };
-  };
-
   static computeHtmlAttr = (): string => {
     return Array.from(document.getElementsByTagName('html')[0].attributes)
       .map((a) => (a.nodeValue ? `${a.nodeName}="${a.nodeValue.replaceAll('"', '&quot;')}"` : `${a.nodeName}`))
@@ -160,7 +69,7 @@ export class HtmlFactory {
       const shadow = BrowserApi.shadowRoot(params.ref);
       // Go with shadow
       if (shadow) {
-        return ShadowFactory.computeShadow(tagName, params.ref, shadow, params.skipUrlCache);
+        return ShadowFactory.computeShadow(tagName, shadow, params);
       } else {
         params.skipTagCache.add(tagName);
       }
@@ -174,7 +83,7 @@ export class HtmlFactory {
     switch (tagName) {
       case 'svg': {
         // TODO review it's ok
-        html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes));
+        html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes), params);
         return {
           html: `${html.trimEnd()}>${params.ref.innerHTML}</svg>`,
           content
@@ -188,17 +97,17 @@ export class HtmlFactory {
       }
       case 'canvas': {
         try {
-          return this.computeCanvas(params.ref as HTMLCanvasElement);
+          return HtmlCanvasFactory.computeCanvas(params.ref as HTMLCanvasElement);
         } catch (e) {
           fnConsoleLog('COMPUTE CANVAS PROBLEM', e, params, depth);
           return HtmlAttrFactory.EMPTY_RESULT;
         }
       }
       case 'picture': {
-        return await HtmlPictureFactory.computePicture(params.ref as HTMLPictureElement, false, params.skipUrlCache);
+        return await HtmlPictureFactory.computePicture(params.ref as HTMLPictureElement, false, params);
       }
       case 'img': {
-        const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params.skipUrlCache);
+        const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params);
         if (!value) break;
         const hash = fnSha256(value);
         content.push({
@@ -223,7 +132,7 @@ export class HtmlFactory {
       }
       case 'style': {
         if (params.ref.textContent) {
-          const css = await CssFactory.fetchUrls(params.ref.textContent);
+          const css = await CssFactory.fetchUrls(params.ref.textContent, params);
           return {
             html: `<style>${css}</style>`,
             content: []
@@ -233,7 +142,7 @@ export class HtmlFactory {
       }
     }
 
-    html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes));
+    html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes), params);
     html = html.trimEnd() + '>';
 
     const nodes = Array.from(params.ref.childNodes);
@@ -249,6 +158,7 @@ export class HtmlFactory {
           {
             ref: node as Element,
             depth: params.depth,
+            visitedUrl: params.visitedUrl,
             skipAttributes: params.skipAttributes,
             skipTagCache: params.skipTagCache,
             skipUrlCache: params.skipUrlCache,
@@ -274,6 +184,7 @@ export class HtmlFactory {
           const computed = await this.computeHtmlIntermediateData({
             ref: node as Element,
             depth: params.depth,
+            visitedUrl: params.visitedUrl,
             skipAttributes: params.skipAttributes,
             skipTagCache: params.skipTagCache,
             skipUrlCache: params.skipUrlCache,

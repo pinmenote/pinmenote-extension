@@ -125,18 +125,22 @@ data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-i
   ): Promise<IFrameFetchMessage | undefined> => {
     if (!ref.contentDocument) return undefined;
 
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+    const params = {
       ref: ref.contentDocument.body,
       depth: depth + 1,
       skipAttributes: [],
+      visitedUrl: {},
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false,
       insideLink: false
-    });
+    };
+
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(params);
     fnConsoleLog('ContentFetchAccessibleIframeCommand->html->done');
-    const css = await CssFactory.computeCssContent(ref.contentDocument);
+    const css = await CssFactory.computeCssContent(ref.contentDocument, params);
     fnConsoleLog('ContentFetchAccessibleIframeCommand->css->done');
+
     const data: ObjSnapshotContentDto = {
       hash: fnSha256(htmlContent.html),
       html: htmlContent.html,
@@ -144,6 +148,7 @@ data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-i
       css,
       content: htmlContent.content
     };
+
     return {
       index: '-',
       uid: fnSha256(htmlContent.html),

@@ -41,19 +41,23 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const skipAttributes = HtmlConstraints.SKIP_URLS[location.hostname] || [];
     skipAttributes.push(...this.skipAttributes);
     const urlCache = new Set<string>();
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+    const params = {
       ref: this.element,
       depth: 1,
       skipAttributes,
+      visitedUrl: {},
       skipTagCache: new Set<string>(),
       skipUrlCache: urlCache,
       isPartial: this.isPartial,
       insideLink: this.element.tagName.toLowerCase() === 'a'
-    });
+    };
+
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(params);
     const html = HtmlFactory.computeHtmlParent(this.element.parentElement, htmlContent.html, this.isPartial);
     const htmlAttr = HtmlFactory.computeHtmlAttr();
+
     fnConsoleLog('HTML DONE', htmlAttr);
-    const css = await CssFactory.computeCssContent(document, urlCache);
+    const css = await CssFactory.computeCssContent(document, params);
 
     const adopted = CssFactory.computeAdoptedStyleSheets(document.adoptedStyleSheets);
     if (adopted) css.css.unshift({ hash: fnSha256(adopted), data: adopted });

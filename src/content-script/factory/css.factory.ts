@@ -20,6 +20,7 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
+import { HtmlComputeParams } from './html/html.factory';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnComputeUrl } from '../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../common/fn/fn-console';
@@ -36,7 +37,7 @@ export const STRIP_FONT_REG = new RegExp('(@font-face)(.*?})', 'g');
 export const STRIP_URL_IMPORT_REG = new RegExp('[()\'";]', 'g');
 
 export class CssFactory {
-  static computeCssContent = async (document: Document, skipUrlCache?: Set<string>): Promise<CssStyleListDto> => {
+  static computeCssContent = async (document: Document, params: HtmlComputeParams): Promise<CssStyleListDto> => {
     const css: CssStyleDto[] = [];
     const styleSheets = Array.from(document.styleSheets);
     fnConsoleLog('CssFactory->computeCssContent', styleSheets.length);
@@ -45,15 +46,15 @@ export class CssFactory {
       const s = styleSheets[i];
       if (s.href) {
         // skip
-        if (skipUrlCache?.has(s.href)) continue;
+        if (params.skipUrlCache.has(s.href)) continue;
 
         const href = fnComputeUrl(s.href);
         const cssFetchData = await this.fetchCss(href);
         if (cssFetchData.ok) {
-          const imports = await this.fetchImports(cssFetchData.res, href, skipUrlCache);
+          const imports = await this.fetchImports(cssFetchData.res, params, href);
 
           let data = cssFetchData.res.replace(CSS_IMPORT_REG, '').trim();
-          data = await this.fetchUrls(data, href, skipUrlCache);
+          data = await this.fetchUrls(data, params, href);
           css.push(...imports);
           if (!data) continue;
           css.push({
@@ -63,7 +64,7 @@ export class CssFactory {
             data
           });
         } else {
-          skipUrlCache?.add(s.href);
+          params.skipUrlCache.add(s.href);
           css.push({
             hash: '',
             href: s.href,
@@ -72,7 +73,7 @@ export class CssFactory {
           });
         }
       } else {
-        const selectors = await this.computeSelectorRules(s);
+        const selectors = await this.computeSelectorRules(s, params);
         css.push(...selectors);
       }
     }
@@ -85,7 +86,7 @@ export class CssFactory {
 
   private static computeSelectorRules = async (
     stylesheet: CSSStyleSheet,
-    skipUrlCache?: Set<string>
+    params: HtmlComputeParams
   ): Promise<CssStyleDto[]> => {
     const css: CssStyleDto[] = [];
     let out = '';
@@ -95,13 +96,13 @@ export class CssFactory {
       if (r.media) {
         // TODO - optimize that ( ok for now ) - look at old source from repo
         let data = r.cssText;
-        const imports = await this.fetchImports(data, undefined, skipUrlCache);
+        const imports = await this.fetchImports(data, params, undefined);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out += data + '\n';
       } else if (r.selectorText) {
         let data = r.cssText;
-        const imports = await this.fetchImports(data, undefined, skipUrlCache);
+        const imports = await this.fetchImports(data, params, undefined);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
         css.push(...imports);
         out += data + '\n';
@@ -136,7 +137,7 @@ export class CssFactory {
     return out;
   };
 
-  static fetchImports = async (css: string, baseUrl?: string, skipUrlCache?: Set<string>): Promise<CssStyleDto[]> => {
+  static fetchImports = async (css: string, params: HtmlComputeParams, baseUrl?: string): Promise<CssStyleDto[]> => {
     const importList = css.match(CSS_IMPORT_REG);
     if (!importList) return [];
 
@@ -160,18 +161,18 @@ export class CssFactory {
       }
 
       // skip
-      if (skipUrlCache?.has(url)) return out;
+      if (params.skipUrlCache.has(url)) return out;
 
       const result = await this.fetchCss(url);
 
       if (result.ok) {
         // !important recurrence of getting imports inside imports here
         let res = result.res;
-        const imports = await this.fetchImports(result.res);
+        const imports = await this.fetchImports(result.res, params);
         res = res.replaceAll(CSS_IMPORT_REG, '').trim();
         out.push(...imports);
         // Now fetch urls to save offline
-        const data = await this.fetchUrls(res, baseUrl);
+        const data = await this.fetchUrls(res, params, baseUrl);
         // TODO check if should skip this one
         if (!data) continue;
         out.push({
@@ -181,14 +182,14 @@ export class CssFactory {
           data
         });
       } else {
-        skipUrlCache?.add(url);
+        params.skipUrlCache.add(url);
         // fnConsoleLog('CssFactory->fetchImports->ERROR !!!', importUrl, url);
       }
     }
     return out;
   };
 
-  static fetchUrls = async (css: string, baseurl?: string, skipUrlCache?: Set<string>): Promise<string> => {
+  static fetchUrls = async (css: string, params: HtmlComputeParams, baseurl?: string): Promise<string> => {
     const urlList = css.match(CSS_URL_REG);
     if (!urlList) return css;
 
@@ -224,16 +225,23 @@ export class CssFactory {
         url = fnComputeUrl(url);
       }
 
-      if (skipUrlCache?.has(url)) continue;
+      if (params.skipUrlCache.has(url)) continue;
 
-      const result = await fnFetchImage(url, ContentSettingsStore.skipCssImageSize);
-
-      if (result.ok) {
-        const newUrl = `url(${result.res})`;
+      if (params.visitedUrl[url]) {
+        const newUrl = `url(${params.visitedUrl[url]})`;
         css = css.replace(urlMatch, newUrl);
       } else {
-        // fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, baseurl);
-        skipUrlCache?.add(url);
+        const result = await fnFetchImage(url, ContentSettingsStore.skipCssImageSize);
+
+        if (result.ok) {
+          const newUrl = `url(${result.res})`;
+          css = css.replace(urlMatch, newUrl);
+
+          params.visitedUrl[url] = result.res;
+        } else {
+          // fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, baseurl);
+          params.skipUrlCache.add(url);
+        }
       }
     }
     // Remove masks because I don't have time and money for now to parse all css types of urls

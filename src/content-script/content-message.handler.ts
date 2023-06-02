@@ -23,6 +23,7 @@ import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { IFrameMessageHandler } from './iframe-message.handler';
 import { PinAddFactory } from './factory/pin-add.factory';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
+import { PinPendingStore } from './store/pin-pending.store';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
@@ -98,6 +99,7 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.CONTENT_PIN_REMOVE:
         PinStore.delByUid(msg.data);
+        PinPendingStore.remove(msg.data);
         break;
       case BusMessageType.CONTENT_PIN_VISIBLE:
         new PinVisibleCommand(msg.data).execute();

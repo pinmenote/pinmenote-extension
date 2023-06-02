@@ -20,7 +20,6 @@ import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from './pin-component-add.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
-import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnIsElementHidden } from '../../../common/fn/fn-is-element-hidden';
 
 export class PinAddXpathCommand implements ICommand<boolean> {
@@ -28,14 +27,17 @@ export class PinAddXpathCommand implements ICommand<boolean> {
   execute(): boolean {
     const pin = this.data.data;
     const value = XpathFactory.newXPathResult(document, pin.data.xpath);
-    fnConsoleLog('PinAddXpathCommand->xpath', pin.data.xpath, 'singleNodeValue', value.singleNodeValue);
+
     const node = value.singleNodeValue as HTMLElement;
+
     if (!this.data.local?.visible || !node || fnIsElementHidden(node)) {
       // will be created on invalidate
       PinPendingStore.add(this.data);
       return false;
     }
+
     const pinData = new PinComponentAddCommand(node, this.data).execute();
+
     // CHECK IF CREATED
     if (pinData) return true;
     PinPendingStore.add(this.data);

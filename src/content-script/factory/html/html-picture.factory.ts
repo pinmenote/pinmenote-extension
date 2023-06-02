@@ -16,6 +16,7 @@
  */
 import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlAttrFactory } from './html-attr.factory';
+import { HtmlComputeParams } from './html.factory';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
@@ -25,7 +26,7 @@ export class HtmlPictureFactory {
   static computePicture = async (
     ref: HTMLPictureElement,
     forShadow: boolean,
-    skipUrlCache?: Set<string>
+    params: HtmlComputeParams
   ): Promise<HtmlIntermediateData> => {
     // fnConsoleLog('HtmlPictureFactory->computePicture');
     if (!ref.firstElementChild) return HtmlAttrFactory.EMPTY_RESULT;
@@ -33,26 +34,32 @@ export class HtmlPictureFactory {
     const img = ref.querySelector('img');
     let imgValue = undefined;
     if (img && img.currentSrc) {
-      // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
-      // Compute picture as img to cache source as base64 encoded string inside img tag
-      // TODO still need fix for not rendered images - this is half baked
-      const imageData = await fnFetchImage(img.currentSrc);
-      if (imageData.ok) {
-        imgValue = imageData.res;
+      if (params.visitedUrl[img.currentSrc]) {
+        imgValue = params.visitedUrl[img.currentSrc];
+      } else {
+        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
+        // Compute picture as img to cache source as base64 encoded string inside img tag
+        // TODO still need fix for not rendered images - this is half baked
+        const imageData = await fnFetchImage(img.currentSrc);
+        if (imageData.ok) {
+          imgValue = imageData.res;
+          params.visitedUrl[img.currentSrc] = imgValue;
+        }
       }
     } else if (!img) {
       return HtmlAttrFactory.EMPTY_RESULT;
     }
 
-    if (!imgValue) imgValue = await HtmlImgFactory.computeImgValue(img, skipUrlCache);
+    if (!imgValue) imgValue = await HtmlImgFactory.computeImgValue(img, params);
     if (!imgValue) return HtmlAttrFactory.EMPTY_RESULT;
 
     const content: ObjContentDto[] = [];
     let html = `<picture `;
-    const picAttrs = await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes));
+    const picAttrs = await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes), params);
     html += picAttrs.substring(0, picAttrs.length - 1) + '>';
 
     if (forShadow) {
+      // TODO hash for shadow
       html += `<img src="${imgValue}" `;
     } else {
       const hash = fnSha256(imgValue);
@@ -64,7 +71,7 @@ export class HtmlPictureFactory {
       });
     }
 
-    html += await HtmlAttrFactory.computeAttrValues('img', Array.from(img.attributes));
+    html += await HtmlAttrFactory.computeAttrValues('img', Array.from(img.attributes), params);
     html += ' /></picture>';
 
     return {

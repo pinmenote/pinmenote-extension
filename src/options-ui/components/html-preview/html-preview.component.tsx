@@ -224,7 +224,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
     if (c.snapshot.content) {
       fnConsoleLog('RENDER CONTENT', c.snapshot.content.length);
+      const visited = new Set<string>();
       for (const content of c.snapshot.content) {
+        if (visited.has(content.hash)) continue;
         const elList = doc.querySelectorAll(`[data-pin-hash="${content.hash}"]`);
         const elArray = Array.from(elList);
         try {
@@ -234,6 +236,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         } catch (e) {
           fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, content);
         }
+        visited.add(content.hash);
+        fnConsoleLog('render !!!');
       }
     }
     fnConsoleLog('DONE');

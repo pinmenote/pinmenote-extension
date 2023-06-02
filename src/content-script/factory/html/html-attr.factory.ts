@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CSS_URL_REG, CssFactory } from '../css.factory';
+import { HtmlComputeParams } from './html.factory';
 import { HtmlIntermediateData } from '../../model/html.model';
 import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
@@ -27,7 +28,11 @@ export class HtmlAttrFactory {
     content: []
   };
 
-  static computeAttrValues = async (tagName: string, attributes: Attr[]): Promise<string> => {
+  static computeAttrValues = async (
+    tagName: string,
+    attributes: Attr[],
+    params: HtmlComputeParams
+  ): Promise<string> => {
     let html = '';
     let hrefFilled = false;
     for (const attr of attributes) {
@@ -77,7 +82,7 @@ export class HtmlAttrFactory {
         attrValue = attrValue.replaceAll('&quot;', '"');
         const urlList = attrValue.match(CSS_URL_REG);
         if (urlList) {
-          attrValue = await CssFactory.fetchUrls(attrValue);
+          attrValue = await CssFactory.fetchUrls(attrValue, params);
         }
         attrValue = attrValue.replaceAll('"', '&quot;');
         html += `${attr.name}="${attrValue}" `;

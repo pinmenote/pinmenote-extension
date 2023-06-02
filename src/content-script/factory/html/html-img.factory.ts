@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComputeParams } from './html.factory';
 import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
 
 export class HtmlImgFactory {
   // TODO fix 'data:image/jp2'
-  static computeImgValue = async (ref: HTMLImageElement, skipUrlCache?: Set<string>): Promise<string> => {
+  static computeImgValue = async (ref: HTMLImageElement, params: HtmlComputeParams): Promise<string> => {
     let value = ref.src || '';
 
     // yet another problem with some library loading img tags async
@@ -29,8 +30,11 @@ export class HtmlImgFactory {
     // fnConsoleLog('HtmlImgFactory->computeImgValue', ref);
 
     if (value.startsWith('http')) {
+      if (params.visitedUrl[value]) return params.visitedUrl[value];
+
       const imageData = await fnFetchImage(value);
       if (imageData.ok) {
+        params.visitedUrl[value] = imageData.res;
         return imageData.res;
       }
     }
@@ -39,8 +43,12 @@ export class HtmlImgFactory {
     if (isAsyncDecoding && ref.getAttribute('data-lazy-src')) {
       let url = ref.getAttribute('data-lazy-src') || '';
       url = fnComputeUrl(url);
+
+      if (params.visitedUrl[url]) return params.visitedUrl[url];
+
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
+        params.visitedUrl[url] = imageData.res;
         return imageData.res;
       } else {
         fnConsoleLog('HtmlImgFactory->computeImgValue->data-pin-media', url);
@@ -51,8 +59,11 @@ export class HtmlImgFactory {
     if (ref.getAttribute('data-src')) {
       let url = ref.getAttribute('data-src') || '';
       url = fnComputeUrl(url);
+      if (params.visitedUrl[url]) return params.visitedUrl[url];
+
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
+        params.visitedUrl[url] = imageData.res;
         return imageData.res;
       }
     }
@@ -61,8 +72,12 @@ export class HtmlImgFactory {
     if (ref.getAttribute('data-pin-media')) {
       let url = ref.getAttribute('data-pin-media') || '';
       url = fnComputeUrl(url);
+
+      if (params.visitedUrl[url]) return params.visitedUrl[url];
+
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
+        params.visitedUrl[url] = imageData.res;
         return imageData.res;
       } else {
         fnConsoleLog('HtmlImgFactory->computeImgValue->data-pin-media', url);
@@ -72,19 +87,19 @@ export class HtmlImgFactory {
     // srcset
     if (ref.srcset) {
       // TODO check if ok for all cases - pick best image based on second parameter
-      const result = await this.computeSrcSet(ref.srcset.split(', '));
+      const result = await this.computeSrcSet(ref.srcset.split(', '), params);
       if (result) return result;
     }
 
     if (ref.getAttribute('data-lazy-srcset')) {
       const srcset = ref.getAttribute('data-lazy-srcset') || '';
-      const result = await this.computeSrcSet(srcset.split(', '));
+      const result = await this.computeSrcSet(srcset.split(', '), params);
       if (result) return result;
     }
 
     if (ref.getAttribute('data-srcset')) {
       const srcset = ref.getAttribute('data-srcset') || '';
-      const result = await this.computeSrcSet(srcset.split(', '));
+      const result = await this.computeSrcSet(srcset.split(', '), params);
       if (result) return result;
     }
 
@@ -100,19 +115,19 @@ export class HtmlImgFactory {
     value = value.replaceAll('"', '&quot;');
 
     const url = fnComputeUrl(value);
-    if (skipUrlCache?.has(url)) return '';
+    if (params.skipUrlCache.has(url)) return '';
 
     const imageData = await fnFetchImage(url);
     if (imageData.ok) {
       return imageData.res;
     } else {
       fnConsoleLog('HtmlImgFactory->computeImgValue->skipUrlCache', url);
-      skipUrlCache?.add(url);
+      params.skipUrlCache.add(url);
     }
     return '';
   };
 
-  private static computeSrcSet = async (srcset: string[]): Promise<string> => {
+  private static computeSrcSet = async (srcset: string[], params: HtmlComputeParams): Promise<string> => {
     fnConsoleLog('HtmlImgFactory->computeSrcSet', srcset);
     // sort by size so it's best image
     if (srcset.length > 1) {
@@ -132,10 +147,14 @@ export class HtmlImgFactory {
     }
     const value = srcset[0].trim().split(' ')[0];
     const url = fnComputeUrl(value);
+
+    if (params.visitedUrl[url]) return params.visitedUrl[url];
+
     if (url.startsWith('http')) {
       const imageData = await fnFetchImage(url);
       fnConsoleLog('HtmlImgFactory->computeSrcSet->fetch->complete');
       if (imageData.ok) {
+        params.visitedUrl[url] = imageData.res;
         return imageData.res;
       }
     }

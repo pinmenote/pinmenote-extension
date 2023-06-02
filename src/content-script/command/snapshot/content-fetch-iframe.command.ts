@@ -29,19 +29,32 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   constructor(private href: string, private uid: string, private depth: number) {}
 
   async execute(): Promise<void> {
-    fnConsoleLog('ContentFetchIframeCommand->execute', this.href, this.uid, this.depth);
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+    fnConsoleLog(
+      'ContentFetchIframeCommand->execute',
+      this.href,
+      this.uid,
+      this.depth,
+      'children',
+      document.body.children.length
+    );
+
+    const params = {
       ref: document.body,
       depth: this.depth + 1,
       skipAttributes: [],
+      visitedUrl: {},
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false,
       insideLink: false
-    });
+    };
+
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(params);
     fnConsoleLog('ContentFetchIframeCommand->html->done');
-    const css = await CssFactory.computeCssContent(document);
+
+    const css = await CssFactory.computeCssContent(document, params);
     fnConsoleLog('ContentFetchIframeCommand->css->done');
+
     const dto: ObjSnapshotContentDto = {
       hash: fnSha256(htmlContent.html),
       html: htmlContent.html,
