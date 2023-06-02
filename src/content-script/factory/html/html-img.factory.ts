@@ -100,7 +100,7 @@ export class HtmlImgFactory {
     value = value.replaceAll('"', '&quot;');
 
     const url = fnComputeUrl(value);
-    if (skipUrlCache?.has(url)) return url;
+    if (skipUrlCache?.has(url)) return '';
 
     const imageData = await fnFetchImage(url);
     if (imageData.ok) {
@@ -109,7 +109,7 @@ export class HtmlImgFactory {
       fnConsoleLog('HtmlImgFactory->computeImgValue->skipUrlCache', url);
       skipUrlCache?.add(url);
     }
-    return url;
+    return '';
   };
 
   private static computeSrcSet = async (srcset: string[]): Promise<string> => {

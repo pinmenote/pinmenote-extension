@@ -51,15 +51,18 @@ export class HtmlVideoFactory {
 
     html += `/>`;
 
+    const content = imgData
+      ? [
+          {
+            hash,
+            type: ObjContentTypeDto.IMG,
+            content: imgData
+          }
+        ]
+      : [];
     return {
       html: html,
-      content: [
-        {
-          hash,
-          type: ObjContentTypeDto.IMG,
-          content: imgData
-        }
-      ]
+      content
     };
   }
 }

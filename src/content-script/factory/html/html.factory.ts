@@ -115,15 +115,20 @@ export class HtmlFactory {
     if (clazz) html += `class="${clazz}" `;
 
     html += `/>`;
+
+    const content = imgData
+      ? [
+          {
+            hash,
+            type: ObjContentTypeDto.IMG,
+            content: imgData
+          }
+        ]
+      : [];
+
     return {
       html,
-      content: [
-        {
-          hash,
-          type: ObjContentTypeDto.IMG,
-          content: imgData
-        }
-      ]
+      content
     };
   };
 
@@ -194,6 +199,7 @@ export class HtmlFactory {
       }
       case 'img': {
         const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params.skipUrlCache);
+        if (!value) break;
         const hash = fnSha256(value);
         content.push({
           hash,

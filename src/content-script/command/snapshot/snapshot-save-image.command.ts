@@ -30,6 +30,8 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
     const value = await HtmlImgFactory.computeImgValue(this.element as HTMLImageElement);
+    if (!value) return -1;
+
     const html = `<img src="${value}" />`;
     const hash = fnSha256(html);
     await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {

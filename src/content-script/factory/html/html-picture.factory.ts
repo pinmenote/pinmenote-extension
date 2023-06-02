@@ -45,6 +45,7 @@ export class HtmlPictureFactory {
     }
 
     if (!imgValue) imgValue = await HtmlImgFactory.computeImgValue(img, skipUrlCache);
+    if (!imgValue) return HtmlAttrFactory.EMPTY_RESULT;
 
     const content: ObjContentDto[] = [];
     let html = `<picture `;

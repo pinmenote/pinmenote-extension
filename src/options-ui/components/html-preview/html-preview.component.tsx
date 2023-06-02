@@ -244,7 +244,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const asyncRenderIframe = async (html: string, doc: Document): Promise<void> => {
     return new Promise((resolve) => {
-      fnSleep(250)
+      fnSleep(10)
         .then(() => {
           doc.write(html);
           doc.close();
@@ -258,7 +258,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const asyncEmbedContent = async (dto: ObjContentDto, el: Element): Promise<void> => {
     return new Promise((resolve, reject) => {
-      fnSleep(5)
+      fnSleep(2)
         .then(() => {
           if (dto.type === ObjContentTypeDto.IFRAME) {
             const iframe: ObjSnapshotContentDto = dto.content as ObjSnapshotContentDto;
