@@ -79,7 +79,12 @@ export class HtmlFactory {
         };
       }
       case 'video': {
-        return HtmlVideoFactory.captureVideo(params);
+        try {
+          return HtmlVideoFactory.captureVideo(params);
+        } catch (e) {
+          fnConsoleLog('COMPUTE VIDEO CANVAS PROBLEM', e, params, depth);
+          return HtmlAttrFactory.EMPTY_RESULT;
+        }
       }
       case 'iframe': {
         return await IFrameFactory.computeIframe(params);
