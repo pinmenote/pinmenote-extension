@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ICommand } from '../../model/shared/common.dto';
-import { ObjContentDto } from '../../model/obj/obj-content.dto';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { PageContentDto } from '../../../model/obj/obj-content.dto';
 
 export class ContentSnapshotAddCommand<T> implements ICommand<Promise<void>> {
-  constructor(private content: ObjContentDto<T>) {}
+  constructor(private content: PageContentDto<T>) {}
 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.content.hash}`;
-    await BrowserStorageWrapper.set<ObjContentDto<T>>(key, this.content);
+    await BrowserStorageWrapper.set<PageContentDto<T>>(key, this.content);
     await this.incrementCount();
   }
 

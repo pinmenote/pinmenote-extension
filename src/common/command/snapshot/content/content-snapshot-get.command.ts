@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ContentDto } from '../../model/obj/obj-content.dto';
-import { ICommand } from '../../model/shared/common.dto';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { PageContentDto } from '../../../model/obj/obj-content.dto';
 
-export class ContentSnapshotGetCommand<T> implements ICommand<Promise<ContentDto<T> | undefined>> {
+export class ContentSnapshotGetCommand<T> implements ICommand<Promise<PageContentDto<T> | undefined>> {
   constructor(private hash: string) {}
 
-  async execute(): Promise<ContentDto<T> | undefined> {
+  async execute(): Promise<PageContentDto<T> | undefined> {
     const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.hash}`;
-    return await BrowserStorageWrapper.get<ContentDto<T> | undefined>(key);
+    return await BrowserStorageWrapper.get<PageContentDto<T> | undefined>(key);
   }
 }

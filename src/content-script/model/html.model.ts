@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjContentDto } from '../../common/model/obj/obj-content.dto';
+import { PageContentDto } from '../../common/model/obj/obj-content.dto';
 
 export interface HtmlIntermediateData {
   html: string;
-  hashes: string[];
+  assets: string[];
 }
 
 export interface HtmlSkipAttribute {
@@ -33,7 +33,7 @@ export interface HtmlComputeParams {
   skipAttributes: HtmlSkipAttribute[];
   skipTagCache: Set<string>;
   skipUrlCache: Set<string>;
-  contentCallback: (obj: ObjContentDto) => void;
+  contentCallback: (obj: PageContentDto) => void;
   isPartial: boolean;
   insideLink: boolean; // detect and mitigate link inside link hacks inside html generators
 }

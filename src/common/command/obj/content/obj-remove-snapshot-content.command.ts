@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
-import { ContentSnapshotRemoveListCommand } from '../../snapshot/content-snapshot-remove-list.command';
+import { ContentSnapshotDto } from '../../../model/obj/obj-content.dto';
+import { ContentSnapshotRemoveListCommand } from '../../snapshot/content/content-snapshot-remove-list.command';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjRemoveHashtagsCommand } from '../hashtag/obj-remove-hashtags.command';
-import { ObjSnapshotContentDto } from '../../../model/obj/obj-content.dto';
 import { ObjSnapshotDto } from '../../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { WordIndex } from '../../../text/index/word.index';
@@ -28,8 +28,10 @@ export class ObjRemoveSnapshotContentCommand implements ICommand<Promise<void>> 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.CONTENT_ID}:${this.snapshot.contentId}`;
 
-    const content = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
-    await new ContentSnapshotRemoveListCommand(content.hashes).execute();
+    const content = await BrowserStorageWrapper.get<ContentSnapshotDto>(key);
+    // Remove hashed content
+    await new ContentSnapshotRemoveListCommand(content.assets).execute();
+    await new ContentSnapshotRemoveListCommand(content.css).execute();
 
     await WordIndex.removeFlat(this.snapshot.words, this.id);
 

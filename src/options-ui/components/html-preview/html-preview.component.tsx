@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import {
-  ObjContentDto,
-  ObjContentTypeDto,
-  ObjShadowContentDto,
-  ObjSnapshotContentDto
+  ContentImgDto,
+  ContentShadowDto,
+  ContentSnapshotDto,
+  ContentTypeDto
 } from '../../../common/model/obj/obj-content.dto';
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import {
@@ -29,7 +29,7 @@ import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
-import { ContentSnapshotGetCommand } from '../../../common/command/snapshot/content-snapshot-get.command';
+import { ContentSnapshotGetCommand } from '../../../common/command/snapshot/content/content-snapshot-get.command';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
@@ -96,7 +96,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       if (obj.data.snapshot.contentId > 0) {
         c = await new ObjGetSnapshotContentCommand(obj.data.snapshot.contentId).execute();
         const a = Date.now();
-        const dom = fnParse5(c.snapshot.html);
+        const dom = fnParse5(c.snapshot.html.html);
         fnConsoleLog('DOM !!!', dom, 'in', Date.now() - a);
         fnConsoleLog('obj', obj, 'snapshot', c);
         setSnapshotData(c);
@@ -188,7 +188,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (!iframe.contentWindow) return;
     let html = `<body>`;
     if (c) {
-      html += `${c.snapshot.html}`;
+      html += `${c.snapshot.html.html}`;
     } else {
       html += `<img src="${s.screenshot || ''}" alt="screenshot" />`;
     }
@@ -217,15 +217,15 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
 
-    const html = IframeHtmlFactory.computeHtml(c.snapshot);
+    const html = await IframeHtmlFactory.computeHtml(c.snapshot, s.title);
 
     const doc = iframe.contentWindow.document;
     await asyncRenderIframe(html, doc);
     setIsPreLoading(false);
 
-    if (c.snapshot.hashes) {
-      fnConsoleLog('RENDER CONTENT', c.snapshot.hashes.length);
-      for (const hash of c.snapshot.hashes) {
+    if (c.snapshot.assets) {
+      fnConsoleLog('RENDER CONTENT', c.snapshot.assets.length);
+      for (const hash of c.snapshot.assets) {
         const elList = doc.querySelectorAll(`[data-pin-hash="${hash}"]`);
         const elArray = Array.from(elList);
         try {
@@ -235,7 +235,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         } catch (e) {
           fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, hash);
         }
-        fnConsoleLog('render !!!');
       }
     }
     fnConsoleLog('DONE');
@@ -261,16 +260,20 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const asyncEmbedContent = async (hash: string, el: Element): Promise<void> => {
-    const dto: ObjContentDto = await new ContentSnapshotGetCommand(hash).execute();
+    const dto = await new ContentSnapshotGetCommand(hash).execute();
+    if (!dto) {
+      fnConsoleLog('asyncEmbedContent->missing->hash', hash);
+      return;
+    }
     await fnSleep(2);
-    if (dto.type === ObjContentTypeDto.IFRAME) {
-      const iframe: ObjSnapshotContentDto = dto.content as ObjSnapshotContentDto;
+    if (dto.type === ContentTypeDto.IFRAME) {
+      const iframe: ContentSnapshotDto = dto.content as ContentSnapshotDto;
       const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
       if (iframeDoc) {
-        const iframeHtml = IframeHtmlFactory.computeHtml(iframe);
+        const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
         iframeDoc.write(iframeHtml);
         iframeDoc.close();
-        for (const iframeHash of iframe.hashes) {
+        for (const iframeHash of iframe.assets) {
           const elList = iframeDoc.querySelectorAll(`[data-pin-hash="${iframeHash}"]`);
           const iel = elList[0];
           try {
@@ -280,18 +283,18 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           }
         }
       }
-    } else if (dto.type === ObjContentTypeDto.IMG) {
+    } else if (dto.type === ContentTypeDto.IMG) {
       const img = el as HTMLImageElement;
-      img.src = dto.content as string;
+      img.src = (dto.content as ContentImgDto).src;
       if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
         img.style.maxWidth = `${window.innerWidth}px`;
-    } else if (dto.type === ObjContentTypeDto.SHADOW) {
-      const content = dto.content as ObjShadowContentDto;
+    } else if (dto.type === ContentTypeDto.SHADOW) {
+      const content = dto.content as ContentShadowDto;
       renderShadow(el, content);
     }
   };
 
-  const renderShadow = (el: Element, content: ObjShadowContentDto) => {
+  const renderShadow = (el: Element, content: ContentShadowDto) => {
     el.innerHTML = content.html + el.innerHTML;
     renderTemplate(el);
   };

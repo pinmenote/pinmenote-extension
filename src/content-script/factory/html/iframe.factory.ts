@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ContentSnapshotDto, ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { IFrameFetchMessage, IFrameIndexMessage } from '../../../common/model/iframe-message.model';
-import { ObjContentTypeDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../css.factory';
@@ -46,11 +46,11 @@ export class IFrameFactory {
       })
       .join(' ');
     fnConsoleLog('IFrameFactory->computeIframe->END');
-    params.contentCallback({ hash: msg.data.hash, type: ObjContentTypeDto.IFRAME, content: msg.data });
+    params.contentCallback({ hash: msg.data.html.hash, type: ContentTypeDto.IFRAME, content: msg.data });
     return {
       html: `<iframe width="${width}" height="${height}" ${iframeAttr} 
-data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-iframe-href="${msg.href}"></iframe>`,
-      hashes: [msg.data.hash]
+data-pin-hash="${msg.data.html.hash}" data-pin-iframe-index="${msg.index}" data-pin-iframe-href="${msg.href}"></iframe>`,
+      assets: [msg.data.html.hash]
     };
   };
 
@@ -133,12 +133,14 @@ data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-i
     const css = await CssFactory.computeCssContent(ref.contentDocument, params);
     fnConsoleLog('ContentFetchAccessibleIframeCommand->css->done');
 
-    const data: ObjSnapshotContentDto = {
-      hash: fnSha256(htmlContent.html),
-      html: htmlContent.html,
-      htmlAttr: HtmlFactory.computeHtmlAttr(),
+    const data: ContentSnapshotDto = {
+      html: {
+        hash: fnSha256(htmlContent.html),
+        html: htmlContent.html,
+        htmlAttr: HtmlFactory.computeHtmlAttr()
+      },
       css,
-      hashes: htmlContent.hashes
+      assets: htmlContent.assets
     };
 
     return {

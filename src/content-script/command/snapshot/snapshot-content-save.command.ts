@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjContentDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
+import { ContentSnapshotDto, ContentTypeDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
-import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content-snapshot-add.command';
+import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content/content-snapshot-add.command';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlConstraints } from '../../factory/html/html.constraints';
 import { HtmlFactory } from '../../factory/html/html.factory';
@@ -65,7 +65,15 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const css = await CssFactory.computeCssContent(document, params);
 
     const adopted = CssFactory.computeAdoptedStyleSheets(document.adoptedStyleSheets);
-    if (adopted) css.css.unshift({ hash: fnSha256(adopted), data: adopted });
+    const hash = fnSha256(adopted);
+    css.unshift(hash);
+    await this.contentCallback({
+      hash,
+      type: ContentTypeDto.CSS,
+      content: {
+        data: adopted
+      }
+    });
 
     fnConsoleLog('CSS DONE');
     const words = AutoTagMediator.computeTags(this.element);
@@ -73,18 +81,20 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     fnConsoleLog('SKIPPED', urlCache);
     fnConsoleLog('END');
 
-    await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {
-      hash: fnSha256(html),
-      html,
-      htmlAttr,
+    await BrowserStorageWrapper.set<ContentSnapshotDto>(key, {
+      html: {
+        hash: fnSha256(html),
+        html,
+        htmlAttr
+      },
       css,
-      hashes: Array.from(new Set<string>(htmlContent.hashes))
+      assets: Array.from(new Set<string>(htmlContent.assets))
     });
 
     return { id, words };
   }
 
-  private contentCallback = async (content: ObjContentDto) => {
+  private contentCallback = async (content: PageContentDto) => {
     if (this.savedHash.has(content.hash)) {
       fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
       return;

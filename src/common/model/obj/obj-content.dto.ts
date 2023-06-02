@@ -14,30 +14,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssStyleListDto } from './obj-css.dto';
 
-export interface ObjSnapshotContentDto {
+export interface ContentCssDto {
+  href?: string;
+  media?: string;
+  data: string;
+}
+
+export interface ContentSnapshotDto {
+  html: ContentHtmlDto;
+  css: string[];
+  assets: string[];
+}
+
+interface ContentHtmlDto {
   hash: string;
   html: string;
   htmlAttr: string;
-  css: CssStyleListDto;
-  hashes: string[];
 }
 
-export interface ObjShadowContentDto {
+export interface ContentShadowDto {
   html: string;
 }
 
-export enum ObjContentTypeDto {
-  IFRAME = 1,
-  IMG,
-  SHADOW
+export interface ContentImgDto {
+  src: string;
 }
 
-type ObjContent = ObjShadowContentDto | string;
+export enum ContentTypeDto {
+  IFRAME = 1,
+  IMG,
+  SHADOW,
+  CSS
+}
 
-export interface ObjContentDto<T = ObjContent> {
-  type: ObjContentTypeDto;
+type PageContent = ContentCssDto | ContentSnapshotDto | ContentShadowDto | ContentImgDto;
+
+export interface PageContentDto<T = PageContent> {
+  type: ContentTypeDto;
   hash: string;
   content: T;
 }

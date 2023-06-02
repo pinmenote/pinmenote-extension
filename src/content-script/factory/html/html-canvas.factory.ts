@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
-import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
+import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -99,13 +99,15 @@ export class HtmlCanvasFactory {
 
     params.contentCallback({
       hash,
-      type: ObjContentTypeDto.IMG,
-      content: imgData
+      type: ContentTypeDto.IMG,
+      content: {
+        src: imgData
+      }
     });
 
     return {
       html,
-      hashes: [hash]
+      assets: [hash]
     };
   };
 }

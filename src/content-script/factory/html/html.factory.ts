@@ -16,6 +16,7 @@
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlCanvasFactory } from './html-canvas.factory';
@@ -24,7 +25,6 @@ import { HtmlImgFactory } from './html-img.factory';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { HtmlVideoFactory } from './html-video.factory';
 import { IFrameFactory } from './iframe.factory';
-import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { ShadowFactory } from './shadow.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -64,7 +64,7 @@ export class HtmlFactory {
       }
     }
 
-    const hashes: string[] = [];
+    const assets: string[] = [];
 
     let html = `<${tagName} `;
 
@@ -75,11 +75,11 @@ export class HtmlFactory {
         html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes), params);
         return {
           html: `${html.trimEnd()}>${params.ref.innerHTML}</svg>`,
-          hashes
+          assets
         };
       }
       case 'video': {
-        return HtmlVideoFactory.captureVideo(params.ref as HTMLVideoElement);
+        return HtmlVideoFactory.captureVideo(params);
       }
       case 'iframe': {
         return await IFrameFactory.computeIframe(params);
@@ -100,11 +100,13 @@ export class HtmlFactory {
         if (!value) break;
         const hash = fnSha256(value);
         html += `data-pin-hash="${hash}" `;
-        hashes.push(hash);
+        assets.push(hash);
         params.contentCallback({
           hash,
-          type: ObjContentTypeDto.IMG,
-          content: value
+          type: ContentTypeDto.IMG,
+          content: {
+            src: value
+          }
         });
         break;
       }
@@ -125,7 +127,7 @@ export class HtmlFactory {
           const css = await CssFactory.fetchUrls(params.ref.textContent, params);
           return {
             html: `<style>${css}</style>`,
-            hashes: []
+            assets: []
           };
         }
         return HtmlAttrFactory.EMPTY_RESULT;
@@ -159,7 +161,7 @@ export class HtmlFactory {
           depth++
         );
         html += computed.html;
-        hashes.push(...computed.hashes);
+        assets.push(...computed.assets);
       } else if (node.nodeType === Node.COMMENT_NODE) {
         html += '<!---->';
       } else {
@@ -192,7 +194,7 @@ export class HtmlFactory {
 
     return {
       html,
-      hashes
+      assets: assets
     };
   };
 

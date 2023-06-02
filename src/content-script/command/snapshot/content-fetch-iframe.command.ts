@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjContentDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
+import { ContentSnapshotDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content-snapshot-add.command';
+import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content/content-snapshot-add.command';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
@@ -59,12 +59,14 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     const css = await CssFactory.computeCssContent(document, params);
     fnConsoleLog('ContentFetchIframeCommand->css->done');
 
-    const dto: ObjSnapshotContentDto = {
-      hash: fnSha256(htmlContent.html),
-      html: htmlContent.html,
-      htmlAttr: HtmlFactory.computeHtmlAttr(),
+    const dto: ContentSnapshotDto = {
+      html: {
+        hash: fnSha256(htmlContent.html),
+        html: htmlContent.html,
+        htmlAttr: HtmlFactory.computeHtmlAttr()
+      },
       css,
-      hashes: Array.from(new Set<string>(htmlContent.hashes))
+      assets: Array.from(new Set<string>(htmlContent.assets))
     };
     const index = fnIframeIndex();
     await BrowserApi.sendRuntimeMessage<IFrameFetchMessage>({
@@ -78,7 +80,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     });
   }
 
-  private contentCallback = async (content: ObjContentDto) => {
+  private contentCallback = async (content: PageContentDto) => {
     if (this.savedHash.has(content.hash)) {
       fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
       return;

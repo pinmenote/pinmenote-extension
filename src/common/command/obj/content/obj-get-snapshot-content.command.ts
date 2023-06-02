@@ -15,14 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { ContentSnapshotDto } from '../../../model/obj/obj-content.dto';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjSnapshotContentDto } from '../../../model/obj/obj-content.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnConsoleLog } from '../../../fn/fn-console';
 
 export interface ObjSnapshotData {
   size: number;
-  snapshot: ObjSnapshotContentDto;
+  snapshot: ContentSnapshotDto;
 }
 
 export class ObjGetSnapshotContentCommand implements ICommand<Promise<ObjSnapshotData>> {
@@ -32,7 +32,7 @@ export class ObjGetSnapshotContentCommand implements ICommand<Promise<ObjSnapsho
     const size = await BrowserStorageWrapper.getBytesInUse(key);
     fnConsoleLog('ObjGetSnapshotContentCommand->execute', this.id, size);
 
-    const snapshot = await BrowserStorageWrapper.get<ObjSnapshotContentDto>(key);
+    const snapshot = await BrowserStorageWrapper.get<ContentSnapshotDto>(key);
     return { snapshot, size };
   }
 }

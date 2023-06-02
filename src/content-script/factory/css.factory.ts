@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssStyleDto, CssStyleListDto } from '../../common/model/obj/obj-css.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { ContentTypeDto } from '../../common/model/obj/obj-content.dto';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
 import { HtmlComputeParams } from '../model/html.model';
@@ -37,8 +37,8 @@ export const STRIP_FONT_REG = new RegExp('(@font-face)(.*?})', 'g');
 export const STRIP_URL_IMPORT_REG = new RegExp('[()\'";]', 'g');
 
 export class CssFactory {
-  static computeCssContent = async (document: Document, params: HtmlComputeParams): Promise<CssStyleListDto> => {
-    const css: CssStyleDto[] = [];
+  static computeCssContent = async (document: Document, params: HtmlComputeParams): Promise<string[]> => {
+    const cssHash: string[] = [];
     const styleSheets = Array.from(document.styleSheets);
     fnConsoleLog('CssFactory->computeCssContent', styleSheets.length);
 
@@ -55,40 +55,37 @@ export class CssFactory {
 
           let data = cssFetchData.res.replace(CSS_IMPORT_REG, '').trim();
           data = await this.fetchUrls(data, params, href);
-          css.push(...imports);
+          cssHash.push(...imports);
           if (!data) continue;
-          css.push({
-            hash: fnSha256(data),
-            href: s.href,
-            media: s.media.mediaText,
-            data
+          const hash = fnSha256(data);
+          cssHash.push(hash);
+          params.contentCallback({
+            type: ContentTypeDto.CSS,
+            hash,
+            content: {
+              href: s.href,
+              media: s.media.mediaText,
+              data
+            }
           });
         } else {
           params.skipUrlCache.add(s.href);
-          css.push({
-            hash: '',
-            href: s.href,
-            media: s.media.mediaText,
-            data: undefined
-          });
+          fnConsoleLog('CssFactory->computeCssContent->fail', s.href);
         }
       } else {
         const selectors = await this.computeSelectorRules(s, params);
-        css.push(...selectors);
+        cssHash.push(...selectors);
       }
     }
     // fnConsoleLog('CssFactory->computeCssContent', css);
-    // TODO merge small ones to one
-    return {
-      css
-    };
+    return cssHash;
   };
 
   private static computeSelectorRules = async (
     stylesheet: CSSStyleSheet,
     params: HtmlComputeParams
-  ): Promise<CssStyleDto[]> => {
-    const css: CssStyleDto[] = [];
+  ): Promise<string[]> => {
+    const cssHash: string[] = [];
     let out = '';
     const cssRules = Array.from(stylesheet.cssRules) as any[];
     /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-plus-operands */
@@ -98,13 +95,13 @@ export class CssFactory {
         let data = r.cssText;
         const imports = await this.fetchImports(data, params, undefined);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
-        css.push(...imports);
+        cssHash.push(...imports);
         out += data + '\n';
       } else if (r.selectorText) {
         let data = r.cssText;
         const imports = await this.fetchImports(data, params, undefined);
         data = data.replaceAll(CSS_IMPORT_REG, '').trim();
-        css.push(...imports);
+        cssHash.push(...imports);
         out += data + '\n';
       } else if (r instanceof CSSSupportsRule || r instanceof CSSContainerRule || r instanceof CSSKeyframesRule) {
         out += r.cssText + '\n';
@@ -115,12 +112,17 @@ export class CssFactory {
     }
     /* eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-plus-operands */
     if (!out) return [];
-    css.push({
-      hash: fnSha256(out),
-      data: out,
-      media: stylesheet.media.mediaText
+    const hash = fnSha256(out);
+    cssHash.push(hash);
+    params.contentCallback({
+      hash,
+      type: ContentTypeDto.CSS,
+      content: {
+        data: out,
+        media: stylesheet.media.mediaText
+      }
     });
-    return css;
+    return cssHash;
   };
 
   static computeAdoptedStyleSheets = (adoptedStyleSheets: CSSStyleSheet[]): string => {
@@ -137,11 +139,16 @@ export class CssFactory {
     return out;
   };
 
-  static fetchImports = async (css: string, params: HtmlComputeParams, baseUrl?: string): Promise<CssStyleDto[]> => {
+  static fetchImports = async (
+    css: string,
+    params: HtmlComputeParams,
+    baseUrl?: string,
+    forShadow = false
+  ): Promise<string[]> => {
     const importList = css.match(CSS_IMPORT_REG);
     if (!importList) return [];
 
-    const out: CssStyleDto[] = [];
+    const out: string[] = [];
 
     for (const importUrl of importList) {
       if (importUrl.startsWith('http')) continue;
@@ -161,7 +168,7 @@ export class CssFactory {
       }
 
       // skip
-      if (params.skipUrlCache.has(url)) return out;
+      if (params.skipUrlCache.has(url)) continue;
 
       const result = await this.fetchCss(url);
 
@@ -175,12 +182,21 @@ export class CssFactory {
         const data = await this.fetchUrls(res, params, baseUrl);
         // TODO check if should skip this one
         if (!data) continue;
-        out.push({
-          hash: fnSha256(data),
-          href: result.url,
-          media: '',
-          data
-        });
+        if (forShadow) {
+          out.push(data);
+        } else {
+          const hash = fnSha256(data);
+          out.push(hash);
+          params.contentCallback({
+            hash,
+            type: ContentTypeDto.CSS,
+            content: {
+              href: result.url,
+              media: '',
+              data
+            }
+          });
+        }
       } else {
         params.skipUrlCache.add(url);
         // fnConsoleLog('CssFactory->fetchImports->ERROR !!!', importUrl, url);

@@ -14,15 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlIntermediateData } from '../../model/html.model';
-import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
+import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
+import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class HtmlVideoFactory {
-  static captureVideo(ref: HTMLVideoElement): HtmlIntermediateData {
+  static captureVideo(params: HtmlComputeParams): HtmlIntermediateData {
+    const ref = params.ref as HTMLVideoElement;
     let imgData = '';
-
-    const hash = fnSha256(imgData);
 
     const can = document.createElement('canvas');
     can.width = ref.videoWidth;
@@ -51,18 +50,18 @@ export class HtmlVideoFactory {
 
     html += `/>`;
 
-    const content = imgData
-      ? [
-          {
-            hash,
-            type: ObjContentTypeDto.IMG,
-            content: imgData
-          }
-        ]
-      : [];
+    const hash = fnSha256(imgData);
+
+    params.contentCallback({
+      hash,
+      type: ContentTypeDto.IMG,
+      content: {
+        src: imgData
+      }
+    });
     return {
       html: html,
-      content
+      assets: [hash]
     };
   }
 }

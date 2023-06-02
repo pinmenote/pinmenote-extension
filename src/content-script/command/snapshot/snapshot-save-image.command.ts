@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ContentSnapshotDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlImgFactory } from '../../factory/html/html-img.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
-import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -46,14 +46,14 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
 
     const html = `<img src="${value}" />`;
     const hash = fnSha256(html);
-    await BrowserStorageWrapper.set<ObjSnapshotContentDto>(key, {
-      hash,
-      html,
-      htmlAttr: '',
-      css: {
-        css: []
+    await BrowserStorageWrapper.set<ContentSnapshotDto>(key, {
+      html: {
+        hash,
+        html,
+        htmlAttr: ''
       },
-      hashes: []
+      css: [],
+      assets: []
     });
     return id;
   }

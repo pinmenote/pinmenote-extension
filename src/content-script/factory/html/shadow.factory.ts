@@ -17,11 +17,11 @@
 import { CSS_IMPORT_REG, CssFactory } from '../css.factory';
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlPictureFactory } from './html-picture.factory';
-import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -47,7 +47,7 @@ export class ShadowFactory {
 
     params.contentCallback({
       hash,
-      type: ObjContentTypeDto.SHADOW,
+      type: ContentTypeDto.SHADOW,
       content: {
         html: shadowHtml
       }
@@ -55,7 +55,7 @@ export class ShadowFactory {
 
     return {
       html,
-      hashes: [hash]
+      assets: [hash]
     };
   };
 
@@ -136,14 +136,14 @@ export class ShadowFactory {
   };
 
   private static computeCssData = async (cssData: string, params: HtmlComputeParams): Promise<string> => {
-    const imports = await CssFactory.fetchImports(cssData, params);
+    const imports = await CssFactory.fetchImports(cssData, params, undefined, true);
     cssData = cssData.replaceAll(CSS_IMPORT_REG, '').trim();
     cssData = await CssFactory.fetchUrls(cssData, params);
     cssData = `<style>${cssData}</style>`;
     for (const imp of imports) {
-      if (!imp.data) continue;
+      if (!imp) continue;
       cssData =
-        `<style>${imp.data}</style>
+        `<style>${imp}</style>
 ` + cssData;
     }
     return cssData;
