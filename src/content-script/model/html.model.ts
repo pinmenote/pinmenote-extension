@@ -20,3 +20,19 @@ export interface HtmlIntermediateData {
   html: string;
   content: ObjContentDto[];
 }
+
+export interface HtmlSkipAttribute {
+  key: string;
+  value: string;
+}
+
+export interface HtmlComputeParams {
+  ref: Element;
+  depth: number;
+  visitedUrl: { [key: string]: string };
+  skipAttributes: HtmlSkipAttribute[];
+  skipTagCache: Set<string>;
+  skipUrlCache: Set<string>;
+  isPartial: boolean;
+  insideLink: boolean; // detect and mitigate link inside link hacks inside html generators
+}

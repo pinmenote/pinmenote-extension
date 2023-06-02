@@ -20,7 +20,7 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
-import { HtmlComputeParams } from './html/html.factory';
+import { HtmlComputeParams } from '../model/html.model';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnComputeUrl } from '../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../common/fn/fn-console';

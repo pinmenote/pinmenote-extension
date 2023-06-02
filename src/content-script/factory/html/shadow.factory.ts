@@ -15,12 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CSS_IMPORT_REG, CssFactory } from '../css.factory';
+import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { HtmlAttrFactory } from './html-attr.factory';
-import { HtmlComputeParams } from './html.factory';
 import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';
-import { HtmlIntermediateData } from '../../model/html.model';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnComputeUrl } from '../../../common/fn/fn-compute-url';

@@ -18,6 +18,9 @@ export class ObjectStoreKeys {
   // ID
   static readonly CONTENT_ID = 'o:c:id';
 
+  static readonly CONTENT_HASH = 'o:ch';
+  static readonly CONTENT_HASH_COUNT = 'o:chc';
+
   static readonly PIN_ID = 'o:p:id';
   static readonly PIN_COMMENT = 'o:p:c';
 

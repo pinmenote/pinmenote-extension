@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlAttrFactory } from './html-attr.factory';
-import { HtmlComputeParams } from './html.factory';
 import { HtmlImgFactory } from './html-img.factory';
-import { HtmlIntermediateData } from '../../model/html.model';
 import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 

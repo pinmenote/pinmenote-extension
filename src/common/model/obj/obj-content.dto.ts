@@ -36,8 +36,8 @@ export enum ObjContentTypeDto {
 
 type ObjContent = ObjShadowContentDto | string;
 
-export interface ObjContentDto {
+export interface ObjContentDto<T = ObjContent> {
   type: ObjContentTypeDto;
   hash: string;
-  content: ObjContent;
+  content: T;
 }

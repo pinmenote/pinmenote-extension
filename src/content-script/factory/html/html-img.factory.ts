@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComputeParams } from './html.factory';
+import { HtmlComputeParams } from '../../model/html.model';
 import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnFetchImage } from '../../../common/fn/fn-fetch-image';

@@ -14,31 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlConstraints, HtmlSkipAttribute } from './html.constraints';
+import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlCanvasFactory } from './html-canvas.factory';
+import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';
-import { HtmlIntermediateData } from '../../model/html.model';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { HtmlVideoFactory } from './html-video.factory';
 import { IFrameFactory } from './iframe.factory';
 import { ShadowFactory } from './shadow.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
-
-export interface HtmlComputeParams {
-  ref: Element;
-  depth: number;
-  visitedUrl: { [key: string]: string };
-  skipAttributes: HtmlSkipAttribute[];
-  skipTagCache: Set<string>;
-  skipUrlCache: Set<string>;
-  isPartial: boolean;
-  insideLink: boolean; // detect and mitigate link inside link hacks inside html generators
-}
 
 export class HtmlFactory {
   static computeHtmlAttr = (): string => {
