@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
-import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlImgFactory } from './html-img.factory';
+import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -52,7 +52,7 @@ export class HtmlPictureFactory {
     if (!imgValue) imgValue = await HtmlImgFactory.computeImgValue(img, params);
     if (!imgValue) return HtmlAttrFactory.EMPTY_RESULT;
 
-    const content: ObjContentDto[] = [];
+    const hashes: string[] = [];
     let html = `<picture `;
     const picAttrs = await HtmlAttrFactory.computeAttrValues('picture', Array.from(ref.attributes), params);
     html += picAttrs.substring(0, picAttrs.length - 1) + '>';
@@ -63,7 +63,8 @@ export class HtmlPictureFactory {
     } else {
       const hash = fnSha256(imgValue);
       html += `<img data-pin-hash="${hash}" `;
-      content.push({
+      hashes.push(hash);
+      params.contentCallback({
         hash,
         type: ObjContentTypeDto.IMG,
         content: imgValue
@@ -75,7 +76,7 @@ export class HtmlPictureFactory {
 
     return {
       html,
-      content
+      hashes
     };
   };
 }

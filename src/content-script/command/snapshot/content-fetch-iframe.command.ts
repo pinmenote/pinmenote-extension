@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjContentDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content-snapshot-add.command';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
-import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -46,7 +47,8 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       skipUrlCache: new Set<string>(),
       skipTagCache: new Set<string>(),
       isPartial: false,
-      insideLink: false
+      insideLink: false,
+      contentCallback: this.contentCallback
     };
 
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(params);
@@ -60,7 +62,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       html: htmlContent.html,
       htmlAttr: HtmlFactory.computeHtmlAttr(),
       css,
-      content: htmlContent.content
+      hashes: Array.from(new Set<string>(htmlContent.hashes))
     };
     const index = fnIframeIndex();
     await BrowserApi.sendRuntimeMessage<IFrameFetchMessage>({
@@ -73,4 +75,8 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       }
     });
   }
+
+  private contentCallback = async (content: ObjContentDto) => {
+    await new ContentSnapshotAddCommand(content).execute();
+  };
 }

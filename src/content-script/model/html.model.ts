@@ -18,7 +18,7 @@ import { ObjContentDto } from '../../common/model/obj/obj-content.dto';
 
 export interface HtmlIntermediateData {
   html: string;
-  content: ObjContentDto[];
+  hashes: string[];
 }
 
 export interface HtmlSkipAttribute {
@@ -33,6 +33,7 @@ export interface HtmlComputeParams {
   skipAttributes: HtmlSkipAttribute[];
   skipTagCache: Set<string>;
   skipUrlCache: Set<string>;
+  contentCallback: (obj: ObjContentDto) => void;
   isPartial: boolean;
   insideLink: boolean; // detect and mitigate link inside link hacks inside html generators
 }

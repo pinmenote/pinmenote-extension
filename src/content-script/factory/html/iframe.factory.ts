@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { IFrameFetchMessage, IFrameIndexMessage } from '../../../common/model/iframe-message.model';
 import { ObjContentTypeDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
@@ -21,22 +22,21 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlFactory } from './html.factory';
-import { HtmlIntermediateData } from '../../model/html.model';
 import { IFrameStore } from '../../store/iframe.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class IFrameFactory {
-  static computeIframe = async (ref: HTMLIFrameElement, depth: number): Promise<HtmlIntermediateData> => {
+  static computeIframe = async (params: HtmlComputeParams): Promise<HtmlIntermediateData> => {
     fnConsoleLog('IFrameFactory->computeIframe->START');
     // Skip iframe->iframe->skip
-    if (depth > 3) return HtmlAttrFactory.EMPTY_RESULT;
-    const msg = await this.fetchIframe(ref, depth);
+    if (params.depth > 3) return HtmlAttrFactory.EMPTY_RESULT;
+    const msg = await this.fetchIframe(params);
     if (!msg) return HtmlAttrFactory.EMPTY_RESULT;
-    const width = ref.getAttribute('width') || '100%';
-    const height = ref.getAttribute('width') || '100%';
-    const iframeAttr = Array.from(ref.attributes)
+    const width = params.ref.getAttribute('width') || '100%';
+    const height = params.ref.getAttribute('width') || '100%';
+    const iframeAttr = Array.from(params.ref.attributes)
       .map((a) => {
         if (['width', 'height', 'src'].includes(a.nodeName)) return '';
         if (a.nodeValue) {
@@ -46,20 +46,22 @@ export class IFrameFactory {
       })
       .join(' ');
     fnConsoleLog('IFrameFactory->computeIframe->END');
+    params.contentCallback({ hash: msg.data.hash, type: ObjContentTypeDto.IFRAME, content: msg.data });
     return {
       html: `<iframe width="${width}" height="${height}" ${iframeAttr} 
 data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-iframe-href="${msg.href}"></iframe>`,
-      content: [{ hash: msg.data.hash, type: ObjContentTypeDto.IFRAME, content: msg.data }]
+      hashes: [msg.data.hash]
     };
   };
 
-  private static fetchIframe = (ref: HTMLIFrameElement, depth: number): Promise<IFrameFetchMessage | undefined> => {
+  private static fetchIframe = (params: HtmlComputeParams): Promise<IFrameFetchMessage | undefined> => {
     return new Promise<IFrameFetchMessage | undefined>((resolve) => {
+      const ref = params.ref as HTMLIFrameElement;
       const msg = IFrameStore.findIndex(ref);
       if (!msg) {
         if (ref.contentDocument) {
           setTimeout(async () => {
-            const result = await this.fetchLocalIframe(ref, depth);
+            const result = await this.fetchLocalIframe(params);
             resolve(result);
           }, 0);
         } else {
@@ -87,7 +89,7 @@ data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-i
             }
           );
 
-          BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_FETCH, data: { ...msg, depth } })
+          BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_FETCH, data: { ...msg, depth: params.depth } })
             .then(() => {
               /* IGNORE*/
             })
@@ -119,24 +121,14 @@ data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-i
     });
   };
 
-  private static fetchLocalIframe = async (
-    ref: HTMLIFrameElement,
-    depth: number
-  ): Promise<IFrameFetchMessage | undefined> => {
+  private static fetchLocalIframe = async (params: HtmlComputeParams): Promise<IFrameFetchMessage | undefined> => {
+    const ref = params.ref as HTMLIFrameElement;
     if (!ref.contentDocument) return undefined;
 
-    const params = {
-      ref: ref.contentDocument.body,
-      depth: depth + 1,
-      skipAttributes: [],
-      visitedUrl: {},
-      skipUrlCache: new Set<string>(),
-      skipTagCache: new Set<string>(),
-      isPartial: false,
-      insideLink: false
-    };
-
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(params);
+    const htmlContent = await HtmlFactory.computeHtmlIntermediateData({
+      ...params,
+      ref: ref.contentDocument.body
+    });
     fnConsoleLog('ContentFetchAccessibleIframeCommand->html->done');
     const css = await CssFactory.computeCssContent(ref.contentDocument, params);
     fnConsoleLog('ContentFetchAccessibleIframeCommand->css->done');
@@ -146,7 +138,7 @@ data-pin-hash="${msg.data.hash}" data-pin-iframe-index="${msg.index}" data-pin-i
       html: htmlContent.html,
       htmlAttr: HtmlFactory.computeHtmlAttr(),
       css,
-      content: htmlContent.content
+      hashes: htmlContent.hashes
     };
 
     return {

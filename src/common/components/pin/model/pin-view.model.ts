@@ -35,6 +35,8 @@ export interface PageComponent {
   resize(): void;
   render(): any;
   isHidden(): boolean;
+  hide(): void;
+  show(): void;
 }
 
 export interface HtmlComponent<T> {

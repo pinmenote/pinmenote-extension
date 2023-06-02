@@ -29,6 +29,7 @@ import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
+import { ContentSnapshotGetCommand } from '../../../common/command/snapshot/content-snapshot-get.command';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
@@ -222,21 +223,18 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     await asyncRenderIframe(html, doc);
     setIsPreLoading(false);
 
-    if (c.snapshot.content) {
-      fnConsoleLog('RENDER CONTENT', c.snapshot.content.length);
-      const visited = new Set<string>();
-      for (const content of c.snapshot.content) {
-        if (visited.has(content.hash)) continue;
-        const elList = doc.querySelectorAll(`[data-pin-hash="${content.hash}"]`);
+    if (c.snapshot.hashes) {
+      fnConsoleLog('RENDER CONTENT', c.snapshot.hashes.length);
+      for (const hash of c.snapshot.hashes) {
+        const elList = doc.querySelectorAll(`[data-pin-hash="${hash}"]`);
         const elArray = Array.from(elList);
         try {
           for (const el of elArray) {
-            await asyncEmbedContent(content, el);
+            await asyncEmbedContent(hash, el);
           }
         } catch (e) {
-          fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, content);
+          fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, hash);
         }
-        visited.add(content.hash);
         fnConsoleLog('render !!!');
       }
     }
@@ -257,62 +255,40 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const asyncRenderIframe = async (html: string, doc: Document): Promise<void> => {
-    return new Promise((resolve) => {
-      fnSleep(10)
-        .then(() => {
-          doc.write(html);
-          doc.close();
-          resolve();
-        })
-        .catch(() => {
-          /* IGNORE */
-        });
-    });
+    await fnSleep(10);
+    doc.write(html);
+    doc.close();
   };
 
-  const asyncEmbedContent = async (dto: ObjContentDto, el: Element): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      fnSleep(2)
-        .then(() => {
-          if (dto.type === ObjContentTypeDto.IFRAME) {
-            const iframe: ObjSnapshotContentDto = dto.content as ObjSnapshotContentDto;
-            const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
-            if (iframeDoc) {
-              const iframeHtml = IframeHtmlFactory.computeHtml(iframe);
-              iframeDoc.write(iframeHtml);
-              iframeDoc.close();
-              for (const content of iframe.content) {
-                const elList = iframeDoc.querySelectorAll(`[data-pin-hash="${content.hash}"]`);
-                const iel = elList[0];
-                try {
-                  if (iel)
-                    asyncEmbedContent(content, iel)
-                      .then(() => {
-                        /* IGNORE */
-                      })
-                      .catch(() => {
-                        /* IGNORE */
-                      });
-                } catch (e) {
-                  fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, content);
-                }
-              }
-            }
-          } else if (dto.type === ObjContentTypeDto.IMG) {
-            const img = el as HTMLImageElement;
-            img.src = dto.content as string;
-            if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
-              img.style.maxWidth = `${window.innerWidth}px`;
-          } else if (dto.type === ObjContentTypeDto.SHADOW) {
-            const content = dto.content as ObjShadowContentDto;
-            renderShadow(el, content);
+  const asyncEmbedContent = async (hash: string, el: Element): Promise<void> => {
+    const dto: ObjContentDto = await new ContentSnapshotGetCommand(hash).execute();
+    await fnSleep(2);
+    if (dto.type === ObjContentTypeDto.IFRAME) {
+      const iframe: ObjSnapshotContentDto = dto.content as ObjSnapshotContentDto;
+      const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
+      if (iframeDoc) {
+        const iframeHtml = IframeHtmlFactory.computeHtml(iframe);
+        iframeDoc.write(iframeHtml);
+        iframeDoc.close();
+        for (const iframeHash of iframe.hashes) {
+          const elList = iframeDoc.querySelectorAll(`[data-pin-hash="${iframeHash}"]`);
+          const iel = elList[0];
+          try {
+            if (iel) await asyncEmbedContent(iframeHash, iel);
+          } catch (e) {
+            fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, iframeHash);
           }
-          resolve();
-        })
-        .catch((e) => {
-          reject(e);
-        });
-    });
+        }
+      }
+    } else if (dto.type === ObjContentTypeDto.IMG) {
+      const img = el as HTMLImageElement;
+      img.src = dto.content as string;
+      if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
+        img.style.maxWidth = `${window.innerWidth}px`;
+    } else if (dto.type === ObjContentTypeDto.SHADOW) {
+      const content = dto.content as ObjShadowContentDto;
+      renderShadow(el, content);
+    }
   };
 
   const renderShadow = (el: Element, content: ObjShadowContentDto) => {

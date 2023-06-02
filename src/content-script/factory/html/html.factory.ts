@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
-import { ObjContentDto, ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
@@ -25,6 +24,7 @@ import { HtmlImgFactory } from './html-img.factory';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { HtmlVideoFactory } from './html-video.factory';
 import { IFrameFactory } from './iframe.factory';
+import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { ShadowFactory } from './shadow.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -64,7 +64,7 @@ export class HtmlFactory {
       }
     }
 
-    const content: ObjContentDto[] = [];
+    const hashes: string[] = [];
 
     let html = `<${tagName} `;
 
@@ -75,18 +75,18 @@ export class HtmlFactory {
         html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes), params);
         return {
           html: `${html.trimEnd()}>${params.ref.innerHTML}</svg>`,
-          content
+          hashes
         };
       }
       case 'video': {
         return HtmlVideoFactory.captureVideo(params.ref as HTMLVideoElement);
       }
       case 'iframe': {
-        return await IFrameFactory.computeIframe(params.ref as HTMLIFrameElement, params.depth);
+        return await IFrameFactory.computeIframe(params);
       }
       case 'canvas': {
         try {
-          return HtmlCanvasFactory.computeCanvas(params.ref as HTMLCanvasElement);
+          return HtmlCanvasFactory.computeCanvas(params);
         } catch (e) {
           fnConsoleLog('COMPUTE CANVAS PROBLEM', e, params, depth);
           return HtmlAttrFactory.EMPTY_RESULT;
@@ -99,12 +99,13 @@ export class HtmlFactory {
         const value = await HtmlImgFactory.computeImgValue(params.ref as HTMLImageElement, params);
         if (!value) break;
         const hash = fnSha256(value);
-        content.push({
+        html += `data-pin-hash="${hash}" `;
+        hashes.push(hash);
+        params.contentCallback({
           hash,
           type: ObjContentTypeDto.IMG,
           content: value
         });
-        html += `data-pin-hash="${hash}" `;
         break;
       }
       case 'textarea': {
@@ -124,7 +125,7 @@ export class HtmlFactory {
           const css = await CssFactory.fetchUrls(params.ref.textContent, params);
           return {
             html: `<style>${css}</style>`,
-            content: []
+            hashes: []
           };
         }
         return HtmlAttrFactory.EMPTY_RESULT;
@@ -152,12 +153,13 @@ export class HtmlFactory {
             skipTagCache: params.skipTagCache,
             skipUrlCache: params.skipUrlCache,
             isPartial: params.isPartial,
-            insideLink: tagName === 'a' || params.insideLink
+            insideLink: tagName === 'a' || params.insideLink,
+            contentCallback: params.contentCallback
           },
           depth++
         );
         html += computed.html;
-        content.push(...computed.content);
+        hashes.push(...computed.hashes);
       } else if (node.nodeType === Node.COMMENT_NODE) {
         html += '<!---->';
       } else {
@@ -178,7 +180,8 @@ export class HtmlFactory {
             skipTagCache: params.skipTagCache,
             skipUrlCache: params.skipUrlCache,
             isPartial: params.isPartial,
-            insideLink: tagName === 'a' || params.insideLink
+            insideLink: tagName === 'a' || params.insideLink,
+            contentCallback: params.contentCallback
           });
           html += computed.html;
         }
@@ -189,7 +192,7 @@ export class HtmlFactory {
 
     return {
       html,
-      content
+      hashes
     };
   };
 

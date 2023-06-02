@@ -14,30 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { CssStyleListDto } from './obj-css.dto';
+import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { ContentDto } from '../../model/obj/obj-content.dto';
+import { ICommand } from '../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../keys/object.store.keys';
 
-export interface ObjSnapshotContentDto {
-  hash: string;
-  html: string;
-  htmlAttr: string;
-  css: CssStyleListDto;
-  hashes: string[];
-}
+export class ContentSnapshotGetCommand<T> implements ICommand<Promise<ContentDto<T> | undefined>> {
+  constructor(private hash: string) {}
 
-export interface ObjShadowContentDto {
-  html: string;
-}
-
-export enum ObjContentTypeDto {
-  IFRAME = 1,
-  IMG,
-  SHADOW
-}
-
-type ObjContent = ObjShadowContentDto | string;
-
-export interface ObjContentDto<T = ObjContent> {
-  type: ObjContentTypeDto;
-  hash: string;
-  content: T;
+  async execute(): Promise<ContentDto<T> | undefined> {
+    const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.hash}`;
+    return await BrowserStorageWrapper.get<ContentDto<T> | undefined>(key);
+  }
 }

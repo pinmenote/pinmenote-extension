@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlConstraints, HtmlSkipAttribute } from '../../factory/html/html.constraints';
+import { ObjContentDto, ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content-snapshot-add.command';
 import { CssFactory } from '../../factory/css.factory';
+import { HtmlConstraints } from '../../factory/html/html.constraints';
 import { HtmlFactory } from '../../factory/html/html.factory';
+import { HtmlSkipAttribute } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
-import { ObjSnapshotContentDto } from '../../../common/model/obj/obj-content.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -49,7 +51,8 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
       skipTagCache: new Set<string>(),
       skipUrlCache: urlCache,
       isPartial: this.isPartial,
-      insideLink: this.element.tagName.toLowerCase() === 'a'
+      insideLink: this.element.tagName.toLowerCase() === 'a',
+      contentCallback: this.contentCallback
     };
 
     const htmlContent = await HtmlFactory.computeHtmlIntermediateData(params);
@@ -73,9 +76,13 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
       html,
       htmlAttr,
       css,
-      content: htmlContent.content
+      hashes: Array.from(new Set<string>(htmlContent.hashes))
     });
 
     return { id, words };
   }
+
+  private contentCallback = async (content: ObjContentDto) => {
+    await new ContentSnapshotAddCommand(content).execute();
+  };
 }

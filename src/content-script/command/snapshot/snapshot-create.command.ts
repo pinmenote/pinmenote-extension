@@ -15,9 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCanvasDto, ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
-import { HtmlSkipAttribute } from 'src/content-script/factory/html/html.constraints';
+import { HtmlSkipAttribute } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
+import { PinStore } from '../../store/pin.store';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SettingsConfig } from '../../../common/environment';
 import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
@@ -34,6 +35,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
   ) {}
 
   async execute(): Promise<ObjSnapshotDto> {
+    PinStore.each((v) => v.hide());
     const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
     let contentId = -1;
     let words: string[] = [];
@@ -50,6 +52,7 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       this.url
     );
     const title = this.element.innerText.substring(0, 100) || document.title;
+    PinStore.each((v) => v.show());
     return {
       title,
       url: this.url,

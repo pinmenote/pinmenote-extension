@@ -215,4 +215,14 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   isHidden(): boolean {
     return fnIsElementHidden(this.model.ref);
   }
+
+  hide(): void {
+    this.top.style.display = 'none';
+    this.bottom.style.display = 'none';
+  }
+
+  show(): void {
+    this.top.style.display = 'flex';
+    this.bottom.style.display = 'flex';
+  }
 }

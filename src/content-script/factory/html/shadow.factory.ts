@@ -39,23 +39,23 @@ export class ShadowFactory {
     html += await HtmlAttrFactory.computeAttrValues(tagName, Array.from(params.ref.attributes), params);
     html = html.substring(0, html.length - 1) + '>';
 
-    // @vane shadow element can have normal children - those are probably rendered from slots
+    // @vane shadow element can also have normal children - those are probably rendered from slots
     // - don't fully understand no time and money left for that - it renders correctly and that's enough
     html += await this.computeChildren(Array.from(params.ref.childNodes), params);
 
     html += `</${tagName}>`;
 
+    params.contentCallback({
+      hash,
+      type: ObjContentTypeDto.SHADOW,
+      content: {
+        html: shadowHtml
+      }
+    });
+
     return {
       html,
-      content: [
-        {
-          hash,
-          type: ObjContentTypeDto.SHADOW,
-          content: {
-            html: shadowHtml
-          }
-        }
-      ]
+      hashes: [hash]
     };
   };
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlIntermediateData } from '../../model/html.model';
+import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { ObjContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -32,9 +32,9 @@ const findContext = (ref: HTMLCanvasElement): { ctx: RenderingContext | null; na
 };
 
 export class HtmlCanvasFactory {
-  static computeCanvas = (ref: HTMLCanvasElement): HtmlIntermediateData => {
+  static computeCanvas = (params: HtmlComputeParams): HtmlIntermediateData => {
     fnConsoleLog('HtmlFactory->computeCanvas');
-
+    const ref = params.ref as HTMLCanvasElement;
     let imgData = '';
     const render = findContext(ref);
 
@@ -97,19 +97,15 @@ export class HtmlCanvasFactory {
 
     html += `/>`;
 
-    const content = imgData
-      ? [
-          {
-            hash,
-            type: ObjContentTypeDto.IMG,
-            content: imgData
-          }
-        ]
-      : [];
+    params.contentCallback({
+      hash,
+      type: ObjContentTypeDto.IMG,
+      content: imgData
+    });
 
     return {
       html,
-      content
+      hashes: [hash]
     };
   };
 }
