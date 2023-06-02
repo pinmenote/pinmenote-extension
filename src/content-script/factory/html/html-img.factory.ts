@@ -117,8 +117,11 @@ export class HtmlImgFactory {
     const url = fnComputeUrl(value);
     if (params.skipUrlCache.has(url)) return '';
 
+    if (params.visitedUrl[url]) return params.visitedUrl[url];
+
     const imageData = await fnFetchImage(url);
     if (imageData.ok) {
+      params.visitedUrl[url] = imageData.res;
       return imageData.res;
     } else {
       fnConsoleLog('HtmlImgFactory->computeImgValue->skipUrlCache', url);

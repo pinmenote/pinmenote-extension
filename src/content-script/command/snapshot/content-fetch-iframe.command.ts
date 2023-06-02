@@ -27,6 +27,8 @@ import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
+  private savedHash = new Set<string>();
+
   constructor(private href: string, private uid: string, private depth: number) {}
 
   async execute(): Promise<void> {
@@ -77,6 +79,11 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   }
 
   private contentCallback = async (content: ObjContentDto) => {
+    if (this.savedHash.has(content.hash)) {
+      fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
+      return;
+    }
+    this.savedHash.add(content.hash);
     await new ContentSnapshotAddCommand(content).execute();
   };
 }

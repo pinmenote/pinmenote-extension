@@ -29,7 +29,19 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
     const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
     const key = `${ObjectStoreKeys.CONTENT_ID}:${id}`;
 
-    const value = await HtmlImgFactory.computeImgValue(this.element as HTMLImageElement);
+    const value = await HtmlImgFactory.computeImgValue(this.element as HTMLImageElement, {
+      ref: this.element,
+      depth: 1,
+      visitedUrl: {},
+      skipAttributes: [],
+      skipTagCache: new Set<string>(),
+      skipUrlCache: new Set<string>(),
+      isPartial: false,
+      insideLink: false,
+      contentCallback: () => {
+        /*IGNORE*/
+      }
+    });
     if (!value) return -1;
 
     const html = `<img src="${value}" />`;
@@ -41,7 +53,7 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<number>> {
       css: {
         css: []
       },
-      content: []
+      hashes: []
     });
     return id;
   }

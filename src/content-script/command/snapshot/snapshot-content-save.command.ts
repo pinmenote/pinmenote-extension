@@ -34,6 +34,8 @@ interface SnapshotResult {
 }
 
 export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
+  private savedHash = new Set<string>();
+
   constructor(private element: HTMLElement, private skipAttributes: HtmlSkipAttribute[], private isPartial = true) {}
   async execute(): Promise<SnapshotResult> {
     const id = await new ObjNextIdCommand(ObjectStoreKeys.CONTENT_ID).execute();
@@ -83,6 +85,11 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
   }
 
   private contentCallback = async (content: ObjContentDto) => {
+    if (this.savedHash.has(content.hash)) {
+      fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
+      return;
+    }
+    this.savedHash.add(content.hash);
     await new ContentSnapshotAddCommand(content).execute();
   };
 }
