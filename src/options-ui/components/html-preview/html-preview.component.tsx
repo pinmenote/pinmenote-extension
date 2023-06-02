@@ -119,10 +119,11 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (!el.contentDocument || !el.contentWindow) return;
 
     await SettingsStore.fetchData();
-    fnConsoleLog('PIN IDS !!!!', ids, 'iframe', el);
+    fnConsoleLog('HtmlPreviewComponent->renderPins', ids);
 
     for (const id of ids) {
       const pin = await new ObjPinGetCommand(id).execute();
+      fnConsoleLog('HtmlPreviewComponent->renderPins->pin', pin);
       if (pin.data.data.iframe) {
         renderIframePin(el, pin);
       } else {
@@ -131,30 +132,39 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     }
   };
 
-  const renderIframePin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>, depth = 1) => {
+  const renderIframePin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>) => {
     if (!el.contentDocument || !el.contentWindow) return false;
     if (!pin.data.data.iframe) return;
-    let index = pin.data.data.iframe.index;
-    const a = index.split('.');
-    if (index.length === depth + 1) {
-      renderHtmlPin(el, pin);
+    const index = pin.data.data.iframe.index;
+    const iframe = el.contentDocument.querySelector(`[data-pin-iframe-index="${index}"]`);
+    if (!iframe) {
+      const iframeList = Array.from(el.contentDocument.getElementsByTagName('iframe'));
+      for (const frame of iframeList) {
+        renderIframePin(frame, pin);
+      }
     } else {
-      // Remove elements and recurrent find iframe for current depth
-      a.splice(depth + 1);
-      index = a.join('.');
-      const iframe = el.contentDocument.querySelector(`[data-pin-iframe-index="${index}"]`);
-      if (!iframe) return;
-      fnConsoleLog('IFRAME FOUND !!!', index);
-      renderIframePin(iframe as HTMLIFrameElement, pin, depth + 1);
+      // fnConsoleLog('renderIframePin->pin', pin, 'index', index);
+      renderHtmlPin(iframe as HTMLIFrameElement, pin);
     }
   };
 
   const renderHtmlPin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>) => {
     if (!el.contentDocument || !el.contentWindow) return false;
     if (!SettingsStore.settings) return false;
-    const value = XpathFactory.newXPathResult(el.contentDocument, pin.data.data.xpath);
+
+    let xpath = pin.data.data.xpath;
+    // canvas pins are saved as img
+    if (pin.data.data.canvas) {
+      xpath = xpath.replaceAll('CANVAS', 'IMG').replaceAll('VIDEO', 'IMG');
+    }
+    const value = XpathFactory.newXPathResult(el.contentDocument, xpath);
     const node = value.singleNodeValue as HTMLElement;
-    if (!node) return false;
+
+    if (!node) {
+      fnConsoleLog('renderHtmlPin->not-found', pin, 'xpath', pin.data.data.xpath, 'el', el);
+      return false;
+    }
+
     const pinComponent = new PinComponent(node, pin, {
       settings: SettingsStore.settings,
       document: el.contentDocument,

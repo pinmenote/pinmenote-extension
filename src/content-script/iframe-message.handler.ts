@@ -73,7 +73,7 @@ export class IFrameMessageHandler {
       }
       case BusMessageType.IFRAME_PIN_SEND: {
         const index = fnIframeIndex();
-        if (index === msg.data.data.iframe.index) {
+        if (msg.data.data.data.iframe && index === msg.data.data.data.iframe.index) {
           const added = new PinAddIframeXpathCommand(msg.data).execute();
           fnConsoleLog('IFRAME_PIN_SEND', msg, added);
           if (added) await BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_PIN_SHOW, data: msg.data });
@@ -81,7 +81,6 @@ export class IFrameMessageHandler {
         break;
       }
       case BusMessageType.IFRAME_PIN_SHOW: {
-        fnConsoleLog('IFRAME_PIN_SHOW', msg);
         if (!iframe) PinPendingStore.remove(msg.data.id);
         break;
       }
