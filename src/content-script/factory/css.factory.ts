@@ -17,10 +17,10 @@
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { ContentTypeDto } from '../../common/model/obj/obj-content.dto';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '../../common/model/api.model';
 import { HtmlComputeParams } from '../model/html.model';
+import { SegmentTypeDto } from '../../common/model/obj/page-segment.dto';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { fnComputeUrl } from '../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../common/fn/fn-console';
@@ -60,7 +60,7 @@ export class CssFactory {
           const hash = fnSha256(data);
           cssHash.push(hash);
           params.contentCallback({
-            type: ContentTypeDto.CSS,
+            type: SegmentTypeDto.CSS,
             hash,
             content: {
               href: s.href,
@@ -116,7 +116,7 @@ export class CssFactory {
     cssHash.push(hash);
     params.contentCallback({
       hash,
-      type: ContentTypeDto.CSS,
+      type: SegmentTypeDto.CSS,
       content: {
         data: out,
         media: stylesheet.media.mediaText
@@ -189,7 +189,7 @@ export class CssFactory {
           out.push(hash);
           params.contentCallback({
             hash,
-            type: ContentTypeDto.CSS,
+            type: SegmentTypeDto.CSS,
             content: {
               href: result.url,
               media: '',

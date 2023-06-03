@@ -17,14 +17,14 @@
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { PageContentDto } from '../../../model/obj/obj-content.dto';
+import { PageSegmentDto } from '../../../model/obj/page-segment.dto';
 
-export class ContentSnapshotAddCommand<T> implements ICommand<Promise<void>> {
-  constructor(private content: PageContentDto<T>) {}
+export class PageSegmentAddCommand<T> implements ICommand<Promise<void>> {
+  constructor(private content: PageSegmentDto<T>) {}
 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.content.hash}`;
-    await BrowserStorageWrapper.set<PageContentDto<T>>(key, this.content);
+    await BrowserStorageWrapper.set<PageSegmentDto<T>>(key, this.content);
     await this.incrementCount();
   }
 

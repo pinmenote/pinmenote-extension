@@ -17,14 +17,28 @@
 import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { PageContentDto } from '../../../model/obj/obj-content.dto';
 
-export class ContentSnapshotGetCommand<T> implements ICommand<Promise<PageContentDto<T> | undefined>> {
-  constructor(private hash?: string) {}
+export class PageSegmentRemoveListCommand implements ICommand<Promise<void>> {
+  constructor(private hashList: string[]) {}
 
-  async execute(): Promise<PageContentDto<T> | undefined> {
-    if (!this.hash) return undefined;
-    const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.hash}`;
-    return await BrowserStorageWrapper.get<PageContentDto<T> | undefined>(key);
+  async execute(): Promise<void> {
+    for (const hash of this.hashList) {
+      const key = `${ObjectStoreKeys.CONTENT_HASH}:${hash}`;
+
+      const isLast = await this.decrementCount(hash);
+      if (isLast) await BrowserStorageWrapper.remove(key);
+    }
+  }
+
+  async decrementCount(hash: string): Promise<boolean> {
+    const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${hash}`;
+    let count = (await BrowserStorageWrapper.get<number | undefined>(key)) || 0;
+    count--;
+    if (count === 0) {
+      await BrowserStorageWrapper.remove(key);
+      return true;
+    }
+    await BrowserStorageWrapper.set<number>(key, count);
+    return false;
   }
 }

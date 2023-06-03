@@ -16,9 +16,9 @@
  */
 import { ObjPinDto, PinBorderDataDto, PinIframeDto } from '../../common/model/obj/obj-pin.dto';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
+import { PageCanvasDto } from '../../common/model/obj/page-snapshot.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { fnIframeIndex } from '../../common/fn/fn-iframe-index';
@@ -31,7 +31,7 @@ export class PinFactory {
     border: PinBorderDataDto,
     isIframe: boolean,
     baseUrl?: ObjUrlDto,
-    canvas?: ObjCanvasDto
+    canvas?: PageCanvasDto
   ): Promise<ObjPinDto> => {
     const rect = canvas ? canvas.rect : XpathFactory.computeRect(ref);
     const screenshot = await ScreenshotFactory.takeScreenshot(
@@ -70,7 +70,7 @@ export class PinFactory {
     };
   };
 
-  static objCanvasPinNew = (rect: ObjRectangleDto): ObjCanvasDto => {
+  static objCanvasPinNew = (rect: ObjRectangleDto): PageCanvasDto => {
     return {
       windowSize: {
         width: window.innerWidth,

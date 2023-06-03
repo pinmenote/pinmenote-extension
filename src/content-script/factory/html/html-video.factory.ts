@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
-import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
+import { SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class HtmlVideoFactory {
@@ -54,7 +54,7 @@ export class HtmlVideoFactory {
 
     params.contentCallback({
       hash,
-      type: ContentTypeDto.IMG,
+      type: SegmentTypeDto.IMG,
       content: {
         src: imgData
       }

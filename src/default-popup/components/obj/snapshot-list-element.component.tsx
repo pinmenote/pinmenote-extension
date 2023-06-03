@@ -39,8 +39,8 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleNavigate = async (data: ObjDto<ObjPageDto>): Promise<void> => {
-    if (PopupActiveTabStore.url?.href !== data.data.snapshot.url.href) {
-      await BrowserApi.setActiveTabUrl(data.data.snapshot.url.href);
+    if (PopupActiveTabStore.url?.href !== data.data.snapshot.info.url.href) {
+      await BrowserApi.setActiveTabUrl(data.data.snapshot.info.url.href);
       window.close();
     }
   };
@@ -60,7 +60,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
   );
   const expandComponent = isExpanded ? <SnapshotListExpandComponent obj={props.obj} /> : '';
 
-  const value = props.obj.data.snapshot.title;
+  const value = props.obj.data.snapshot.info.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (

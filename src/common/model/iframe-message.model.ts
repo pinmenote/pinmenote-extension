@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
-import { ContentSnapshotDto } from './obj/obj-content.dto';
+import { SegmentPageDto } from './obj/page-segment.dto';
 
 export interface IFrameIndexMessage {
   index: string;
@@ -31,5 +31,5 @@ export interface IFrameFetchMessage {
   index: string;
   uid: string;
   href: string;
-  data: ContentSnapshotDto;
+  data: SegmentPageDto;
 }

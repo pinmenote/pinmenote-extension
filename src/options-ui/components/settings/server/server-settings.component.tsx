@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckIcon from '@mui/icons-material/Check';
@@ -22,12 +22,11 @@ import IconButton from '@mui/material/IconButton';
 import { SyncSettingsComponent } from '../sync/sync-settings.component';
 import Typography from '@mui/material/Typography';
 import { UserSettingsComponent } from '../user/user-settings.component';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export const ServerSettingsComponent: FunctionComponent = () => {
-  const [isAdding, setIsAdding] = useState<boolean>(false);
-
   const handleAddClick = () => {
-    setIsAdding(true);
+    fnConsoleLog('ServerSettingsComponent->Add');
   };
 
   return (

@@ -15,9 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ContentSnapshotDto } from '../../model/obj/obj-content.dto';
-import { ContentSnapshotGetCommand } from './content/content-snapshot-get.command';
-import { ContentSnapshotRemoveListCommand } from './content/content-snapshot-remove-list.command';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjDto } from '../../model/obj/obj.dto';
@@ -25,6 +22,9 @@ import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjRemoveHashtagsCommand } from '../obj/hashtag/obj-remove-hashtags.command';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { PageSegmentGetCommand } from './segment/page-segment-get.command';
+import { PageSegmentRemoveListCommand } from './segment/page-segment-remove-list.command';
+import { SegmentPageDto } from '../../model/obj/page-segment.dto';
 import { WordIndex } from '../../text/index/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
 
@@ -39,26 +39,26 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
 
     const { snapshot } = this.obj.data;
 
-    await LinkHrefStore.del(snapshot.url, this.obj.id);
+    await LinkHrefStore.del(snapshot.info.url, this.obj.id);
 
-    if (snapshot.contentHash) await this.removeSnapshot(snapshot.contentHash);
+    if (snapshot.segmentHash) await this.removeSnapshot(snapshot.segmentHash);
 
-    await WordIndex.removeFlat(this.obj.data.snapshot.words, this.obj.id);
+    await WordIndex.removeFlat(this.obj.data.snapshot.info.words, this.obj.id);
 
-    await new ObjRemoveHashtagsCommand(this.obj.id, snapshot.hashtags).execute();
+    await new ObjRemoveHashtagsCommand(this.obj.id, snapshot.info.hashtags).execute();
   }
 
-  private removeSnapshot = async (contentHash: string) => {
-    const pageSnapshot = await new ContentSnapshotGetCommand<ContentSnapshotDto>(contentHash).execute();
-    if (!pageSnapshot) {
-      fnConsoleLog('PageSnapshotRemoveCommand->removeSnapshot->empty', contentHash);
+  private removeSnapshot = async (segmentHash: string) => {
+    const segment = await new PageSegmentGetCommand<SegmentPageDto>(segmentHash).execute();
+    if (!segment) {
+      fnConsoleLog('PageSnapshotRemoveCommand->removeSnapshot->empty', segmentHash);
       return;
     }
     // Remove hashed content
-    await new ContentSnapshotRemoveListCommand(pageSnapshot.content.assets).execute();
-    await new ContentSnapshotRemoveListCommand(pageSnapshot.content.css).execute();
+    await new PageSegmentRemoveListCommand(segment.content.assets).execute();
+    await new PageSegmentRemoveListCommand(segment.content.css).execute();
 
     // remove snapshot
-    await new ContentSnapshotRemoveListCommand([contentHash]).execute();
+    await new PageSegmentRemoveListCommand([segmentHash]).execute();
   };
 }

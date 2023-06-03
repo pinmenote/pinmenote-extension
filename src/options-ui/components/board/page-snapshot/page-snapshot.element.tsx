@@ -46,18 +46,18 @@ export const PageSnapshotElement: FunctionComponent<Props> = ({ dto, refreshBoar
   return (
     <BoardItem>
       <BoardItemTitle
-        title={dto.data.snapshot.title}
+        title={dto.data.snapshot.info.title}
         editCallback={handleEdit}
         htmlCallback={handleHtml}
         removeCallback={handleRemove}
       />
-      <img style={{ height: '100%', width: '100%', objectFit: 'contain' }} src={dto.data.snapshot.screenshot} />
+      <img style={{ height: '100%', width: '100%', objectFit: 'contain' }} src={dto.data.snapshot.data.screenshot} />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
         title="page snapshot"
         createdAt={dto.createdAt}
-        words={dto.data.snapshot.words}
-        url={dto.data.snapshot.url?.href}
+        words={dto.data.snapshot.info.words}
+        url={dto.data.snapshot.info.url.href}
       />
     </BoardItem>
   );

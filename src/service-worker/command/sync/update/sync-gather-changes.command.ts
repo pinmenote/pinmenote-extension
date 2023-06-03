@@ -16,13 +16,13 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { ServerChangeDto, ServerPathDto } from '../../../../common/model/obj/obj-server.dto';
-import { ContentSnapshotDto } from '../../../../common/model/obj/obj-content.dto';
-import { ContentSnapshotGetCommand } from '../../../../common/command/snapshot/content/content-snapshot-get.command';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
+import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
 import { PinGetCommentListCommand } from '../../../../common/command/pin/comment/pin-get-comment-list.command';
+import { SegmentPageDto } from '../../../../common/model/obj/page-segment.dto';
 
 export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDto[]>> {
   constructor(private obj: ObjDto) {}
@@ -58,8 +58,8 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     changes.push({ path: ServerPathDto.SNAPSHOT, type: 'upload' });
     changes.push({ path: ServerPathDto.HASHTAGS, type: 'upload' });
 
-    if (pageObj.snapshot.contentHash) {
-      const snapshot = await this.snapshotChanges(pageObj.snapshot.contentHash);
+    if (pageObj.snapshot.segmentHash) {
+      const snapshot = await this.snapshotChanges(pageObj.snapshot.segmentHash);
       changes.push(...snapshot);
     }
 
@@ -88,7 +88,7 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
   private snapshotChanges = async (contentHash: string): Promise<ServerChangeDto[]> => {
     const changes: ServerChangeDto[] = [];
 
-    const pageSnapshot = await new ContentSnapshotGetCommand<ContentSnapshotDto>(contentHash).execute();
+    const pageSnapshot = await new PageSegmentGetCommand<SegmentPageDto>(contentHash).execute();
     if (!pageSnapshot) return [];
 
     // asserts

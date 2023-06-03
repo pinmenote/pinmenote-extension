@@ -36,7 +36,7 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
         continue;
       }
       if ([ObjTypeDto.PageSnapshot, ObjTypeDto.PageElementSnapshot, ObjTypeDto.PageElementPin].includes(obj.type)) {
-        if ((obj.data as ObjPageDto).snapshot.url.href === this.data.href) continue;
+        if ((obj.data as ObjPageDto).snapshot.info.url.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageNote) {
         if ((obj.data as ObjNoteDto).url?.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageTask) {

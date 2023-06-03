@@ -14,18 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import {
-  ContentImgDto,
-  ContentShadowDto,
-  ContentSnapshotDto,
-  ContentTypeDto
-} from '../../../common/model/obj/obj-content.dto';
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import {
+  SegmentImgDto,
+  SegmentPageDto,
+  SegmentShadowDto,
+  SegmentTypeDto
+} from '../../../common/model/obj/page-segment.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
-import { ContentSnapshotGetCommand } from '../../../common/command/snapshot/content/content-snapshot-get.command';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
@@ -34,7 +33,8 @@ import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjPinGetCommand } from '../../../common/command/obj/obj-pin-get.command';
-import { ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import { PageSegmentGetCommand } from '../../../common/command/snapshot/segment/page-segment-get.command';
+import { PageSnapshotDto } from '../../../common/model/obj/page-snapshot.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
 import { SettingsStore } from '../../store/settings.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
@@ -61,8 +61,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const [visible, setVisible] = useState<boolean>(props.visible);
 
-  const [snapshotData, setSnapshotData] = useState<ContentSnapshotDto | undefined>();
-  const [snapshot, setSnapshot] = useState<ObjSnapshotDto | undefined>();
+  const [pageSegment, setPageSegment] = useState<SegmentPageDto | undefined>();
+  const [pageSnapshot, setPageSnapshot] = useState<PageSnapshotDto | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPreLoading, setIsPreLoading] = useState<boolean>(true);
 
@@ -87,24 +87,24 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       setIsPreLoading(true);
       setIsLoading(true);
       const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
-      setSnapshot(obj.data.snapshot);
-      const pageContent = await new ContentSnapshotGetCommand<ContentSnapshotDto>(
-        obj.data.snapshot.contentHash
-      ).execute();
-      if (pageContent) {
+      setPageSnapshot(obj.data.snapshot);
+      const pageSegment = await new PageSegmentGetCommand<SegmentPageDto>(obj.data.snapshot.segmentHash).execute();
+      if (pageSegment) {
         const a = Date.now();
-        const dom = fnParse5(pageContent.content.html.html);
+        const dom = fnParse5(pageSegment.content.html.html);
         fnConsoleLog('DOM !!!', dom, 'in', Date.now() - a);
-        fnConsoleLog('obj', obj, 'snapshot', pageContent);
-        setSnapshotData(pageContent.content);
+        fnConsoleLog('obj', obj, 'snapshot', pageSegment);
+        setPageSegment(pageSegment.content);
+      } else {
+        fnConsoleLog('NOT FOUND ', obj.data.snapshot, 'hash', obj.data.snapshot.segmentHash);
       }
-      if (obj.data.snapshot.canvas) {
+      if (obj.data.snapshot.data.canvas) {
         renderCanvas(obj.data.snapshot);
       } else {
-        await renderSnapshot(obj.data.snapshot, pageContent?.content);
+        await renderSnapshot(obj.data.snapshot, pageSegment?.content);
       }
       if (obj.type === ObjTypeDto.PageSnapshot) {
-        const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.url.href);
+        const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.info.url.href);
         await renderPins(pinIds);
       }
     });
@@ -173,7 +173,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     return true;
   };
 
-  const renderCanvas = (snapshot: ObjSnapshotDto, content?: ContentSnapshotDto) => {
+  const renderCanvas = (snapshot: PageSnapshotDto, content?: SegmentPageDto) => {
     renderHeader(snapshot, 0);
 
     if (!htmlRef.current) return;
@@ -187,7 +187,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (content) {
       html += `${content.html.html}`;
     } else {
-      html += `<img src="${snapshot.screenshot || ''}" alt="screenshot" />`;
+      html += `<img src="${snapshot.data.screenshot || ''}" alt="screenshot" />`;
     }
 
     html += `</body>`;
@@ -199,12 +199,12 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const renderSnapshot = async (s: ObjSnapshotDto, content?: ContentSnapshotDto): Promise<void> => {
+  const renderSnapshot = async (snapshot: PageSnapshotDto, segment?: SegmentPageDto): Promise<void> => {
     let size = 0;
-    renderHeader(s, size);
+    renderHeader(snapshot, size);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
-    if (!content) return;
+    if (!segment) return;
 
     containerRef.current.style.display = 'flex';
     const iframe = document.createElement('iframe');
@@ -215,15 +215,15 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
 
-    const html = await IframeHtmlFactory.computeHtml(content, s.title);
+    const html = await IframeHtmlFactory.computeHtml(segment, snapshot.info.title);
 
     const doc = iframe.contentWindow.document;
     await renderIframe(html, doc);
     setIsPreLoading(false);
 
-    if (content.assets) {
-      fnConsoleLog('RENDER CONTENT', content.assets.length);
-      for (const hash of content.assets) {
+    if (segment.assets) {
+      fnConsoleLog('RENDER CONTENT', segment.assets.length);
+      for (const hash of segment.assets) {
         const elList = doc.querySelectorAll(`[data-pin-hash="${hash}"]`);
         const elArray = Array.from(elList);
         try {
@@ -239,15 +239,15 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const renderHeader = (s: ObjSnapshotDto, size?: number): void => {
+  const renderHeader = (snapshot: PageSnapshotDto, size?: number): void => {
     if (sizeRef.current) {
       sizeRef.current.innerHTML = `${fnByteToMb(size)} MB`;
     }
     if (titleRef.current) {
-      titleRef.current.innerHTML = s.title;
+      titleRef.current.innerHTML = snapshot.info.title;
     }
     if (urlRef.current) {
-      urlRef.current.innerHTML = `<a href="${s.url.href}" style="word-break: break-all">${s.url.href}</a>`;
+      urlRef.current.innerHTML = `<a href="${snapshot.info.url.href}" style="word-break: break-all">${snapshot.info.url.href}</a>`;
     }
   };
 
@@ -258,14 +258,14 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const renderAsset = async (hash: string, el: Element): Promise<number> => {
-    const dto = await new ContentSnapshotGetCommand(hash).execute();
+    const dto = await new PageSegmentGetCommand(hash).execute();
     if (!dto) {
       fnConsoleLog('asyncEmbedContent->missing->hash', hash);
       return 0;
     }
     await fnSleep(2);
-    if (dto.type === ContentTypeDto.IFRAME) {
-      const iframe: ContentSnapshotDto = dto.content as ContentSnapshotDto;
+    if (dto.type === SegmentTypeDto.IFRAME) {
+      const iframe: SegmentPageDto = dto.content as SegmentPageDto;
       const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
       if (iframeDoc) {
         const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
@@ -281,19 +281,19 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           }
         }
       }
-    } else if (dto.type === ContentTypeDto.IMG) {
+    } else if (dto.type === SegmentTypeDto.IMG) {
       const img = el as HTMLImageElement;
-      img.src = (dto.content as ContentImgDto).src;
+      img.src = (dto.content as SegmentImgDto).src;
       if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
         img.style.maxWidth = `${window.innerWidth}px`;
-    } else if (dto.type === ContentTypeDto.SHADOW) {
-      const content = dto.content as ContentShadowDto;
+    } else if (dto.type === SegmentTypeDto.SHADOW) {
+      const content = dto.content as SegmentShadowDto;
       renderShadow(el, content);
     }
     return 0;
   };
 
-  const renderShadow = (el: Element, content: ContentShadowDto) => {
+  const renderShadow = (el: Element, content: SegmentShadowDto) => {
     el.innerHTML = content.html + el.innerHTML;
     renderTemplate(el);
   };
@@ -314,8 +314,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const handleDownload = async () => {
-    if (!snapshotData || !snapshot) return;
-    const html = IframeHtmlFactory.computeDownload(snapshot, snapshotData);
+    if (!pageSegment || !pageSnapshot) return;
+    const html = IframeHtmlFactory.computeDownload(pageSnapshot, pageSegment);
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
     const filename = `${fnUid()}.html`;

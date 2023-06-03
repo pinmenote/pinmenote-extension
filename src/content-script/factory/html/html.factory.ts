@@ -16,7 +16,6 @@
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlCanvasFactory } from './html-canvas.factory';
@@ -25,6 +24,7 @@ import { HtmlImgFactory } from './html-img.factory';
 import { HtmlPictureFactory } from './html-picture.factory';
 import { HtmlVideoFactory } from './html-video.factory';
 import { IFrameFactory } from './iframe.factory';
+import { SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
 import { ShadowFactory } from './shadow.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -108,7 +108,7 @@ export class HtmlFactory {
         assets.push(hash);
         params.contentCallback({
           hash,
-          type: ContentTypeDto.IMG,
+          type: SegmentTypeDto.IMG,
           content: {
             src: value
           }

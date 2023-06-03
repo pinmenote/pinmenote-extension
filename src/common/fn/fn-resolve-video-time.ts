@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjVideoDataDto } from '../model/obj/obj-snapshot.dto';
+import { ObjVideoDataDto } from '../model/obj/page-snapshot.dto';
 import { XpathFactory } from '../factory/xpath.factory';
 
 export const fnResolveVideoTime = (video?: ObjVideoDataDto): void => {

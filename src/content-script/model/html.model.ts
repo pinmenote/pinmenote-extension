@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PageContentDto } from '../../common/model/obj/obj-content.dto';
+import { PageSegmentDto } from '../../common/model/obj/page-segment.dto';
 
 export interface HtmlIntermediateData {
   html: string;
@@ -33,7 +33,7 @@ export interface HtmlComputeParams {
   skipAttributes: HtmlSkipAttribute[];
   skipTagCache: Set<string>;
   skipUrlCache: Set<string>;
-  contentCallback: (obj: PageContentDto) => void;
+  contentCallback: (obj: PageSegmentDto) => void;
   isPartial: boolean;
   insideLink: boolean; // detect and mitigate link inside link hacks inside html generators
 }

@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentTypeDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
-import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content/content-snapshot-add.command';
+import { PageSegmentDto, SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
 import { HtmlImgFactory } from '../../factory/html/html-img.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
-export class SnapshotSaveImageCommand implements ICommand<Promise<string>> {
+export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<string>> {
   constructor(private element: HTMLElement) {}
 
   async execute(): Promise<string> {
@@ -42,7 +42,7 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<string>> {
     const hash = fnSha256(html);
     await this.contentCallback({
       hash,
-      type: ContentTypeDto.SNAPSHOT,
+      type: SegmentTypeDto.SNAPSHOT,
       content: {
         html: {
           hash,
@@ -56,7 +56,7 @@ export class SnapshotSaveImageCommand implements ICommand<Promise<string>> {
     return hash;
   }
 
-  private contentCallback = async (content: PageContentDto) => {
-    await new ContentSnapshotAddCommand(content).execute();
+  private contentCallback = async (content: PageSegmentDto) => {
+    await new PageSegmentAddCommand(content).execute();
   };
 }

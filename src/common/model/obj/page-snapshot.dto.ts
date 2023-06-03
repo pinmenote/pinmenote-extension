@@ -14,45 +14,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
+import { ObjUrlDto } from './obj.dto';
 
-export interface ContentCssDto {
-  href?: string;
-  media?: string;
-  data: string;
+export interface PageCanvasDto {
+  windowSize: ObjSizeDto;
+  rect: ObjRectangleDto;
 }
 
-export interface ContentSnapshotDto {
-  html: ContentHtmlDto;
-  css: string[];
-  assets: string[];
-}
-
-interface ContentHtmlDto {
+export interface PageSnapshotInfoDto {
   hash: string;
-  html: string;
-  htmlAttr: string;
+  url: ObjUrlDto;
+  title: string;
+  words: string[];
+  hashtags: string[];
 }
 
-export interface ContentShadowDto {
-  html: string;
-}
-
-export interface ContentImgDto {
-  src: string;
-}
-
-export enum ContentTypeDto {
-  IFRAME = 1,
-  IMG,
-  SHADOW,
-  CSS,
-  SNAPSHOT
-}
-
-type PageContent = ContentCssDto | ContentSnapshotDto | ContentShadowDto | ContentImgDto;
-
-export interface PageContentDto<T = PageContent> {
-  type: ContentTypeDto;
+export interface PageSnapshotDataDto {
   hash: string;
-  content: T;
+  canvas?: PageCanvasDto;
+  screenshot: string;
+}
+
+export interface PageSnapshotDto {
+  data: PageSnapshotDataDto;
+  info: PageSnapshotInfoDto;
+  segmentHash?: string; // SegmentSnapshotDto
+}
+
+export interface ObjVideoDataDto {
+  xpath: string;
+  time: ObjVideoTimeDto[];
+}
+
+export interface ObjVideoTimeDto {
+  currentTime: number;
+  displayTime: number;
 }

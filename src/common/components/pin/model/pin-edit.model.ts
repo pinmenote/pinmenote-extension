@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasDto, ObjVideoDataDto } from '../../../model/obj/obj-snapshot.dto';
 import { ObjDto, ObjLocalDto, ObjUrlDto } from '../../../model/obj/obj.dto';
 import { ObjPinDto, PinBorderDataDto, PinIframeDto } from '../../../model/obj/obj-pin.dto';
+import { ObjVideoDataDto, PageCanvasDto } from '../../../model/obj/page-snapshot.dto';
 import { ObjCommentListDto } from '../../../model/obj/obj-comment.dto';
 import { ObjRectangleDto } from '../../../model/obj/obj-utils.dto';
 import { PinComponent } from '../pin.component';
@@ -103,7 +103,7 @@ export class PinEditModel {
     return this.obj.data.comments;
   }
 
-  get canvas(): ObjCanvasDto | undefined {
+  get canvas(): PageCanvasDto | undefined {
     return this.obj.data.data.canvas;
   }
 

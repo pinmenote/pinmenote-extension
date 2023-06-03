@@ -14,30 +14,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasDto, ObjSnapshotDto } from '../../../common/model/obj/obj-snapshot.dto';
+import {
+  PageCanvasDto,
+  PageSnapshotDataDto,
+  PageSnapshotDto,
+  PageSnapshotInfoDto
+} from '../../../common/model/obj/page-snapshot.dto';
+import { ContentPageSegmentSaveCommand } from './content-page-segment-save.command';
+import { ContentPageSegmentSaveImageCommand } from './content-page-segment-save-image.command';
 import { HtmlSkipAttribute } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { PinStore } from '../../store/pin.store';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SettingsConfig } from '../../../common/environment';
-import { SnapshotContentSaveCommand } from './snapshot-content-save.command';
-import { SnapshotSaveImageCommand } from './snapshot-save-image.command';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { fnSha256Object } from '../../../common/fn/fn-sha256';
 
-export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> {
+export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSnapshotDto>> {
   constructor(
     private settings: SettingsConfig,
     private url: ObjUrlDto,
     private element: HTMLElement,
     private skipAttributes: HtmlSkipAttribute[],
-    private canvas?: ObjCanvasDto
+    private canvas?: PageCanvasDto
   ) {}
 
-  async execute(): Promise<ObjSnapshotDto> {
+  async execute(): Promise<PageSnapshotDto> {
     PinStore.each((v) => v.hide());
-
-    const title = this.element.innerText.substring(0, 100) || document.title;
+    const title =
+      this.element === document.body
+        ? document.title || this.url.origin || this.element.innerText.substring(0, 100)
+        : this.element.innerText.substring(0, 100) || document.title || this.url.origin;
 
     const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
 
@@ -45,11 +53,11 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
     let contentHash = undefined;
 
     if (!this.canvas) {
-      const res = await new SnapshotContentSaveCommand(this.element, this.skipAttributes).execute();
+      const res = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes).execute();
       contentHash = res.hash;
       words = res.words;
     } else if (this.element instanceof HTMLImageElement) {
-      contentHash = await new SnapshotSaveImageCommand(this.element).execute();
+      contentHash = await new ContentPageSegmentSaveImageCommand(this.element).execute();
     }
 
     const screenshot = await ScreenshotFactory.takeScreenshot(
@@ -58,16 +66,26 @@ export class SnapshotCreateCommand implements ICommand<Promise<ObjSnapshotDto>> 
       this.url
     );
 
-    PinStore.each((v) => v.show());
-
-    return {
+    const info: Partial<PageSnapshotInfoDto> = {
       title,
       url: this.url,
       words,
-      hashtags: [],
-      canvas: this.canvas,
+      hashtags: []
+    };
+    info.hash = fnSha256Object(JSON.stringify(info));
+
+    const data: Partial<PageSnapshotDataDto> = {
       screenshot,
-      contentHash
+      canvas: this.canvas
+    };
+    data.hash = fnSha256Object(JSON.stringify(data));
+
+    PinStore.each((v) => v.show());
+
+    return {
+      info: info as PageSnapshotInfoDto,
+      data: data as PageSnapshotDataDto,
+      segmentHash: contentHash
     };
   }
 }

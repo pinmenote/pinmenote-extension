@@ -17,11 +17,11 @@
 import { CSS_IMPORT_REG, CssFactory } from '../css.factory';
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';
 import { HtmlPictureFactory } from './html-picture.factory';
+import { SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
 import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -47,7 +47,7 @@ export class ShadowFactory {
 
     params.contentCallback({
       hash,
-      type: ContentTypeDto.SHADOW,
+      type: SegmentTypeDto.SHADOW,
       content: {
         html: shadowHtml
       }

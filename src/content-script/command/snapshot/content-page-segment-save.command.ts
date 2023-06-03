@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentTypeDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
+import { PageSegmentDto, SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
-import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content/content-snapshot-add.command';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlConstraints } from '../../factory/html/html.constraints';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { HtmlSkipAttribute } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -30,7 +30,7 @@ interface SnapshotResult {
   words: string[];
 }
 
-export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResult>> {
+export class ContentPageSegmentSaveCommand implements ICommand<Promise<SnapshotResult>> {
   private savedHash = new Set<string>();
 
   constructor(private element: HTMLElement, private skipAttributes: HtmlSkipAttribute[], private isPartial = true) {}
@@ -63,7 +63,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     css.unshift(adoptedHash);
     await this.contentCallback({
       hash: adoptedHash,
-      type: ContentTypeDto.CSS,
+      type: SegmentTypeDto.CSS,
       content: {
         data: adopted
       }
@@ -78,7 +78,7 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     const hash = fnSha256(html);
     await this.contentCallback({
       hash,
-      type: ContentTypeDto.SNAPSHOT,
+      type: SegmentTypeDto.SNAPSHOT,
       content: {
         html: {
           hash,
@@ -92,12 +92,12 @@ export class SnapshotContentSaveCommand implements ICommand<Promise<SnapshotResu
     return { hash, words };
   }
 
-  private contentCallback = async (content: PageContentDto) => {
+  private contentCallback = async (content: PageSegmentDto) => {
     if (this.savedHash.has(content.hash)) {
       fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
       return;
     }
     this.savedHash.add(content.hash);
-    await new ContentSnapshotAddCommand(content).execute();
+    await new PageSegmentAddCommand(content).execute();
   };
 }

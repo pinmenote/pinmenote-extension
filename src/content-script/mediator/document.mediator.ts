@@ -18,18 +18,18 @@ import { ObjTypeDto, ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
+import { ContentPageSnapshotCreateCommand } from '../command/snapshot/content-page-snapshot-create.command';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { HtmlSkipAttribute } from '../factory/html/html.constraints';
+import { HtmlSkipAttribute } from '../model/html.model';
 import { IFrameIndexMessage } from '../../common/model/iframe-message.model';
 import { IFrameStore } from '../store/iframe.store';
-import { ObjCanvasDto } from '../../common/model/obj/obj-snapshot.dto';
+import { PageCanvasDto } from '../../common/model/obj/page-snapshot.dto';
 import { PageSnapshotAddCommand } from '../../common/command/snapshot/page-snapshot-add.command';
 import { PinAddCommand } from '../command/pin/pin-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
 import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from '../factory/pin.factory';
-import { SnapshotCreateCommand } from '../command/snapshot/snapshot-create.command';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
 import { applyStylesToElement } from '../../common/style.utils';
@@ -284,7 +284,7 @@ export class DocumentMediator {
   private static addElementPin = async (
     element: HTMLElement,
     border: PinBorderDataDto,
-    canvas?: ObjCanvasDto
+    canvas?: PageCanvasDto
   ): Promise<void> => {
     PinAddFactory.clearStyles();
 
@@ -295,7 +295,7 @@ export class DocumentMediator {
     new PinComponentAddCommand(element, obj, true).execute();
   };
 
-  private static addElementSnapshot = async (element: HTMLElement, canvas?: ObjCanvasDto): Promise<void> => {
+  private static addElementSnapshot = async (element: HTMLElement, canvas?: PageCanvasDto): Promise<void> => {
     if (element) {
       PinAddFactory.clearStyles();
 
@@ -303,7 +303,7 @@ export class DocumentMediator {
       const skipUid = this.showPreloader();
 
       const url = UrlFactory.newUrl();
-      const dto = await new SnapshotCreateCommand(
+      const dto = await new ContentPageSnapshotCreateCommand(
         ContentSettingsStore.settings,
         url,
         element,

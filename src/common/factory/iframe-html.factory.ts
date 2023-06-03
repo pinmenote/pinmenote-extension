@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentCssDto, ContentSnapshotDto } from '../model/obj/obj-content.dto';
-import { ContentSnapshotGetCommand } from '../command/snapshot/content/content-snapshot-get.command';
-import { ObjSnapshotDto } from '../model/obj/obj-snapshot.dto';
+import { SegmentCssDto, SegmentPageDto } from '../model/obj/page-segment.dto';
+import { PageSegmentGetCommand } from '../command/snapshot/segment/page-segment-get.command';
+import { PageSnapshotDto } from '../model/obj/page-snapshot.dto';
 import { fnConsoleLog } from '../fn/fn-console';
 
 export class IframeHtmlFactory {
-  static computeHtml = async (snapshot: ContentSnapshotDto, title?: string): Promise<string> => {
+  static computeHtml = async (snapshot: SegmentPageDto, title?: string): Promise<string> => {
     let style = '';
     let titleTag = '';
     if (title) {
       titleTag = `<title>${title}</title>`;
     }
     for (const hash of snapshot.css) {
-      const dto = await new ContentSnapshotGetCommand<ContentCssDto>(hash).execute();
+      const dto = await new PageSegmentGetCommand<SegmentCssDto>(hash).execute();
       if (dto) {
-        const css: ContentCssDto = dto.content;
+        const css: SegmentCssDto = dto.content;
         style += '<style';
         css.media ? (style += ` media="${css.media}">`) : (style += '>');
         style += css.data + '</style>';
@@ -65,7 +65,7 @@ export class IframeHtmlFactory {
 </html>`;
   };
 
-  static computeDownload = (snapshot: ObjSnapshotDto, data: ContentSnapshotDto): string => {
+  static computeDownload = (snapshot: PageSnapshotDto, data: SegmentPageDto): string => {
     return '';
   };
 }

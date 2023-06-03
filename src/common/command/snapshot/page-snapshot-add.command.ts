@@ -23,12 +23,12 @@ import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPageDto } from '../../model/obj/obj-page.dto';
-import { ObjSnapshotDto } from '../../model/obj/obj-snapshot.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { PageSnapshotDto } from '../../model/obj/page-snapshot.dto';
 import { WordIndex } from '../../text/index/word.index';
 
 export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
-  constructor(private dto: ObjSnapshotDto, private type: ObjTypeDto) {}
+  constructor(private dto: PageSnapshotDto, private type: ObjTypeDto) {}
 
   async execute(): Promise<void> {
     const id = await new ObjNextIdCommand(ObjectStoreKeys.OBJECT_ID).execute();
@@ -43,12 +43,12 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
       version: OBJ_DTO_VERSION,
       local: {}
     };
-    await WordIndex.indexFlat(this.dto.words, id);
+    await WordIndex.indexFlat(this.dto.info.words, id);
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
     await BrowserStorageWrapper.set(key, dto);
 
-    await LinkHrefStore.add(this.dto.url, id);
+    await LinkHrefStore.add(this.dto.info.url, id);
 
     await new ObjAddIdCommand({ id, dt }).execute();
 

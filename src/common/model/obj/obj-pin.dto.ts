@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjCanvasDto, ObjVideoDataDto } from './obj-snapshot.dto';
+import { ObjVideoDataDto, PageCanvasDto } from './page-snapshot.dto';
 import { ObjCommentListDto } from './obj-comment.dto';
 import { ObjDrawListDto } from './obj-draw.dto';
 import { ObjUrlDto } from './obj.dto';
@@ -31,7 +31,7 @@ interface ObjPinDataDto {
   screenshot: string;
   border: PinBorderDataDto;
   iframe?: PinIframeDto;
-  canvas?: ObjCanvasDto;
+  canvas?: PageCanvasDto;
 }
 
 interface ObjPinDescription {

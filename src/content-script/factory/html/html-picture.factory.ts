@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
-import { ContentTypeDto } from '../../../common/model/obj/obj-content.dto';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlImgFactory } from './html-img.factory';
+import { SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
 import { fnFetchImage } from '../../../common/fn/fn-fetch-image';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -66,7 +66,7 @@ export class HtmlPictureFactory {
       assets.push(hash);
       params.contentCallback({
         hash,
-        type: ContentTypeDto.IMG,
+        type: SegmentTypeDto.IMG,
         content: {
           src: imgValue
         }

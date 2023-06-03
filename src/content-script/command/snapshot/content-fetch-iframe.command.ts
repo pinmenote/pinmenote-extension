@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ContentSnapshotDto, PageContentDto } from '../../../common/model/obj/obj-content.dto';
+import { PageSegmentDto, SegmentPageDto } from '../../../common/model/obj/page-segment.dto';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { ContentSnapshotAddCommand } from '../../../common/command/snapshot/content/content-snapshot-add.command';
 import { CssFactory } from '../../factory/css.factory';
 import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
+import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
@@ -59,7 +59,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     const css = await CssFactory.computeCssContent(document, params);
     fnConsoleLog('ContentFetchIframeCommand->css->done');
 
-    const dto: ContentSnapshotDto = {
+    const dto: SegmentPageDto = {
       html: {
         hash: fnSha256(htmlContent.html),
         html: htmlContent.html,
@@ -80,12 +80,12 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     });
   }
 
-  private contentCallback = async (content: PageContentDto) => {
+  private contentCallback = async (content: PageSegmentDto) => {
     if (this.savedHash.has(content.hash)) {
       fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
       return;
     }
     this.savedHash.add(content.hash);
-    await new ContentSnapshotAddCommand(content).execute();
+    await new PageSegmentAddCommand(content).execute();
   };
 }

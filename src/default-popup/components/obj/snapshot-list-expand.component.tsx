@@ -32,7 +32,7 @@ export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps>
         position: 'relative'
       }}
     >
-      <img src={obj.data.snapshot.screenshot} width="280" />
+      <img src={obj.data.snapshot.data.screenshot} width="280" />
     </div>
   );
 };

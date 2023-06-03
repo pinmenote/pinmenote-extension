@@ -14,30 +14,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
-import { ObjUrlDto } from './obj.dto';
 
-export interface ObjCanvasDto {
-  windowSize: ObjSizeDto;
-  rect: ObjRectangleDto;
+export interface SegmentCssDto {
+  href?: string;
+  media?: string;
+  data: string;
 }
 
-export interface ObjSnapshotDto {
-  url: ObjUrlDto;
-  title: string;
-  words: string[];
-  hashtags: string[];
-  screenshot?: string;
-  contentHash?: string; // ContentSnapshotDto
-  canvas?: ObjCanvasDto;
+export interface SegmentPageDto {
+  html: SegmentHtmlDto;
+  css: string[];
+  assets: string[];
 }
 
-export interface ObjVideoDataDto {
-  xpath: string;
-  time: ObjVideoTimeDto[];
+interface SegmentHtmlDto {
+  hash: string;
+  html: string;
+  htmlAttr: string;
 }
 
-export interface ObjVideoTimeDto {
-  currentTime: number;
-  displayTime: number;
+export interface SegmentShadowDto {
+  html: string;
+}
+
+export interface SegmentImgDto {
+  src: string;
+}
+
+export enum SegmentTypeDto {
+  IFRAME = 1,
+  IMG,
+  SHADOW,
+  CSS,
+  SNAPSHOT
+}
+
+type PageSegment = SegmentCssDto | SegmentPageDto | SegmentShadowDto | SegmentImgDto;
+
+export interface PageSegmentDto<T = PageSegment> {
+  type: SegmentTypeDto;
+  hash: string;
+  content: T;
 }

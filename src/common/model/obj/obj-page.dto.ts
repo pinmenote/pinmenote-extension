@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCommentListDto } from './obj-comment.dto';
-import { ObjSnapshotDto } from './obj-snapshot.dto';
+import { PageSnapshotDto } from './page-snapshot.dto';
 
 export interface ObjPageDto {
-  snapshot: ObjSnapshotDto;
+  snapshot: PageSnapshotDto;
   comments: ObjCommentListDto;
 }
