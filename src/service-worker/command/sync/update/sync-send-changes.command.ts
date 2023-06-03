@@ -32,15 +32,14 @@ export class SyncSendChangesCommand implements ICommand<Promise<void>> {
     while (changes.length > 0) {
       switch (changes[0].path) {
         case ServerPathDto.OBJ:
-        case ServerPathDto.HASHTAGS:
-        case ServerPathDto.WORDS:
         case ServerPathDto.COMMENT:
         case ServerPathDto.DRAW:
         case ServerPathDto.NOTE:
         case ServerPathDto.PIN:
-        case ServerPathDto.SNAPSHOT:
-        case ServerPathDto.SNAPSHOT_ASSETS:
-        case ServerPathDto.SNAPSHOT_CSS:
+        case ServerPathDto.SNAPSHOT_INFO:
+        case ServerPathDto.SNAPSHOT_DATA:
+        case ServerPathDto.PAGE_ASSETS:
+        case ServerPathDto.PAGE_CSS:
           fnConsoleLog('SyncSendChangesCommand->send', this.obj.id, changes[0]);
           await fnSleep(10);
           // remove change from changes

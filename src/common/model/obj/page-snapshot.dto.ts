@@ -43,6 +43,7 @@ export interface PageSnapshotDto {
 }
 
 export interface ObjVideoDataDto {
+  hash: string;
   xpath: string;
   time: ObjVideoTimeDto[];
 }

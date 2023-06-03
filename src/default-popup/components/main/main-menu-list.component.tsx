@@ -79,13 +79,13 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
     window.close();
   };
 
-  const handleCustomizePageClick = async (): Promise<void> => {
+  const handleAlterPageClick = async (): Promise<void> => {
     if (!PopupActiveTabStore.url) return;
     await BrowserApi.sendTabMessage<PopupPageCustomizeRequest>({
-      type: BusMessageType.POPUP_PAGE_CUSTOMIZE_START,
+      type: BusMessageType.POPUP_PAGE_ALTER_START,
       data: {
         url: PopupActiveTabStore.url,
-        type: ObjTypeDto.PageCustomize
+        type: ObjTypeDto.PageAlter
       }
     });
     props.closeListCallback(MainViewEnum.PAGE_OBJECTS);
@@ -118,11 +118,11 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>
-          <ListItemButton onClick={handleCustomizePageClick}>
+          <ListItemButton onClick={handleAlterPageClick}>
             <ListItemIcon>
               <HtmlIcon />
             </ListItemIcon>
-            <ListItemText primary="Customize Page" />
+            <ListItemText primary="Alter Page" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>

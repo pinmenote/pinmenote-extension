@@ -17,19 +17,18 @@
 
 export enum ServerPathDto {
   OBJ = 'obj',
-  HASHTAGS = 'hashtags',
-  WORDS = 'words',
   COMMENT = 'comment',
   DRAW = 'draw',
   NOTE = 'note',
+  PAGE_ASSETS = 'page/assets',
+  PAGE_CSS = 'page/css',
   PIN = 'pin',
-  SNAPSHOT = 'snapshot',
-  SNAPSHOT_ASSETS = 'snapshot/content',
-  SNAPSHOT_CSS = 'snapshot/css'
+  SNAPSHOT_INFO = 'snapshot/info',
+  SNAPSHOT_DATA = 'snapshot/data'
 }
 
 export interface ServerChangeDto {
-  hash?: string;
+  hash: string;
   path: ServerPathDto;
   type: 'download' | 'upload' | 'remove';
 }

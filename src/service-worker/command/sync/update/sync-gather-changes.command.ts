@@ -18,10 +18,10 @@ import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { ServerChangeDto, ServerPathDto } from '../../../../common/model/obj/obj-server.dto';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
+import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
-import { PinGetCommentListCommand } from '../../../../common/command/pin/comment/pin-get-comment-list.command';
 import { SegmentPageDto } from '../../../../common/model/obj/page-segment.dto';
 
 export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDto[]>> {
@@ -39,15 +39,15 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
       }
       case ObjTypeDto.PageElementPin: {
         const pin = this.obj.data as ObjPinDto;
-        changes = await this.commentChanges(pin.comments.data);
+        changes = this.commentChanges(pin.comments.data);
         const drawChanges = this.drawChanges(pin.draw.data);
         changes.push(...drawChanges);
-        changes.push({ type: 'upload', path: ServerPathDto.PIN });
+        changes.push({ type: 'upload', path: ServerPathDto.PIN, hash: pin.data.hash });
         break;
       }
       case ObjTypeDto.PageNote: {
-        changes.push({ type: 'upload', path: ServerPathDto.NOTE });
-        changes.push({ type: 'upload', path: ServerPathDto.HASHTAGS });
+        const note = this.obj.data as ObjNoteDto;
+        changes.push({ type: 'upload', path: ServerPathDto.NOTE, hash: note.hash });
       }
     }
     return changes;
@@ -55,15 +55,16 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
 
   private pageChanges = async (pageObj: ObjPageDto): Promise<ServerChangeDto[]> => {
     const changes: ServerChangeDto[] = [];
-    changes.push({ path: ServerPathDto.SNAPSHOT, type: 'upload' });
-    changes.push({ path: ServerPathDto.HASHTAGS, type: 'upload' });
 
     if (pageObj.snapshot.segmentHash) {
       const snapshot = await this.snapshotChanges(pageObj.snapshot.segmentHash);
       changes.push(...snapshot);
     }
 
-    const comments = await this.commentChanges(pageObj.comments.data);
+    changes.push({ type: 'upload', path: ServerPathDto.SNAPSHOT_INFO, hash: pageObj.snapshot.info.hash });
+    changes.push({ type: 'upload', path: ServerPathDto.SNAPSHOT_DATA, hash: pageObj.snapshot.data.hash });
+
+    const comments = this.commentChanges(pageObj.comments.data);
     changes.push(...comments);
     return changes;
   };
@@ -76,11 +77,10 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     return changes;
   };
 
-  private commentChanges = async (hashList: string[]): Promise<ServerChangeDto[]> => {
-    const commentList = await new PinGetCommentListCommand(hashList).execute();
+  private commentChanges = (hashList: string[]): ServerChangeDto[] => {
     const changes: ServerChangeDto[] = [];
-    for (let i = 0; i < commentList.length; i++) {
-      changes.push({ path: ServerPathDto.COMMENT, type: 'upload', hash: commentList[i].hash });
+    for (let i = 0; i < hashList.length; i++) {
+      changes.push({ path: ServerPathDto.COMMENT, type: 'upload', hash: hashList[i] });
     }
     return changes;
   };
@@ -94,13 +94,13 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
     // asserts
     const assets = pageSnapshot.content.assets;
     for (let i = 0; i < assets.length; i++) {
-      changes.push({ path: ServerPathDto.SNAPSHOT_ASSETS, type: 'upload', hash: assets[i] });
+      changes.push({ path: ServerPathDto.PAGE_ASSETS, type: 'upload', hash: assets[i] });
     }
 
     // css
     const css = pageSnapshot.content.css;
     for (let i = 0; i < css.length; i++) {
-      changes.push({ path: ServerPathDto.SNAPSHOT_CSS, type: 'upload', hash: css[i] });
+      changes.push({ path: ServerPathDto.PAGE_CSS, type: 'upload', hash: css[i] });
     }
     return changes;
   };

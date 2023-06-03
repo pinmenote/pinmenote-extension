@@ -223,7 +223,7 @@ export class DocumentMediator {
           await this.addElementSnapshot(element, canvas);
           break;
         }
-        case ObjTypeDto.PageCustomize: {
+        case ObjTypeDto.PageAlter: {
           element.setAttribute('contenteditable', 'true');
           element.focus();
           break;

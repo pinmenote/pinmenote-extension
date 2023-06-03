@@ -82,7 +82,7 @@ export class ContentMessageHandler {
         }
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
-      case BusMessageType.POPUP_PAGE_CUSTOMIZE_START:
+      case BusMessageType.POPUP_PAGE_ALTER_START:
       case BusMessageType.POPUP_PIN_START:
         if (this.href !== msg.data.url.href) {
           // fnConsoleLog('SKIP', href);
