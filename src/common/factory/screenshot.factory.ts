@@ -35,11 +35,11 @@ export class ScreenshotFactory {
           resolve(screenshot);
         }
       );
-      this.sendGetPinTakeScreenshot(reject, url);
+      this.sendTakeScreenshot(reject, url);
     });
   };
 
-  private static sendGetPinTakeScreenshot = (reject: (value: string) => void, url?: ObjUrlDto) => {
+  private static sendTakeScreenshot = (reject: (value: string) => void, url?: ObjUrlDto) => {
     BrowserApi.sendRuntimeMessage<ObjUrlDto | undefined>({
       type: BusMessageType.CONTENT_TAKE_SCREENSHOT,
       data: url
@@ -48,7 +48,7 @@ export class ScreenshotFactory {
         // We handle it above, inside dispatcher
       })
       .catch((e) => {
-        fnConsoleLog('PROBLEM sendGetPinTakeScreenshot !!!', e);
+        fnConsoleLog('ScreenshotFactory->sendTakeScreenshot->error', e);
         reject('PROBLEM !!!');
       });
   };

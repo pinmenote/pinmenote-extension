@@ -24,6 +24,7 @@ import { ContentPageSegmentSaveCommand } from './content-page-segment-save.comma
 import { ContentPageSegmentSaveImageCommand } from './content-page-segment-save-image.command';
 import { HtmlSkipAttribute } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { PinStore } from '../../store/pin.store';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
@@ -42,12 +43,22 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
 
   async execute(): Promise<PageSnapshotDto> {
     PinStore.each((v) => v.hide());
-    const title =
-      this.element === document.body
-        ? document.title || this.url.origin || this.element.innerText.substring(0, 100)
-        : this.element.innerText.substring(0, 100) || document.title || this.url.origin;
+    let title = '';
+    let rect: ObjRectangleDto;
+    if (this.element === document.body) {
+      title = document.title || this.url.origin || this.element.innerText.substring(0, 100);
+      // document.body can have 0 height and display page correctly - looking at you youtube
+      rect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
+    } else {
+      title = this.element.innerText.substring(0, 100) || document.title || this.url.origin;
+      rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
+    }
 
-    const rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
+    const screenshot = await ScreenshotFactory.takeScreenshot(
+      { settings: this.settings, document, window },
+      rect,
+      this.url
+    );
 
     let words: string[] = [];
     let contentHash = undefined;
@@ -59,12 +70,6 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     } else if (this.element instanceof HTMLImageElement) {
       contentHash = await new ContentPageSegmentSaveImageCommand(this.element).execute();
     }
-
-    const screenshot = await ScreenshotFactory.takeScreenshot(
-      { settings: this.settings, document, window },
-      rect,
-      this.url
-    );
 
     const info: Partial<PageSnapshotInfoDto> = {
       title,

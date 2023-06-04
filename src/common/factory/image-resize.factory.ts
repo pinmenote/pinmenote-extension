@@ -16,6 +16,7 @@
  */
 import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
 import { PinDocument } from '../components/pin/model/pin-view.model';
+import { fnConsoleLog } from '../fn/fn-console';
 
 export class ImageResizeFactory {
   static resize = (doc: PinDocument, size: ObjRectangleDto, b64image: string): Promise<string> => {
@@ -60,6 +61,7 @@ export class ImageResizeFactory {
         img.onerror = null;
         img.onload = null;
         reject(error);
+        fnConsoleLog('ImageResizeFactory->resize', error);
       };
       img.src = b64image;
     });
