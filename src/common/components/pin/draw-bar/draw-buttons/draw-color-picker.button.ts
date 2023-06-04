@@ -50,7 +50,7 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
 
   updateColor(attr: string, color: string) {
     (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute(attr, color);
-    this.model.draw.color = color;
+    if (attr === 'fill') this.model.draw.color = color;
   }
 
   cleanup(): void {
@@ -69,10 +69,10 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
     this.visible = !this.visible;
     if (this.visible) {
       this.picker.show();
-      this.updateColor('stroke', '#ff0000');
+      this.updateColor('stroke', this.model.draw.color);
     } else {
       this.picker.hide();
-      this.updateColor('stroke', '#000000');
+      this.updateColor('stroke', this.model.draw.color);
     }
   };
 }
