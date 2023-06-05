@@ -18,6 +18,7 @@ import { COLOR_DEFAULT_BORDER, DEFAULT_BORDER_RADIUS } from '../../../../common/
 import { CalendarDateType, CalendarEvent } from '../calendar.model';
 import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import Button from '@mui/material/Button';
+import { DATE_YEAR_SECOND } from '../../../../common/date-format.constraints';
 import IconButton from '@mui/material/IconButton';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import { StyledInput } from '../../../../common/components/react/styled.input';
@@ -35,11 +36,9 @@ interface CalendarAddDescriptionComponentProps {
   changeTypeCallback: (type: CalendarDateType) => void;
 }
 
-const dtFormat = 'YYYY-MM-DD HH:mm:ss';
-
 export const CalendarAddDescriptionComponent: FunctionComponent<CalendarAddDescriptionComponentProps> = (props) => {
-  const [startDate, setStartDate] = useState<string>(dayjs(props.event.startDate).format(dtFormat));
-  const [endDate, setEndDate] = useState<string>(dayjs(props.event.endDate).format(dtFormat));
+  const [startDate, setStartDate] = useState<string>(dayjs(props.event.startDate).format(DATE_YEAR_SECOND));
+  const [endDate, setEndDate] = useState<string>(dayjs(props.event.endDate).format(DATE_YEAR_SECOND));
   const [title, setTitle] = useState<string>(props.event.title);
   const [description, setDescription] = useState<string>(props.event.description);
 
@@ -57,8 +56,8 @@ export const CalendarAddDescriptionComponent: FunctionComponent<CalendarAddDescr
 
   const handleEventAdd = () => {
     // TODO save event
-    const sd = dayjs(startDate, dtFormat);
-    const ed = dayjs(endDate, dtFormat);
+    const sd = dayjs(startDate, DATE_YEAR_SECOND);
+    const ed = dayjs(endDate, DATE_YEAR_SECOND);
     props.event.startDate = sd.toDate();
     props.event.endDate = ed.toDate();
     props.addCallback(props.event);

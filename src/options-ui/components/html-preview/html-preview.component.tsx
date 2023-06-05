@@ -43,11 +43,6 @@ import { fnParse5 } from '../../../common/fn/fn-parse5';
 import { fnSleep } from '../../../common/fn/fn-sleep';
 import { fnUid } from '../../../common/fn/fn-uid';
 
-const fnByteToMb = (value?: number): number => {
-  if (!value) return 0;
-  return Math.floor(value / 10000) / 100;
-};
-
 interface Props {
   visible: boolean;
 }
@@ -57,7 +52,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   const htmlRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const urlRef = useRef<HTMLDivElement>(null);
-  const sizeRef = useRef<HTMLDivElement>(null);
 
   const [visible, setVisible] = useState<boolean>(props.visible);
 
@@ -81,7 +75,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const render = (id: number) => {
     if (titleRef.current) titleRef.current.innerHTML = '';
-    if (sizeRef.current) sizeRef.current.innerHTML = '';
     if (urlRef.current) urlRef.current.innerHTML = '';
     setTimeout(async () => {
       setIsPreLoading(true);
@@ -174,7 +167,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const renderCanvas = (snapshot: PageSnapshotDto, content?: SegmentPageDto) => {
-    renderHeader(snapshot, 0);
+    renderHeader(snapshot);
 
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
@@ -200,8 +193,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const renderSnapshot = async (snapshot: PageSnapshotDto, segment?: SegmentPageDto): Promise<void> => {
-    let size = 0;
-    renderHeader(snapshot, size);
+    renderHeader(snapshot);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
     if (!segment) return;
@@ -228,7 +220,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         const elArray = Array.from(elList);
         try {
           for (const el of elArray) {
-            size += await renderAsset(hash, el);
+            await renderAsset(hash, el);
           }
         } catch (e) {
           fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, hash);
@@ -239,10 +231,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const renderHeader = (snapshot: PageSnapshotDto, size?: number): void => {
-    if (sizeRef.current) {
-      sizeRef.current.innerHTML = `${fnByteToMb(size)} MB`;
-    }
+  const renderHeader = (snapshot: PageSnapshotDto): void => {
     if (titleRef.current) {
       titleRef.current.innerHTML = snapshot.info.title;
     }
@@ -257,11 +246,11 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     doc.close();
   };
 
-  const renderAsset = async (hash: string, el: Element): Promise<number> => {
+  const renderAsset = async (hash: string, el: Element): Promise<void> => {
     const dto = await new PageSegmentGetCommand(hash).execute();
     if (!dto) {
       fnConsoleLog('asyncEmbedContent->missing->hash', hash);
-      return 0;
+      return;
     }
     await fnSleep(2);
     if (dto.type === SegmentTypeDto.IFRAME) {
@@ -290,7 +279,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       const content = dto.content as SegmentShadowDto;
       renderShadow(el, content);
     }
-    return 0;
   };
 
   const renderShadow = (el: Element, content: SegmentShadowDto) => {
@@ -356,7 +344,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           <div style={{ display: isLoading ? 'flex' : 'none' }}>
             <CircularProgress />
           </div>
-          <div style={{ fontSize: '2em', marginLeft: '10px' }} ref={sizeRef}></div>
           <IconButton onClick={handleDownload}>
             <DownloadIcon />
           </IconButton>

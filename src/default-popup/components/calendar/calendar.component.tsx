@@ -22,6 +22,7 @@ import { CalendarAddHourComponent } from './add/calendar-add-hour.component';
 import { CalendarAddMinuteComponent } from './add/calendar-add-minute.component';
 import { CalendarAddRepeatComponent } from './add/calendar-add-repeat.component';
 import { CalendarEventListComponent } from './calendar-event-list.component';
+import { DATE_YEAR_SECOND } from '../../../common/date-format.constraints';
 import dayjs from 'dayjs';
 
 enum CurrentView {
@@ -111,8 +112,8 @@ export const CalendarComponent: FunctionComponent = () => {
 
   const handleAddEvent = (value: CalendarEvent) => {
     // TODO reload event list
-    const sd = dayjs(value.startDate).format('YYYY-MM-DD HH:mm:ss');
-    const ed = dayjs(value.endDate).format('YYYY-MM-DD HH:mm:ss');
+    const sd = dayjs(value.startDate).format(DATE_YEAR_SECOND);
+    const ed = dayjs(value.endDate).format(DATE_YEAR_SECOND);
     alert(`Add ${sd} ${ed} \n repeat ${value.repeat} ${value.title} ${value.description}`);
     setState(CurrentView.EVENT_LIST);
   };
