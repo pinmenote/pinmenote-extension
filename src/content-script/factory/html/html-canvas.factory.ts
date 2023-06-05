@@ -31,6 +31,8 @@ const findContext = (ref: HTMLCanvasElement): { ctx: RenderingContext | null; na
   return { ctx, name };
 };
 
+const BIGNUM = 1_000_000;
+
 export class HtmlCanvasFactory {
   static computeCanvas = (params: HtmlComputeParams): HtmlIntermediateData => {
     fnConsoleLog('HtmlFactory->computeCanvas');
@@ -78,12 +80,10 @@ export class HtmlCanvasFactory {
     let width = ref.getAttribute('width');
     let height = ref.getAttribute('height');
 
-    if (!width || !height) {
-      const rect1 = ref.parentElement?.getBoundingClientRect();
-      const rect2 = ref.getBoundingClientRect();
-      width = Math.max(rect1?.width || 0, rect2.width).toString() || '100%';
-      height = Math.max(rect1?.height || 0, rect2.height).toString() || '100%';
-    }
+    const rect1 = ref.parentElement?.getBoundingClientRect();
+    const rect2 = ref.getBoundingClientRect();
+    width = Math.min(width ? parseInt(width) : BIGNUM, rect1?.width || BIGNUM, rect2.width).toString() || '100%';
+    height = Math.min(height ? parseInt(height) : BIGNUM, rect1?.height || BIGNUM, rect2.height).toString() || '100%';
 
     const hash = fnSha256(imgData);
 
