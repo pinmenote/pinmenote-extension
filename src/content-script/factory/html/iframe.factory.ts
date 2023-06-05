@@ -35,7 +35,7 @@ export class IFrameFactory {
     const msg = await this.fetchIframe(params);
     if (!msg) return HtmlAttrFactory.EMPTY_RESULT;
     const width = params.ref.getAttribute('width') || '100%';
-    const height = params.ref.getAttribute('width') || '100%';
+    const height = params.ref.getAttribute('height') || '100%';
     const iframeAttr = Array.from(params.ref.attributes)
       .map((a) => {
         if (['width', 'height', 'src'].includes(a.nodeName)) return '';
