@@ -21,6 +21,9 @@ import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 type CtxName = '2d' | 'webgl' | 'webgl2';
 
+const BIGNUM = 1_000_000;
+const ONEPX = 'data:image/gif;base64,R0lGODlhAQABAHAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+
 const findContext = (ref: HTMLCanvasElement): { ctx: RenderingContext | null; name: CtxName } => {
   let name: CtxName = '2d';
   let ctx: RenderingContext | null = ref.getContext(name);
@@ -30,8 +33,6 @@ const findContext = (ref: HTMLCanvasElement): { ctx: RenderingContext | null; na
   ctx = ref.getContext(name, { preserveDrawingBuffer: true });
   return { ctx, name };
 };
-
-const BIGNUM = 1_000_000;
 
 export class HtmlCanvasFactory {
   static computeCanvas = (params: HtmlComputeParams): HtmlIntermediateData => {
@@ -53,25 +54,7 @@ export class HtmlCanvasFactory {
             fnConsoleLog('HtmlFactory->computeCanvas->preserveDrawingBuffer', true);
           } else {
             fnConsoleLog('HtmlFactory->computeCanvas->preserveDrawingBuffer', false);
-            /* TODO capture webgl texture without preserveDrawingBuffer
-                        const texture = gl.createTexture();
-                        gl.bindTexture(gl.TEXTURE_2D, texture);
-                        const empty1x1 = new Uint8Array([1, 1, 1, 1]);
-                        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, empty1x1);
-                        gl.framebufferTexture2D(
-                            gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-                            gl.TEXTURE_2D, texture, 0);
-                        if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
-
-                        }*/
-            const can = document.createElement('canvas');
-            const empty1x1 = new Uint8Array([1, 1, 1, 1]);
-            const img = new ImageData(Uint8ClampedArray.from(empty1x1), 1, 1);
-            const ctx = can.getContext('2d');
-            if (ctx) {
-              ctx.putImageData(img, 0, 0);
-            }
-            imgData = can.toDataURL('image/png', 80);
+            imgData = ONEPX;
           }
         }
       }

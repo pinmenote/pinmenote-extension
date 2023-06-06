@@ -18,6 +18,8 @@ import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model'
 import { SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
+const BIGNUM = 1_000_000;
+
 export class HtmlVideoFactory {
   static captureVideo(params: HtmlComputeParams): HtmlIntermediateData {
     const ref = params.ref as HTMLVideoElement;
@@ -30,17 +32,19 @@ export class HtmlVideoFactory {
     if (ctx) ctx.drawImage(ref, 0, 0);
 
     imgData = can.toDataURL('image/png', 80);
+    // @vane not img because we break pin xpath
+    let html = `<video `;
+    if (imgData !== 'data:,') html += `poster="${imgData}" `;
 
     let width = ref.getAttribute('width');
     let height = ref.getAttribute('height');
 
-    if (!width || !height) {
-      const rect = ref.getBoundingClientRect();
-      width = rect.width.toString() || '100%';
-      height = rect.height.toString() || '100%';
-    }
-    // @vane not img because we break pin xpath
-    let html = `<video poster="${imgData}" width="${width}" height="${height}" `;
+    const rect = ref.getBoundingClientRect();
+
+    width = Math.min(width ? parseInt(width) : BIGNUM, rect.width).toString() || '100%';
+    height = Math.min(height ? parseInt(height) : BIGNUM, rect.height).toString() || '100%';
+
+    html += `width="${width}" height="${height}" `;
 
     const style = ref.getAttribute('style') || '';
     if (style) html += `style="${style}" `;
