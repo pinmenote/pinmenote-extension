@@ -274,7 +274,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       const img = el as HTMLImageElement;
       img.src = (dto.content as SegmentImgDto).src;
       if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
-        img.style.maxWidth = `100%`;
+        img.style.width = `100%`;
     } else if (dto.type === SegmentTypeDto.SHADOW) {
       const content = dto.content as SegmentShadowDto;
       renderShadow(el, content);
