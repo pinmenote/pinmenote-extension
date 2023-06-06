@@ -93,9 +93,12 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
     if (!words) return;
 
     const distanceWord: DistanceWord[] = [];
+    let minDistance = 1_000_000;
 
     for (const word of words) {
-      distanceWord.push({ word, distance: distance(search, word) });
+      const d = distance(search, word);
+      minDistance = Math.min(d, minDistance);
+      distanceWord.push({ word, distance: d });
     }
     distanceWord.sort((a, b) => {
       if (a.distance > b.distance) {
@@ -110,7 +113,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
 
     for (const dw of distanceWord) {
       const wordKey = `${ObjectStoreKeys.SEARCH_INDEX}:${dw.word}`;
-      if (dw.distance > 3) continue;
+      if (dw.distance > minDistance + 3) continue;
       const ids = await BrowserStorageWrapper.get<number[] | undefined>(wordKey);
       if (!ids) continue;
       distances.push({ distance: dw.distance, ids: ids.reverse(), word: dw.word });
