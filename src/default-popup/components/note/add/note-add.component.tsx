@@ -22,7 +22,7 @@ import { NoteAddCommand } from '../../../../common/command/note/note-add.command
 import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { StyledInput } from '../../../../common/components/react/styled.input';
-import { WordIndex } from '../../../../common/text/index/word.index';
+import { WordIndex } from '../../../../common/text/word.index';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnSha256 } from '../../../../common/fn/fn-sha256';

@@ -25,7 +25,7 @@ import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PageSnapshotDto } from '../../model/obj/page-snapshot.dto';
-import { WordIndex } from '../../text/index/word.index';
+import { WordIndex } from '../../text/word.index';
 
 export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
   constructor(private dto: PageSnapshotDto, private type: ObjTypeDto) {}

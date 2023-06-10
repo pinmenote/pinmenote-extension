@@ -20,7 +20,7 @@ import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { WordIndex } from '../../text/index/word.index';
+import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
 import { fnSha256 } from '../../fn/fn-sha256';
 

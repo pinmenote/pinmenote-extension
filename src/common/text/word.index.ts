@@ -14,27 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
-import { ConstraintsWord } from './constraints.word';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
+import { ObjectStoreKeys } from '../keys/object.store.keys';
+
+const wordRegex = /[\w\d]+/g;
 
 export class WordIndex {
   static toWordList(sentence: string): string[] {
-    const words: string[] = [];
-    let word = '';
-    let key = '';
-    for (let i = 0; i < sentence.length; i++) {
-      key = sentence.charAt(i).toLowerCase();
-      if (ConstraintsWord.KEY_MAP[key]) key = ConstraintsWord.KEY_MAP[key];
-      if (ConstraintsWord.PUNCT_CHARS.has(key)) {
-        if (word.trim().length > 0) words.push(word.trim());
-        word = '';
-        continue;
-      }
-      word += key;
+    const words = sentence.match(wordRegex) || [];
+    const out = new Set<string>();
+    for (const word of words) {
+      out.add(word.toLowerCase());
     }
-    words.push(word);
-    return words;
+    return Array.from(out).sort();
   }
 
   static indexFlat = async (words: string[], id: number): Promise<void> => {

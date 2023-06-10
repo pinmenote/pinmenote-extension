@@ -114,7 +114,7 @@ export class BrowserApi {
       /* eslint-disable @typescript-eslint/no-unsafe-call */
       return el.openOrClosedShadowRoot();
     } catch (e) {
-      fnConsoleLog('BrowserApiWrapper->shadowRoot->ERROR', el);
+      fnConsoleLog('BrowserApiWrapper->shadowRoot->ERROR', el, e);
     }
     return null;
   }

@@ -25,7 +25,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PageSegmentGetCommand } from './segment/page-segment-get.command';
 import { PageSegmentRemoveListCommand } from './segment/page-segment-remove-list.command';
 import { SegmentPageDto } from '../../model/obj/page-segment.dto';
-import { WordIndex } from '../../text/index/word.index';
+import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {

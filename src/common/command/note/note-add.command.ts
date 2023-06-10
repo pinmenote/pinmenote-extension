@@ -22,7 +22,7 @@ import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { WordIndex } from '../../text/index/word.index';
+import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class NoteAddCommand implements ICommand<Promise<void>> {

@@ -16,7 +16,7 @@
  */
 import { DetectLanguage } from '../../common/text/detect-language';
 import { StopWordRemove } from '../../common/text/stop-word/stop-word-remove';
-import { WordIndex } from '../../common/text/index/word.index';
+import { WordIndex } from '../../common/text/word.index';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class AutoTagMediator {
@@ -35,28 +35,20 @@ export class AutoTagMediator {
   );
 
   static computeTags = (element: HTMLElement): string[] => {
-    let keywords: string[];
+    let sentence: string;
     if (element instanceof HTMLBodyElement) {
-      keywords = this.captureKeywordData();
+      sentence = this.captureKeywordData();
     } else {
       const link = this.getLink();
-      keywords = [...element.innerText.split(' '), document.title, ...link];
+      sentence = `${link} ${element.innerText} ${document.title}`;
     }
-    const tagList = this.calculateTags(keywords);
+    const tagList = this.calculateTags(sentence);
     fnConsoleLog('CLEAN WORD LIST', tagList);
     return tagList;
   };
 
-  private static calculateTags(keywords: string[]): string[] {
-    let tagList = [];
-    for (const keyword of keywords) {
-      const words = WordIndex.toWordList(keyword);
-      for (const word of words) {
-        if (word.length <= 1) continue;
-        tagList.push(word);
-      }
-    }
-    tagList = Array.from(new Set(tagList));
+  private static calculateTags(sentence: string): string[] {
+    let tagList = WordIndex.toWordList(sentence);
 
     const language = DetectLanguage.detect(document.body.innerText);
     fnConsoleLog('LANGUAGE', language, 'WITH STOPWORDS', tagList);
@@ -66,14 +58,14 @@ export class AutoTagMediator {
     return tagList;
   }
 
-  private static captureKeywordData(): string[] {
+  private static captureKeywordData(): string {
     const link = this.getLink();
-    return Array.from(
-      new Set([...Array.from(this.captureMeta()), ...Array.from(this.captureLdJson()), document.title, ...link])
-    );
+    const meta = this.captureMeta();
+    const ldJson = this.captureLdJson();
+    return `${link} ${meta} ${ldJson} ${document.title}`;
   }
 
-  private static captureMeta(): Set<string> {
+  private static captureMeta(): string {
     const metaList = Array.from(document.querySelectorAll('meta[property], meta[name]'));
     const out = new Set<string>();
     for (const meta of metaList) {
@@ -87,10 +79,10 @@ export class AutoTagMediator {
         out.add(content.replaceAll(this.REMOVE_LINK_REGEX, ''));
       }
     }
-    return out;
+    return Array.from(out).join(' ');
   }
 
-  private static captureLdJson(): Set<string> {
+  private static captureLdJson(): string {
     const out = new Set<string>();
     const ldJsonScript = Array.from(document.getElementsByTagName('script')).filter(
       (s) => s.getAttribute('type') && s.getAttribute('type') == 'application/ld+json'
@@ -107,16 +99,17 @@ export class AutoTagMediator {
         fnConsoleLog('captureLdJson->Error', e);
       }
     }
-    return out;
+    return Array.from(out).join(' ');
   }
 
-  private static getLink(): string[] {
+  private static getLink(): string {
     // filter <3 letters - this will deal with prefix iso2 language and most of the suffixes
     // not best but should mostly work
-    const hostname = window.location.host.split('.').filter((a) => a.length > 3);
-    return [
-      ...hostname,
-      ...decodeURI(window.location.pathname.replaceAll('.html', '').replaceAll('-', '/')).split('/')
-    ];
+    const hostname = window.location.host
+      .split('.')
+      .filter((a) => a.length > 3)
+      .join(' ');
+    const uri = decodeURI(window.location.pathname.replaceAll('.html', ''));
+    return `${hostname} ${uri}`;
   }
 }
