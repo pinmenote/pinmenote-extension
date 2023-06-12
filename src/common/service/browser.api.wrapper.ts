@@ -129,7 +129,7 @@ export class BrowserApi {
           try {
             this.tabs.sendMessage(currentTab.id, msg, resolve);
           } catch (e) {
-            fnConsoleLog('Error sendTabMessage', msg, e);
+            fnConsoleLog('Error sendTabMessage', msg, e, 'lastError', BrowserApi.runtime.lastError);
             reject(e);
           }
         }
@@ -145,7 +145,7 @@ export class BrowserApi {
           resolve(ack);
         });
       } catch (e) {
-        fnConsoleLog('runtime.lastError', BrowserApi.runtime.lastError);
+        fnConsoleLog('runtime.lastError', msg, e, 'lastError', BrowserApi.runtime.lastError);
         reject(e);
       }
     });

@@ -35,17 +35,34 @@ export class AutoTagMediator {
   );
 
   static computeTags = (element: HTMLElement): string[] => {
-    let sentence: string;
+    let tagList: string[] = [];
     if (element instanceof HTMLBodyElement) {
-      sentence = this.captureKeywordData();
+      const sentence = this.captureKeywordData();
+      const keywords = this.calculateTags(sentence);
+      tagList = this.calculateNeighbours(keywords);
     } else {
       const link = this.getLink();
-      sentence = `${link} ${element.innerText} ${document.title}`;
+      const sentence = `${link} ${element.innerText} ${document.title}`;
+      tagList = this.calculateTags(sentence);
     }
-    const tagList = this.calculateTags(sentence);
     fnConsoleLog('CLEAN WORD LIST', tagList);
     return tagList;
   };
+
+  private static calculateNeighbours(keywords: string[]): string[] {
+    const tagList = WordIndex.toWordList(document.body.innerText);
+    const keySet = new Set<string>(keywords);
+    for (let i = 1; i < tagList.length - 1; i++) {
+      const tag = tagList[i];
+      if (keySet.has(tag)) {
+        const prev = tagList[i - 1];
+        if (prev.length > 3) keySet.add(prev);
+        const next = tagList[i + 1];
+        if (next.length > 3) keySet.add(next);
+      }
+    }
+    return Array.from(keySet).sort();
+  }
 
   private static calculateTags(sentence: string): string[] {
     let tagList = WordIndex.toWordList(sentence);

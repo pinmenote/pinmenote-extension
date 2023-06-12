@@ -37,6 +37,7 @@ import Tabs from '@mui/material/Tabs';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { createRoot } from 'react-dom/client';
 import { environmentConfig } from '../common/environment';
+import { fnConsoleLog } from '../common/fn/fn-console';
 
 enum PanelEnum {
   MAIN,
@@ -65,7 +66,12 @@ const ExtensionPopupApp: React.FC = () => {
     LogManager.log('ExtensionPopupApp->init !!!');
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     (async () => {
-      await PopupMessageHandler.init();
+      try {
+        await PopupMessageHandler.init();
+      } catch (e) {
+        LogManager.log(`PopupMessageHandler->init->error`);
+        fnConsoleLog('Error', e);
+      }
     })();
   }, []);
 

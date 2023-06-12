@@ -30,7 +30,6 @@ export class PopupMessageHandler {
     await PopupTokenStore.init();
 
     this.popupInitListener();
-
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_OPEN });
   }
 
