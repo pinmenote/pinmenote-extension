@@ -17,7 +17,6 @@
 import { ObjNoteDto } from './obj-note.dto';
 import { ObjPageDto } from './obj-page.dto';
 import { ObjPinDto } from './obj-pin.dto';
-import { ObjServerDto } from './obj-server.dto';
 import { ObjTaskDto } from './obj-task.dto';
 
 export const OBJ_DTO_VERSION = 1;
@@ -50,7 +49,6 @@ export type ObjPageDataDto = ObjPinDto | ObjPageDto | ObjNoteDto | ObjTaskDto;
 
 export interface ObjDto<T = ObjDataDto> {
   id: number;
-  server?: ObjServerDto;
   version: number;
   type: ObjTypeDto;
   updatedAt: number;

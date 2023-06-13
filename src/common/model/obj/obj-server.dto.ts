@@ -38,16 +38,8 @@ export interface ServerObjDto {
   data: string;
 }
 
-export enum ObjSyncStatusDto {
-  DOWNLOAD = 'DOWNLOAD', // receiving changes from server
-  UPLOAD = 'UPLOAD', // sending changes to server
-  GATHER = 'GATHER', // gathering changes to send
-  OK = 'OK'
-}
-
 export interface ObjServerDto {
   id?: number;
-  status: ObjSyncStatusDto;
   changes: ServerChangeDto[];
 }
 

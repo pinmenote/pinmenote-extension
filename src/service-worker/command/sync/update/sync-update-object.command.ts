@@ -14,17 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjServerDto, ObjStatusDto, ObjSyncStatusDto } from '../../../../common/model/obj/obj-server.dto';
-import { ApiStoreAddObjectCommand } from '../../api/store/api-store-add-object.command';
 import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/model/obj-index.model';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjUpdateIndexDelCommand } from '../../../../common/command/obj/date-index/obj-update-index-del.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { SyncGatherChangesCommand } from './sync-gather-changes.command';
-import { SyncSendChangesCommand } from './sync-send-changes.command';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
   constructor(private index: ObjDateIndex) {}
@@ -38,58 +33,6 @@ export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
       return false;
     }
 
-    // Gather data to sync
-    if (!obj.server) {
-      obj.server = await this.assignServerId(obj);
-      await BrowserStorageWrapper.set<ObjDto>(key, obj);
-    }
-
-    // got some error so return false
-    if (!obj.server) return false;
-
-    // skip object that is already updated
-    if (obj.server.status === ObjSyncStatusDto.OK) {
-      return true;
-    }
-
-    // trying to gather changes
-    if (obj.server.status === ObjSyncStatusDto.GATHER) {
-      obj.server.changes = await new SyncGatherChangesCommand(obj).execute();
-      obj.server.status = ObjSyncStatusDto.UPLOAD;
-      await BrowserStorageWrapper.set<ObjDto>(key, obj);
-    }
-
-    // trying to upload changes
-    if (obj.server.status === ObjSyncStatusDto.UPLOAD) {
-      await new SyncSendChangesCommand(obj).execute();
-      obj.server.status = ObjSyncStatusDto.OK;
-      await BrowserStorageWrapper.set<ObjDto>(key, obj);
-    }
-
     return true;
   }
-
-  private assignServerId = async (obj: any): Promise<ObjServerDto | undefined> => {
-    // copy data
-    const data = obj.data;
-    const local = obj.local;
-    // temporary remove data from obj
-    delete obj['data'];
-    delete obj['local'];
-
-    const req = await new ApiStoreAddObjectCommand(obj).execute();
-
-    // bring back data
-    obj.data = data;
-    obj.local = local;
-
-    if (!req) return;
-    const res = req.res;
-    if (req.status !== 201 && res.result !== ObjStatusDto.OK) {
-      fnConsoleLog('SyncUpdateObjectCommand->resp', req, this.index.id, obj);
-      return;
-    }
-
-    return { id: res.serverId, changes: [], status: ObjSyncStatusDto.GATHER };
-  };
 }

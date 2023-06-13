@@ -37,14 +37,15 @@ export class SyncClearServerCommand implements ICommand<Promise<void>> {
 
   private async clearList(list: number[]): Promise<void> {
     for (const id of list) {
-      LogManager.log(`SyncClearServerCommand->clearList ${id}`);
       const obj = await new ObjGetCommand<ObjDataDto>(id).execute();
       if (!obj) {
         LogManager.log(`Problem reading object ${id}`);
         continue;
       }
-      obj.server = undefined;
-      await this.setObject(id, obj);
+      if ((obj as any).server) {
+        LogManager.log(`SyncClearServerCommand->clearList ${id}`);
+        await this.setObject(id, obj);
+      }
     }
   }
 
