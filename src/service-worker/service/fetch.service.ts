@@ -78,21 +78,39 @@ export class FetchService {
   }
 
   static async get<T>(url: string, authenticate = false, type = ResponseType.JSON): Promise<FetchResponse<T>> {
-    const ctrl = new AbortController();
-    setTimeout(() => {
-      fnConsoleLog('FetchService->get->abort');
-      ctrl.abort();
-    }, 15000);
-
-    const requestInit = { method: 'GET', signal: ctrl.signal };
-
-    if (authenticate) {
-      const headers = await ApiHelper.getAuthHeaders();
-      return await this.refetch<T>(url, { ...requestInit, headers }, type);
-    }
-    const req = await fetch(url, requestInit);
-    const res = await this.getResponse(req, type);
-    return { url, ok: req.ok, status: req.status, type, res };
+    // No clue why AbortController abort doesn't work for Steve Jobs - probably he is still there aborting flash bandwagon
+    // https://web.archive.org/web/20100501010616/http://www.apple.com/hotnews/thoughts-on-flash/
+    return new Promise((resolve, reject) => {
+      fnConsoleLog('FetchService->get', url);
+      const timeout = setTimeout(() => {
+        fnConsoleLog('FetchService->timeout', url);
+        reject(`Timeout ${url}`);
+      }, 15000);
+      if (authenticate) {
+        ApiHelper.getAuthHeaders()
+          .then((headers) => {
+            this.refetch<T>(url, { method: 'GET', headers }, type)
+              .then((res) => {
+                clearTimeout(timeout);
+                resolve(res);
+              })
+              .catch((e) => fnConsoleLog('Error FetchService->refetch', e));
+          })
+          .catch((e) => fnConsoleLog('Error FetchService->getAuthHeaders', e));
+      }
+      fetch(url, { method: 'GET' })
+        .then((req) => {
+          // This will be stuck on limbo state cause of Steve Jobs haunting on his thoughts
+          this.getResponse(req, type)
+            .then((res) => {
+              fnConsoleLog('clearTimeout', url);
+              clearTimeout(timeout);
+              resolve({ url, ok: req.ok, status: req.status, type, res });
+            })
+            .catch((e) => fnConsoleLog('Error FetchService->getResponse', e));
+        })
+        .catch((e) => fnConsoleLog('Error FetchService->fetch', e));
+    });
   }
 
   private static getResponse = async (req: Response, type: ResponseType) => {

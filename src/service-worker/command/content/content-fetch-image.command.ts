@@ -27,9 +27,10 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest) {}
   async execute(): Promise<void> {
     try {
-      const blob = await FetchService.get<Blob>(this.req.url, false, ResponseType.BLOB);
-      const data = await UrlFactory.toDataUri(blob.res);
-      let ok = blob.ok;
+      // fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
+      const req = await FetchService.get<Blob>(this.req.url, false, ResponseType.BLOB);
+      const data = await UrlFactory.toDataUri(req.res);
+      let ok = req.ok;
       if (
         data.startsWith('data:text/html') ||
         data.startsWith('data:text/javascript') ||
@@ -40,10 +41,10 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
       }
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,
-        data: { ...blob, res: data, ok }
+        data: { res: data, ok, url: req.url, status: req.status, type: req.type }
       });
     } catch (e) {
-      fnConsoleLog('ERROR', e, this.req.url);
+      fnConsoleLog('ContentFetchImageCommand->ERROR', e, this.req.url);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,
         data: {

@@ -26,10 +26,20 @@ export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchCssRequest) {}
   async execute(): Promise<void> {
     try {
-      const data = await FetchService.get<string>(this.req.url, false, ResponseType.TEXT);
-      await BrowserApi.sendTabMessage<FetchResponse<string>>({ type: BusMessageType.CONTENT_FETCH_CSS, data });
+      // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url);
+      const req = await FetchService.get<string>(this.req.url, false, ResponseType.TEXT);
+      await BrowserApi.sendTabMessage<FetchResponse<string>>({
+        type: BusMessageType.CONTENT_FETCH_CSS,
+        data: {
+          url: req.url,
+          ok: req.ok,
+          status: req.status,
+          type: req.type,
+          res: req.res
+        }
+      });
     } catch (e) {
-      fnConsoleLog('ERROR', e, this.req.url);
+      fnConsoleLog('ContentFetchCssCommand->ERROR', e, this.req.url);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_CSS,
         data: {

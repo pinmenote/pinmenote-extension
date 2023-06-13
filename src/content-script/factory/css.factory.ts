@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { FetchResponse, ResponseType } from '../../common/model/api.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
-import { FetchResponse } from '../../common/model/api.model';
 import { HtmlComputeParams } from '../model/html.model';
 import { SegmentTypeDto } from '../../common/model/obj/page-segment.dto';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
@@ -44,6 +44,7 @@ export class CssFactory {
 
     for (let i = 0; i < styleSheets.length; i++) {
       const s = styleSheets[i];
+      fnConsoleLog('CssFactory->computeCssContent', i, 'out of', styleSheets.length, '', s.href);
       if (s.href) {
         // skip
         if (params.skipUrlCache.has(s.href)) continue;
@@ -209,7 +210,10 @@ export class CssFactory {
     const urlList = css.match(CSS_URL_REG);
     if (!urlList) return css;
 
-    for (const urlMatch of Array.from(urlList)) {
+    const a = Array.from(urlList);
+    for (let i = 0; i < a.length; i++) {
+      const urlMatch = a[i];
+      fnConsoleLog('CssFactory->fetchUrls', i, 'of', a.length);
       let url = urlMatch.substring(3, urlMatch.length - 1);
 
       url = url.replaceAll(STRIP_URL_IMPORT_REG, '');
@@ -269,15 +273,18 @@ export class CssFactory {
   };
 
   static fetchCss(url: string): Promise<FetchResponse<string>> {
-    // fnConsoleLog('CssFactory->fetchCss', url);
-    return new Promise<FetchResponse<string>>((resolve, reject) => {
-      TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_CSS, (event, key, value) => {
-        // fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
-        if (value.url === url) {
-          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
-          resolve(value);
+    fnConsoleLog('CssFactory->fetchCss', url);
+    return new Promise<FetchResponse<string>>((resolve) => {
+      const fetchKey = TinyEventDispatcher.addListener<FetchResponse<string>>(
+        BusMessageType.CONTENT_FETCH_CSS,
+        (event, key, value) => {
+          // fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
+          if (value.url === url) {
+            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
+            resolve(value);
+          }
         }
-      });
+      );
       BrowserApi.sendRuntimeMessage<FetchCssRequest>({
         type: BusMessageType.CONTENT_FETCH_CSS,
         data: {
@@ -288,7 +295,9 @@ export class CssFactory {
           /* SKIP */
         })
         .catch((e) => {
-          reject(e);
+          fnConsoleLog('Error CssFactory->fetchCss', e);
+          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, fetchKey);
+          resolve({ ok: false, url, res: '', status: 500, type: ResponseType.TEXT });
         });
     });
   }

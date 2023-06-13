@@ -21,37 +21,43 @@ import { FetchImageRequest } from '../model/obj-request.model';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
 import { fnConsoleLog } from './fn-console';
 
+const emptyResponse: Omit<FetchResponse<string>, 'url'> = {
+  ok: false,
+  status: 500,
+  res: '',
+  type: ResponseType.BLOB
+};
+
 export const fnFetchImage = (url: string, skipSize = 0): Promise<FetchResponse<string>> => {
-  return new Promise<FetchResponse<string>>((resolve, reject) => {
+  return new Promise<FetchResponse<string>>((resolve) => {
     if (!url) {
       fnConsoleLog('fnFetchImage->EMPTY_URL !!!');
-      resolve({
-        url,
-        ok: false,
-        status: 500,
-        res: '',
-        type: ResponseType.BLOB
-      });
+      resolve({ url, ...emptyResponse });
       return;
     }
-    TinyEventDispatcher.addListener<FetchResponse<string>>(BusMessageType.CONTENT_FETCH_IMAGE, (event, key, value) => {
-      if (value.url === url) {
-        TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
-        const size = Math.floor(value.res.length / 10000) / 100;
-        if (skipSize > 0 && size > skipSize) {
-          fnConsoleLog(`Skipping image url (${url}) of size ${size}MB exceeding skip size ${skipSize}MB`);
-          resolve({
-            url,
-            ok: false,
-            status: 500,
-            res: '',
-            type: ResponseType.BLOB
-          });
-        } else {
-          resolve(value);
+    const fetchKey = TinyEventDispatcher.addListener<FetchResponse<string>>(
+      BusMessageType.CONTENT_FETCH_IMAGE,
+      (event, key, value) => {
+        // fnConsoleLog('fnFetchImage->CONTENT_FETCH_IMAGE', value.url, url, value.url === url);
+        if (value.url === url) {
+          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
+          const size = Math.floor(value.res.length / 10000) / 100;
+          if (skipSize > 0 && size > skipSize) {
+            fnConsoleLog(`Skipping image url (${url}) of size ${size}MB exceeding skip size ${skipSize}MB`);
+            resolve({
+              url,
+              ok: false,
+              status: 500,
+              res: '',
+              type: ResponseType.BLOB
+            });
+          } else {
+            fnConsoleLog('fnFetchImage->resolve', value.url);
+            resolve(value);
+          }
         }
       }
-    });
+    );
     BrowserApi.sendRuntimeMessage<FetchImageRequest>({
       type: BusMessageType.CONTENT_FETCH_IMAGE,
       data: { url }
@@ -60,7 +66,9 @@ export const fnFetchImage = (url: string, skipSize = 0): Promise<FetchResponse<s
         /* SKIP */
       })
       .catch((e) => {
-        reject(e);
+        TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, fetchKey);
+        fnConsoleLog('fnFetchImage->Error', e);
+        resolve({ url, ...emptyResponse });
       });
   });
 };
