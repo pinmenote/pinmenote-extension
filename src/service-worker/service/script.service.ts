@@ -36,11 +36,11 @@ const reloadContentScript = async (tabId: number): Promise<void> => {
   const scripts = chrome.runtime.getManifest().content_scripts;
   if (!scripts) return;
   try {
-    fnConsoleLog('reloadContentScript', scripts);
-    await insertJsFiles(tabId, scripts[0]?.js);
-    await insertCssFiles(tabId, scripts[0].css);
+    fnConsoleLog('reloadContentScript->js', scripts[0].js, 'css', scripts[0].css);
+    if (scripts[0].js) await insertJsFiles(tabId, scripts[0].js);
+    if (scripts[0].css) await insertCssFiles(tabId, scripts[0].css);
   } catch (e) {
-    fnConsoleLog('Error', e);
+    fnConsoleLog('Error->reloadContentScript', e);
   }
 };
 

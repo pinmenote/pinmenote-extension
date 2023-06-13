@@ -26,6 +26,7 @@ export type BrowserTabObject = chrome.tabs.Tab | browser.tabs.Tab;
 export type BrowserLocalStore = typeof chrome.storage.local | typeof browser.storage.local;
 export type BrowserDownloads = typeof chrome.downloads | typeof browser.downloads;
 export type BrowserAction = typeof chrome.action | typeof browser.browserAction;
+export type BrowserTabChangeInfo = chrome.tabs.TabChangeInfo | browser.tabs._OnUpdatedChangeInfo;
 
 export class BrowserApi {
   private static browserApi: BrowserGlobal;
