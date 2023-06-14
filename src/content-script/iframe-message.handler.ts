@@ -30,7 +30,7 @@ export class IFrameMessageHandler {
   static handleMessage = async (msg: BusMessage<any>, iframe: boolean, uid: string, href?: string): Promise<void> => {
     switch (msg.type) {
       case BusMessageType.IFRAME_INDEX: {
-        if (msg.data.uid !== uid) IFrameStore.registerIframe(msg.data as IFrameIndexMessage, uid);
+        if (msg.data.uid !== uid) IFrameStore.getInstance().registerIframe(msg.data as IFrameIndexMessage, uid);
         break;
       }
       case BusMessageType.IFRAME_INDEX_REGISTER: {

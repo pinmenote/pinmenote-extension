@@ -22,10 +22,10 @@ import {
 } from '../../../common/model/obj/page-snapshot.dto';
 import { ContentPageSegmentSaveCommand } from './content-page-segment-save.command';
 import { ContentPageSegmentSaveImageCommand } from './content-page-segment-save-image.command';
-import { HtmlSkipAttribute } from '../../model/html.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
+import { PageSkipAttribute } from '@pinmenote/page-compute';
 import { PinStore } from '../../store/pin.store';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SettingsConfig } from '../../../common/environment';
@@ -37,7 +37,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     private settings: SettingsConfig,
     private url: ObjUrlDto,
     private element: HTMLElement,
-    private skipAttributes: HtmlSkipAttribute[],
+    private skipAttributes: PageSkipAttribute[],
     private canvas?: PageCanvasDto
   ) {}
 

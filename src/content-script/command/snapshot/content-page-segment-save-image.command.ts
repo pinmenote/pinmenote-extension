@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlImgFactory, SegmentData } from '@pinmenote/page-compute';
 import { PageSegmentDto, SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
-import { HtmlImgFactory } from '../../factory/html/html-img.factory';
+import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -33,9 +35,11 @@ export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<stri
       skipUrlCache: new Set<string>(),
       isPartial: false,
       insideLink: false,
-      contentCallback: () => {
+      contentCallback: async () => {
         /*IGNORE*/
-      }
+      },
+      iframeStore: IFrameStore.getInstance(),
+      skipCssImageSizeMB: ContentSettingsStore.skipCssImageSize
     });
 
     const html = `<img src="${value}" />`;

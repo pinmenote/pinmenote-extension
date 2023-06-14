@@ -14,17 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { PageCompute, SegmentData } from '@pinmenote/page-compute';
 import { PageSegmentDto, SegmentPageDto } from '../../../common/model/obj/page-segment.dto';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { CssFactory } from '../../factory/css.factory';
-import { HtmlFactory } from '../../factory/html/html.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
+import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
-import { fnSha256 } from '../../../common/fn/fn-sha256';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   private savedHash = new Set<string>();
@@ -41,32 +40,12 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       document.body.children.length
     );
 
-    const params = {
-      ref: document.body,
-      depth: this.depth + 1,
-      skipAttributes: [],
-      visitedUrl: {},
-      skipUrlCache: new Set<string>(),
-      skipTagCache: new Set<string>(),
-      isPartial: false,
-      insideLink: false,
-      contentCallback: this.contentCallback
-    };
-
-    const htmlContent = await HtmlFactory.computeHtmlIntermediateData(params);
-    fnConsoleLog('ContentFetchIframeCommand->html->done');
-
-    const css = await CssFactory.computeCssContent(document, params);
-    fnConsoleLog('ContentFetchIframeCommand->css->done');
+    const snapshot = await PageCompute.compute(document.body, this.contentCallback, IFrameStore.getInstance(), []);
 
     const dto: SegmentPageDto = {
-      html: {
-        hash: fnSha256(htmlContent.html),
-        html: htmlContent.html,
-        htmlAttr: HtmlFactory.computeHtmlAttr()
-      },
-      css,
-      assets: Array.from(new Set<string>(htmlContent.assets))
+      html: snapshot.content.html,
+      css: snapshot.content.css,
+      assets: snapshot.content.assets
     };
     const index = fnIframeIndex();
     await BrowserApi.sendRuntimeMessage<IFrameFetchMessage>({
@@ -80,12 +59,12 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     });
   }
 
-  private contentCallback = async (content: PageSegmentDto) => {
+  private contentCallback = async (content: PageSegmentDto | SegmentData) => {
     if (this.savedHash.has(content.hash)) {
       fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
       return;
     }
     this.savedHash.add(content.hash);
-    await new PageSegmentAddCommand(content).execute();
+    await new PageSegmentAddCommand(content as PageSegmentDto).execute();
   };
 }

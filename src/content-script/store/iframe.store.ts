@@ -18,28 +18,35 @@ import { IFrameIndexMessage, IFrameListenerMessage } from '../../common/model/if
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../common/model/bus.model';
 import { DocumentMediator } from '../mediator/document.mediator';
+import { IFrameDataStore } from '@pinmenote/page-compute';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 import { fnIframeIndex } from '../../common/fn/fn-iframe-index';
 
-export class IFrameStore {
+export class IFrameStore implements IFrameDataStore {
+  private static instance: IFrameStore;
   private static iframeMap: { [key: string]: IFrameIndexMessage } = {};
   private static passIndex?: IFrameIndexMessage;
 
-  static registerIframe(value: IFrameIndexMessage, uid: string) {
-    this.iframeMap[value.index] = value;
-    fnConsoleLog('IFrameStore->registerIframe', value.index, value.uid, 'inside', uid);
+  static getInstance(): IFrameStore {
+    if (!this.instance) this.instance = new IFrameStore();
+    return this.instance;
   }
 
-  static findIndex(ref: HTMLIFrameElement): IFrameIndexMessage | undefined {
+  registerIframe = (value: IFrameIndexMessage, uid: string) => {
+    IFrameStore.iframeMap[value.index] = value;
+    fnConsoleLog('IFrameStore->registerIframe', value.index, value.uid, 'inside', uid);
+  };
+
+  findIndex = (ref: HTMLIFrameElement): IFrameIndexMessage | undefined => {
     const myIndex = fnIframeIndex();
     const frames = Array.from(window.frames);
     for (let i = 0; i < frames.length; i++) {
       if (frames[i] === ref.contentWindow) {
-        return this.iframeMap[`${myIndex}.${i}`];
+        return IFrameStore.iframeMap[`${myIndex}.${i}`];
       }
     }
     return undefined;
-  }
+  };
 
   static passListeners(msg: IFrameIndexMessage) {
     this.passIndex = msg;

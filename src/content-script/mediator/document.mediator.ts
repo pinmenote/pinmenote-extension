@@ -20,10 +20,10 @@ import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
 import { ContentPageSnapshotCreateCommand } from '../command/snapshot/content-page-snapshot-create.command';
 import { ContentSettingsStore } from '../store/content-settings.store';
-import { HtmlSkipAttribute } from '../model/html.model';
 import { IFrameIndexMessage } from '../../common/model/iframe-message.model';
 import { IFrameStore } from '../store/iframe.store';
 import { PageCanvasDto } from '../../common/model/obj/page-snapshot.dto';
+import { PageSkipAttribute } from '@pinmenote/page-compute';
 import { PageSnapshotAddCommand } from '../../common/command/snapshot/page-snapshot-add.command';
 import { PinAddCommand } from '../command/pin/pin-add.command';
 import { PinAddFactory } from '../factory/pin-add.factory';
@@ -68,7 +68,7 @@ export class DocumentMediator {
   private static startIframeListeners(ref: HTMLIFrameElement) {
     if (this.startingIframeListeners) return;
     this.startingIframeListeners = true;
-    const msg = IFrameStore.findIndex(ref);
+    const msg = IFrameStore.getInstance().findIndex(ref);
     if (!msg) {
       this.startingIframeListeners = false;
       return;
@@ -331,7 +331,7 @@ export class DocumentMediator {
     await fnSleep(100);
   };
 
-  private static showPreloader = (): HtmlSkipAttribute => {
+  private static showPreloader = (): PageSkipAttribute => {
     const key = `data-${fnUid()}`;
     this.preloader.innerHTML = CIRCLE_PRELOADER_SVG;
     this.preloader.setAttribute(key, 'true');
