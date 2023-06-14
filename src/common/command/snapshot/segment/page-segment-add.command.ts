@@ -17,14 +17,14 @@
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { PageSegmentDto } from '../../../model/obj/page-segment.dto';
+import { SegmentData } from '@pinmenote/page-compute';
 
 export class PageSegmentAddCommand<T> implements ICommand<Promise<void>> {
-  constructor(private content: PageSegmentDto<T>) {}
+  constructor(private content: SegmentData<T>) {}
 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.content.hash}`;
-    await BrowserStorage.set<PageSegmentDto<T>>(key, this.content);
+    await BrowserStorage.set<SegmentData<T>>(key, this.content);
     await this.incrementCount();
   }
 

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
-import { SegmentPageDto } from './obj/page-segment.dto';
+import { SegmentPage } from '@pinmenote/page-compute';
 
 export interface IFrameIndexMessage {
   index: string;
@@ -31,5 +31,5 @@ export interface IFrameFetchMessage {
   index: string;
   uid: string;
   href: string;
-  data: SegmentPageDto;
+  data: SegmentPage;
 }

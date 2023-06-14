@@ -14,8 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PageCompute, SegmentData } from '@pinmenote/page-compute';
-import { PageSegmentDto, SegmentPageDto } from '../../../common/model/obj/page-segment.dto';
+import { PageCompute, SegmentData, SegmentPage } from '@pinmenote/page-compute';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
@@ -42,7 +41,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
 
     const snapshot = await PageCompute.compute(document.body, this.contentCallback, IFrameStore.getInstance(), []);
 
-    const dto: SegmentPageDto = {
+    const dto: SegmentPage = {
       html: snapshot.content.html,
       css: snapshot.content.css,
       assets: snapshot.content.assets
@@ -59,12 +58,12 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     });
   }
 
-  private contentCallback = async (content: PageSegmentDto | SegmentData) => {
+  private contentCallback = async (content: SegmentData) => {
     if (this.savedHash.has(content.hash)) {
       fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
       return;
     }
     this.savedHash.add(content.hash);
-    await new PageSegmentAddCommand(content as PageSegmentDto).execute();
+    await new PageSegmentAddCommand(content).execute();
   };
 }

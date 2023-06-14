@@ -24,7 +24,7 @@ import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PageSegmentGetCommand } from './segment/page-segment-get.command';
 import { PageSegmentRemoveListCommand } from './segment/page-segment-remove-list.command';
-import { SegmentPageDto } from '../../model/obj/page-segment.dto';
+import { SegmentPage } from '@pinmenote/page-compute';
 import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
 
@@ -35,7 +35,7 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
     await BrowserStorage.remove(key);
 
-    await new ObjRemoveIdCommand({ id: this.obj.id, dt: Date.now() }, this.obj.server?.id).execute();
+    await new ObjRemoveIdCommand({ id: this.obj.id, dt: Date.now() }).execute();
 
     const { snapshot } = this.obj.data;
 
@@ -49,7 +49,7 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
   }
 
   private removeSnapshot = async (segmentHash: string) => {
-    const segment = await new PageSegmentGetCommand<SegmentPageDto>(segmentHash).execute();
+    const segment = await new PageSegmentGetCommand<SegmentPage>(segmentHash).execute();
     if (!segment) {
       fnConsoleLog('PageSnapshotRemoveCommand->removeSnapshot->empty', segmentHash);
       return;

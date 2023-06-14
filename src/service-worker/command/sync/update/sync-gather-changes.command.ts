@@ -22,7 +22,7 @@ import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
-import { SegmentPageDto } from '../../../../common/model/obj/page-segment.dto';
+import { SegmentPage } from '@pinmenote/page-compute';
 
 export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDto[]>> {
   constructor(private obj: ObjDto) {}
@@ -88,7 +88,7 @@ export class SyncGatherChangesCommand implements ICommand<Promise<ServerChangeDt
   private snapshotChanges = async (contentHash: string): Promise<ServerChangeDto[]> => {
     const changes: ServerChangeDto[] = [];
 
-    const pageSnapshot = await new PageSegmentGetCommand<SegmentPageDto>(contentHash).execute();
+    const pageSnapshot = await new PageSegmentGetCommand<SegmentPage>(contentHash).execute();
     if (!pageSnapshot) return [];
 
     // asserts

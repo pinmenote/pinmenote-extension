@@ -16,12 +16,7 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import {
-  SegmentImgDto,
-  SegmentPageDto,
-  SegmentShadowDto,
-  SegmentTypeDto
-} from '../../../common/model/obj/page-segment.dto';
+import { SegmentImg, SegmentPage, SegmentShadow, SegmentType } from '@pinmenote/page-compute';
 import { BrowserApi } from '@pinmenote/browser-api';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -55,7 +50,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const [visible, setVisible] = useState<boolean>(props.visible);
 
-  const [pageSegment, setPageSegment] = useState<SegmentPageDto | undefined>();
+  const [pageSegment, setPageSegment] = useState<SegmentPage | undefined>();
   const [pageSnapshot, setPageSnapshot] = useState<PageSnapshotDto | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPreLoading, setIsPreLoading] = useState<boolean>(true);
@@ -81,7 +76,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       setIsLoading(true);
       const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
       setPageSnapshot(obj.data.snapshot);
-      const pageSegment = await new PageSegmentGetCommand<SegmentPageDto>(obj.data.snapshot.segmentHash).execute();
+      const pageSegment = await new PageSegmentGetCommand<SegmentPage>(obj.data.snapshot.segmentHash).execute();
       if (pageSegment) {
         const a = Date.now();
         const dom = fnParse5(pageSegment.content.html.html);
@@ -166,7 +161,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     return true;
   };
 
-  const renderCanvas = (snapshot: PageSnapshotDto, content?: SegmentPageDto) => {
+  const renderCanvas = (snapshot: PageSnapshotDto, content?: SegmentPage) => {
     renderHeader(snapshot);
 
     if (!htmlRef.current) return;
@@ -192,7 +187,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const renderSnapshot = async (snapshot: PageSnapshotDto, segment?: SegmentPageDto): Promise<void> => {
+  const renderSnapshot = async (snapshot: PageSnapshotDto, segment?: SegmentPage): Promise<void> => {
     renderHeader(snapshot);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
@@ -253,8 +248,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       return;
     }
     await fnSleep(2);
-    if (dto.type === SegmentTypeDto.IFRAME) {
-      const iframe: SegmentPageDto = dto.content as SegmentPageDto;
+    if (dto.type === SegmentType.IFRAME) {
+      const iframe: SegmentPage = dto.content as SegmentPage;
       const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
       if (iframeDoc) {
         const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
@@ -270,18 +265,18 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           }
         }
       }
-    } else if (dto.type === SegmentTypeDto.IMG) {
+    } else if (dto.type === SegmentType.IMG) {
       const img = el as HTMLImageElement;
-      img.src = (dto.content as SegmentImgDto).src;
+      img.src = (dto.content as SegmentImg).src;
       if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
         img.style.width = `100%`;
-    } else if (dto.type === SegmentTypeDto.SHADOW) {
-      const content = dto.content as SegmentShadowDto;
+    } else if (dto.type === SegmentType.SHADOW) {
+      const content = dto.content as SegmentShadow;
       renderShadow(el, content);
     }
   };
 
-  const renderShadow = (el: Element, content: SegmentShadowDto) => {
+  const renderShadow = (el: Element, content: SegmentShadow) => {
     el.innerHTML = content.html + el.innerHTML;
     renderTemplate(el);
   };

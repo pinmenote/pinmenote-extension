@@ -20,7 +20,6 @@ import { HtmlConstraints } from '../../factory/html/html.constraints';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
-import { PageSegmentDto } from '../../../common/model/obj/page-segment.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 interface SnapshotResult {
@@ -49,12 +48,12 @@ export class ContentPageSegmentSaveCommand implements ICommand<Promise<SnapshotR
     return { hash: snapshot.hash, words };
   }
 
-  private contentCallback = async (content: SegmentData | PageSegmentDto) => {
+  private contentCallback = async (content: SegmentData) => {
     if (this.savedHash.has(content.hash)) {
       fnConsoleLog('SnapshotContentSaveCommand->DUPLICATE', content.hash, content);
       return;
     }
     this.savedHash.add(content.hash);
-    await new PageSegmentAddCommand(content as PageSegmentDto).execute();
+    await new PageSegmentAddCommand(content).execute();
   };
 }

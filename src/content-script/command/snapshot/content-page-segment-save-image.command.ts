@@ -14,8 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlImgFactory, SegmentData } from '@pinmenote/page-compute';
-import { PageSegmentDto, SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
+import { HtmlImgFactory, SegmentData, SegmentType } from '@pinmenote/page-compute';
 import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameStore } from '../../store/iframe.store';
@@ -46,7 +45,7 @@ export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<stri
     const hash = fnSha256(html);
     await this.contentCallback({
       hash,
-      type: SegmentTypeDto.SNAPSHOT,
+      type: SegmentType.SNAPSHOT,
       content: {
         html: {
           hash,
@@ -60,7 +59,7 @@ export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<stri
     return hash;
   }
 
-  private contentCallback = async (content: PageSegmentDto) => {
+  private contentCallback = async (content: SegmentData) => {
     await new PageSegmentAddCommand(content).execute();
   };
 }

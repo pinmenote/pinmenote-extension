@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { SegmentCssDto, SegmentPageDto } from '../model/obj/page-segment.dto';
+import { SegmentCss, SegmentPage } from '@pinmenote/page-compute';
 import { PageSegmentGetCommand } from '../command/snapshot/segment/page-segment-get.command';
 import { PageSnapshotDto } from '../model/obj/page-snapshot.dto';
 import { fnConsoleLog } from '../fn/fn-console';
 
 export class IframeHtmlFactory {
-  static computeHtml = async (snapshot: SegmentPageDto, title?: string): Promise<string> => {
+  static computeHtml = async (snapshot: SegmentPage, title?: string): Promise<string> => {
     let style = '';
     let titleTag = '';
     if (title) {
       titleTag = `<title>${title}</title>`;
     }
     for (const hash of snapshot.css) {
-      const dto = await new PageSegmentGetCommand<SegmentCssDto>(hash).execute();
+      const dto = await new PageSegmentGetCommand<SegmentCss>(hash).execute();
       if (dto) {
-        const css: SegmentCssDto = dto.content;
+        const css: SegmentCss = dto.content;
         style += '<style';
         css.media ? (style += ` media="${css.media}">`) : (style += '>');
         style += css.data + '</style>';
@@ -65,7 +65,7 @@ export class IframeHtmlFactory {
 </html>`;
   };
 
-  static computeDownload = (snapshot: PageSnapshotDto, data: SegmentPageDto): string => {
+  static computeDownload = (snapshot: PageSnapshotDto, data: SegmentPage): string => {
     return '';
   };
 }
