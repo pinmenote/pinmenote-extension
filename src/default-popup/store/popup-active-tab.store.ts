@@ -21,7 +21,7 @@ import { LogManager } from '../../common/popup/log.manager';
 import { ObjGetHrefCommand } from '../../common/command/obj/url/obj-get-href.command';
 import { ObjGetOriginCommand } from '../../common/command/obj/url/obj-get-origin.command';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
-import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
 
 export class PopupActiveTabStore {
@@ -69,7 +69,7 @@ export class PopupActiveTabStore {
       } else if (this.urlValue?.href.startsWith(BrowserApi.disabledUrl)) {
         this.isError = true;
       }
-      TinyEventDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_URL);
+      TinyDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_URL);
     }
   };
 
@@ -77,7 +77,7 @@ export class PopupActiveTabStore {
     LogManager.log(`PopupActiveTabStore->INIT - ${JSON.stringify(initData || {})}`);
     if (initData?.isAdding) {
       this.isAddingValue = true;
-      TinyEventDispatcher.dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAddingValue);
+      TinyDispatcher.dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAddingValue);
     }
   };
 }

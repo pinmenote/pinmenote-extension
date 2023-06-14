@@ -25,7 +25,7 @@ import { MainViewEnum } from '../component-model';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
 interface CreateComponentProps {
   currentView: MainViewEnum;
@@ -37,11 +37,11 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (pro
   const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAdding);
 
   useEffect(() => {
-    const addKey = TinyEventDispatcher.addListener<boolean>(BusMessageType.POP_IS_ADDING, (event, key, value) => {
+    const addKey = TinyDispatcher.addListener<boolean>(BusMessageType.POP_IS_ADDING, (event, key, value) => {
       setIsAdding(value);
     });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POP_IS_ADDING, addKey);
+      TinyDispatcher.removeListener(BusMessageType.POP_IS_ADDING, addKey);
     };
   }, []);
   const handleNewPin = async () => {

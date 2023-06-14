@@ -26,7 +26,7 @@ import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinPendingStore } from './store/pin-pending.store';
 import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
-import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../common/fn/fn-console';
 
 export class ContentMessageHandler {
@@ -39,7 +39,7 @@ export class ContentMessageHandler {
     this.iframe = iframe;
     this.uid = uid;
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
-    TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
+    TinyDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
 
   static updateHref(href: string): void {
@@ -105,7 +105,7 @@ export class ContentMessageHandler {
         new PinVisibleCommand(msg.data).execute();
         break;
       default:
-        TinyEventDispatcher.dispatch(msg.type, msg.data);
+        TinyDispatcher.dispatch(msg.type, msg.data);
         break;
     }
   };

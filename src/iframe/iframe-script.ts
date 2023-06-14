@@ -22,7 +22,7 @@ import { BusMessageType } from '../common/model/bus.model';
 import { ContentMessageHandler } from '../content-script/content-message.handler';
 import { ContentSettingsStore } from '../content-script/store/content-settings.store';
 import { DocumentMediator } from '../content-script/mediator/document.mediator';
-import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
 import { fnIframeIndex } from '../common/fn/fn-iframe-index';
 import { fnIsIframe } from '../common/fn/fn-is-iframe';
@@ -46,12 +46,12 @@ export class IframeScript {
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     document.addEventListener('mouseout', this.handleMouseOut);
 
-    TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
-    TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
+    TinyDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
+    TinyDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
   }
 
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
-    TinyEventDispatcher.removeListener(event, key);
+    TinyDispatcher.removeListener(event, key);
 
     await ContentSettingsStore.initSettings();
   };
@@ -91,7 +91,7 @@ export class IframeScript {
   private cleanup(): void {
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     document.removeEventListener('mouseout', this.handleMouseOut);
-    TinyEventDispatcher.cleanup();
+    TinyDispatcher.cleanup();
     DocumentMediator.stopListeners();
     ContentMessageHandler.cleanup();
     clearTimeout(this.timeoutId);

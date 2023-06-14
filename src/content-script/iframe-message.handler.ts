@@ -22,7 +22,7 @@ import { IFrameIndexMessage } from '../common/model/iframe-message.model';
 import { IFrameStore } from './store/iframe.store';
 import { PinAddIframeXpathCommand } from './command/pin/pin-add-iframe-xpath.command';
 import { PinPendingStore } from './store/pin-pending.store';
-import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../common/fn/fn-console';
 import { fnIframeIndex } from '../common/fn/fn-iframe-index';
 
@@ -46,7 +46,7 @@ export class IFrameMessageHandler {
         if (iframe && msg.data.uid === uid && href) {
           await new ContentFetchIframeCommand(href, uid, msg.data.depth).execute();
         } else {
-          TinyEventDispatcher.dispatch(msg.type, msg.data);
+          TinyDispatcher.dispatch(msg.type, msg.data);
         }
         break;
       }
@@ -85,7 +85,7 @@ export class IFrameMessageHandler {
         break;
       }
       default:
-        TinyEventDispatcher.dispatch(msg.type, msg.data);
+        TinyDispatcher.dispatch(msg.type, msg.data);
         break;
     }
   };

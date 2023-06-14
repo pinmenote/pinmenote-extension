@@ -23,7 +23,7 @@ import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlFactory } from './html.factory';
 import { IFrameStore } from '../../store/iframe.store';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256 } from '../../../common/fn/fn-sha256';
 
@@ -72,19 +72,19 @@ data-pin-hash="${msg.data.html.hash}" data-pin-iframe-index="${msg.index}" data-
       }
       fnConsoleLog('IFrameFactory->fetchIframe->index', msg.index, msg.uid, 'src', ref.src);
 
-      const pingKey = TinyEventDispatcher.addListener<IFrameIndexMessage>(
+      const pingKey = TinyDispatcher.addListener<IFrameIndexMessage>(
         BusMessageType.IFRAME_PING_RESULT,
         (event, key, value) => {
           if (value.uid !== msg.uid) return;
           clearTimeout(iframePingTimeout);
-          TinyEventDispatcher.removeListener(event, key);
+          TinyDispatcher.removeListener(event, key);
 
-          const fetchKey = TinyEventDispatcher.addListener<IFrameFetchMessage>(
+          const fetchKey = TinyDispatcher.addListener<IFrameFetchMessage>(
             BusMessageType.IFRAME_FETCH_RESULT,
             (event, key, value) => {
               if (value.uid !== msg.uid) return;
               clearTimeout(iframeFetchTimeout);
-              TinyEventDispatcher.removeListener(event, key);
+              TinyDispatcher.removeListener(event, key);
               resolve(value);
             }
           );
@@ -99,7 +99,7 @@ data-pin-hash="${msg.data.html.hash}" data-pin-iframe-index="${msg.index}" data-
 
           const iframeFetchTimeout = setTimeout(() => {
             fnConsoleLog('IFrameFactory->iframeFetchTimeout', msg.index, msg.uid, ref);
-            TinyEventDispatcher.removeListener(BusMessageType.IFRAME_FETCH_RESULT, fetchKey);
+            TinyDispatcher.removeListener(BusMessageType.IFRAME_FETCH_RESULT, fetchKey);
             resolve(undefined);
           }, 20000);
         }
@@ -107,7 +107,7 @@ data-pin-hash="${msg.data.html.hash}" data-pin-iframe-index="${msg.index}" data-
 
       const iframePingTimeout = setTimeout(() => {
         fnConsoleLog('IFrameFactory->iframePingTimeout', msg.index, msg.uid, ref);
-        TinyEventDispatcher.removeListener(BusMessageType.IFRAME_PING_RESULT, pingKey);
+        TinyDispatcher.removeListener(BusMessageType.IFRAME_PING_RESULT, pingKey);
         resolve(undefined);
       }, 1000);
 

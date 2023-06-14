@@ -31,7 +31,7 @@ import { DocumentMediator } from './mediator/document.mediator';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
-import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
 import { fnUid } from '../common/fn/fn-uid';
 
@@ -47,12 +47,12 @@ class PinMeScript {
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
-    TinyEventDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
-    TinyEventDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
+    TinyDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
+    TinyDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
   }
 
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
-    TinyEventDispatcher.removeListener(event, key);
+    TinyDispatcher.removeListener(event, key);
 
     await ContentSettingsStore.initSettings();
 
@@ -106,7 +106,7 @@ class PinMeScript {
 
   private cleanup(): void {
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
-    TinyEventDispatcher.cleanup();
+    TinyDispatcher.cleanup();
     DocumentMediator.stopListeners();
     PinStore.clear();
     ContentMessageHandler.cleanup();

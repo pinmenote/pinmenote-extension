@@ -19,7 +19,7 @@ import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { PopupActiveTabStore } from './store/popup-active-tab.store';
 import { PopupTokenStore } from './store/popup-token.store';
-import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
 export class PopupMessageHandler {
   static async init(): Promise<void> {
@@ -34,7 +34,7 @@ export class PopupMessageHandler {
   }
 
   private static popupInitListener(): void {
-    TinyEventDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
+    TinyDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
       PopupActiveTabStore.updateState(value);
     });
   }
@@ -50,6 +50,6 @@ export class PopupMessageHandler {
     // Skip not owned messages
     if (runtime.id !== BrowserApi.runtime.id) return;
 
-    TinyEventDispatcher.dispatch(msg.type, msg.data);
+    TinyDispatcher.dispatch(msg.type, msg.data);
   };
 }

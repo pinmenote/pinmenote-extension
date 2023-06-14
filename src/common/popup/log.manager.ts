@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BusMessageType } from '../model/bus.model';
-import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../fn/fn-console';
 
 export class LogManager {
@@ -24,7 +24,7 @@ export class LogManager {
   static log = (value: string): void => {
     this.logValue = '<span>' + value + '</span><br />' + this.logValue;
     fnConsoleLog(value);
-    TinyEventDispatcher.dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
+    TinyDispatcher.dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
   };
 
   static get logs(): string {
@@ -33,6 +33,6 @@ export class LogManager {
 
   static clear(): void {
     this.logValue = '';
-    TinyEventDispatcher.dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
+    TinyDispatcher.dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
   }
 }

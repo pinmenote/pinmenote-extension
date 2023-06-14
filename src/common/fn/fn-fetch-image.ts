@@ -18,7 +18,7 @@ import { BrowserApi } from '../service/browser.api.wrapper';
 import { BusMessageType } from '../model/bus.model';
 import { FetchImageRequest } from '../model/obj-request.model';
 import { FetchResponse } from '@pinmenote/fetch-service';
-import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from './fn-console';
 
 const emptyResponse: Omit<FetchResponse<string>, 'url'> = {
@@ -35,12 +35,12 @@ export const fnFetchImage = (url: string, skipSize = 0): Promise<FetchResponse<s
       resolve({ url, ...emptyResponse });
       return;
     }
-    const fetchKey = TinyEventDispatcher.addListener<FetchResponse<string>>(
+    const fetchKey = TinyDispatcher.addListener<FetchResponse<string>>(
       BusMessageType.CONTENT_FETCH_IMAGE,
       (event, key, value) => {
         // fnConsoleLog('fnFetchImage->CONTENT_FETCH_IMAGE', value.url, url, value.url === url);
         if (value.url === url) {
-          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
+          TinyDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
           const size = Math.floor(value.data.length / 10000) / 100;
           if (skipSize > 0 && size > skipSize) {
             fnConsoleLog(`Skipping image url (${url}) of size ${size}MB exceeding skip size ${skipSize}MB`);
@@ -60,7 +60,7 @@ export const fnFetchImage = (url: string, skipSize = 0): Promise<FetchResponse<s
         /* SKIP */
       })
       .catch((e) => {
-        TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, fetchKey);
+        TinyDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, fetchKey);
         fnConsoleLog('fnFetchImage->Error', e);
         resolve({ url, ...emptyResponse });
       });

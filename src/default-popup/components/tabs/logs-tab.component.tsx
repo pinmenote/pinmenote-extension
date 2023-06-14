@@ -20,7 +20,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import { LogManager } from '../../../common/popup/log.manager';
 import { SyncClearServerCommand } from '../../../common/command/sync/sync-clear-server.command';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import Typography from '@mui/material/Typography';
 
 export const LogsTabComponent: FunctionComponent = () => {
@@ -28,11 +28,11 @@ export const LogsTabComponent: FunctionComponent = () => {
 
   useEffect(() => {
     if (ref.current) ref.current.innerHTML = LogManager.logs;
-    const key = TinyEventDispatcher.addListener<string>(BusMessageType.POP_CONSOLE_LOG, (event, key, value) => {
+    const key = TinyDispatcher.addListener<string>(BusMessageType.POP_CONSOLE_LOG, (event, key, value) => {
       if (ref.current) ref.current.innerHTML = value;
     });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POP_CONSOLE_LOG, key);
+      TinyDispatcher.removeListener(BusMessageType.POP_CONSOLE_LOG, key);
     };
   }, []);
 

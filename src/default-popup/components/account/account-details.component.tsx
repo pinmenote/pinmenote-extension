@@ -23,7 +23,7 @@ import { COLOR_DEFAULT_RED } from '../../../common/components/colors';
 import { FetchResponse } from '@pinmenote/fetch-service';
 import { LogManager } from '../../../common/popup/log.manager';
 import { PopupTokenStore } from '../../store/popup-token.store';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { TokenDataDto } from '../../../common/model/shared/token.dto';
 import Typography from '@mui/material/Typography';
 import jwtDecode from 'jwt-decode';
@@ -41,30 +41,30 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
     }
-    const loginSuccessKey = TinyEventDispatcher.addListener(
+    const loginSuccessKey = TinyDispatcher.addListener(
       BusMessageType.POPUP_LOGIN_SUCCESS,
       async (event, key, value) => {
-        TinyEventDispatcher.removeListener(event, key);
+        TinyDispatcher.removeListener(event, key);
         await PopupTokenStore.init();
         if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
         // TODO upload keys ???
         LogManager.log(`${JSON.stringify(value)}`);
       }
     );
-    const logoutKey = TinyEventDispatcher.addListener<FetchResponse<BoolDto | ServerErrorDto>>(
+    const logoutKey = TinyDispatcher.addListener<FetchResponse<BoolDto | ServerErrorDto>>(
       BusMessageType.POPUP_LOGOUT,
       (event, key, value) => {
         LogManager.log('POPUP_LOGOUT_RESPONSE');
         if (value.ok) {
           logoutSuccess();
         } else {
-          setResponseError(value.res as ServerErrorDto);
+          setResponseError(value.data as ServerErrorDto);
         }
       }
     );
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
+      TinyDispatcher.removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
+      TinyDispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
     };
   }, []);
 

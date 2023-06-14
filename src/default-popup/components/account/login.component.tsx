@@ -25,7 +25,7 @@ import Link from '@mui/material/Link';
 import { LogManager } from '../../../common/popup/log.manager';
 import { ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { StyledInput } from '../../../common/components/react/styled.input';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import Typography from '@mui/material/Typography';
 import { environmentConfig } from '../../../common/environment';
 
@@ -51,19 +51,19 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
-    const loginKey = TinyEventDispatcher.addListener<FetchResponse<AccessTokenDto>>(
+    const loginKey = TinyDispatcher.addListener<FetchResponse<AccessTokenDto>>(
       BusMessageType.POPUP_LOGIN,
       (event, key, value) => {
         LogManager.log(`POPUP_LOGIN: ${JSON.stringify(value)}`);
         if (value.ok) {
-          loginSuccess(value.res);
+          loginSuccess(value.data);
         } else {
-          setResponseError(value.res as ServerErrorDto);
+          setResponseError(value.data as ServerErrorDto);
         }
       }
     );
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POPUP_LOGIN, loginKey);
+      TinyDispatcher.removeListener(BusMessageType.POPUP_LOGIN, loginKey);
     };
   }, []);
 

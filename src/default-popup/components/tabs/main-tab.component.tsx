@@ -19,17 +19,17 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { ConnectionErrorComponent } from '../main/connection-error.component';
 import { MainViewComponent } from '../main/main-view.component';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
 export const MainTabComponent: FunctionComponent = () => {
   const [isError, setIsError] = useState<boolean>(PopupActiveTabStore.showErrorText);
 
   useEffect(() => {
-    const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
+    const urlKey = TinyDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
       setIsError(PopupActiveTabStore.showErrorText);
     });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
+      TinyDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
   }, []);
 

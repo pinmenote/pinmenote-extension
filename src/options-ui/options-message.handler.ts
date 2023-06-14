@@ -17,13 +17,13 @@
 import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
 import { BrowserApi } from '../common/service/browser.api.wrapper';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
-import { TinyEventDispatcher } from '../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../common/fn/fn-console';
 
 export class OptionsMessageHandler {
   static init(): void {
     BrowserApi.runtime.onMessage.addListener(this.handleRemoteMessage);
-    TinyEventDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
+    TinyDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
 
   private static handleRemoteMessage = (
@@ -35,7 +35,7 @@ export class OptionsMessageHandler {
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });
-    TinyEventDispatcher.dispatch(msg.type, msg.data);
+    TinyDispatcher.dispatch(msg.type, msg.data);
   };
 
   private static handlePopupOpen = async (): Promise<void> => {

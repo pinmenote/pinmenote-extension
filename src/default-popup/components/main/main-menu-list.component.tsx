@@ -36,7 +36,7 @@ import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import WebOutlined from '@mui/icons-material/WebOutlined';
 
 const zeroPad = {
@@ -57,8 +57,8 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
   const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
 
   const handleSavePageClick = async () => {
-    TinyEventDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
-      TinyEventDispatcher.removeListener(event, key);
+    TinyDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
+      TinyDispatcher.removeListener(event, key);
       setIsLoading(IsLoadingType.None);
       setTimeout(() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS), 100);
     });

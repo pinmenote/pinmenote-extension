@@ -22,7 +22,7 @@ import { ObjGetOriginCommand } from '../../../common/command/obj/url/obj-get-ori
 import { ObjListComponent } from './obj-list.component';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
-import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import Typography from '@mui/material/Typography';
 
 interface ObjViewComponent {
@@ -38,11 +38,11 @@ export const ObjViewComponent: FunctionComponent<ObjViewComponent> = (props) => 
     (async () => {
       await initUrl();
     })();
-    const urlKey = TinyEventDispatcher.addListener(BusMessageType.POP_UPDATE_URL, async () => {
+    const urlKey = TinyDispatcher.addListener(BusMessageType.POP_UPDATE_URL, async () => {
       await initUrl();
     });
     return () => {
-      TinyEventDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
+      TinyDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
   }, []);
 

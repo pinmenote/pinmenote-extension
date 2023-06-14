@@ -21,7 +21,7 @@ import { FetchCssRequest } from '../../common/model/obj-request.model';
 import { FetchResponse } from '@pinmenote/fetch-service';
 import { HtmlComputeParams } from '../model/html.model';
 import { SegmentTypeDto } from '../../common/model/obj/page-segment.dto';
-import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnComputeUrl } from '../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 import { fnFetchImage } from '../../common/fn/fn-fetch-image';
@@ -275,12 +275,12 @@ export class CssFactory {
   static fetchCss(url: string): Promise<FetchResponse<string>> {
     fnConsoleLog('CssFactory->fetchCss', url);
     return new Promise<FetchResponse<string>>((resolve) => {
-      const fetchKey = TinyEventDispatcher.addListener<FetchResponse<string>>(
+      const fetchKey = TinyDispatcher.addListener<FetchResponse<string>>(
         BusMessageType.CONTENT_FETCH_CSS,
         (event, key, value) => {
           fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
           if (value.url === url) {
-            TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
+            TinyDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
             resolve(value);
           }
         }
@@ -296,7 +296,7 @@ export class CssFactory {
         })
         .catch((e) => {
           fnConsoleLog('Error CssFactory->fetchCss', e);
-          TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, fetchKey);
+          TinyDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, fetchKey);
           resolve({ ok: false, url, data: '', status: 500, type: 'TEXT' });
         });
     });

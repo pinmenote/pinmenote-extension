@@ -30,7 +30,7 @@ import { PinAddFactory } from '../factory/pin-add.factory';
 import { PinBorderDataDto } from '../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from '../command/pin/pin-component-add.command';
 import { PinFactory } from '../factory/pin.factory';
-import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
 import { applyStylesToElement } from '../../common/style.utils';
 import { fnConsoleLog } from '../../common/fn/fn-console';
@@ -75,13 +75,13 @@ export class DocumentMediator {
     }
     fnConsoleLog('DocumentMediator->startIframeListeners', msg, this.baseUrl, this.iframe);
 
-    const key = TinyEventDispatcher.addListener<IFrameIndexMessage>(
+    const key = TinyDispatcher.addListener<IFrameIndexMessage>(
       BusMessageType.IFRAME_START_LISTENERS_RESULT,
       (event, key, value) => {
         if (msg.uid === value.uid) {
           fnConsoleLog('DocumentMediator->startIframeListeners->IFRAME_START_LISTENERS_RESULT');
           clearTimeout(timeout);
-          TinyEventDispatcher.removeListener(event, key);
+          TinyDispatcher.removeListener(event, key);
           this.stopListeners(false);
           this.startingIframeListeners = false;
           IFrameStore.passListeners(msg);
@@ -102,7 +102,7 @@ export class DocumentMediator {
     const timeout = setTimeout(() => {
       fnConsoleLog('DocumentMediator->startIframeListeners->timeout');
       this.startingIframeListeners = false;
-      TinyEventDispatcher.removeListener(BusMessageType.IFRAME_START_LISTENERS_RESULT, key);
+      TinyDispatcher.removeListener(BusMessageType.IFRAME_START_LISTENERS_RESULT, key);
     }, 1000);
   }
 
