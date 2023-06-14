@@ -34,8 +34,8 @@ export class HtmlImgFactory {
 
       const imageData = await fnFetchImage(value);
       if (imageData.ok) {
-        params.visitedUrl[value] = imageData.res;
-        return imageData.res;
+        params.visitedUrl[value] = imageData.data;
+        return imageData.data;
       }
     }
 
@@ -48,8 +48,8 @@ export class HtmlImgFactory {
 
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
-        params.visitedUrl[url] = imageData.res;
-        return imageData.res;
+        params.visitedUrl[url] = imageData.data;
+        return imageData.data;
       } else {
         fnConsoleLog('HtmlImgFactory->computeImgValue->data-pin-media', url);
       }
@@ -63,8 +63,8 @@ export class HtmlImgFactory {
 
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
-        params.visitedUrl[url] = imageData.res;
-        return imageData.res;
+        params.visitedUrl[url] = imageData.data;
+        return imageData.data;
       }
     }
 
@@ -77,8 +77,8 @@ export class HtmlImgFactory {
 
       const imageData = await fnFetchImage(url);
       if (imageData.ok) {
-        params.visitedUrl[url] = imageData.res;
-        return imageData.res;
+        params.visitedUrl[url] = imageData.data;
+        return imageData.data;
       } else {
         fnConsoleLog('HtmlImgFactory->computeImgValue->data-pin-media', url);
       }
@@ -121,8 +121,8 @@ export class HtmlImgFactory {
 
     const imageData = await fnFetchImage(url);
     if (imageData.ok) {
-      params.visitedUrl[url] = imageData.res;
-      return imageData.res;
+      params.visitedUrl[url] = imageData.data;
+      return imageData.data;
     } else {
       fnConsoleLog('HtmlImgFactory->computeImgValue->skipUrlCache', url);
       params.skipUrlCache.add(url);
@@ -157,8 +157,8 @@ export class HtmlImgFactory {
       const imageData = await fnFetchImage(url);
       fnConsoleLog('HtmlImgFactory->computeSrcSet->fetch->complete');
       if (imageData.ok) {
-        params.visitedUrl[url] = imageData.res;
-        return imageData.res;
+        params.visitedUrl[url] = imageData.data;
+        return imageData.data;
       }
     }
     fnConsoleLog('HtmlImgFactory->computeSrcSet->empty');

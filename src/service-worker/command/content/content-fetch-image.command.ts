@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, ResponseType } from '../../../common/model/api.model';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchImageRequest } from '../../../common/model/obj-request.model';
-import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
@@ -28,8 +27,10 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     try {
       // fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
-      const req = await FetchService.get<Blob>(this.req.url, false, ResponseType.BLOB);
-      const data = await UrlFactory.toDataUri(req.res);
+      const req = await FetchService.fetch<Blob>(this.req.url, {
+        type: 'BLOB'
+      });
+      const data = await UrlFactory.toDataUri(req.data);
       let ok = req.ok;
       if (
         data.startsWith('data:text/html') ||
@@ -41,7 +42,7 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
       }
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_IMAGE,
-        data: { res: data, ok, url: req.url, status: req.status, type: req.type }
+        data: { data, ok, url: req.url, status: req.status, type: req.type }
       });
     } catch (e) {
       fnConsoleLog('ContentFetchImageCommand->ERROR', e, this.req.url);
@@ -51,8 +52,8 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
           url: this.req.url,
           ok: false,
           status: 500,
-          type: ResponseType.BLOB,
-          res: ''
+          type: 'BLOB',
+          data: ''
         }
       });
     }

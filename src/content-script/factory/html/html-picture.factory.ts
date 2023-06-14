@@ -41,7 +41,7 @@ export class HtmlPictureFactory {
         // TODO still need fix for not rendered images - this is half baked
         const imageData = await fnFetchImage(img.currentSrc);
         if (imageData.ok) {
-          imgValue = imageData.res;
+          imgValue = imageData.data;
           params.visitedUrl[img.currentSrc] = imgValue;
         }
       }

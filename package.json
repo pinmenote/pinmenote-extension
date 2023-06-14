@@ -60,6 +60,7 @@
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.3",
     "@mui/x-date-pickers": "^6.1.0",
+    "@pinmenote/fetch-service": "^0.0.3",
     "css": "^3.0.0",
     "dayjs": "^1.11.7",
     "fastest-levenshtein": "^1.0.16",

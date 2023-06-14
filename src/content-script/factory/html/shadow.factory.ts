@@ -99,7 +99,7 @@ export class ShadowFactory {
         const url = fnComputeUrl(uri);
         const css = await CssFactory.fetchCss(url);
         if (css.ok) {
-          return this.computeCssData(css.res, params);
+          return this.computeCssData(css.data, params);
         } else {
           fnConsoleLog('computeShadowChild->link->error', css);
           return '';

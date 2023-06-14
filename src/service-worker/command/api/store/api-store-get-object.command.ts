@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ApiHelper } from '../../../api/api-helper';
-import { FetchResponse } from '../../../../common/model/api.model';
-import { FetchService } from '../../../service/fetch.service';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
@@ -31,7 +30,8 @@ export class ApiStoreGetObjectCommand implements ICommand<Promise<FetchResponse<
     const url = `${storeUrl}/api/v1/obj/${this.id}`;
 
     try {
-      return await FetchService.get(url, true);
+      const headers = await ApiHelper.getAuthHeaders();
+      return await FetchService.fetch(url, { headers });
     } catch (e) {
       fnConsoleLog('ApiStoreGetObjectCommand->Error', e);
     }

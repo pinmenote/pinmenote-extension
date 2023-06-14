@@ -15,8 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CSS_URL_REG, CssFactory } from '../css.factory';
-import { HtmlComputeParams } from './html.factory';
-import { HtmlIntermediateData } from '../../model/html.model';
+import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { fnComputeUrl } from '../../../common/fn/fn-compute-url';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
@@ -25,7 +24,7 @@ const TRANSLATE_REG = new RegExp('(transform: translateY\\()([0-9.px]+)(\\);)', 
 export class HtmlAttrFactory {
   static readonly EMPTY_RESULT: HtmlIntermediateData = {
     html: '',
-    content: []
+    assets: []
   };
 
   static computeAttrValues = async (

@@ -20,7 +20,7 @@ import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import { COLOR_DEFAULT_RED } from '../../../common/components/colors';
-import { FetchResponse } from '../../../common/model/api.model';
+import { FetchResponse } from '@pinmenote/fetch-service';
 import { LogManager } from '../../../common/popup/log.manager';
 import { PopupTokenStore } from '../../store/popup-token.store';
 import { TinyEventDispatcher } from '../../../common/service/tiny.event.dispatcher';

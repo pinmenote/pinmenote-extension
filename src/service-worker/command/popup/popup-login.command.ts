@@ -19,7 +19,7 @@ import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dt
 import { ApiLoginCommand } from '../api/api-login.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { FetchResponse } from '../../../common/model/api.model';
+import { FetchResponse } from '@pinmenote/fetch-service';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PopupLoginCommand implements ICommand<void> {

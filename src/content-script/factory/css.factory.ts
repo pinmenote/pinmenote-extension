@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, ResponseType } from '../../common/model/api.model';
 import { BrowserApi } from '../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ContentSettingsStore } from '../store/content-settings.store';
 import { FetchCssRequest } from '../../common/model/obj-request.model';
+import { FetchResponse } from '@pinmenote/fetch-service';
 import { HtmlComputeParams } from '../model/html.model';
 import { SegmentTypeDto } from '../../common/model/obj/page-segment.dto';
 import { TinyEventDispatcher } from '../../common/service/tiny.event.dispatcher';
@@ -52,9 +52,9 @@ export class CssFactory {
         const href = fnComputeUrl(s.href);
         const cssFetchData = await this.fetchCss(href);
         if (cssFetchData.ok) {
-          const imports = await this.fetchImports(cssFetchData.res, params, href);
+          const imports = await this.fetchImports(cssFetchData.data, params, href);
 
-          let data = cssFetchData.res.replace(CSS_IMPORT_REG, '').trim();
+          let data = cssFetchData.data.replace(CSS_IMPORT_REG, '').trim();
           data = await this.fetchUrls(data, params, href);
           cssHash.push(...imports);
           if (!data) continue;
@@ -175,8 +175,8 @@ export class CssFactory {
 
       if (result.ok) {
         // !important recurrence of getting imports inside imports here
-        let res = result.res;
-        const imports = await this.fetchImports(result.res, params);
+        let res = result.data;
+        const imports = await this.fetchImports(result.data, params);
         res = res.replaceAll(CSS_IMPORT_REG, '').trim();
         out.push(...imports);
         // Now fetch urls to save offline
@@ -254,10 +254,10 @@ export class CssFactory {
         const result = await fnFetchImage(url, ContentSettingsStore.skipCssImageSize);
 
         if (result.ok) {
-          const newUrl = `url(${result.res})`;
+          const newUrl = `url(${result.data})`;
           css = css.replace(urlMatch, newUrl);
 
-          params.visitedUrl[url] = result.res;
+          params.visitedUrl[url] = result.data;
         } else {
           // fnConsoleLog('CssFactory->fetchUrl->ERROR !!!', result, baseurl);
           params.skipUrlCache.add(url);
@@ -278,7 +278,7 @@ export class CssFactory {
       const fetchKey = TinyEventDispatcher.addListener<FetchResponse<string>>(
         BusMessageType.CONTENT_FETCH_CSS,
         (event, key, value) => {
-          // fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
+          fnConsoleLog('CssFactory->fetchCss->CONTENT_FETCH_CSS', value);
           if (value.url === url) {
             TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, key);
             resolve(value);
@@ -297,7 +297,7 @@ export class CssFactory {
         .catch((e) => {
           fnConsoleLog('Error CssFactory->fetchCss', e);
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_CSS, fetchKey);
-          resolve({ ok: false, url, res: '', status: 500, type: ResponseType.TEXT });
+          resolve({ ok: false, url, data: '', status: 500, type: 'TEXT' });
         });
     });
   }

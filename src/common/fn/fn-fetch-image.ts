@@ -14,18 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, ResponseType } from '../model/api.model';
 import { BrowserApi } from '../service/browser.api.wrapper';
 import { BusMessageType } from '../model/bus.model';
 import { FetchImageRequest } from '../model/obj-request.model';
+import { FetchResponse } from '@pinmenote/fetch-service';
 import { TinyEventDispatcher } from '../service/tiny.event.dispatcher';
 import { fnConsoleLog } from './fn-console';
 
 const emptyResponse: Omit<FetchResponse<string>, 'url'> = {
   ok: false,
   status: 500,
-  res: '',
-  type: ResponseType.BLOB
+  data: '',
+  type: 'BLOB'
 };
 
 export const fnFetchImage = (url: string, skipSize = 0): Promise<FetchResponse<string>> => {
@@ -41,16 +41,10 @@ export const fnFetchImage = (url: string, skipSize = 0): Promise<FetchResponse<s
         // fnConsoleLog('fnFetchImage->CONTENT_FETCH_IMAGE', value.url, url, value.url === url);
         if (value.url === url) {
           TinyEventDispatcher.removeListener(BusMessageType.CONTENT_FETCH_IMAGE, key);
-          const size = Math.floor(value.res.length / 10000) / 100;
+          const size = Math.floor(value.data.length / 10000) / 100;
           if (skipSize > 0 && size > skipSize) {
             fnConsoleLog(`Skipping image url (${url}) of size ${size}MB exceeding skip size ${skipSize}MB`);
-            resolve({
-              url,
-              ok: false,
-              status: 500,
-              res: '',
-              type: ResponseType.BLOB
-            });
+            resolve({ url, ...emptyResponse });
           } else {
             fnConsoleLog('fnFetchImage->resolve', value.url);
             resolve(value);

@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, ResponseType } from '../../../common/model/api.model';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchCssRequest } from '../../../common/model/obj-request.model';
-import { FetchService } from '../../service/fetch.service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
@@ -27,7 +26,9 @@ export class ContentFetchCssCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     try {
       // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url);
-      const req = await FetchService.get<string>(this.req.url, false, ResponseType.TEXT);
+      const req = await FetchService.fetch<string>(this.req.url, {
+        type: 'TEXT'
+      });
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
         type: BusMessageType.CONTENT_FETCH_CSS,
         data: {
@@ -35,7 +36,7 @@ export class ContentFetchCssCommand implements ICommand<Promise<void>> {
           ok: req.ok,
           status: req.status,
           type: req.type,
-          res: req.res
+          data: req.data
         }
       });
     } catch (e) {
@@ -46,8 +47,8 @@ export class ContentFetchCssCommand implements ICommand<Promise<void>> {
           url: this.req.url,
           ok: false,
           status: 500,
-          type: ResponseType.TEXT,
-          res: ''
+          type: 'TEXT',
+          data: ''
         }
       });
     }

@@ -15,10 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto, VerifyTokenDto } from '../../../common/model/shared/token.dto';
-import { FetchResponse, ResponseType } from '../../../common/model/api.model';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiHelper } from '../../api/api-helper';
-import { FetchService } from '../../service/fetch.service';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ApiVerify2faCommand implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>> {
@@ -28,14 +27,17 @@ export class ApiVerify2faCommand implements ICommand<Promise<FetchResponse<Acces
     fnConsoleLog('ApiVerify2faCommand->execute');
     const url = `${ApiHelper.apiUrl}/api/v1/auth/2fa/verify`;
     try {
-      return await FetchService.post<AccessTokenDto>(url, this.data);
+      return await FetchService.fetch<AccessTokenDto>(url, {
+        method: 'POST',
+        data: this.data
+      });
     } catch (e) {
       return {
         ok: false,
         url,
         status: 500,
-        type: ResponseType.JSON,
-        res: { message: 'Send request problem' }
+        type: 'JSON',
+        data: { message: 'Send request problem' }
       };
     }
   }

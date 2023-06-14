@@ -15,9 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BoolDto, ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
-import { FetchResponse, ResponseType } from '../../../common/model/api.model';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ApiHelper } from '../../api/api-helper';
-import { FetchService } from '../../service/fetch.service';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ApiLogoutCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
@@ -25,15 +24,19 @@ export class ApiLogoutCommand implements ICommand<Promise<FetchResponse<BoolDto 
     const url = `${ApiHelper.apiUrl}/api/v1/auth/logout`;
     fnConsoleLog('ApiLogoutCommand->execute', url);
     try {
-      return await FetchService.post<BoolDto>(url, undefined, true);
+      const headers = await ApiHelper.getAuthHeaders();
+      return await FetchService.fetch<BoolDto>(url, {
+        method: 'POST',
+        headers
+      });
     } catch (e) {
       fnConsoleLog('ERROR', e);
       return {
         ok: false,
         url,
         status: 500,
-        type: ResponseType.JSON,
-        res: { message: 'Send request problem' }
+        type: 'JSON',
+        data: { message: 'Send request problem' }
       };
     }
   }

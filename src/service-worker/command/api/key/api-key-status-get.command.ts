@@ -14,29 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, KeyStatusResponse, ResponseType } from '../../../../common/model/api.model';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { ApiHelper } from '../../../api/api-helper';
-import { FetchService } from '../../../service/fetch.service';
+import { apiResponseError } from '../api.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
-export class ApiKeyStatusGetCommand implements ICommand<Promise<FetchResponse<KeyStatusResponse | ServerErrorDto>>> {
-  async execute(): Promise<FetchResponse<KeyStatusResponse | ServerErrorDto>> {
+export class ApiKeyStatusGetCommand implements ICommand<Promise<FetchResponse<any | ServerErrorDto>>> {
+  async execute(): Promise<FetchResponse<any | ServerErrorDto>> {
     fnConsoleLog('ApiPrivateKeyGetCommand->execute');
 
     const storeUrl = await ApiHelper.getStoreUrl();
     const url = `${storeUrl}/api/v1/key/status`;
 
     try {
-      return await FetchService.get<KeyStatusResponse>(url, true);
+      const headers = await ApiHelper.getAuthHeaders();
+      return await FetchService.fetch(url, {
+        headers
+      });
     } catch (e) {
-      return {
-        ok: false,
-        url,
-        status: 500,
-        type: ResponseType.JSON,
-        res: { message: 'Send request problem' }
-      };
+      return { url, ...apiResponseError };
     }
   }
 }

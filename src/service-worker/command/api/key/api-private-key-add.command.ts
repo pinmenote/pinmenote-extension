@@ -15,20 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BoolDto, ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
-import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ApiHelper } from '../../../api/api-helper';
 import { CryptoStore } from '../../../../common/store/crypto.store';
-import { FetchService } from '../../../service/fetch.service';
+import { apiResponseError } from '../api.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiPrivateKeyAddCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
-  private error = {
-    ok: false,
-    status: 500,
-    type: ResponseType.JSON,
-    res: { message: 'Send request problem' }
-  };
-
   constructor(private key: string) {}
 
   async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {
@@ -38,12 +31,16 @@ export class ApiPrivateKeyAddCommand implements ICommand<Promise<FetchResponse<B
     const url = `${storeUrl}/api/v1/key/private`;
 
     await CryptoStore.loadKeys();
-    if (!CryptoStore.cryptoKey) return { url, ...this.error };
-
+    if (!CryptoStore.cryptoKey) return { url, ...apiResponseError };
+    const headers = await ApiHelper.getAuthHeaders();
     try {
-      return await FetchService.post<BoolDto>(url, { key: this.key }, true);
+      return await FetchService.fetch<BoolDto>(url, {
+        data: { key: this.key },
+        method: 'POST',
+        headers
+      });
     } catch (e) {
-      return { url, ...this.error };
+      return { url, ...apiResponseError };
     }
   }
 }

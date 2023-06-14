@@ -15,9 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BoolDto, ICommand } from '../../../../common/model/shared/common.dto';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ApiHelper } from '../../../api/api-helper';
-import { FetchResponse } from '../../../../common/model/api.model';
-import { FetchService } from '../../../service/fetch.service';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiStoreRemoveObjectCommand implements ICommand<Promise<FetchResponse<BoolDto> | undefined>> {
@@ -30,7 +29,8 @@ export class ApiStoreRemoveObjectCommand implements ICommand<Promise<FetchRespon
     const url = `${storeUrl}/api/v1/obj/${this.id}`;
 
     try {
-      return await FetchService.delete<BoolDto>(url, true);
+      const headers = await ApiHelper.getAuthHeaders();
+      return await FetchService.fetch<BoolDto>(url, { method: 'DELETE', headers });
     } catch (e) {
       fnConsoleLog('ApiStoreRemoveObjectCommand->Error', e);
     }

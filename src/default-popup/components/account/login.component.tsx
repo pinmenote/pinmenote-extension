@@ -20,7 +20,7 @@ import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'reac
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
-import { FetchResponse } from '../../../common/model/api.model';
+import { FetchResponse } from '@pinmenote/fetch-service';
 import Link from '@mui/material/Link';
 import { LogManager } from '../../../common/popup/log.manager';
 import { ServerErrorDto } from '../../../common/model/shared/common.dto';

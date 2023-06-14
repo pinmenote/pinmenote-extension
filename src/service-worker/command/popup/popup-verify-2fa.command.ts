@@ -18,7 +18,7 @@ import { AccessTokenDto, VerifyTokenDto } from '../../../common/model/shared/tok
 import { ApiVerify2faCommand } from '../api/api-verify-2fa.command';
 import { BrowserApi } from '../../../common/service/browser.api.wrapper';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { FetchResponse } from '../../../common/model/api.model';
+import { FetchResponse } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 

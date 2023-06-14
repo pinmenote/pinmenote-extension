@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BoolDto, ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
-import { FetchResponse, ResponseType } from '../../../../common/model/api.model';
+import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ApiHelper } from '../../../api/api-helper';
-import { FetchService } from '../../../service/fetch.service';
+import { apiResponseError } from '../api.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiPublicKeyRemoveCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
@@ -28,15 +28,13 @@ export class ApiPublicKeyRemoveCommand implements ICommand<Promise<FetchResponse
     const url = `${storeUrl}/api/v1/key/public`;
 
     try {
-      return await FetchService.delete<BoolDto>(url, true);
+      const headers = await ApiHelper.getAuthHeaders();
+      return await FetchService.fetch<BoolDto>(url, {
+        method: 'DELETE',
+        headers
+      });
     } catch (e) {
-      return {
-        ok: false,
-        url,
-        status: 500,
-        type: ResponseType.JSON,
-        res: { message: 'Send request problem' }
-      };
+      return { url, ...apiResponseError };
     }
   }
 }
