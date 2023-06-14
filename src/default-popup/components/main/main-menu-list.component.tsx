@@ -17,7 +17,7 @@
 import { PopupPageCustomizeRequest, PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import React, { FunctionComponent, useState } from 'react';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CircularProgress from '@mui/material/CircularProgress';

@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
-import { BrowserApi } from '../../service/browser.api.wrapper';
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../model/bus.model';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
@@ -46,7 +46,7 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
     await WordIndex.indexFlat(this.dto.info.words, id);
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
-    await BrowserStorageWrapper.set(key, dto);
+    await BrowserStorage.set(key, dto);
 
     await LinkHrefStore.add(this.dto.info.url, id);
 

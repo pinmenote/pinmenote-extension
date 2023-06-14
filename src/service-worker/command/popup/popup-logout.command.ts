@@ -16,7 +16,7 @@
  */
 import { BoolDto, ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiLogoutCommand } from '../api/api-logout.command';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchResponse } from '@pinmenote/fetch-service';
 import { fnConsoleLog } from '../../../common/fn/fn-console';

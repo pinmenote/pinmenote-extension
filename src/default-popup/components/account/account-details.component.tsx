@@ -16,7 +16,7 @@
  */
 import { BoolDto, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import { COLOR_DEFAULT_RED } from '../../../common/components/colors';

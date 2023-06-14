@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto } from '../../../model/shared/token.dto';
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
@@ -26,6 +26,6 @@ export class TokenStorageSetCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('TokenStorageSetCommand->execute');
     const key = `${ObjectStoreKeys.ACCESS_TOKEN}:${environmentConfig.defaultServer}`;
-    await BrowserStorageWrapper.set(key, this.value);
+    await BrowserStorage.set(key, this.value);
   }
 }

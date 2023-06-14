@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
@@ -48,7 +48,7 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
 
-    await BrowserStorageWrapper.set(key, dto);
+    await BrowserStorage.set(key, dto);
     if (this.note.url) {
       await LinkHrefStore.add(this.note.url, id);
       await LinkHrefStore.noteAdd(this.note.url, id);

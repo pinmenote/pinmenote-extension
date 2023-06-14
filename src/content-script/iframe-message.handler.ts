@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusMessage, BusMessageType } from '../common/model/bus.model';
-import { BrowserApi } from '../common/service/browser.api.wrapper';
+import { BrowserApi, BusMessage } from '@pinmenote/browser-api';
+import { BusMessageType } from '../common/model/bus.model';
 import { ContentFetchIframeCommand } from './command/snapshot/content-fetch-iframe.command';
 import { DocumentMediator } from './mediator/document.mediator';
 import { IFrameIndexMessage } from '../common/model/iframe-message.model';

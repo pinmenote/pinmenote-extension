@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlCanvasFactory } from './html-canvas.factory';

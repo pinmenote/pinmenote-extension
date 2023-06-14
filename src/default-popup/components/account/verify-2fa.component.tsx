@@ -17,7 +17,7 @@
 import { AccessTokenDto, VerifyTokenDto } from '../../../common/model/shared/token.dto';
 import { COLOR_DEFAULT_GREY_LIGHT, COLOR_DEFAULT_RED, DEFAULT_BORDER_RADIUS } from '../../../common/components/colors';
 import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import { FetchResponse } from '@pinmenote/fetch-service';

@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjPageDataDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useState } from 'react';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { NoteListElementComponent } from './note-list-element.component';
 import { NoteRemoveCommand } from '../../../common/command/note/note-remove.command';

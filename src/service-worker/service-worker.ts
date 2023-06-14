@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
-import { BrowserApi } from '../common/service/browser.api.wrapper';
+import { BrowserApi, BrowserGlobalSender, BusMessage } from '@pinmenote/browser-api';
+import { BusMessageType } from '../common/model/bus.model';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
@@ -129,5 +129,6 @@ BrowserApi.runtime.onInstalled.addListener(handleInstalled);
 BrowserApi.runtime.onMessage.addListener(handleMessage);
 BrowserApi.tabs.onActivated.addListener(handleTabActivated);
 BrowserApi.runtime.onSuspend?.addListener(handleSuspend);
+BrowserApi.init();
 
 fnConsoleLog(`Pinmenote service-worker start! ${BrowserApi.runtime.id}`);

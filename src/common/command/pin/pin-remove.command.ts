@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { ObjPinDto, PinIframeDto } from '../../model/obj/obj-pin.dto';
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
@@ -29,10 +29,10 @@ export class PinRemoveCommand implements ICommand<void> {
     fnConsoleLog('PinRemoveCommand->execute', this.id);
 
     const key = `${ObjectStoreKeys.PIN_ID}:${this.id}`;
-    const pin = await BrowserStorageWrapper.get<ObjDto<ObjPinDto> | undefined>(key);
+    const pin = await BrowserStorage.get<ObjDto<ObjPinDto> | undefined>(key);
     if (!pin) return;
 
-    await BrowserStorageWrapper.remove(key);
+    await BrowserStorage.remove(key);
 
     await LinkHrefStore.pinDel(this.url, this.id);
 

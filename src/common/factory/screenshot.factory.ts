@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../model/bus.model';
 import { ImageResizeFactory } from './image-resize.factory';
 import { ObjRectangleDto } from '../model/obj/obj-utils.dto';

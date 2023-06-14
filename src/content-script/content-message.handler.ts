@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserGlobalSender, BusMessage, BusMessageType } from '../common/model/bus.model';
-import { BrowserApi } from '../common/service/browser.api.wrapper';
+import { BrowserApi, BrowserGlobalSender, BusMessage } from '@pinmenote/browser-api';
+import { BusMessageType } from '../common/model/bus.model';
 import { ContentPageSnapshotAddCommand } from './command/snapshot/content-page-snapshot-add.command';
 import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';

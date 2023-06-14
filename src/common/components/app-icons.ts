@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import icon128 from '../../assets/icon/light/128.png';
 import icon16 from '../../assets/icon/light/16.png';
 import icon24 from '../../assets/icon/light/24.png';

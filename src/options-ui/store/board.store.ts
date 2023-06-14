@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../common/model/obj/obj-page.dto';
 import { ObjRangeRequest } from '../../common/model/obj-request.model';
@@ -76,7 +76,7 @@ export class BoardStore {
   static async clearSearch(): Promise<void> {
     this.isLastValue = false;
     this.rangeRequest.search = '';
-    this.rangeRequest.from = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
+    this.rangeRequest.from = (await BrowserStorage.get<number | undefined>(ObjectStoreKeys.OBJECT_ID)) || 1;
     this.rangeRequest.listId = -1;
     this.objData = [];
     this.keySet.clear();

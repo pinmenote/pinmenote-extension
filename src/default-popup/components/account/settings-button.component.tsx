@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import Button from '@mui/material/Button';
 
 export const SettingsButtonComponent: FunctionComponent = () => {

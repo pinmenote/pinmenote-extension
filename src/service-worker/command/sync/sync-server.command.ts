@@ -16,7 +16,7 @@
  */
 import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/fn-date';
 import { ApiHelper } from '../../api/api-helper';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
@@ -62,10 +62,10 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
 
   private async shouldSync(): Promise<boolean> {
     if (SyncServerCommand.isInSync) return false;
-    const interval = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.SYNC_INTERVAL)) || 0;
+    const interval = (await BrowserStorage.get<number | undefined>(ObjectStoreKeys.SYNC_INTERVAL)) || 0;
     fnConsoleLog('SyncServerCommand->shouldSync', Date.now() - interval);
     if (Date.now() - interval > 5_000) {
-      await BrowserStorageWrapper.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
+      await BrowserStorage.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
 
       const loggedIn = await ApiHelper.isLoggedIn();
       fnConsoleLog('SyncServerCommand->loggedIn', loggedIn);

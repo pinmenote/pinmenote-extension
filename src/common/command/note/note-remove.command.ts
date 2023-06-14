@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjDto } from '../../model/obj/obj.dto';
@@ -28,7 +28,7 @@ export class NoteRemoveCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjNoteDto>) {}
   async execute(): Promise<void> {
     fnConsoleLog('NoteRemoveCommand->execute', this.obj);
-    await BrowserStorageWrapper.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
+    await BrowserStorage.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
 
     if (this.obj.data.url) {
       await LinkHrefStore.del(this.obj.data.url, this.obj.id);

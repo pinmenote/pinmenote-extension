@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjDrawDto } from '../../../model/obj/obj-draw.dto';
 import { ObjDto } from '../../../model/obj/obj.dto';
@@ -34,6 +34,6 @@ export class PinUpdateDrawCommand implements ICommand<Promise<void>> {
       createdAt: this.draw.createdAt
     };
     const hash = fnSha256Object(draw);
-    await BrowserStorageWrapper.set(`${ObjectStoreKeys.PIN_ID}:${this.pin.id}`, this.pin);
+    await BrowserStorage.set(`${ObjectStoreKeys.PIN_ID}:${this.pin.id}`, this.pin);
   }
 }

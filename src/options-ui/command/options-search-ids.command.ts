@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { distance } from 'fastest-levenshtein';
@@ -89,7 +89,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
   async getWordSet(search: string): Promise<DistanceIds[] | undefined> {
     const start = search.substring(0, 2);
     const key = `${ObjectStoreKeys.SEARCH_WORD}:${start}`;
-    const words = await BrowserStorageWrapper.get<string[] | undefined>(key);
+    const words = await BrowserStorage.get<string[] | undefined>(key);
     if (!words) return;
 
     const distanceWord: DistanceWord[] = [];
@@ -114,7 +114,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
     for (const dw of distanceWord) {
       const wordKey = `${ObjectStoreKeys.SEARCH_INDEX}:${dw.word}`;
       if (dw.distance > minDistance + 3) continue;
-      const ids = await BrowserStorageWrapper.get<number[] | undefined>(wordKey);
+      const ids = await BrowserStorage.get<number[] | undefined>(wordKey);
       if (!ids) continue;
       distances.push({ distance: dw.distance, ids: ids.reverse(), word: dw.word });
     }

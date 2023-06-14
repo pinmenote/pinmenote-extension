@@ -16,7 +16,7 @@
  */
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import { ScreenshotFormat, SettingsConfig } from '../../../../common/environment';
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
@@ -49,7 +49,7 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
     setScreenshotQuality(value);
     if (value > 0 && value <= 100) {
       SettingsStore.settings.screenshotQuality = value;
-      await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+      await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
     }
   };
 
@@ -57,7 +57,7 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
     if (!SettingsStore.settings) return;
     setScreenshotFormat(e.target.value);
     SettingsStore.settings.screenshotFormat = e.target.value as ScreenshotFormat;
-    await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
   return (

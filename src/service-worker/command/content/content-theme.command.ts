@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ContentExtensionData, ExtensionThemeDto } from '../../../common/model/settings.model';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { appLightIcons } from '../../../common/components/app-icons';
 import { fnConsoleLog } from '../../../common/fn/fn-console';

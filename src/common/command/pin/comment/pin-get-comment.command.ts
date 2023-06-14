@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
@@ -26,6 +26,6 @@ export class PinGetCommentCommand implements ICommand<Promise<ObjCommentDto | un
   async execute(): Promise<ObjCommentDto | undefined> {
     fnConsoleLog('PinGetCommentCommand', this.hash);
     const key = `${ObjectStoreKeys.PIN_COMMENT}:${this.hash}`;
-    return await BrowserStorageWrapper.get<ObjCommentDto | undefined>(key);
+    return await BrowserStorage.get<ObjCommentDto | undefined>(key);
   }
 }

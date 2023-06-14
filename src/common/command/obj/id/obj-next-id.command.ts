@@ -14,18 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 
 export class ObjNextIdCommand implements ICommand<Promise<number>> {
   constructor(private key: string) {}
   async execute(): Promise<number> {
-    const value = await BrowserStorageWrapper.get<number | undefined>(this.key);
+    const value = await BrowserStorage.get<number | undefined>(this.key);
     if (value) {
-      await BrowserStorageWrapper.set(this.key, value + 1);
+      await BrowserStorage.set(this.key, value + 1);
       return value + 1;
     }
-    await BrowserStorageWrapper.set(this.key, 1);
+    await BrowserStorage.set(this.key, 1);
     return 1;
   }
 }

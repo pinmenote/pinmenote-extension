@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPinDto } from '../../model/obj/obj-pin.dto';
@@ -23,6 +23,6 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 export class ObjPinGetCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
   constructor(private id: number) {}
   async execute(): Promise<ObjDto<ObjPinDto>> {
-    return await BrowserStorageWrapper.get<ObjDto<ObjPinDto>>(`${ObjectStoreKeys.PIN_ID}:${this.id}`);
+    return await BrowserStorage.get<ObjDto<ObjPinDto>>(`${ObjectStoreKeys.PIN_ID}:${this.id}`);
   }
 }

@@ -16,7 +16,7 @@
  */
 import { ObjDataDto, ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjRangeRequest, ObjRangeResponse } from '../../common/model/obj-request.model';
-import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../common/model/shared/common.dto';
 import { ObjGetCommand } from '../../common/command/obj/obj-get.command';
 import { ObjRangeIdCommand } from '../../common/command/obj/id/obj-range-id.command';
@@ -37,7 +37,7 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
         return await this.getSearch(from, limit, search);
       }
       if (listId === -1) {
-        listId = (await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
+        listId = (await BrowserStorage.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID)) || 1;
       }
       return await this.getRange(from, listId, limit);
     } catch (e) {

@@ -17,7 +17,7 @@
 import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
 import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiLoginCommand } from '../api/api-login.command';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchResponse } from '@pinmenote/fetch-service';
 import { fnConsoleLog } from '../../../common/fn/fn-console';

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
@@ -26,19 +26,19 @@ export class PageSegmentRemoveListCommand implements ICommand<Promise<void>> {
       const key = `${ObjectStoreKeys.CONTENT_HASH}:${hash}`;
 
       const isLast = await this.decrementCount(hash);
-      if (isLast) await BrowserStorageWrapper.remove(key);
+      if (isLast) await BrowserStorage.remove(key);
     }
   }
 
   async decrementCount(hash: string): Promise<boolean> {
     const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${hash}`;
-    let count = (await BrowserStorageWrapper.get<number | undefined>(key)) || 0;
+    let count = (await BrowserStorage.get<number | undefined>(key)) || 0;
     count--;
     if (count === 0) {
-      await BrowserStorageWrapper.remove(key);
+      await BrowserStorage.remove(key);
       return true;
     }
-    await BrowserStorageWrapper.set<number>(key, count);
+    await BrowserStorage.set<number>(key, count);
     return false;
   }
 }

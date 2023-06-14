@@ -16,8 +16,8 @@
  */
 import { IFrameIndexMessage, IFrameListenerMessage } from '../common/model/iframe-message.model';
 import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
-import { BrowserApi } from '../common/service/browser.api.wrapper';
-import { BrowserStorageWrapper } from '../common/service/browser.storage.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../common/model/bus.model';
 import { ContentMessageHandler } from '../content-script/content-message.handler';
 import { ContentSettingsStore } from '../content-script/store/content-settings.store';
@@ -63,7 +63,7 @@ export class IframeScript {
 
   private invalidateContentScript = async (): Promise<boolean> => {
     try {
-      await BrowserStorageWrapper.get('foo');
+      await BrowserStorage.get('foo');
       return true;
     } catch (e) {
       fnConsoleLog('IframeScript->Error', this.id, e);
@@ -100,6 +100,7 @@ export class IframeScript {
 
 try {
   if (fnIsIframe()) {
+    BrowserApi.init();
     new IframeScript(fnUid());
   }
 } catch (e: unknown) {

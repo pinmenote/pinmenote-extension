@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncProgress } from '../sync.model';
@@ -22,6 +22,6 @@ import { SyncProgress } from '../sync.model';
 export class SyncSetProgressCommand implements ICommand<Promise<void>> {
   constructor(protected progress: SyncProgress) {}
   async execute(): Promise<void> {
-    await BrowserStorageWrapper.set<SyncProgress>(ObjectStoreKeys.SYNC_PROGRESS, this.progress);
+    await BrowserStorage.set<SyncProgress>(ObjectStoreKeys.SYNC_PROGRESS, this.progress);
   }
 }

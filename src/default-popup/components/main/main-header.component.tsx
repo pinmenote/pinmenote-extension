@@ -16,7 +16,7 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';

@@ -16,7 +16,7 @@
  */
 import { CSS_IMPORT_REG, CssFactory } from '../css.factory';
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { HtmlAttrFactory } from './html-attr.factory';
 import { HtmlConstraints } from './html.constraints';
 import { HtmlImgFactory } from './html-img.factory';

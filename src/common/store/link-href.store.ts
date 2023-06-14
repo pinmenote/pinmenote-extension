@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { LinkOriginStore } from './link-origin.store';
 import { ObjUrlDto } from '../model/obj/obj.dto';
 import { fnConsoleLog } from '../fn/fn-console';
@@ -29,7 +29,7 @@ export class LinkHrefStore {
     fnConsoleLog('LinkHrefStore->addHrefOriginId', url.href);
     const hrefIds = await this.hrefIds(url.href);
     hrefIds.push(id);
-    await BrowserStorageWrapper.set(`${this.OBJ_HREF}:${url.href}`, hrefIds);
+    await BrowserStorage.set(`${this.OBJ_HREF}:${url.href}`, hrefIds);
 
     await LinkOriginStore.add(LinkOriginStore.OBJ_ORIGIN, id, url.origin);
   }
@@ -40,9 +40,9 @@ export class LinkHrefStore {
     const hrefIds = await this.hrefIds(url.href);
     const newHref = hrefIds.filter((i) => i !== id);
     if (newHref.length === 0) {
-      await BrowserStorageWrapper.remove(`${this.OBJ_HREF}:${url.href}`);
+      await BrowserStorage.remove(`${this.OBJ_HREF}:${url.href}`);
     } else {
-      await BrowserStorageWrapper.set(`${this.OBJ_HREF}:${url.href}`, newHref);
+      await BrowserStorage.set(`${this.OBJ_HREF}:${url.href}`, newHref);
     }
     await LinkOriginStore.del(LinkOriginStore.OBJ_ORIGIN, id, url.origin);
   }
@@ -50,14 +50,14 @@ export class LinkHrefStore {
   static async hrefIds(url: string): Promise<number[]> {
     fnConsoleLog('LinkHrefStore->hrefIds', url);
     const key = `${this.OBJ_HREF}:${url}`;
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
   }
 
   static async pinAdd(url: ObjUrlDto, id: number): Promise<void> {
     const hrefIds = await this.pinIds(url.href);
     hrefIds.push(id);
-    await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, hrefIds);
+    await BrowserStorage.set(`${this.PIN_HREF}:${url.href}`, hrefIds);
 
     await LinkOriginStore.add(LinkOriginStore.PIN_ORIGIN, id, url.origin);
   }
@@ -66,9 +66,9 @@ export class LinkHrefStore {
     const hrefIds = await this.pinIds(url.href);
     const newHref = hrefIds.filter((i) => i !== id);
     if (newHref.length === 0) {
-      await BrowserStorageWrapper.remove(`${this.PIN_HREF}:${url.href}`);
+      await BrowserStorage.remove(`${this.PIN_HREF}:${url.href}`);
     } else {
-      await BrowserStorageWrapper.set(`${this.PIN_HREF}:${url.href}`, newHref);
+      await BrowserStorage.set(`${this.PIN_HREF}:${url.href}`, newHref);
     }
 
     await LinkOriginStore.del(LinkOriginStore.PIN_ORIGIN, id, url.origin);
@@ -76,14 +76,14 @@ export class LinkHrefStore {
 
   static async pinIds(url: string): Promise<number[]> {
     const key = `${this.PIN_HREF}:${url}`;
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
   }
 
   static async noteAdd(url: ObjUrlDto, id: number): Promise<void> {
     const hrefIds = await this.noteIds(url.href);
     hrefIds.push(id);
-    await BrowserStorageWrapper.set(`${this.NOTE_HREF}:${url.href}`, hrefIds);
+    await BrowserStorage.set(`${this.NOTE_HREF}:${url.href}`, hrefIds);
 
     await LinkOriginStore.add(LinkOriginStore.NOTE_ORIGIN, id, url.origin);
   }
@@ -92,9 +92,9 @@ export class LinkHrefStore {
     const hrefIds = await this.noteIds(url.href);
     const newHref = hrefIds.filter((i) => i !== id);
     if (newHref.length === 0) {
-      await BrowserStorageWrapper.remove(`${this.NOTE_HREF}:${url.href}`);
+      await BrowserStorage.remove(`${this.NOTE_HREF}:${url.href}`);
     } else {
-      await BrowserStorageWrapper.set(`${this.NOTE_HREF}:${url.href}`, newHref);
+      await BrowserStorage.set(`${this.NOTE_HREF}:${url.href}`, newHref);
     }
 
     await LinkOriginStore.del(LinkOriginStore.NOTE_ORIGIN, id, url.origin);
@@ -102,7 +102,7 @@ export class LinkHrefStore {
 
   static async noteIds(url: string): Promise<number[]> {
     const key = `${this.NOTE_HREF}:${url}`;
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
   }
 }

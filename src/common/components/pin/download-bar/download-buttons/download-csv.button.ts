@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BusDownloadMessage, BusMessageType } from '../../../../model/bus.model';
-import { BrowserApi } from '../../../../service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { applyStylesToElement } from '../../../../style.utils';
 import { fnUid } from '../../../../fn/fn-uid';

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { PageSegmentDto } from '../../../model/obj/page-segment.dto';
@@ -24,14 +24,14 @@ export class PageSegmentAddCommand<T> implements ICommand<Promise<void>> {
 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.content.hash}`;
-    await BrowserStorageWrapper.set<PageSegmentDto<T>>(key, this.content);
+    await BrowserStorage.set<PageSegmentDto<T>>(key, this.content);
     await this.incrementCount();
   }
 
   async incrementCount(): Promise<void> {
     const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${this.content.hash}`;
-    let count = (await BrowserStorageWrapper.get<number | undefined>(key)) || 0;
+    let count = (await BrowserStorage.get<number | undefined>(key)) || 0;
     count++;
-    await BrowserStorageWrapper.set(key, count);
+    await BrowserStorage.set(key, count);
   }
 }

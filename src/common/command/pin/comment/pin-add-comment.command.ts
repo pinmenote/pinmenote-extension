@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjAddHashtagsCommand } from '../../obj/hashtag/obj-add-hashtags.command';
 import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
@@ -40,12 +40,12 @@ export class PinAddCommentCommand implements ICommand<Promise<string>> {
     comment.hash = hash;
     fnConsoleLog('PinAddCommentCommand', hash);
 
-    await BrowserStorageWrapper.set(`${ObjectStoreKeys.PIN_COMMENT}:${hash}`, comment);
+    await BrowserStorage.set(`${ObjectStoreKeys.PIN_COMMENT}:${hash}`, comment);
 
     this.pin.data.comments.data.push(hash);
 
     const pinKey = `${ObjectStoreKeys.PIN_ID}:${this.pin.id}`;
-    await BrowserStorageWrapper.set(pinKey, this.pin);
+    await BrowserStorage.set(pinKey, this.pin);
     return hash;
   }
 }

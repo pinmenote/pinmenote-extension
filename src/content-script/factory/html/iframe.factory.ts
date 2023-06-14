@@ -17,7 +17,7 @@
 import { HtmlComputeParams, HtmlIntermediateData } from '../../model/html.model';
 import { IFrameFetchMessage, IFrameIndexMessage } from '../../../common/model/iframe-message.model';
 import { SegmentPageDto, SegmentTypeDto } from '../../../common/model/obj/page-segment.dto';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { CssFactory } from '../css.factory';
 import { HtmlAttrFactory } from './html-attr.factory';

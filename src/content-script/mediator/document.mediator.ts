@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjTypeDto, ObjUrlDto } from '../../common/model/obj/obj.dto';
-import { BrowserApi } from '../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../common/model/bus.model';
 import { CIRCLE_PRELOADER_SVG } from './capture.preloader';
 import { ContentPageSnapshotCreateCommand } from '../command/snapshot/content-page-snapshot-create.command';

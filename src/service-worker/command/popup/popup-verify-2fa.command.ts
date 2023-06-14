@@ -15,11 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto, VerifyTokenDto } from '../../../common/model/shared/token.dto';
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiVerify2faCommand } from '../api/api-verify-2fa.command';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchResponse } from '@pinmenote/fetch-service';
-import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PopupVerify2faCommand implements ICommand<void> {
@@ -30,7 +30,7 @@ export class PopupVerify2faCommand implements ICommand<void> {
 
     const data = await new ApiVerify2faCommand(this.data).execute();
 
-    await BrowserApi.sendRuntimeMessage<FetchResponse<AccessTokenDto>>({
+    await BrowserApi.sendRuntimeMessage<FetchResponse<AccessTokenDto | ServerErrorDto>>({
       type: BusMessageType.POPUP_VERIFY_2FA,
       data
     });

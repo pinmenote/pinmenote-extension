@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
@@ -31,12 +31,12 @@ export class ObjUpdateIndexDelCommand implements ICommand<Promise<void>> {
     const idIndex = ids.findIndex((o) => o.id === this.index.id);
     if (idIndex > -1) {
       ids.splice(idIndex, 1);
-      await BrowserStorageWrapper.set(key, ids);
+      await BrowserStorage.set(key, ids);
     }
   }
 
   private async getList(key: string): Promise<ObjDateIndex[]> {
-    const value = await BrowserStorageWrapper.get<ObjDateIndex[] | undefined>(key);
+    const value = await BrowserStorage.get<ObjDateIndex[] | undefined>(key);
     return value || [];
   }
 }

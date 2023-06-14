@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
@@ -26,7 +26,7 @@ export class SyncFirstDateCommand implements ICommand<Promise<number>> {
     // find first not empty list
     while (!id) {
       const key = `${ObjectStoreKeys.OBJECT_LIST}:${i}`;
-      const list = await BrowserStorageWrapper.get<number[]>(key);
+      const list = await BrowserStorage.get<number[]>(key);
       id = list.shift();
       i++;
     }

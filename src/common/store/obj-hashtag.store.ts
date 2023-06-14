@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 
 export class ObjHashtagStore {
   private static OBJ_HASHTAG = 'obj:hashtag';
@@ -26,7 +26,7 @@ export class ObjHashtagStore {
       ids.push(id);
     }
     const key = `${this.OBJ_HASHTAG}:${hashtag}`;
-    await BrowserStorageWrapper.set(key, ids);
+    await BrowserStorage.set(key, ids);
 
     await this.addListHashtag(hashtag);
   }
@@ -41,21 +41,21 @@ export class ObjHashtagStore {
       }
     }
     if (ids.length === 0) {
-      await BrowserStorageWrapper.remove(key);
+      await BrowserStorage.remove(key);
       await this.delListHashtag(hashtag);
     } else {
-      await BrowserStorageWrapper.set(key, ids);
+      await BrowserStorage.set(key, ids);
     }
   }
 
   static async getHashtagList(): Promise<string[]> {
-    const value = await BrowserStorageWrapper.get<string[] | undefined>(this.OBJ_LIST_HASHTAG);
+    const value = await BrowserStorage.get<string[] | undefined>(this.OBJ_LIST_HASHTAG);
     return value || [];
   }
 
   private static async getHashtagIds(hashtag: string): Promise<number[]> {
     const key = `${this.OBJ_HASHTAG}:${hashtag}`;
-    return (await BrowserStorageWrapper.get<number[] | undefined>(key)) || [];
+    return (await BrowserStorage.get<number[] | undefined>(key)) || [];
   }
 
   private static async addListHashtag(hashtag: string): Promise<void> {
@@ -71,6 +71,6 @@ export class ObjHashtagStore {
   }
 
   private static async setHashtagList(list: string[]): Promise<void> {
-    await BrowserStorageWrapper.set(this.OBJ_LIST_HASHTAG, list);
+    await BrowserStorage.set(this.OBJ_LIST_HASHTAG, list);
   }
 }

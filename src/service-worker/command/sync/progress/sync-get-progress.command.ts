@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncFirstDateCommand } from '../sync-first-date.command';
@@ -22,7 +22,7 @@ import { SyncProgress } from '../sync.model';
 
 export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
   async execute(): Promise<SyncProgress> {
-    const sync = await BrowserStorageWrapper.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
+    const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
     if (!sync) {
       const timestamp = await new SyncFirstDateCommand().execute();
       return { state: 'update', timestamp };

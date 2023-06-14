@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
 import { ObjDto } from '../../../model/obj/obj.dto';
@@ -38,21 +38,21 @@ export class PinRemoveCommentCommand implements ICommand<Promise<void>> {
 
     while (prev !== undefined) {
       const prevKey = `${ObjectStoreKeys.PIN_COMMENT}:${prev}`;
-      const prevComment = await BrowserStorageWrapper.get<ObjCommentDto | undefined>(prevKey);
+      const prevComment = await BrowserStorage.get<ObjCommentDto | undefined>(prevKey);
       fnConsoleLog('PinRemoveCommentCommand->prev', prev);
       if (prevComment) {
         prev = prevComment.prev;
-        await BrowserStorageWrapper.remove(prevKey);
+        await BrowserStorage.remove(prevKey);
       }
     }
 
-    await BrowserStorageWrapper.remove(`${ObjectStoreKeys.PIN_COMMENT}:${comment.hash}`);
+    await BrowserStorage.remove(`${ObjectStoreKeys.PIN_COMMENT}:${comment.hash}`);
 
     if (this.updatePin) {
       commentList.data.splice(hashIndex, 1);
 
       const pinKey = `${ObjectStoreKeys.PIN_ID}:${this.pin.id}`;
-      await BrowserStorageWrapper.set(pinKey, this.pin);
+      await BrowserStorage.set(pinKey, this.pin);
     }
   }
 }

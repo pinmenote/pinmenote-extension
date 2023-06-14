@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/model/obj-index.model';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
@@ -48,11 +48,11 @@ export class SyncRemoveListCommand implements ICommand<Promise<void>> {
   }
 
   private async getList(key: string): Promise<ObjDateIndex[]> {
-    const value = await BrowserStorageWrapper.get<ObjDateIndex[] | undefined>(key);
+    const value = await BrowserStorage.get<ObjDateIndex[] | undefined>(key);
     return value || [];
   }
 
   private async updateList(key: string, value: ObjDateIndex[]): Promise<void> {
-    await BrowserStorageWrapper.set(key, value);
+    await BrowserStorage.set(key, value);
   }
 }

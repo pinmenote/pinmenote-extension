@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchCssRequest } from '../../../common/model/obj-request.model';
 import { ICommand } from '../../../common/model/shared/common.dto';

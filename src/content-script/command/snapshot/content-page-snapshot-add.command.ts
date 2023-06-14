@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjTypeDto, ObjUrlDto } from '../../../common/model/obj/obj.dto';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentPageSnapshotCreateCommand } from './content-page-snapshot-create.command';
 import { ICommand } from '../../../common/model/shared/common.dto';

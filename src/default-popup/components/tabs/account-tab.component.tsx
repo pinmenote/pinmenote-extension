@@ -17,7 +17,7 @@
 import React, { FunctionComponent, ReactElement, useState } from 'react';
 import { AccessTokenDto } from '../../../common/model/shared/token.dto';
 import { AccountDetailsComponent } from '../account/account-details.component';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { LoginComponent } from '../account/login.component';
 import { PopupTokenStore } from '../../store/popup-token.store';

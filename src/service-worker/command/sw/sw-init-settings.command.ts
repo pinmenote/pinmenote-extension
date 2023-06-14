@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { SettingsConfig, environmentConfig } from '../../../common/environment';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { CryptoGenerateKeyPairCommand } from '../../../common/command/crypto/crypto-generate-key-pair.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
@@ -23,10 +23,10 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class SwInitSettingsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const settings = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
+    const settings = await BrowserStorage.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
     if (!settings) {
       fnConsoleLog('Settings Initialize');
-      await BrowserStorageWrapper.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, environmentConfig.settings);
+      await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, environmentConfig.settings);
       await new CryptoGenerateKeyPairCommand().execute();
     } else if (settings.version !== environmentConfig.settings.version) {
       fnConsoleLog('Settings Migrate placeholder');

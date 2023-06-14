@@ -22,7 +22,7 @@ import {
   SegmentShadowDto,
   SegmentTypeDto
 } from '../../../common/model/obj/page-segment.dto';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';

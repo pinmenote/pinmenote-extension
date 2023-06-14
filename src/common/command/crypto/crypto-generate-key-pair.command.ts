@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { CryptoKeyData, CryptoStore } from '../../store/crypto.store';
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { generateKey } from 'openpgp';
 
@@ -28,7 +28,7 @@ export class CryptoGenerateKeyPairCommand implements ICommand<Promise<CryptoKeyD
       format: 'armored'
     });
     const keyData = { privateKey, publicKey, revocationCertificate };
-    await BrowserStorageWrapper.set<CryptoKeyData>(CryptoStore.PRIVATE_KEY, keyData);
+    await BrowserStorage.set<CryptoKeyData>(CryptoStore.PRIVATE_KEY, keyData);
 
     // load keys to variable after generation
     await CryptoStore.loadKeys();

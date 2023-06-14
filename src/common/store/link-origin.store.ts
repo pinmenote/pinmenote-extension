@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { fnConsoleLog } from '../fn/fn-console';
 
 export class LinkOriginStore {
@@ -28,7 +28,7 @@ export class LinkOriginStore {
     // Update origin
     const originIds = await this.originIds(keyPrefix, origin);
     originIds.push(id);
-    await BrowserStorageWrapper.set(`${keyPrefix}:${origin}`, originIds);
+    await BrowserStorage.set(`${keyPrefix}:${origin}`, originIds);
     await this.addList(origin);
   }
 
@@ -38,23 +38,23 @@ export class LinkOriginStore {
     const newOrigin = originIds.filter((i) => i !== id);
     const key = `${keyPrefix}:${origin}`;
     if (newOrigin.length === 0) {
-      await BrowserStorageWrapper.remove(key);
+      await BrowserStorage.remove(key);
       await this.delList(origin);
     } else {
-      await BrowserStorageWrapper.set(key, newOrigin);
+      await BrowserStorage.set(key, newOrigin);
     }
   }
 
   static async originIds(keyPrefix: string, url: string): Promise<number[]> {
     fnConsoleLog('LinkOriginStore->originIds', url);
     const key = `${keyPrefix}:${url}`;
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
   }
 
   static async originList(): Promise<string[]> {
     fnConsoleLog('LinkOriginStore->list');
-    const value = await BrowserStorageWrapper.get<string[] | undefined>(this.ORIGIN_LIST);
+    const value = await BrowserStorage.get<string[] | undefined>(this.ORIGIN_LIST);
     return value || [];
   }
 
@@ -62,7 +62,7 @@ export class LinkOriginStore {
     const list = await this.originList();
     if (list.indexOf(url) === -1) {
       list.push(url);
-      await BrowserStorageWrapper.set(this.ORIGIN_LIST, list);
+      await BrowserStorage.set(this.ORIGIN_LIST, list);
     }
   }
 
@@ -71,7 +71,7 @@ export class LinkOriginStore {
     const index = list.indexOf(url);
     if (index > -1) {
       list.splice(index, 1);
-      await BrowserStorageWrapper.set(this.ORIGIN_LIST, list);
+      await BrowserStorage.set(this.ORIGIN_LIST, list);
     }
   }
 }

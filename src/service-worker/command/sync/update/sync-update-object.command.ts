@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/model/obj-index.model';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
@@ -25,7 +25,7 @@ export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
   constructor(private index: ObjDateIndex) {}
   async execute(): Promise<boolean> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.index.id}`;
-    const obj = await BrowserStorageWrapper.get<ObjDto>(key);
+    const obj = await BrowserStorage.get<ObjDto>(key);
 
     // some error when you update object then you remove it - remove from index cause no object found
     if (!obj) {

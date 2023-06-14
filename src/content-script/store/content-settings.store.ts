@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../common/service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { SettingsConfig } from '../../common/environment';
 
@@ -46,6 +46,6 @@ export class ContentSettingsStore {
   }
 
   static initSettings = async (): Promise<void> => {
-    this.settingsData = await BrowserStorageWrapper.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
+    this.settingsData = await BrowserStorage.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
   };
 }

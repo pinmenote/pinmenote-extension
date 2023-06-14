@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjCreateIndexDelCommand } from '../date-index/obj-create-index-del.command';
 import { ObjDateIndex } from '../../../model/obj-index.model';
@@ -42,20 +42,20 @@ export class ObjRemoveIdCommand implements ICommand<Promise<void>> {
     if (idIndex > -1) {
       ids.splice(idIndex, 1);
       const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
-      await BrowserStorageWrapper.set(key, ids);
+      await BrowserStorage.set(key, ids);
     } else if (listId > 1) {
       return this.removeFromList(listId - 1);
     }
   }
 
   private async getListId(): Promise<number> {
-    const value = await BrowserStorageWrapper.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
+    const value = await BrowserStorage.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
     return value || 1;
   }
 
   private async getList(listId: number): Promise<number[]> {
     const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
   }
 }

@@ -14,8 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BusMessage } from '../../../common/model/bus.model';
+import { BrowserApi, BusMessage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../common/model/shared/common.dto';
 
 export class IframePassMessageCommand implements ICommand<Promise<void>> {

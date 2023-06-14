@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
-import { BrowserApi } from '../../../common/service/browser.api.wrapper';
-import { BrowserStorageWrapper } from '../../../common/service/browser.storage.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { LinkHrefStore } from '../../../common/store/link-href.store';
@@ -48,7 +48,7 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
 
     const key = `${ObjectStoreKeys.PIN_ID}:${id}`;
 
-    await BrowserStorageWrapper.set(key, dto);
+    await BrowserStorage.set(key, dto);
 
     await LinkHrefStore.pinAdd(this.pin.data.url, id);
     if (this.pin.data.iframe) await LinkHrefStore.pinAdd(this.pin.data.iframe.url, id);

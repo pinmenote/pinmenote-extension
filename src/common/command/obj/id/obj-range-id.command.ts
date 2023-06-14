@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjIdRangeResponse } from '../../../model/obj-request.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
@@ -57,7 +57,7 @@ export class ObjRangeIdCommand implements ICommand<Promise<ObjIdRangeResponse>> 
 
   private async getList(listId: number): Promise<number[]> {
     const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
-    const value = await BrowserStorageWrapper.get<number[] | undefined>(key);
+    const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
   }
 }

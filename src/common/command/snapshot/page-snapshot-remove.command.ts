@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorageWrapper } from '../../service/browser.storage.wrapper';
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjDto } from '../../model/obj/obj.dto';
@@ -33,7 +33,7 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
-    await BrowserStorageWrapper.remove(key);
+    await BrowserStorage.remove(key);
 
     await new ObjRemoveIdCommand({ id: this.obj.id, dt: Date.now() }, this.obj.server?.id).execute();
 

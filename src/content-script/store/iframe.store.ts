@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { IFrameIndexMessage, IFrameListenerMessage } from '../../common/model/iframe-message.model';
-import { BrowserApi } from '../../common/service/browser.api.wrapper';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../common/model/bus.model';
 import { DocumentMediator } from '../mediator/document.mediator';
 import { fnConsoleLog } from '../../common/fn/fn-console';
