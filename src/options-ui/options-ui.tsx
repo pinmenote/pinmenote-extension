@@ -19,7 +19,6 @@ import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BoardComponent } from './components/board/board.component';
 import { BoardDrawer } from './components/board/board/board-drawer';
 import { BoardMenu } from './components/board/board/board-menu';
-import { BrowserApi } from '@pinmenote/browser-api';
 import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
 import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
 import { ObjGetCommand } from '../common/command/obj/obj-get.command';
@@ -127,7 +126,6 @@ const OptionsUI: FunctionComponent = () => {
 };
 
 try {
-  BrowserApi.init();
   OptionsMessageHandler.init();
 } catch (e: unknown) {
   fnConsoleError('PROBLEM OptionsMessageHandler.init !!!', e);

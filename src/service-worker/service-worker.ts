@@ -129,6 +129,5 @@ BrowserApi.runtime.onInstalled.addListener(handleInstalled);
 BrowserApi.runtime.onMessage.addListener(handleMessage);
 BrowserApi.tabs.onActivated.addListener(handleTabActivated);
 BrowserApi.runtime.onSuspend?.addListener(handleSuspend);
-BrowserApi.init();
 
 fnConsoleLog(`Pinmenote service-worker start! ${BrowserApi.runtime.id}`);

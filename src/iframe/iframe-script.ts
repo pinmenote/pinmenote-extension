@@ -100,7 +100,6 @@ export class IframeScript {
 
 try {
   if (fnIsIframe()) {
-    BrowserApi.init();
     new IframeScript(fnUid());
   }
 } catch (e: unknown) {

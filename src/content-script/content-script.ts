@@ -128,7 +128,6 @@ class PinMeScript {
   }
 }
 try {
-  BrowserApi.init();
   new PinMeScript(fnUid(), 250);
 } catch (e: unknown) {
   fnConsoleError('PinMeScript->PROBLEM !!!', e);
