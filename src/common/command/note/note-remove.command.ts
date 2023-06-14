@@ -37,6 +37,6 @@ export class NoteRemoveCommand implements ICommand<void> {
 
     await WordIndex.removeFlat(this.obj.data.words, this.obj.id);
 
-    await new ObjRemoveIdCommand({ id: this.obj.id, dt: Date.now() }, this.obj.server?.id).execute();
+    await new ObjRemoveIdCommand({ id: this.obj.id, dt: Date.now() }).execute();
   }
 }

@@ -20,6 +20,7 @@ import { ContentFetchIframeCommand } from './command/snapshot/content-fetch-ifra
 import { DocumentMediator } from './mediator/document.mediator';
 import { IFrameIndexMessage } from '../common/model/iframe-message.model';
 import { IFrameStore } from './store/iframe.store';
+import { PageComputeMessage } from '@pinmenote/page-compute';
 import { PinAddIframeXpathCommand } from './command/pin/pin-add-iframe-xpath.command';
 import { PinPendingStore } from './store/pin-pending.store';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
@@ -42,7 +43,7 @@ export class IFrameMessageHandler {
         fnConsoleLog('IframeScript->sendIframeIndex', uid, index, window.document);
         break;
       }
-      case BusMessageType.IFRAME_FETCH: {
+      case PageComputeMessage.IFRAME_FETCH: {
         if (iframe && msg.data.uid === uid && href) {
           await new ContentFetchIframeCommand(href, uid, msg.data.depth).execute();
         } else {
@@ -65,9 +66,9 @@ export class IFrameMessageHandler {
         IFrameStore.resumeListeners(msg.data);
         break;
       }
-      case BusMessageType.IFRAME_PING: {
+      case PageComputeMessage.IFRAME_PING: {
         if (iframe && msg.data.uid === uid) {
-          await BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_PING_RESULT, data: msg.data });
+          await BrowserApi.sendRuntimeMessage({ type: PageComputeMessage.IFRAME_PING_RESULT, data: msg.data });
         }
         break;
       }

@@ -47,8 +47,6 @@ export enum BusMessageType {
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
   CONTENT_INVALIDATE = 'content.invalidate',
-  CONTENT_FETCH_CSS = 'content.fetch.css',
-  CONTENT_FETCH_IMAGE = 'content.fetch.image',
   CONTENT_PING_URL = 'content.ping.url',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',
   CONTENT_PIN_NAVIGATE = 'content.pin.navigate',
@@ -64,10 +62,6 @@ export enum BusMessageType {
   IFRAME_STOP_LISTENERS = 'iframe.stop.listeners',
   IFRAME_MOUSE_OUT = 'iframe.mouse.out',
   IFRAME_PIN_SEND = 'iframe.pin.send',
-  IFRAME_PIN_SHOW = 'iframe.pin.show',
-  IFRAME_PING = 'iframe.ping',
-  IFRAME_PING_RESULT = 'iframe.ping.result',
-  IFRAME_FETCH = 'iframe.fetch',
-  IFRAME_FETCH_RESULT = 'iframe.fetch.result'
+  IFRAME_PIN_SHOW = 'iframe.pin.show'
   // Options
 }

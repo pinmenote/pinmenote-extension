@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { PageCompute, SegmentData, SegmentPage } from '@pinmenote/page-compute';
+import { PageCompute, PageComputeMessage, SegmentData, SegmentPage } from '@pinmenote/page-compute';
 import { BrowserApi } from '@pinmenote/browser-api';
-import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
 import { IFrameStore } from '../../store/iframe.store';
@@ -48,7 +47,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     };
     const index = fnIframeIndex();
     await BrowserApi.sendRuntimeMessage<IFrameFetchMessage>({
-      type: BusMessageType.IFRAME_FETCH_RESULT,
+      type: PageComputeMessage.IFRAME_FETCH_RESULT,
       data: {
         index,
         uid: this.uid,

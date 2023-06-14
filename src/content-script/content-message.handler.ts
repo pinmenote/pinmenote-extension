@@ -21,6 +21,7 @@ import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { IFrameMessageHandler } from './iframe-message.handler';
+import { PageComputeMessage } from '@pinmenote/page-compute';
 import { PinAddFactory } from './factory/pin-add.factory';
 import { PinNavigateCommand } from './command/pin/pin-navigate.command';
 import { PinPendingStore } from './store/pin-pending.store';
@@ -68,12 +69,12 @@ export class ContentMessageHandler {
       case BusMessageType.IFRAME_INDEX_REGISTER:
       case BusMessageType.IFRAME_PIN_SEND:
       case BusMessageType.IFRAME_PIN_SHOW:
-      case BusMessageType.IFRAME_PING:
+      case PageComputeMessage.IFRAME_PING:
       case BusMessageType.IFRAME_START_LISTENERS:
       case BusMessageType.IFRAME_START_LISTENERS_RESULT:
       case BusMessageType.IFRAME_STOP_LISTENERS:
       case BusMessageType.IFRAME_MOUSE_OUT:
-      case BusMessageType.IFRAME_FETCH:
+      case PageComputeMessage.IFRAME_FETCH:
         await IFrameMessageHandler.handleMessage(msg, this.iframe, this.uid, this.href);
         break;
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:

@@ -16,9 +16,9 @@
  */
 import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { BrowserApi } from '@pinmenote/browser-api';
-import { BusMessageType } from '../../../common/model/bus.model';
 import { FetchCssRequest } from '../../../common/model/obj-request.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { PageComputeMessage } from '@pinmenote/page-compute';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
@@ -30,7 +30,7 @@ export class ContentFetchCssCommand implements ICommand<Promise<void>> {
         type: 'TEXT'
       });
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: BusMessageType.CONTENT_FETCH_CSS,
+        type: PageComputeMessage.CONTENT_FETCH_CSS,
         data: {
           url: req.url,
           ok: req.ok,
@@ -42,7 +42,7 @@ export class ContentFetchCssCommand implements ICommand<Promise<void>> {
     } catch (e) {
       fnConsoleLog('ContentFetchCssCommand->ERROR', e, this.req.url);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: BusMessageType.CONTENT_FETCH_CSS,
+        type: PageComputeMessage.CONTENT_FETCH_CSS,
         data: {
           url: this.req.url,
           ok: false,

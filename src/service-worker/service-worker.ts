@@ -24,6 +24,7 @@ import { ContentPinStopCommand } from './command/content/content-pin-stop.comman
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { IframePassMessageCommand } from './command/iframe/iframe-pass-message.command';
+import { PageComputeMessage } from '@pinmenote/page-compute';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLoginSuccessCommand } from './command/popup/popup-login-success.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
@@ -62,10 +63,10 @@ const handleMessage = async (
     case BusMessageType.CONTENT_STOP_LISTENERS:
       await new ContentPinStopCommand().execute();
       break;
-    case BusMessageType.CONTENT_FETCH_CSS:
+    case PageComputeMessage.CONTENT_FETCH_CSS:
       await new ContentFetchCssCommand(msg.data).execute();
       break;
-    case BusMessageType.CONTENT_FETCH_IMAGE:
+    case PageComputeMessage.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_LOGIN:
@@ -91,16 +92,16 @@ const handleMessage = async (
     case BusMessageType.IFRAME_MOUSE_OUT:
     case BusMessageType.IFRAME_PIN_SEND:
     case BusMessageType.IFRAME_PIN_SHOW:
-    case BusMessageType.IFRAME_PING:
-    case BusMessageType.IFRAME_PING_RESULT:
-    case BusMessageType.IFRAME_FETCH:
-    case BusMessageType.IFRAME_FETCH_RESULT: {
+    case PageComputeMessage.IFRAME_PING:
+    case PageComputeMessage.IFRAME_PING_RESULT:
+    case PageComputeMessage.IFRAME_FETCH:
+    case PageComputeMessage.IFRAME_FETCH_RESULT: {
       await new IframePassMessageCommand(msg).execute();
       break;
     }
   }
   // Sync command
-  if (![BusMessageType.CONTENT_FETCH_CSS, BusMessageType.CONTENT_FETCH_IMAGE].includes(msg.type)) {
+  if (![PageComputeMessage.CONTENT_FETCH_CSS, PageComputeMessage.CONTENT_FETCH_IMAGE].includes(msg.type)) {
     await new SyncServerCommand().execute();
   }
 };
