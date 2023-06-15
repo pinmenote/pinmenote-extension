@@ -34,7 +34,7 @@ export class PopupMessageHandler {
   }
 
   private static popupInitListener(): void {
-    TinyDispatcher.addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
+    TinyDispatcher.getInstance().addListener<ExtensionPopupInitData>(BusMessageType.POPUP_INIT, (event, key, value) => {
       PopupActiveTabStore.updateState(value);
     });
   }
@@ -50,6 +50,6 @@ export class PopupMessageHandler {
     // Skip not owned messages
     if (runtime.id !== BrowserApi.runtime.id) return;
 
-    TinyDispatcher.dispatch(msg.type, msg.data);
+    TinyDispatcher.getInstance().dispatch(msg.type, msg.data);
   };
 }

@@ -25,11 +25,11 @@ export const MainTabComponent: FunctionComponent = () => {
   const [isError, setIsError] = useState<boolean>(PopupActiveTabStore.showErrorText);
 
   useEffect(() => {
-    const urlKey = TinyDispatcher.addListener(BusMessageType.POP_UPDATE_URL, () => {
+    const urlKey = TinyDispatcher.getInstance().addListener(BusMessageType.POP_UPDATE_URL, () => {
       setIsError(PopupActiveTabStore.showErrorText);
     });
     return () => {
-      TinyDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
   }, []);
 

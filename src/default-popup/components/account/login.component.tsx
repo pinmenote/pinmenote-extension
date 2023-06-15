@@ -51,7 +51,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
-    const loginKey = TinyDispatcher.addListener<FetchResponse<AccessTokenDto>>(
+    const loginKey = TinyDispatcher.getInstance().addListener<FetchResponse<AccessTokenDto>>(
       BusMessageType.POPUP_LOGIN,
       (event, key, value) => {
         LogManager.log(`POPUP_LOGIN: ${JSON.stringify(value)}`);
@@ -63,7 +63,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
       }
     );
     return () => {
-      TinyDispatcher.removeListener(BusMessageType.POPUP_LOGIN, loginKey);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POPUP_LOGIN, loginKey);
     };
   }, []);
 

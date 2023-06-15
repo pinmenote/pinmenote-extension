@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjUrlDto } from '../model/obj/obj.dto';
+import { fnConsoleLog } from '../fn/fn-console';
 
 interface QueryParam {
   key: string;
@@ -71,6 +72,7 @@ export class UrlFactory {
         resolve(this.result as string);
       };
       reader.onerror = function () {
+        fnConsoleLog('UrlFactory->toDataUri->error', value, this.error);
         reject(this.error);
       };
       reader.readAsDataURL(value);

@@ -38,11 +38,11 @@ export const ObjViewComponent: FunctionComponent<ObjViewComponent> = (props) => 
     (async () => {
       await initUrl();
     })();
-    const urlKey = TinyDispatcher.addListener(BusMessageType.POP_UPDATE_URL, async () => {
+    const urlKey = TinyDispatcher.getInstance().addListener(BusMessageType.POP_UPDATE_URL, async () => {
       await initUrl();
     });
     return () => {
-      TinyDispatcher.removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
   }, []);
 

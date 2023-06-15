@@ -14,42 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto, ObjUrlDto } from './obj/obj.dto';
+import { ObjCommentListDto } from './obj-comment.dto';
+import { ObjUrlDto } from './obj.dto';
 
-export interface ObjIdRangeResponse {
-  ids: number[];
-  listId: number;
+export type ObjBinaryType = 'PDF' | 'IMAGE';
+
+export interface ObjBinaryDataDto {
+  type: ObjBinaryType;
+  hash: string;
+  data: string;
 }
 
-export interface ObjRangeRequest {
-  from: number;
-  listId: number;
-  limit: number;
-  search: string;
-}
-
-export interface ObjRangeResponse {
-  listId: number;
-  data: ObjDto[];
-}
-
-export interface PopupPinStartRequest {
-  url: ObjUrlDto;
-  type: ObjTypeDto;
-}
-
-export interface FetchCssRequest {
-  url: string;
-}
-
-export type FetchImageRequest = FetchCssRequest;
-export type FetchPDFRequest = FetchCssRequest;
-
-export interface ExtensionPopupInitData {
-  isAdding: boolean;
-}
-
-export interface PopupPageCustomizeRequest {
-  url: ObjUrlDto;
-  type: ObjTypeDto;
+export interface ObjBinaryDto {
+  hash: string;
+  url?: ObjUrlDto;
+  words?: string[];
+  hashtags?: string[];
+  comments?: ObjCommentListDto;
 }

@@ -37,11 +37,14 @@ export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (pro
   const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAdding);
 
   useEffect(() => {
-    const addKey = TinyDispatcher.addListener<boolean>(BusMessageType.POP_IS_ADDING, (event, key, value) => {
-      setIsAdding(value);
-    });
+    const addKey = TinyDispatcher.getInstance().addListener<boolean>(
+      BusMessageType.POP_IS_ADDING,
+      (event, key, value) => {
+        setIsAdding(value);
+      }
+    );
     return () => {
-      TinyDispatcher.removeListener(BusMessageType.POP_IS_ADDING, addKey);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POP_IS_ADDING, addKey);
     };
   }, []);
   const handleNewPin = async () => {

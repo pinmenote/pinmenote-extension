@@ -20,6 +20,7 @@ import { HtmlConstraints } from '../../factory/html/html.constraints';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 interface SnapshotResult {
@@ -40,7 +41,8 @@ export class ContentPageSegmentSaveCommand implements ICommand<Promise<SnapshotR
       this.element,
       this.contentCallback,
       IFrameStore.getInstance(),
-      skipAttributes
+      skipAttributes,
+      TinyDispatcher.getInstance()
     );
     await this.contentCallback(snapshot);
     const words = AutoTagMediator.computeTags(this.element);

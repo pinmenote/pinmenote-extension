@@ -40,7 +40,7 @@ export class ContentMessageHandler {
     this.iframe = iframe;
     this.uid = uid;
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
-    TinyDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
+    TinyDispatcher.getInstance().addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
 
   static updateHref(href: string): void {
@@ -60,7 +60,7 @@ export class ContentMessageHandler {
     runtime: BrowserGlobalSender,
     sendResponse: (response: BusMessage<undefined>) => void
   ): Promise<void> => {
-    // fnConsoleLog('ContentMessageHandler->handleMessage', this.href, msg);
+    fnConsoleLog('ContentMessageHandler->handleMessage', this.href, msg, this.iframe);
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });
@@ -69,7 +69,6 @@ export class ContentMessageHandler {
       case BusMessageType.IFRAME_INDEX_REGISTER:
       case BusMessageType.IFRAME_PIN_SEND:
       case BusMessageType.IFRAME_PIN_SHOW:
-      case PageComputeMessage.IFRAME_PING:
       case BusMessageType.IFRAME_START_LISTENERS:
       case BusMessageType.IFRAME_START_LISTENERS_RESULT:
       case BusMessageType.IFRAME_STOP_LISTENERS:
@@ -106,7 +105,7 @@ export class ContentMessageHandler {
         new PinVisibleCommand(msg.data).execute();
         break;
       default:
-        TinyDispatcher.dispatch(msg.type, msg.data);
+        TinyDispatcher.getInstance().dispatch(msg.type, msg.data);
         break;
     }
   };

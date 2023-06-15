@@ -53,6 +53,7 @@ export enum BusMessageType {
   CONTENT_PIN_REMOVE = 'content.pin.remove',
   CONTENT_STOP_LISTENERS = 'content.stop.listeners',
   CONTENT_TAKE_SCREENSHOT = 'content.take.screenshot',
+  CONTENT_FETCH_PDF = 'content.fetch.pdf',
   CONTENT_THEME = 'content.theme',
   // Iframe content script
   IFRAME_INDEX = 'iframe.index',

@@ -57,13 +57,13 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
   const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
 
   const handleSavePageClick = async () => {
-    TinyDispatcher.addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
-      TinyDispatcher.removeListener(event, key);
+    TinyDispatcher.getInstance().addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
+      TinyDispatcher.getInstance().removeListener(event, key);
       setIsLoading(IsLoadingType.None);
       setTimeout(() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS), 100);
     });
-    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
     setIsLoading(IsLoadingType.PageSave);
+    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
   };
 
   const handleSaveElementClick = async (): Promise<void> => {

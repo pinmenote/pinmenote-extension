@@ -19,6 +19,7 @@ import { BusMessageType } from '../common/model/bus.model';
 import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
+import { ContentFetchPDFCommand } from './command/content/content-fetch-pdf.command';
 import { ContentInvalidateCommand } from './command/content/content-invalidate.command';
 import { ContentPinStopCommand } from './command/content/content-pin-stop.command';
 import { ContentTakeScreenshotCommand } from './command/content/content-take-screenshot.command';
@@ -69,6 +70,9 @@ const handleMessage = async (
     case PageComputeMessage.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data).execute();
       break;
+    case BusMessageType.CONTENT_FETCH_PDF:
+      await new ContentFetchPDFCommand(msg.data).execute();
+      break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();
       break;
@@ -92,8 +96,6 @@ const handleMessage = async (
     case BusMessageType.IFRAME_MOUSE_OUT:
     case BusMessageType.IFRAME_PIN_SEND:
     case BusMessageType.IFRAME_PIN_SHOW:
-    case PageComputeMessage.IFRAME_PING:
-    case PageComputeMessage.IFRAME_PING_RESULT:
     case PageComputeMessage.IFRAME_FETCH:
     case PageComputeMessage.IFRAME_FETCH_RESULT: {
       await new IframePassMessageCommand(msg).execute();

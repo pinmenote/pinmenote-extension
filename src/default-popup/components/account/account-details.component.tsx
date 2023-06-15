@@ -41,17 +41,17 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
     }
-    const loginSuccessKey = TinyDispatcher.addListener(
+    const loginSuccessKey = TinyDispatcher.getInstance().addListener(
       BusMessageType.POPUP_LOGIN_SUCCESS,
       async (event, key, value) => {
-        TinyDispatcher.removeListener(event, key);
+        TinyDispatcher.getInstance().removeListener(event, key);
         await PopupTokenStore.init();
         if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
         // TODO upload keys ???
         LogManager.log(`${JSON.stringify(value)}`);
       }
     );
-    const logoutKey = TinyDispatcher.addListener<FetchResponse<BoolDto | ServerErrorDto>>(
+    const logoutKey = TinyDispatcher.getInstance().addListener<FetchResponse<BoolDto | ServerErrorDto>>(
       BusMessageType.POPUP_LOGOUT,
       (event, key, value) => {
         LogManager.log('POPUP_LOGOUT_RESPONSE');
@@ -63,8 +63,8 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
       }
     );
     return () => {
-      TinyDispatcher.removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
-      TinyDispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
     };
   }, []);
 

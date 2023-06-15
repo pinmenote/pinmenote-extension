@@ -69,7 +69,7 @@ export class PopupActiveTabStore {
       } else if (this.urlValue?.href.startsWith(BrowserApi.disabledUrl)) {
         this.isError = true;
       }
-      TinyDispatcher.dispatch<void>(BusMessageType.POP_UPDATE_URL);
+      TinyDispatcher.getInstance().dispatch<void>(BusMessageType.POP_UPDATE_URL);
     }
   };
 
@@ -77,7 +77,7 @@ export class PopupActiveTabStore {
     LogManager.log(`PopupActiveTabStore->INIT - ${JSON.stringify(initData || {})}`);
     if (initData?.isAdding) {
       this.isAddingValue = true;
-      TinyDispatcher.dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAddingValue);
+      TinyDispatcher.getInstance().dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAddingValue);
     }
   };
 }

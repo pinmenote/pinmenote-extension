@@ -51,7 +51,7 @@ export const Verify2faComponent: FunctionComponent<Verify2faComponentProps> = ({
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
-    const loginKey = TinyDispatcher.addListener<FetchResponse<AccessTokenDto>>(
+    const loginKey = TinyDispatcher.getInstance().addListener<FetchResponse<AccessTokenDto>>(
       BusMessageType.POPUP_VERIFY_2FA,
       (event, key, value) => {
         LogManager.log(`POPUP_LOGIN: ${JSON.stringify(value)}`);
@@ -63,7 +63,7 @@ export const Verify2faComponent: FunctionComponent<Verify2faComponentProps> = ({
       }
     );
     return () => {
-      TinyDispatcher.removeListener(BusMessageType.POPUP_VERIFY_2FA, loginKey);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POPUP_VERIFY_2FA, loginKey);
     };
   }, []);
 

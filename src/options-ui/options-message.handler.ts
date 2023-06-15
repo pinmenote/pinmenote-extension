@@ -23,7 +23,7 @@ import { fnConsoleLog } from '../common/fn/fn-console';
 export class OptionsMessageHandler {
   static init(): void {
     BrowserApi.runtime.onMessage.addListener(this.handleRemoteMessage);
-    TinyDispatcher.addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
+    TinyDispatcher.getInstance().addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
   }
 
   private static handleRemoteMessage = (
@@ -35,7 +35,7 @@ export class OptionsMessageHandler {
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });
-    TinyDispatcher.dispatch(msg.type, msg.data);
+    TinyDispatcher.getInstance().dispatch(msg.type, msg.data);
   };
 
   private static handlePopupOpen = async (): Promise<void> => {

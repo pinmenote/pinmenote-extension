@@ -16,38 +16,31 @@
  */
 import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { BrowserApi } from '@pinmenote/browser-api';
-import { FetchImageRequest } from '../../../common/model/obj-request.model';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { FetchPDFRequest } from '../../../common/model/obj-request.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { PageComputeMessage } from '@pinmenote/page-compute';
 import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
-export class ContentFetchImageCommand implements ICommand<Promise<void>> {
-  constructor(private req: FetchImageRequest) {}
+export class ContentFetchPDFCommand implements ICommand<Promise<void>> {
+  constructor(private req: FetchPDFRequest) {}
   async execute(): Promise<void> {
     try {
-      fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
+      // fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
       const req = await FetchService.fetch<Blob>(this.req.url, {
         type: 'BLOB'
       });
       const data = await UrlFactory.toDataUri(req.data);
-      let ok = req.ok;
-      if (
-        data.startsWith('data:text/html') ||
-        data.startsWith('data:text/javascript') ||
-        data.startsWith('data:text/css')
-      ) {
-        fnConsoleLog('ContentFetchImageCommand->problem', this.req.url);
-        ok = false;
-      }
+      const ok = req.ok;
+      fnConsoleLog('ContentFetchImageCommand->result', this.req.url, data);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: PageComputeMessage.CONTENT_FETCH_IMAGE,
+        type: BusMessageType.CONTENT_FETCH_PDF,
         data: { data, ok, url: req.url, status: req.status, type: req.type }
       });
     } catch (e) {
       fnConsoleLog('ContentFetchImageCommand->ERROR', e, this.req.url);
       await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: PageComputeMessage.CONTENT_FETCH_IMAGE,
+        type: BusMessageType.CONTENT_FETCH_PDF,
         data: {
           url: this.req.url,
           ok: false,

@@ -20,6 +20,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameFetchMessage } from '../../../common/model/iframe-message.model';
 import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
 
@@ -37,8 +38,13 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       'children',
       document.body.children.length
     );
-
-    const snapshot = await PageCompute.compute(document.body, this.contentCallback, IFrameStore.getInstance(), []);
+    const snapshot = await PageCompute.compute(
+      document.body,
+      this.contentCallback,
+      IFrameStore.getInstance(),
+      [],
+      TinyDispatcher.getInstance()
+    );
 
     const dto: SegmentPage = {
       html: snapshot.content.html,

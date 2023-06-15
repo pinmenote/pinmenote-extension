@@ -47,7 +47,7 @@ export class IFrameMessageHandler {
         if (iframe && msg.data.uid === uid && href) {
           await new ContentFetchIframeCommand(href, uid, msg.data.depth).execute();
         } else {
-          TinyDispatcher.dispatch(msg.type, msg.data);
+          TinyDispatcher.getInstance().dispatch(msg.type, msg.data);
         }
         break;
       }
@@ -66,12 +66,6 @@ export class IFrameMessageHandler {
         IFrameStore.resumeListeners(msg.data);
         break;
       }
-      case PageComputeMessage.IFRAME_PING: {
-        if (iframe && msg.data.uid === uid) {
-          await BrowserApi.sendRuntimeMessage({ type: PageComputeMessage.IFRAME_PING_RESULT, data: msg.data });
-        }
-        break;
-      }
       case BusMessageType.IFRAME_PIN_SEND: {
         const index = fnIframeIndex();
         if (msg.data.data.data.iframe && index === msg.data.data.data.iframe.index) {
@@ -86,7 +80,7 @@ export class IFrameMessageHandler {
         break;
       }
       default:
-        TinyDispatcher.dispatch(msg.type, msg.data);
+        TinyDispatcher.getInstance().dispatch(msg.type, msg.data);
         break;
     }
   };

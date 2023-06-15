@@ -27,10 +27,10 @@ export class ScreenshotFactory {
   static takeScreenshot = async (doc: PinDocument, rect?: ObjRectangleDto, url?: ObjUrlDto): Promise<string> => {
     return new Promise((resolve, reject) => {
       // Crop screenshot function
-      TinyDispatcher.addListener<string>(
+      TinyDispatcher.getInstance().addListener<string>(
         BusMessageType.CONTENT_TAKE_SCREENSHOT,
         async (event: string, key: string, screenshot: string) => {
-          TinyDispatcher.removeListener(event, key);
+          TinyDispatcher.getInstance().removeListener(event, key);
           if (rect) screenshot = await ImageResizeFactory.resize(doc, rect, screenshot);
           resolve(screenshot);
         }

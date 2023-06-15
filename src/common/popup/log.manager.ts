@@ -24,7 +24,7 @@ export class LogManager {
   static log = (value: string): void => {
     this.logValue = '<span>' + value + '</span><br />' + this.logValue;
     fnConsoleLog(value);
-    TinyDispatcher.dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
+    TinyDispatcher.getInstance().dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
   };
 
   static get logs(): string {
@@ -33,6 +33,6 @@ export class LogManager {
 
   static clear(): void {
     this.logValue = '';
-    TinyDispatcher.dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
+    TinyDispatcher.getInstance().dispatch(BusMessageType.POP_CONSOLE_LOG, this.logValue);
   }
 }

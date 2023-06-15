@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjBinaryDto } from './obj-binary.dto';
 import { ObjNoteDto } from './obj-note.dto';
 import { ObjPageDto } from './obj-page.dto';
 import { ObjPinDto } from './obj-pin.dto';
@@ -41,10 +42,11 @@ export enum ObjTypeDto {
   Note = 'Note',
   PageAlter = 'PAGE_ALTER',
   PageTask = 'PAGE_TASK',
-  PageEvent = 'PAGE_EVENT'
+  Pdf = 'PDF',
+  Image = 'IMAGE'
 }
 
-export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto;
+export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjBinaryDto;
 export type ObjPageDataDto = ObjPinDto | ObjPageDto | ObjNoteDto | ObjTaskDto;
 
 export interface ObjDto<T = ObjDataDto> {

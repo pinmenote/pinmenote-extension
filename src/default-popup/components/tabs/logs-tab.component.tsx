@@ -28,11 +28,14 @@ export const LogsTabComponent: FunctionComponent = () => {
 
   useEffect(() => {
     if (ref.current) ref.current.innerHTML = LogManager.logs;
-    const key = TinyDispatcher.addListener<string>(BusMessageType.POP_CONSOLE_LOG, (event, key, value) => {
-      if (ref.current) ref.current.innerHTML = value;
-    });
+    const key = TinyDispatcher.getInstance().addListener<string>(
+      BusMessageType.POP_CONSOLE_LOG,
+      (event, key, value) => {
+        if (ref.current) ref.current.innerHTML = value;
+      }
+    );
     return () => {
-      TinyDispatcher.removeListener(BusMessageType.POP_CONSOLE_LOG, key);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.POP_CONSOLE_LOG, key);
     };
   }, []);
 

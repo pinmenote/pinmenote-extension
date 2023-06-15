@@ -53,6 +53,16 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
     setIsExpanded(!isExpanded);
   };
 
+  const handleOpenPage = (data: ObjDto<ObjPageDto>): void => {
+    if (BrowserApi.isChrome) {
+      BrowserApi.openOptionsPage(`#obj/${data.id}`);
+    } else {
+      // TODO change to BrowserApi 0.0.5
+      window.open(`${browser.runtime.getManifest().options_ui?.page || ''}#obj/${data.id}`);
+      window.close();
+    }
+  };
+
   const expandIcon = isExpanded ? (
     <ExpandMoreIcon sx={{ fontSize: '12px' }} />
   ) : (
@@ -93,11 +103,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
             justifyContent: 'flex-end'
           }}
         >
-          <IconButton
-            title="Show on pin board"
-            size="small"
-            onClick={() => BrowserApi.openOptionsPage(`#obj/${props.obj.id}`)}
-          >
+          <IconButton title="Show on pin board" size="small" onClick={() => handleOpenPage(props.obj)}>
             <PushPinIcon sx={{ fontSize: '12px' }} />
           </IconButton>
           <IconButton title="Go to page" size="small" onClick={() => handleNavigate(props.obj)}>

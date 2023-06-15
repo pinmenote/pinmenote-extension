@@ -75,13 +75,13 @@ export class DocumentMediator {
     }
     fnConsoleLog('DocumentMediator->startIframeListeners', msg, this.baseUrl, this.iframe);
 
-    const key = TinyDispatcher.addListener<IFrameIndexMessage>(
+    const key = TinyDispatcher.getInstance().addListener<IFrameIndexMessage>(
       BusMessageType.IFRAME_START_LISTENERS_RESULT,
       (event, key, value) => {
         if (msg.uid === value.uid) {
           fnConsoleLog('DocumentMediator->startIframeListeners->IFRAME_START_LISTENERS_RESULT');
           clearTimeout(timeout);
-          TinyDispatcher.removeListener(event, key);
+          TinyDispatcher.getInstance().removeListener(event, key);
           this.stopListeners(false);
           this.startingIframeListeners = false;
           IFrameStore.passListeners(msg);
@@ -102,7 +102,7 @@ export class DocumentMediator {
     const timeout = setTimeout(() => {
       fnConsoleLog('DocumentMediator->startIframeListeners->timeout');
       this.startingIframeListeners = false;
-      TinyDispatcher.removeListener(BusMessageType.IFRAME_START_LISTENERS_RESULT, key);
+      TinyDispatcher.getInstance().removeListener(BusMessageType.IFRAME_START_LISTENERS_RESULT, key);
     }, 1000);
   }
 

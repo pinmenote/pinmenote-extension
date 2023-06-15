@@ -47,12 +47,12 @@ class PinMeScript {
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
-    TinyDispatcher.addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
-    TinyDispatcher.dispatch(BusMessageType.CNT_SETTINGS, {});
+    TinyDispatcher.getInstance().addListener<number[]>(BusMessageType.CNT_SETTINGS, this.handlePinSettings);
+    TinyDispatcher.getInstance().dispatch(BusMessageType.CNT_SETTINGS, {});
   }
 
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
-    TinyDispatcher.removeListener(event, key);
+    TinyDispatcher.getInstance().removeListener(event, key);
 
     await ContentSettingsStore.initSettings();
 
@@ -106,7 +106,7 @@ class PinMeScript {
 
   private cleanup(): void {
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
-    TinyDispatcher.cleanup();
+    TinyDispatcher.getInstance().cleanup();
     DocumentMediator.stopListeners();
     PinStore.clear();
     ContentMessageHandler.cleanup();
