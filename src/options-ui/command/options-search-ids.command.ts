@@ -35,37 +35,49 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
   async execute(): Promise<number[]> {
     const searchWords = this.search.split(' ');
 
-    const wordsIds: DistanceIds[] = [];
-    for (const search of searchWords) {
-      const s = await this.getWordSet(search);
-      if (s) wordsIds.push(...s);
-    }
-    wordsIds.sort((a, b) => {
-      if (a.distance > b.distance) {
-        return 1;
-      } else if (a.distance < b.distance) {
-        return -1;
+    const idsStats = new Map<number, { distance: number; id: number }>();
+    let maxDistance = 0;
+    // each word with corresponding ids
+    const wordsIdsSet: Set<number>[] = [];
+    for (const word of searchWords) {
+      // we get words with distance
+      const distanceIds = await this.getWordSet(word);
+      const idsSet = new Set<number>();
+      // iterate over each distance and over each id if id exists add distance so
+      // word distance = sum(id, distance) of each id that is in getWordSet
+      // simply we promote ids of words that have the smallest distance
+      for (const obj of distanceIds) {
+        for (const id of obj.ids) {
+          if (idsStats.has(id)) {
+            const d = idsStats.get(id);
+            d.distance += obj.distance;
+            idsStats.set(id, d);
+          } else {
+            idsStats.set(id, { distance: obj.distance, id });
+          }
+          maxDistance = Math.max(maxDistance, obj.distance);
+          idsSet.add(id);
+        }
       }
-      return 0;
-    });
-    // get stats for each word
-    const idsStats: { [key: number]: { count: number; distance: number; id: number } } = {};
-    for (const obj of wordsIds) {
-      for (const id of obj.ids) {
-        if (idsStats[id]) {
-          idsStats[id].count += 1;
-        } else {
-          idsStats[id] = { distance: obj.distance, count: 1, id };
+      // we save ids for each word
+      wordsIdsSet.push(idsSet);
+    }
+    // iterate over word ids and if word is not in wordsIdsSet add max distance so
+    // if we search for more than one word those that have all words won't get maxDistance penalty
+    for (const data of idsStats.values()) {
+      for (const set of wordsIdsSet) {
+        if (!set.has(data.id)) {
+          data.distance += maxDistance;
         }
       }
     }
-    // sort stats results
-    const idsArray = Object.values(idsStats)
+    // finally sort by distance - the smallest distances first
+    const idsArray = Array.from(idsStats.values())
       .sort((a, b) => {
-        if (a.count - a.distance > b.count - b.distance) {
-          return -1;
-        } else if (a.count - a.distance < b.count - b.distance) {
+        if (a.distance > b.distance) {
           return 1;
+        } else if (a.distance < b.distance) {
+          return -1;
         }
         return 0;
       })
@@ -86,11 +98,11 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
     return out;
   }
 
-  async getWordSet(search: string): Promise<DistanceIds[] | undefined> {
+  async getWordSet(search: string): Promise<DistanceIds[]> {
     const start = search.substring(0, 2);
     const key = `${ObjectStoreKeys.SEARCH_WORD}:${start}`;
     const words = await BrowserStorage.get<string[] | undefined>(key);
-    if (!words) return;
+    if (!words) return [];
 
     const distanceWord: DistanceWord[] = [];
     let minDistance = 1_000_000;
@@ -100,23 +112,15 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
       minDistance = Math.min(d, minDistance);
       distanceWord.push({ word, distance: d });
     }
-    distanceWord.sort((a, b) => {
-      if (a.distance > b.distance) {
-        return 1;
-      } else if (a.distance < b.distance) {
-        return -1;
-      }
-      return 0;
-    });
 
     const distances: DistanceIds[] = [];
 
     for (const dw of distanceWord) {
-      const wordKey = `${ObjectStoreKeys.SEARCH_INDEX}:${dw.word}`;
       if (dw.distance > minDistance + 3) continue;
+      const wordKey = `${ObjectStoreKeys.SEARCH_INDEX}:${dw.word}`;
       const ids = await BrowserStorage.get<number[] | undefined>(wordKey);
       if (!ids) continue;
-      distances.push({ distance: dw.distance, ids: ids.reverse(), word: dw.word });
+      distances.push({ distance: dw.distance, ids, word: dw.word });
     }
     return distances;
   }
