@@ -91,8 +91,9 @@ export class BoardStore {
   static async getObjRange(): Promise<void> {
     if (this.loading) return;
     this.loading = true;
+    const a = Date.now();
     const result = await new OptionsObjGetRangeCommand(this.rangeRequest).execute();
-    fnConsoleLog('PinBoardStore->getRange', this.rangeRequest, this.isLastValue, result?.data);
+    fnConsoleLog('getObjRange', this.rangeRequest, this.isLastValue, result?.data, 'in', Date.now() - a);
     if (result && result.data.length > 0) {
       const lastResultObj = result.data[result.data.length - 1];
 

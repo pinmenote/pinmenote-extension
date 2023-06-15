@@ -48,7 +48,9 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
   private async getSearch(from: number, limit: number, search: string): Promise<ObjRangeResponse> {
     if (search.length < 2) return emptyResult;
 
+    const a = Date.now();
     const ids = await new OptionsSearchIdsCommand(search, from, limit).execute();
+    fnConsoleLog(`Search in ${Date.now() - a}`);
 
     const data: ObjDto[] = [];
     for (const objId of ids) {
