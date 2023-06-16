@@ -268,12 +268,21 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     } else if (dto.type === SegmentType.IMG) {
       const img = el as HTMLImageElement;
       img.src = (dto.content as SegmentImg).src;
-      if (img.parentElement?.tagName.toLowerCase() === 'picture' && !img.hasAttribute('width'))
-        img.style.width = `100%`;
+      approximatePictureSize(img);
     } else if (dto.type === SegmentType.SHADOW) {
       const content = dto.content as SegmentShadow;
       renderShadow(el, content);
     }
+  };
+
+  const approximatePictureSize = (img: HTMLImageElement) => {
+    // if nothing is set get bounding size and if width > window.innerWidth set width to 100%
+    if (img.parentElement?.tagName.toLowerCase() !== 'picture') return;
+    if (img.hasAttribute('width') || img.hasAttribute('height')) return;
+    if (img.style.width || img.style.height) return;
+    const rect = img.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) img.style.width = '100%';
+    if (rect.width > window.innerWidth) img.style.width = '100%';
   };
 
   const renderShadow = (el: Element, content: SegmentShadow) => {

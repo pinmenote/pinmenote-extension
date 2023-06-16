@@ -60,7 +60,7 @@ export class ContentMessageHandler {
     runtime: BrowserGlobalSender,
     sendResponse: (response: BusMessage<undefined>) => void
   ): Promise<void> => {
-    fnConsoleLog('ContentMessageHandler->handleMessage', this.href, msg, this.iframe);
+    // fnConsoleLog('ContentMessageHandler->handleMessage', this.href, msg, this.iframe);
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });
