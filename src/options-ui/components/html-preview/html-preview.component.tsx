@@ -20,6 +20,7 @@ import { SegmentImg, SegmentPage, SegmentShadow, SegmentType } from '@pinmenote/
 import { BrowserApi } from '@pinmenote/browser-api';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';
+import { DATE_YEAR_SECOND } from '../../../common/date-format.constraints';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
@@ -33,6 +34,7 @@ import { PageSnapshotDto } from '../../../common/model/obj/page-snapshot.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
 import { SettingsStore } from '../../store/settings.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
+import dayjs from 'dayjs';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnParse5 } from '../../../common/fn/fn-parse5';
 import { fnSleep } from '../../../common/fn/fn-sleep';
@@ -87,9 +89,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         fnConsoleLog('NOT FOUND ', obj.data.snapshot, 'hash', obj.data.snapshot.segmentHash);
       }
       if (obj.data.snapshot.data.canvas) {
-        renderCanvas(obj.data.snapshot);
+        renderCanvas(obj);
       } else {
-        await renderSnapshot(obj.data.snapshot, pageSegment?.content);
+        await renderSnapshot(obj, pageSegment?.content);
       }
       if (obj.type === ObjTypeDto.PageSnapshot) {
         const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.info.url.href);
@@ -161,8 +163,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     return true;
   };
 
-  const renderCanvas = (snapshot: PageSnapshotDto, content?: SegmentPage) => {
-    renderHeader(snapshot);
+  const renderCanvas = (obj: ObjDto<ObjPageDto>, content?: SegmentPage) => {
+    const snapshot: PageSnapshotDto = obj.data.snapshot;
+    renderHeader(obj);
 
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
@@ -187,8 +190,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const renderSnapshot = async (snapshot: PageSnapshotDto, segment?: SegmentPage): Promise<void> => {
-    renderHeader(snapshot);
+  const renderSnapshot = async (obj: ObjDto<ObjPageDto>, segment?: SegmentPage): Promise<void> => {
+    const snapshot: PageSnapshotDto = obj.data.snapshot;
+    renderHeader(obj);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
     if (!segment) return;
@@ -226,12 +230,16 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     setIsLoading(false);
   };
 
-  const renderHeader = (snapshot: PageSnapshotDto): void => {
+  const renderHeader = (obj: ObjDto<ObjPageDto>): void => {
+    const snapshot: PageSnapshotDto = obj.data.snapshot;
     if (titleRef.current) {
       titleRef.current.innerHTML = snapshot.info.title;
     }
     if (urlRef.current) {
-      urlRef.current.innerHTML = `<a href="${snapshot.info.url.href}" style="word-break: break-all">${snapshot.info.url.href}</a>`;
+      urlRef.current.innerHTML = `
+    <a href="${snapshot.info.url.href}" style="word-break: break-all">
+        ${snapshot.info.url.href}
+    </a><span style="margin-left: 10px;">Created At : ${dayjs(obj.createdAt).format(DATE_YEAR_SECOND)}</span>`;
     }
   };
 

@@ -16,3 +16,4 @@
  */
 
 export const DATE_YEAR_SECOND = 'YYYY-MM-DD HH:mm:ss';
+export const DATE_YEAR_DAY = 'YYYY-MM-DD';

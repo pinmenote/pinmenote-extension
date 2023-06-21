@@ -33,7 +33,7 @@ interface DistanceIds {
 export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
   constructor(private search: string, private from: number, private limit: number) {}
   async execute(): Promise<number[]> {
-    const searchWords = this.search.split(' ');
+    const searchWords = this.search.toLowerCase().split(' ');
 
     const idsStats = new Map<number, { distance: number; id: number }>();
     let maxDistance = 0;
@@ -48,8 +48,8 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
       // simply we promote ids of words that have the smallest distance
       for (const obj of distanceIds) {
         for (const id of obj.ids) {
-          if (idsStats.has(id)) {
-            const d = idsStats.get(id);
+          const d = idsStats.get(id);
+          if (d) {
             d.distance += obj.distance;
             idsStats.set(id, d);
           } else {
@@ -73,6 +73,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
     }
     // finally sort by distance - the smallest distances first
     const idsArray = Array.from(idsStats.values())
+      .reverse()
       .sort((a, b) => {
         if (a.distance > b.distance) {
           return 1;
