@@ -59,8 +59,10 @@ export class WordIndex {
     }
   };
 
-  private static saveStorage = async (value: string, id: number) => {
-    const key = `${ObjectStoreKeys.SEARCH_INDEX}:${value}`;
+  private static saveStorage = async (word: string, id: number) => {
+    // TODO this limitation needs review
+    if (word.length < 3) return;
+    const key = `${ObjectStoreKeys.SEARCH_INDEX}:${word}`;
     let arr = await BrowserStorage.get<number[]>(key);
     if (arr) {
       arr.push(id);

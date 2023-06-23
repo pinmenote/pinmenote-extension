@@ -18,6 +18,7 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { distance } from 'fastest-levenshtein';
+import { fnConsoleLog } from '../../common/fn/fn-console';
 
 interface DistanceWord {
   word: string;
@@ -34,6 +35,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
   constructor(private search: string, private from: number, private limit: number) {}
   async execute(): Promise<number[]> {
     const searchWords = this.search.toLowerCase().split(' ');
+    fnConsoleLog('OptionsSearchIdsCommand', searchWords);
 
     const idsStats = new Map<number, { distance: number; id: number }>();
     let maxDistance = 0;
@@ -42,25 +44,34 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
     for (const word of searchWords) {
       // we get words with distance
       const distanceIds = await this.getWordSet(word);
-      const idsSet = new Set<number>();
+      const idsSet = new Map<number, { distance: number; id: number }>();
       // iterate over each distance and over each id if id exists add distance so
-      // word distance = sum(id, distance) of each id that is in getWordSet
+      // word distance = max(distance) of each set of words that is in getWordSet
       // simply we promote ids of words that have the smallest distance
       for (const obj of distanceIds) {
         for (const id of obj.ids) {
-          const d = idsStats.get(id);
+          const d = idsSet.get(id);
           if (d) {
-            d.distance += obj.distance;
-            idsStats.set(id, d);
+            d.distance = Math.min(obj.distance, d.distance);
+            idsSet.set(id, d);
           } else {
-            idsStats.set(id, { distance: obj.distance, id });
+            idsSet.set(id, { distance: obj.distance, id });
           }
           maxDistance = Math.max(maxDistance, obj.distance);
-          idsSet.add(id);
+        }
+      }
+      // now we save those distances into stats as sum(id, distance)
+      for (const val of idsSet.values()) {
+        const d = idsStats.get(val.id);
+        if (d) {
+          d.distance += val.distance;
+          idsStats.set(val.id, d);
+        } else {
+          idsStats.set(val.id, val);
         }
       }
       // we save ids for each word
-      wordsIdsSet.push(idsSet);
+      wordsIdsSet.push(new Set<number>(idsSet.keys()));
     }
     // iterate over word ids and if word is not in wordsIdsSet add max distance so
     // if we search for more than one word those that have all words won't get maxDistance penalty

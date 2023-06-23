@@ -36,20 +36,21 @@ export class AutoTagMediator {
 
   static computeTags = (element: HTMLElement): string[] => {
     let tagList: string[] = [];
+    const language = DetectLanguage.detect(document.body.innerText);
     if (element instanceof HTMLBodyElement) {
       const sentence = this.captureKeywordData();
-      const keywords = this.calculateTags(sentence);
-      tagList = this.calculateNeighbours(keywords);
+      const keywords = this.calculateTags(sentence, language);
+      tagList = this.calculateNeighbours(keywords, language);
     } else {
       const link = this.getLink();
       const sentence = `${link} ${element.innerText} ${document.title}`;
-      tagList = this.calculateTags(sentence);
+      tagList = this.calculateTags(sentence, language);
     }
     fnConsoleLog('CLEAN WORD LIST', tagList);
     return tagList;
   };
 
-  private static calculateNeighbours(keywords: string[]): string[] {
+  private static calculateNeighbours(keywords: string[], language?: string): string[] {
     const tagList = WordIndex.toWordList(document.body.innerText);
     const keySet = new Set<string>(keywords);
     for (let i = 1; i < tagList.length - 1; i++) {
@@ -61,13 +62,14 @@ export class AutoTagMediator {
         if (next.length > 3) keySet.add(next);
       }
     }
-    return Array.from(keySet).sort();
+    let outTags = Array.from(keySet).sort();
+    if (language) outTags = StopWordRemove.execute(language, outTags);
+    return outTags;
   }
 
-  private static calculateTags(sentence: string): string[] {
+  private static calculateTags(sentence: string, language?: string): string[] {
     let tagList = WordIndex.toWordList(sentence);
 
-    const language = DetectLanguage.detect(document.body.innerText);
     fnConsoleLog('LANGUAGE', language, 'WITH STOPWORDS', tagList);
     // TODO maybe check if anything removed - if not maybe take second guess from detected language
     if (language) tagList = StopWordRemove.execute(language, tagList);
