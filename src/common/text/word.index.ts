@@ -17,14 +17,14 @@
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ObjectStoreKeys } from '../keys/object.store.keys';
 
-const wordRegex = /[\w\d]+/g;
+const wordRegex = /[\p{L}-]+/gu;
 
 export class WordIndex {
   static toWordList(sentence: string): string[] {
     const words = sentence.match(wordRegex) || [];
     const out = new Set<string>();
     for (const word of words) {
-      out.add(word.toLowerCase());
+      if (word.length > 3) out.add(word.toLowerCase());
     }
     return Array.from(out).sort();
   }

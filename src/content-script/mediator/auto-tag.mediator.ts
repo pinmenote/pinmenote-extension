@@ -51,18 +51,20 @@ export class AutoTagMediator {
   };
 
   private static calculateNeighbours(keywords: string[], language?: string): string[] {
-    const tagList = WordIndex.toWordList(document.body.innerText);
+    const tagList = WordIndex.toWordList(document.body.innerText.split('\n').join(' '));
     const keySet = new Set<string>(keywords);
+    const newTags = new Set<string>();
     for (let i = 1; i < tagList.length - 1; i++) {
       const tag = tagList[i];
       if (keySet.has(tag)) {
         const prev = tagList[i - 1];
-        if (prev.length > 3) keySet.add(prev);
+        if (prev.length > 3) newTags.add(prev);
         const next = tagList[i + 1];
-        if (next.length > 3) keySet.add(next);
+        if (next.length > 3) newTags.add(next);
       }
     }
     let outTags = Array.from(keySet).sort();
+    outTags.push(...newTags);
     if (language) outTags = StopWordRemove.execute(language, outTags);
     return outTags;
   }

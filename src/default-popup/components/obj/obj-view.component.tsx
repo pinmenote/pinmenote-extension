@@ -32,14 +32,13 @@ interface ObjViewComponent {
 export const ObjViewComponent: FunctionComponent<ObjViewComponent> = (props) => {
   const [originObjs, setOriginObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
   const [hrefObjs, setHrefObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    (async () => {
-      await initUrl();
-    })();
-    const urlKey = TinyDispatcher.getInstance().addListener(BusMessageType.POP_UPDATE_URL, async () => {
-      await initUrl();
+    setTimeout(async () => await initUrl(), 100);
+    const urlKey = TinyDispatcher.getInstance().addListener(BusMessageType.POP_UPDATE_URL, () => {
+      setTimeout(async () => await initUrl(), 100);
     });
     return () => {
       TinyDispatcher.getInstance().removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
@@ -47,7 +46,9 @@ export const ObjViewComponent: FunctionComponent<ObjViewComponent> = (props) => 
   }, []);
 
   const initUrl = async () => {
+    if (initialized) return;
     if (!PopupActiveTabStore.url) return;
+    setInitialized(true);
     const href = await new ObjGetHrefCommand(PopupActiveTabStore.url).execute();
     const origin = await new ObjGetOriginCommand(PopupActiveTabStore.url).execute();
     setHrefObjs(href);

@@ -26,6 +26,7 @@ import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PageSnapshotDto } from '../../model/obj/page-snapshot.dto';
 import { WordIndex } from '../../text/word.index';
+import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
   constructor(private dto: PageSnapshotDto, private type: ObjTypeDto) {}
@@ -43,7 +44,9 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
       version: OBJ_DTO_VERSION,
       local: {}
     };
+    const a = Date.now();
     await WordIndex.indexFlat(this.dto.info.words, id);
+    fnConsoleLog('PageSnapshotAddCommand->WordIndex.indexFlat->in', Date.now() - a);
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
     await BrowserStorage.set(key, dto);
