@@ -44,6 +44,7 @@ export class SyncClearServerCommand implements ICommand<Promise<void>> {
       }
       if ((obj as any).server) {
         LogManager.log(`SyncClearServerCommand->clearList ${id}`);
+        delete (obj as any)['server'];
         await this.setObject(id, obj);
       }
     }

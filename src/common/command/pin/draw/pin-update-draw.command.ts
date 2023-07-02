@@ -21,7 +21,7 @@ import { ObjDto } from '../../../model/obj/obj.dto';
 import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnConsoleLog } from '../../../fn/fn-console';
-import { fnSha256Object } from '../../../fn/fn-sha256';
+import { fnSha256Object } from '../../../fn/fn-hash';
 
 export class PinUpdateDrawCommand implements ICommand<Promise<void>> {
   constructor(private pin: ObjDto<ObjPinDto>, private draw: ObjDrawDto) {}

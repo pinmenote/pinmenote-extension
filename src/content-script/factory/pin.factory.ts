@@ -22,7 +22,7 @@ import { PageCanvasDto } from '../../common/model/obj/page-snapshot.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { XpathFactory } from '../../common/factory/xpath.factory';
 import { fnIframeIndex } from '../../common/fn/fn-iframe-index';
-import { fnSha256 } from '../../common/fn/fn-sha256';
+import { fnSha256 } from '../../common/fn/fn-hash';
 
 export class PinFactory {
   static objPagePinNew = async (

@@ -22,7 +22,7 @@ import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
-import { fnSha256 } from '../../fn/fn-sha256';
+import { fnSha256 } from '../../fn/fn-hash';
 
 export class NoteUpdateCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjNoteDto>, private oldWords: string[]) {}

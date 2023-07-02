@@ -14,12 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import XXH from 'xxhashjs';
 import { sha256 } from 'js-sha256';
 
-export const fnSha256 = (value: string) => {
+export const fnSha256 = (value: string): string => {
   return sha256(value);
 };
 
-export const fnSha256Object = (value: any) => {
+export const fnSha256Object = (value: any): string => {
   return sha256(JSON.stringify(value));
+};
+
+export const fnXxhash = (value: string): number => {
+  return XXH.h32(value, 0xabcd).toNumber();
 };

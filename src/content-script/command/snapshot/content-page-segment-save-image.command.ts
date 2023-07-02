@@ -19,7 +19,7 @@ import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
-import { fnSha256 } from '../../../common/fn/fn-sha256';
+import { fnSha256 } from '../../../common/fn/fn-hash';
 
 export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<string>> {
   constructor(private element: HTMLElement) {}

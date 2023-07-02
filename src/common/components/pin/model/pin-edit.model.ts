@@ -83,10 +83,6 @@ export class PinEditModel {
     return this.obj.id;
   }
 
-  get serverId(): number | undefined {
-    return this.obj.server?.id;
-  }
-
   get url(): ObjUrlDto {
     return this.obj.data.data.url;
   }

@@ -16,33 +16,54 @@
  */
 import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
 
-interface XPathElement {
-  position: number;
+interface XPathTag {
+  index: number;
   tagName: string;
+}
+
+interface XPathNode {
+  index: number;
+  node: Node;
 }
 
 const XPATH_INDEX_REGEX = new RegExp('(\\[)(.*?])', 'g');
 
 export class XpathFactory {
-  static newXPathString(element: HTMLElement): string {
+  static newXPathString(element: Node): string {
     let child = element;
     let parent = child.parentElement;
-    let path: XPathElement[] = [];
+    let path: XPathTag[] = [];
     while (parent) {
-      const position = this.findNodeNameIndex(Array.from(parent.childNodes), child);
+      const index = this.findNodeNameIndex(Array.from(parent.childNodes), child);
       path.push({
-        position,
-        tagName: child.tagName
+        index,
+        tagName: child.nodeName.toLowerCase()
       });
       child = parent;
       parent = parent.parentElement;
     }
     path = path.reverse();
     path.splice(0, 1);
-    return `/html/body/${path.map((p) => `${p.tagName}[${p.position}]`).join('/')}`;
+    return `/html/body/${path.map((p) => `${p.tagName}[${p.index}]`).join('/')}`;
   }
 
-  private static findNodeNameIndex(nodes: ChildNode[], child: HTMLElement): number {
+  static newXPathNode(element: Node) {
+    let child = element;
+    let parent = child.parentElement;
+    const path: XPathNode[] = [];
+    while (parent) {
+      const index = this.findNodeNameIndex(Array.from(parent.childNodes), child);
+      path.push({
+        index,
+        node: child
+      });
+      child = parent;
+      parent = parent.parentElement;
+    }
+    return path.reverse();
+  }
+
+  private static findNodeNameIndex(nodes: ChildNode[], child: Node): number {
     let index = 1;
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];

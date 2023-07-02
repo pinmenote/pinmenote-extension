@@ -30,7 +30,7 @@ import { PinStore } from '../../store/pin.store';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SettingsConfig } from '../../../common/environment';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
-import { fnSha256Object } from '../../../common/fn/fn-sha256';
+import { fnSha256Object } from '../../../common/fn/fn-hash';
 
 export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSnapshotDto>> {
   constructor(
