@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "pinmenote-dev",
-  "short_name": "pinmenote-dev",
+  "name": "pinmenote",
+  "short_name": "pinmenote",
   "description": "Pin note on website, modify, draw, comment and archive content.",
   "version": "0.0.1",
   "icons": {
