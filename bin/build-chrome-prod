@@ -1,6 +1,5 @@
 #!/bin/bash
 export NODE_ENV=production
-
 # swap manifests
 mv src/manifest.json src/manifest.dev.json
 mv src/manifest.ch.json src/manifest.json
