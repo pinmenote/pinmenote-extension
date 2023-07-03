@@ -32,12 +32,10 @@ import { fnConsoleLog } from '../common/fn/fn-console';
 
 export class ContentMessageHandler {
   private static href?: string;
-  private static iframe = false;
   private static uid: string;
 
-  static start(href: string, iframe = false, uid = ''): void {
+  static start(href: string, uid = ''): void {
     this.href = href;
-    this.iframe = iframe;
     this.uid = uid;
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
     TinyDispatcher.getInstance().addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
@@ -74,12 +72,10 @@ export class ContentMessageHandler {
       case BusMessageType.IFRAME_STOP_LISTENERS:
       case BusMessageType.IFRAME_MOUSE_OUT:
       case PageComputeMessage.IFRAME_FETCH:
-        await IFrameMessageHandler.handleMessage(msg, this.iframe, this.uid, this.href);
+        await IFrameMessageHandler.handleMessage(msg, false, this.uid, this.href);
         break;
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
-        if (!this.iframe) {
-          await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, msg.data).execute();
-        }
+        await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, msg.data).execute();
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PAGE_ALTER_START:
@@ -89,7 +85,7 @@ export class ContentMessageHandler {
           return;
         }
         fnConsoleLog('DocumentMediator->startListeners', this.href, msg.data.url);
-        DocumentMediator.startListeners(msg.data.type, msg.data.url, this.iframe);
+        DocumentMediator.startListeners(msg.data.type, msg.data.url, false);
         break;
       case BusMessageType.CONTENT_STOP_LISTENERS:
         DocumentMediator.stopListeners();
@@ -115,7 +111,7 @@ export class ContentMessageHandler {
       isAdding: !!PinAddFactory.currentElement
     };
     fnConsoleLog('ContentMessageHandler->handlePopupOpen', data);
-    if (!this.iframe) await BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_INDEX_REGISTER });
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.IFRAME_INDEX_REGISTER });
     await BrowserApi.sendRuntimeMessage<ExtensionPopupInitData>({ type: BusMessageType.POPUP_INIT, data });
   };
 }

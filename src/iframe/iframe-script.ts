@@ -19,9 +19,9 @@ import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../common/model/bus.model';
-import { ContentMessageHandler } from '../content-script/content-message.handler';
 import { ContentSettingsStore } from '../content-script/store/content-settings.store';
 import { DocumentMediator } from '../content-script/mediator/document.mediator';
+import { IframeScriptMessageHandler } from './iframe-script-message.handler';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
 import { fnIframeIndex } from '../common/fn/fn-iframe-index';
@@ -41,7 +41,7 @@ export class IframeScript {
 
     fnConsoleLog('IframeScript->constructor', this.id, this.href);
 
-    ContentMessageHandler.start(this.href, true, this.id);
+    IframeScriptMessageHandler.start(this.href, this.id);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     document.addEventListener('mouseout', this.handleMouseOut);
@@ -93,7 +93,7 @@ export class IframeScript {
     document.removeEventListener('mouseout', this.handleMouseOut);
     TinyDispatcher.getInstance().cleanup();
     DocumentMediator.stopListeners();
-    ContentMessageHandler.cleanup();
+    IframeScriptMessageHandler.cleanup();
     clearTimeout(this.timeoutId);
   }
 }
