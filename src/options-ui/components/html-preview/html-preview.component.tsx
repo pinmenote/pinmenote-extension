@@ -28,7 +28,6 @@ import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
-import { ObjPinGetCommand } from '../../../common/command/obj/obj-pin-get.command';
 import { PageSegmentGetCommand } from '../../../common/command/snapshot/segment/page-segment-get.command';
 import { PageSnapshotDto } from '../../../common/model/obj/page-snapshot.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
@@ -110,7 +109,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     fnConsoleLog('HtmlPreviewComponent->renderPins', ids);
 
     for (const id of ids) {
-      const pin = await new ObjPinGetCommand(id).execute();
+      const pin = await new ObjGetCommand<ObjPinDto>(id).execute();
       fnConsoleLog('HtmlPreviewComponent->renderPins->pin', pin);
       if (pin.data.data.iframe) {
         renderIframePin(el, pin);

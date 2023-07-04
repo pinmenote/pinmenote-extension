@@ -19,6 +19,7 @@ import { ObjPinDto, PinIframeDto } from '../../model/obj/obj-pin.dto';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
+import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PinRemoveCommentListCommand } from './comment/pin-remove-comment-list.command';
 import { fnConsoleLog } from '../../fn/fn-console';
@@ -28,7 +29,7 @@ export class PinRemoveCommand implements ICommand<void> {
   async execute(): Promise<void> {
     fnConsoleLog('PinRemoveCommand->execute', this.id);
 
-    const key = `${ObjectStoreKeys.PIN_ID}:${this.id}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.id}`;
     const pin = await BrowserStorage.get<ObjDto<ObjPinDto> | undefined>(key);
     if (!pin) return;
 
@@ -39,5 +40,7 @@ export class PinRemoveCommand implements ICommand<void> {
     await new PinRemoveCommentListCommand(pin).execute();
 
     if (this.iframe) await LinkHrefStore.pinDel(this.iframe.url, this.id);
+
+    await new ObjRemoveIdCommand(this.id, ObjectStoreKeys.PIN_LIST).execute();
   }
 }

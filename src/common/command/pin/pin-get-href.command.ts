@@ -17,8 +17,8 @@
 import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
+import { ObjGetCommand } from '../obj/obj-get.command';
 import { ObjPinDto } from '../../model/obj/obj-pin.dto';
-import { ObjPinGetCommand } from '../obj/obj-pin-get.command';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPinDto>[]>> {
@@ -30,7 +30,7 @@ export class PinGetHrefCommand implements ICommand<Promise<ObjDto<ObjPinDto>[]>>
     const out: ObjDto<ObjPinDto>[] = [];
 
     for (const id of pinIds) {
-      const obj = await new ObjPinGetCommand(id).execute();
+      const obj = await new ObjGetCommand<ObjPinDto>(id).execute();
       // TODO revisit visible flag in pin.manager.ts in content scripts
       if (!obj.local?.visible) continue;
       out.push(obj);

@@ -35,7 +35,7 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
     await BrowserStorage.remove(key);
 
-    await new ObjRemoveIdCommand({ id: this.obj.id, dt: Date.now() }).execute();
+    await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
 
     const { snapshot } = this.obj.data;
 

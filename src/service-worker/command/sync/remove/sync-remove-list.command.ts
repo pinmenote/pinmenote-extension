@@ -28,7 +28,7 @@ export class SyncRemoveListCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     const progress = await new SyncGetProgressCommand().execute();
     if (progress.state !== 'remove') return;
-
+    // TODO this is not used in keystore right now as we removed REMOVED_DT
     const key = `${ObjectStoreKeys.REMOVED_DT}:${this.yearMonth}`;
     const removed = await this.getList(key);
 

@@ -44,7 +44,7 @@ export class PinAddCommentCommand implements ICommand<Promise<string>> {
 
     this.pin.data.comments.data.push(hash);
 
-    const pinKey = `${ObjectStoreKeys.PIN_ID}:${this.pin.id}`;
+    const pinKey = `${ObjectStoreKeys.OBJECT_ID}:${this.pin.id}`;
     await BrowserStorage.set(pinKey, this.pin);
     return hash;
   }

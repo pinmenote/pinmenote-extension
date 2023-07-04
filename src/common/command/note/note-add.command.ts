@@ -31,7 +31,7 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('NoteAddCommand->execute', this.note);
 
-    const id = await new ObjNextIdCommand(ObjectStoreKeys.OBJECT_ID).execute();
+    const id = await new ObjNextIdCommand().execute();
     const dt = Date.now();
 
     const dto: ObjDto<ObjNoteDto> = {
@@ -54,6 +54,6 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
       await LinkHrefStore.noteAdd(this.note.url, id);
     }
 
-    await new ObjAddIdCommand({ id, dt }).execute();
+    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
   }
 }

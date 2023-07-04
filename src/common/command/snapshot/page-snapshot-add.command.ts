@@ -32,7 +32,7 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
   constructor(private dto: PageSnapshotDto, private type: ObjTypeDto) {}
 
   async execute(): Promise<void> {
-    const id = await new ObjNextIdCommand(ObjectStoreKeys.OBJECT_ID).execute();
+    const id = await new ObjNextIdCommand().execute();
     const dt = Date.now();
 
     const dto: ObjDto<ObjPageDto> = {
@@ -53,7 +53,7 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
 
     await LinkHrefStore.add(this.dto.info.url, id);
 
-    await new ObjAddIdCommand({ id, dt }).execute();
+    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
 
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_STOP_LISTENERS });
   }

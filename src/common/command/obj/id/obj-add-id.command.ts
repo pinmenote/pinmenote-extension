@@ -22,24 +22,24 @@ import { ObjUpdateIndexAddCommand } from '../date-index/obj-update-index-add.com
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
 
-export class ObjAddIdCommand implements ICommand<Promise<void>> {
-  private readonly listLimit = environmentConfig.objListLimit;
+const listLimit = environmentConfig.objListLimit;
 
-  constructor(private index: ObjDateIndex) {}
+export class ObjAddIdCommand implements ICommand<Promise<void>> {
+  constructor(private index: ObjDateIndex, private key: string) {}
   async execute(): Promise<void> {
     let listId = await this.getListId();
     let ids = await this.getList(listId);
 
     // hit limit so create new list
     // this way we get faster writes and can batch
-    if (ids.length >= this.listLimit) {
+    if (ids.length >= listLimit) {
       listId += 1;
       ids = [];
-      await BrowserStorage.set(ObjectStoreKeys.OBJECT_LIST_ID, listId);
+      await BrowserStorage.set(this.getListIdKey(), listId);
     }
 
     ids.push(this.index.id);
-    const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
+    const key = `${this.key}:${listId}`;
 
     await BrowserStorage.set(key, ids);
 
@@ -48,13 +48,23 @@ export class ObjAddIdCommand implements ICommand<Promise<void>> {
   }
 
   private async getListId(): Promise<number> {
-    const value = await BrowserStorage.get<number | undefined>(ObjectStoreKeys.OBJECT_LIST_ID);
+    const value = await BrowserStorage.get<number | undefined>(this.getListIdKey());
     return value || 1;
   }
 
   private async getList(listId: number): Promise<number[]> {
-    const key = `${ObjectStoreKeys.OBJECT_LIST}:${listId}`;
+    const key = `${this.key}:${listId}`;
     const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
+  }
+
+  private getListIdKey() {
+    switch (this.key) {
+      case ObjectStoreKeys.OBJECT_LIST:
+        return ObjectStoreKeys.OBJECT_LIST_ID;
+      case ObjectStoreKeys.PIN_LIST:
+        return ObjectStoreKeys.PIN_LIST_ID;
+    }
+    throw new Error(`Unsupported key ${this.key}`);
   }
 }

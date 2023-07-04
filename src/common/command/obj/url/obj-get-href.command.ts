@@ -18,7 +18,7 @@ import { ObjDto, ObjPageDataDto, ObjUrlDto } from '../../../model/obj/obj.dto';
 import { ICommand } from '../../../model/shared/common.dto';
 import { LinkHrefStore } from '../../../store/link-href.store';
 import { ObjGetCommand } from '../obj-get.command';
-import { ObjPinGetCommand } from '../obj-pin-get.command';
+import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 
 export class ObjGetHrefCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
   constructor(private data: ObjUrlDto) {}
@@ -27,7 +27,7 @@ export class ObjGetHrefCommand implements ICommand<Promise<ObjDto<ObjPageDataDto
     const out: ObjDto<ObjPageDataDto>[] = [];
     const pinIds = (await LinkHrefStore.pinIds(this.data.href)).reverse();
     for (const id of pinIds) {
-      const obj = await new ObjPinGetCommand(id).execute();
+      const obj = await new ObjGetCommand<ObjPinDto>(id).execute();
       out.push(obj);
     }
     const ids = (await LinkHrefStore.hrefIds(this.data.href)).reverse();

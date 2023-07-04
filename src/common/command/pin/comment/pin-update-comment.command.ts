@@ -50,7 +50,7 @@ export class PinUpdateCommentCommand implements ICommand<Promise<string | undefi
     // replace hash
     commentList.data[hashIndex] = hash;
 
-    const pinKey = `${ObjectStoreKeys.PIN_ID}:${this.pin.id}`;
+    const pinKey = `${ObjectStoreKeys.OBJECT_ID}:${this.pin.id}`;
     await BrowserStorage.set(pinKey, this.pin);
 
     return hash;

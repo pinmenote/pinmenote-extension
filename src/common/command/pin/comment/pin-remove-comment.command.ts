@@ -51,7 +51,7 @@ export class PinRemoveCommentCommand implements ICommand<Promise<void>> {
     if (this.updatePin) {
       commentList.data.splice(hashIndex, 1);
 
-      const pinKey = `${ObjectStoreKeys.PIN_ID}:${this.pin.id}`;
+      const pinKey = `${ObjectStoreKeys.OBJECT_ID}:${this.pin.id}`;
       await BrowserStorage.set(pinKey, this.pin);
     }
   }

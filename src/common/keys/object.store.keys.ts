@@ -18,14 +18,13 @@ export class ObjectStoreKeys {
   static readonly CONTENT_HASH = 'o:ch';
   static readonly CONTENT_HASH_COUNT = 'o:chc';
 
-  static readonly PIN_ID = 'o:p:id';
+  static readonly PIN_LIST_ID = 'o:p:list:id';
+  static readonly PIN_LIST = 'o:p:list';
   static readonly PIN_COMMENT = 'o:p:c';
 
   static readonly OBJECT_ID = 'o:id';
   static readonly OBJECT_LIST_ID = 'o:list:id';
   static readonly OBJECT_LIST = 'o:list';
-
-  // DATE INDEX
   static readonly CREATED_DT = 'o:dt:c';
   static readonly UPDATED_DT = 'o:dt:u';
   static readonly REMOVED_DT = 'o:dt:r';

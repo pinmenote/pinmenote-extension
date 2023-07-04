@@ -26,7 +26,7 @@ export class PinUpdateCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPinDto>) {}
   async execute(): Promise<void> {
     fnConsoleLog('PinUpdateCommand->execute', this.obj);
-    const key = `${ObjectStoreKeys.PIN_ID}:${this.obj.id}`;
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
 
     this.obj.updatedAt = Date.now();
 

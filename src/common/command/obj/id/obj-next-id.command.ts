@@ -16,16 +16,16 @@
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
 export class ObjNextIdCommand implements ICommand<Promise<number>> {
-  constructor(private key: string) {}
   async execute(): Promise<number> {
-    const value = await BrowserStorage.get<number | undefined>(this.key);
+    const value = await BrowserStorage.get<number | undefined>(ObjectStoreKeys.OBJECT_ID);
     if (value) {
-      await BrowserStorage.set(this.key, value + 1);
+      await BrowserStorage.set(ObjectStoreKeys.OBJECT_ID, value + 1);
       return value + 1;
     }
-    await BrowserStorage.set(this.key, 1);
+    await BrowserStorage.set(ObjectStoreKeys.OBJECT_ID, 1);
     return 1;
   }
 }

@@ -103,7 +103,11 @@ const handleMessage = async (
     }
   }
   // Sync command
-  if (![PageComputeMessage.CONTENT_FETCH_CSS, PageComputeMessage.CONTENT_FETCH_IMAGE].includes(msg.type)) {
+  if (
+    ![PageComputeMessage.CONTENT_FETCH_CSS, PageComputeMessage.CONTENT_FETCH_IMAGE].includes(
+      msg.type as PageComputeMessage
+    )
+  ) {
     await new SyncServerCommand().execute();
   }
 };

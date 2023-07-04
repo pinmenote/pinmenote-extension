@@ -18,7 +18,6 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/model/obj-index.model';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ObjUpdateIndexDelCommand } from '../../../../common/command/obj/date-index/obj-update-index-del.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 
 export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
@@ -29,7 +28,6 @@ export class SyncUpdateObjectCommand implements ICommand<Promise<boolean>> {
 
     // some error when you update object then you remove it - remove from index cause no object found
     if (!obj) {
-      await new ObjUpdateIndexDelCommand(this.index).execute();
       return false;
     }
 

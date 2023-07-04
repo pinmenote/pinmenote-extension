@@ -34,6 +34,6 @@ export class PinAddDrawCommand implements ICommand<Promise<void>> {
       createdAt: this.draw.createdAt
     };
     const hash = fnSha256Object(draw);
-    await BrowserStorage.set(`${ObjectStoreKeys.PIN_ID}:${this.pin.id}`, this.pin);
+    await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.pin.id}`, this.pin);
   }
 }
