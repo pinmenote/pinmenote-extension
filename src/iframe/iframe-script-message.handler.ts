@@ -44,7 +44,7 @@ export class IframeScriptMessageHandler {
     runtime: BrowserGlobalSender,
     sendResponse: (response: BusMessage<undefined>) => void
   ): Promise<void> => {
-    fnConsoleLog('IframeScriptMessageHandler->handleMessage', this.href, msg);
+    // fnConsoleLog('IframeScriptMessageHandler->handleMessage', this.href, msg);
     sendResponse({
       type: BusMessageType.CONTENT_ACK
     });

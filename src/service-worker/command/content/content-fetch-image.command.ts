@@ -23,7 +23,7 @@ import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentFetchImageCommand implements ICommand<Promise<void>> {
-  constructor(private req: FetchImageRequest) {}
+  constructor(private req: FetchImageRequest, private tabId?: number) {}
   async execute(): Promise<void> {
     try {
       fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);

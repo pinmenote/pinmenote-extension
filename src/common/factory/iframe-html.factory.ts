@@ -17,7 +17,6 @@
 import { SegmentCss, SegmentPage } from '@pinmenote/page-compute';
 import { PageSegmentGetCommand } from '../command/snapshot/segment/page-segment-get.command';
 import { PageSnapshotDto } from '../model/obj/page-snapshot.dto';
-import { fnConsoleLog } from '../fn/fn-console';
 
 export class IframeHtmlFactory {
   static computeHtml = async (snapshot: SegmentPage, title?: string): Promise<string> => {
@@ -34,11 +33,6 @@ export class IframeHtmlFactory {
         css.media ? (style += ` media="${css.media}">`) : (style += '>');
         style += css.data + '</style>';
       }
-      fnConsoleLog('css', dto);
-      /* just ignore links because can't render them inside extension
-      else if (css.href) {
-        style += `<link rel="stylesheet" href="${css.href}" />`;
-      }*/
     }
     // funny people -> workaround for -> <noscript> html {opacity: 1} </noscript>
     // and <style> html { display: 'none' } </style>

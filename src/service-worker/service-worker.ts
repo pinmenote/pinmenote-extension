@@ -68,7 +68,7 @@ const handleMessage = async (
       await new ContentFetchCssCommand(msg.data).execute();
       break;
     case PageComputeMessage.CONTENT_FETCH_IMAGE:
-      await new ContentFetchImageCommand(msg.data).execute();
+      await new ContentFetchImageCommand(msg.data, runtime.tab?.id).execute();
       break;
     case BusMessageType.CONTENT_FETCH_PDF:
       await new ContentFetchPDFCommand(msg.data).execute();

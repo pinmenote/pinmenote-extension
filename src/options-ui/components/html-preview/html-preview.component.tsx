@@ -35,7 +35,6 @@ import { SettingsStore } from '../../store/settings.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import dayjs from 'dayjs';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { fnParse5 } from '../../../common/fn/fn-parse5';
 import { fnSleep } from '../../../common/fn/fn-sleep';
 import { fnUid } from '../../../common/fn/fn-uid';
 
@@ -79,10 +78,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       setPageSnapshot(obj.data.snapshot);
       const pageSegment = await new PageSegmentGetCommand<SegmentPage>(obj.data.snapshot.segmentHash).execute();
       if (pageSegment) {
-        const a = Date.now();
-        const dom = fnParse5(pageSegment.content.html.html);
-        fnConsoleLog('DOM !!!', dom, 'in', Date.now() - a);
-        fnConsoleLog('obj', obj, 'snapshot', pageSegment);
         setPageSegment(pageSegment.content);
       } else {
         fnConsoleLog('NOT FOUND ', obj.data.snapshot, 'hash', obj.data.snapshot.segmentHash);

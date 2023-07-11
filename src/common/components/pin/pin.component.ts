@@ -31,7 +31,6 @@ import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../style.utils';
 import { fnIsElementHidden } from '../../fn/fn-is-element-hidden';
-import { fnScrollToElement } from '../../fn/fn-scroll-to-element';
 import { pinStyles } from './styles/pin.styles';
 
 export class PinComponent implements HtmlComponent<void>, PageComponent {
@@ -78,7 +77,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   }
 
   focus(): void {
-    fnScrollToElement(this.model.ref, this.model.ref.getBoundingClientRect().height / 2);
     this.handleMouseOver();
   }
 
@@ -217,11 +215,19 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
   }
 
   hide(): void {
+    if (!this.model.canvas) {
+      this.model.ref.style.border = this.doc.settings.borderStyle;
+      this.model.ref.style.borderRadius = this.doc.settings.borderRadius;
+    }
     this.top.style.display = 'none';
     this.bottom.style.display = 'none';
   }
 
   show(): void {
+    if (!this.model.canvas) {
+      this.model.ref.style.border = this.doc.settings.borderStyle;
+      this.model.ref.style.borderRadius = this.doc.settings.borderRadius;
+    }
     this.top.style.display = 'flex';
     this.bottom.style.display = 'flex';
   }
