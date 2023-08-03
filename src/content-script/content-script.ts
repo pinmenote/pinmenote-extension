@@ -28,7 +28,6 @@ import { BusMessageType } from '../common/model/bus.model';
 import { ContentMessageHandler } from './content-message.handler';
 import { ContentSettingsStore } from './store/content-settings.store';
 import { DocumentMediator } from './mediator/document.mediator';
-import { DocumentStore } from './store/document.store';
 import { InvalidatePinsCommand } from './command/pin/invalidate-pins.command';
 import { PinStore } from './store/pin.store';
 import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href.command';
@@ -39,14 +38,10 @@ import { fnUid } from '../common/fn/fn-uid';
 class PinMeScript {
   private href: string;
   private timeoutId = 0;
-  private mutations: MutationObserver;
-  private doc: DocumentStore = DocumentStore.getInstance();
 
   constructor(private readonly id: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
     ContentMessageHandler.start(this.href);
-    this.mutations = new MutationObserver(this.handleMutations);
-    this.mutations.observe(document.documentElement || document.body, { childList: true, subtree: true });
 
     fnConsoleLog('PinMeScript->constructor', this.href, 'referrer', document.referrer);
 
@@ -73,16 +68,6 @@ class PinMeScript {
         theme
       }
     });
-  };
-
-  private handleMutations = (mutationList: MutationRecord[]) => {
-    for (const mutation of mutationList) {
-      if (mutation.type === 'childList') {
-        for (const added of mutation.removedNodes) {
-          this.doc.add(added, mutation.target);
-        }
-      }
-    }
   };
 
   private handleVisibilityChange = async (): Promise<void> => {
@@ -126,7 +111,6 @@ class PinMeScript {
     PinStore.clear();
     ContentMessageHandler.cleanup();
     clearTimeout(this.timeoutId);
-    this.mutations.disconnect();
   }
 
   private adaptIntervalMs() {
