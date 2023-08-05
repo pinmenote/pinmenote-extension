@@ -19,7 +19,6 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CryptoGenerateKeyPairCommand } from '../../../../common/command/crypto/crypto-generate-key-pair.command';
 import { CryptoStore } from '../../../../common/store/crypto.store';
 import IconButton from '@mui/material/IconButton';
-import { KeyListComponent } from './user/key-list.component';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
@@ -91,9 +90,6 @@ export const CryptoSettingsComponent: FunctionComponent = () => {
         <IconButton>
           <ContentCopyIcon />
         </IconButton>
-      </div>
-      <div>
-        <KeyListComponent />
       </div>
     </div>
   );

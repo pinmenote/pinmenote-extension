@@ -28,8 +28,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { MainViewEnum } from '../component-model';
 import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
@@ -155,22 +153,6 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
               <NoteOutlinedIcon />
             </ListItemIcon>
             <ListItemText primary="Note" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem sx={zeroPad}>
-          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.ENCRYPT)}>
-            <ListItemIcon>
-              <LockIcon />
-            </ListItemIcon>
-            <ListItemText primary="Encrypt" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem sx={zeroPad}>
-          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.DECRYPT)}>
-            <ListItemIcon>
-              <LockOpenIcon />
-            </ListItemIcon>
-            <ListItemText primary="Decrypt" />
           </ListItemButton>
         </ListItem>
       </List>

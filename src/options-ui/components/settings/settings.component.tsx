@@ -19,7 +19,6 @@ import { ContentSettingsComponent } from './content/content-settings.component';
 import { CryptoSettingsComponent } from './crypto/crypto-settings.component';
 import { DEFAULT_BORDER_RADIUS } from '../../../common/components/colors';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
-import { ServerSettingsComponent } from './server/server-settings.component';
 import Typography from '@mui/material/Typography';
 
 const containerStyle: CSSProperties = {
@@ -47,9 +46,6 @@ export const SettingsComponent: FunctionComponent = () => {
         </div>
         <div style={containerStyle}>
           <CryptoSettingsComponent></CryptoSettingsComponent>
-        </div>
-        <div style={containerStyle}>
-          <ServerSettingsComponent></ServerSettingsComponent>
         </div>
       </div>
     </div>
