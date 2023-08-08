@@ -16,27 +16,32 @@
  */
 import { ObjDto, ObjPageDataDto, ObjTypeDto, ObjUrlDto } from '../../../model/obj/obj.dto';
 import { ICommand } from '../../../model/shared/common.dto';
-import { LinkHrefStore } from '../../../store/link-href.store';
 import { LinkOriginStore } from '../../../store/link-origin.store';
 import { ObjGetCommand } from '../obj-get.command';
 import { ObjNoteDto } from '../../../model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../model/obj/obj-page.dto';
+import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
   constructor(private data: ObjUrlDto) {}
 
   async execute(): Promise<ObjDto<ObjPageDataDto>[]> {
-    const pinIds = (await LinkOriginStore.originIds(LinkOriginStore.OBJ_ORIGIN, this.data.origin)).reverse();
+    const pinIds = (await LinkOriginStore.originIds(LinkOriginStore.PIN_ORIGIN, this.data.origin)).reverse();
+    const objsIds = (await LinkOriginStore.originIds(LinkOriginStore.OBJ_ORIGIN, this.data.origin)).reverse();
+    pinIds.push(...objsIds);
     const out: ObjDto<ObjPageDataDto>[] = [];
     for (const id of pinIds) {
-      const obj = await new ObjGetCommand<ObjPageDataDto>(id).execute();
+      const obj = await new ObjGetCommand<ObjPageDataDto | ObjPinDto>(id).execute();
       if (!obj) {
-        await LinkHrefStore.del(this.data, id);
+        fnConsoleLog('PROBLEM !!!!!!!!!');
         continue;
       }
-      if ([ObjTypeDto.PageSnapshot, ObjTypeDto.PageElementSnapshot, ObjTypeDto.PageElementPin].includes(obj.type)) {
+      if ([ObjTypeDto.PageSnapshot, ObjTypeDto.PageElementSnapshot].includes(obj.type)) {
         if ((obj.data as ObjPageDto).snapshot.info.url.href === this.data.href) continue;
+      } else if (obj.type === ObjTypeDto.PageElementPin) {
+        if ((obj.data as ObjPinDto).data.url.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageNote) {
         if ((obj.data as ObjNoteDto).url?.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageTask) {

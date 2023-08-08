@@ -85,7 +85,6 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
 
   // Advanced options
   const borderStyle = responseError ? `1px solid ${COLOR_DEFAULT_RED}` : COLOR_DEFAULT_BORDER;
-  const advancedDescription = `Don't have account ?`;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 300 }}>
@@ -104,9 +103,8 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
         </Button>
       </div>
       <Typography align="center" style={{ marginTop: 20 }}>
-        <span>{advancedDescription}</span>{' '}
         <Link target="_blank" href={getWebsiteUrl('/register')}>
-          Register
+          Buy <b>Premium</b> Account
         </Link>
       </Typography>
       <div style={{ margin: 10 }}>
