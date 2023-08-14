@@ -200,6 +200,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     htmlRef.current.appendChild(iframe);
     if (!iframe.contentWindow) return;
 
+    document.title = `pin - ${snapshot.info.title}`;
     const html = await IframeHtmlFactory.computeHtml(segment, snapshot.info.title);
 
     const doc = iframe.contentWindow.document;
@@ -321,6 +322,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const handleClose = () => {
+    document.title = 'pin board';
     window.location.hash = '';
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
