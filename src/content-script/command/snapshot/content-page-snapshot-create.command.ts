@@ -61,14 +61,14 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     );
 
     let words: string[] = [];
-    let contentHash = undefined;
+    let segmentHash = undefined;
 
     if (!this.canvas) {
       const res = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes).execute();
-      contentHash = res.hash;
+      segmentHash = res.hash;
       words = res.words;
     } else if (this.element instanceof HTMLImageElement) {
-      contentHash = await new ContentPageSegmentSaveImageCommand(this.element).execute();
+      segmentHash = await new ContentPageSegmentSaveImageCommand(this.element).execute();
     }
 
     const info: Partial<PageSnapshotInfoDto> = {
@@ -90,7 +90,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     return {
       info: info as PageSnapshotInfoDto,
       data: data as PageSnapshotDataDto,
-      segmentHash: contentHash
+      segmentHash
     };
   }
 }
