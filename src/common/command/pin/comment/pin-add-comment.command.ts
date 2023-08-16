@@ -36,7 +36,7 @@ export class PinAddCommentCommand implements ICommand<Promise<string>> {
       createdAt: dt,
       updatedAt: dt
     };
-    const hash = fnSha256Object(JSON.stringify(comment));
+    const hash = fnSha256Object(comment);
     comment.hash = hash;
     fnConsoleLog('PinAddCommentCommand', hash);
 

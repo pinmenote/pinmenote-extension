@@ -77,13 +77,13 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
       words,
       hashtags: []
     };
-    info.hash = fnSha256Object(JSON.stringify(info));
+    info.hash = fnSha256Object(info);
 
     const data: Partial<PageSnapshotDataDto> = {
       screenshot,
       canvas: this.canvas
     };
-    data.hash = fnSha256Object(JSON.stringify(data));
+    data.hash = fnSha256Object(data);
 
     PinStore.each((v) => v.show());
 
