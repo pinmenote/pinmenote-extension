@@ -26,15 +26,16 @@ import { marked } from 'marked';
 interface Props {
   dto: ObjDto<ObjNoteDto>;
   refreshBoardCallback: () => void;
+  saveTags: (newTags: string[]) => void;
 }
 
-export const NoteElement: FunctionComponent<Props> = ({ dto, refreshBoardCallback }) => {
+export const NoteElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-    ref.current.innerHTML = marked(dto.data.description);
+    ref.current.innerHTML = marked(props.dto.data.description);
   }, []);
 
   const handleEdit = () => {
@@ -42,19 +43,26 @@ export const NoteElement: FunctionComponent<Props> = ({ dto, refreshBoardCallbac
   };
 
   const handleRemove = async () => {
-    if (await BoardStore.removeObj(dto)) {
-      refreshBoardCallback();
+    if (await BoardStore.removeObj(props.dto)) {
+      props.refreshBoardCallback();
     }
   };
 
   return (
     <BoardItem>
-      <BoardItemTitle title={dto.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
+      <BoardItemTitle title={props.dto.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
       <div>
         <div ref={ref}></div>
       </div>
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
-      <BoardItemFooter title="page note" createdAt={dto.createdAt} words={dto.data.words} url={dto.data.url?.href} />
+      <BoardItemFooter
+        title="page note"
+        saveTags={props.saveTags}
+        tags={props.dto.data.hashtags}
+        createdAt={props.dto.createdAt}
+        words={props.dto.data.words}
+        url={props.dto.data.url?.href}
+      />
     </BoardItem>
   );
 };

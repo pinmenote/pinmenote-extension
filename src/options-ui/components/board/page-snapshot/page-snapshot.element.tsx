@@ -21,44 +21,57 @@ import { BoardItemTitle } from '../board/board-item-title';
 import { BoardStore } from '../../../store/board.store';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface Props {
   dto: ObjDto<ObjPageDto>;
   refreshBoardCallback: () => void;
 }
 
-export const PageSnapshotElement: FunctionComponent<Props> = ({ dto, refreshBoardCallback }) => {
+export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
+  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.snapshot.info.hashtags);
 
   const handleEdit = () => {
     setEdit(true);
   };
 
   const handleHtml = () => {
-    window.location.hash = `obj/${dto.id}`;
+    window.location.hash = `obj/${props.dto.id}`;
   };
 
   const handleRemove = async () => {
-    if (await BoardStore.removeObj(dto)) {
-      refreshBoardCallback();
+    if (await BoardStore.removeObj(props.dto)) {
+      props.refreshBoardCallback();
     }
   };
+
+  const handleTagSave = (newTags: string[]) => {
+    props.dto.data.snapshot.info.hashtags = newTags;
+    setHashtags(newTags);
+    fnConsoleLog('PageSnapshotElement->handleTagSave->newTags', newTags);
+  };
+
   return (
     <BoardItem>
       <BoardItemTitle
-        title={dto.data.snapshot.info.title}
+        title={props.dto.data.snapshot.info.title}
         editCallback={handleEdit}
         htmlCallback={handleHtml}
         removeCallback={handleRemove}
       />
-      <img style={{ height: '100%', width: '100%', objectFit: 'contain' }} src={dto.data.snapshot.data.screenshot} />
+      <img
+        style={{ height: '100%', width: '100%', objectFit: 'contain' }}
+        src={props.dto.data.snapshot.data.screenshot}
+      />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
+        saveTags={handleTagSave}
         title="page snapshot"
-        createdAt={dto.createdAt}
-        tags={dto.data.snapshot.info.hashtags}
-        words={dto.data.snapshot.info.words}
-        url={dto.data.snapshot.info.url.href}
+        createdAt={props.dto.createdAt}
+        tags={hashtags}
+        words={props.dto.data.snapshot.info.words}
+        url={props.dto.data.snapshot.info.url.href}
       />
     </BoardItem>
   );

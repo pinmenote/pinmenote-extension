@@ -32,6 +32,7 @@ interface Props {
   words: string[];
   tags: string[];
   url?: string;
+  saveTags: (newTags: string[]) => void;
 }
 
 export const BoardItemFooter: FunctionComponent<Props> = (props) => {
@@ -72,7 +73,7 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
       </div>
       <div style={{ display: wordsVisible ? 'inline-block' : 'none' }}>{props.words.join(', ')}</div>
       <div style={{ display: tagsVisible ? 'inline-block' : 'none' }}>
-        <TagEditor tags={props.tags} />
+        <TagEditor tags={props.tags} saveCallback={props.saveTags} />
       </div>
     </div>
   );

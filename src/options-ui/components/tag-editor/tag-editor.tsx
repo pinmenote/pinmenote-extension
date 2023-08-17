@@ -16,16 +16,21 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
-interface TagEditorProps {
+interface Props {
   tags: string[];
+  saveCallback: (newTags: string[]) => void;
 }
 
-export const TagEditor: FunctionComponent<TagEditorProps> = (props) => {
-  const [open, setOpen] = useState(false);
+export const TagEditor: FunctionComponent<Props> = (props) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [currentValue, setCurrentValue] = useState<string[]>([...props.tags]);
+  const [tagsChanged, setTagsChanged] = useState<boolean>(false);
   const [tagOptions, setTagOptions] = useState<string[] | undefined>(undefined);
   const loading = open && tagOptions === undefined;
 
@@ -33,48 +38,81 @@ export const TagEditor: FunctionComponent<TagEditorProps> = (props) => {
     setTagOptions([]);
   }, []);
 
+  const handleSave = () => {
+    props.saveCallback(currentValue);
+    setTagsChanged(false);
+  };
+
+  const handleCancel = () => {
+    setCurrentValue([...props.tags]);
+    setTagsChanged(false);
+  };
+
   return (
     <div>
-      <p>Tag editor {props.tags}</p>
-      <div style={{ width: 300 }}>
-        <Autocomplete
-          multiple
-          freeSolo
-          limitTags={3}
-          defaultValue={[...props.tags]}
-          size="small"
-          open={open}
-          onOpen={() => {
-            setOpen(true);
+      <p>Tags {tagsChanged}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ width: 378 }}>
+          <Autocomplete
+            multiple
+            freeSolo
+            limitTags={3}
+            value={currentValue}
+            size="small"
+            open={open}
+            onOpen={() => setOpen(true)}
+            onChange={(event: any, newValue: string[]) => {
+              const missing = newValue.filter((item) => props.tags.indexOf(item) < 0);
+              fnConsoleLog('TagEditor->diff', props.tags, newValue, missing);
+              missing.length > 0 ? setTagsChanged(true) : setTagsChanged(false);
+
+              setCurrentValue(newValue);
+            }}
+            onClose={() => setOpen(false)}
+            renderTags={(values: readonly string[], getTagProps) => {
+              const components = [];
+              for (let index = 0; index < values.length; index++) {
+                const option = values[index];
+                // Add new option if not exists
+                if (!tagOptions?.includes(option)) tagOptions?.push(option);
+                // eslint-disable-next-line react/jsx-key
+                components.push(<Chip variant="outlined" label={option} {...getTagProps({ index })} />);
+              }
+              return components;
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Add tags"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  )
+                }}
+              />
+            )}
+            options={tagOptions || []}
+          />
+        </div>
+        <div
+          style={{
+            marginTop: 5,
+            display: tagsChanged ? 'flex' : 'none',
+            flexDirection: 'row',
+            justifyContent: 'space-between'
           }}
-          onClose={() => {
-            setOpen(false);
-          }}
-          renderTags={(value: readonly string[], getTagProps) =>
-            value.map((option: string, index: number) => {
-              // Add new option if not exists
-              if (!tagOptions?.includes(option)) tagOptions?.push(option);
-              // eslint-disable-next-line react/jsx-key
-              return <Chip variant="outlined" label={option} {...getTagProps({ index })} />;
-            })
-          }
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Tags"
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <React.Fragment>
-                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
-                  </React.Fragment>
-                )
-              }}
-            />
-          )}
-          options={tagOptions || []}
-        />
+        >
+          <Button size="medium" variant="outlined" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button size="medium" variant="outlined" onClick={handleSave}>
+            Save
+          </Button>
+        </div>
       </div>
     </div>
   );
