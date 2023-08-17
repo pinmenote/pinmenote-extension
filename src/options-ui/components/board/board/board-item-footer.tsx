@@ -21,6 +21,7 @@ import { DATE_YEAR_SECOND } from '../../../../common/date-format.constraints';
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
+import { TagEditor } from '../../tag-editor/tag-editor';
 import TagIcon from '@mui/icons-material/Tag';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
@@ -29,14 +30,21 @@ interface Props {
   title: string;
   createdAt: number;
   words: string[];
+  tags: string[];
   url?: string;
 }
 
 export const BoardItemFooter: FunctionComponent<Props> = (props) => {
   const [wordsVisible, setWordsVisible] = useState<boolean>(false);
+  const [tagsVisible, setTagsVisible] = useState<boolean>(false);
   const handleWordsIconClick = () => {
     setWordsVisible(!wordsVisible);
   };
+
+  const handleTagIconClick = () => {
+    setTagsVisible(!tagsVisible);
+  };
+
   let url = '';
   if (props.url) {
     url = decodeURI(props.url).length > 50 ? decodeURI(props.url).substring(0, 50) : decodeURI(props.url);
@@ -54,8 +62,8 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
           <IconButton onClick={handleWordsIconClick} title="Show / Hide indexed words">
             <DataArrayIcon style={{ color: wordsVisible ? COLOR_DEFAULT_RED : COLOR_DEFAULT_GREY }} />
           </IconButton>
-          <IconButton title="Show / Hide tags">
-            <TagIcon />
+          <IconButton title="Show / Hide tags" onClick={handleTagIconClick}>
+            <TagIcon style={{ color: tagsVisible ? COLOR_DEFAULT_RED : COLOR_DEFAULT_GREY }} />
           </IconButton>
           <IconButton style={{ marginTop: 4 }} title="Show / Hide comments">
             <CommentIcon />
@@ -63,6 +71,9 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
         </div>
       </div>
       <div style={{ display: wordsVisible ? 'inline-block' : 'none' }}>{props.words.join(', ')}</div>
+      <div style={{ display: tagsVisible ? 'inline-block' : 'none' }}>
+        <TagEditor tags={props.tags} />
+      </div>
     </div>
   );
 };

@@ -56,6 +56,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = ({ dto, refreshBoar
       <BoardItemFooter
         title="page snapshot"
         createdAt={dto.createdAt}
+        tags={dto.data.snapshot.info.hashtags}
         words={dto.data.snapshot.info.words}
         url={dto.data.snapshot.info.url.href}
       />
