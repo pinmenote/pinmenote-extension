@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useState } from 'react';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,6 +26,7 @@ import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinListExpandComponent } from './pin-list-expand.component';
 import { PinUpdateCommand } from '../../../common/command/pin/pin-update.command';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -38,6 +40,13 @@ interface PinListElementProps {
 export const PinListElement: FunctionComponent<PinListElementProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(props.obj.local?.visible);
+
+  const handleNavigate = async (data: ObjDto<ObjPinDto>): Promise<void> => {
+    if (PopupActiveTabStore.url?.href !== data.data.data.url.href) {
+      await BrowserApi.setActiveTabUrl(data.data.data.url.href);
+      window.close();
+    }
+  };
 
   const handlePinVisible = async (data: ObjDto<ObjPinDto>): Promise<void> => {
     data.local.visible = !data.local.visible;
@@ -100,6 +109,9 @@ export const PinListElement: FunctionComponent<PinListElementProps> = (props) =>
           }}
         >
           {visibleIcon}
+          <IconButton title="Go to page" size="small" onClick={() => handleNavigate(props.obj)}>
+            <ArrowForwardIcon sx={{ fontSize: '12px' }} />
+          </IconButton>
           <IconButton title="Remove pin" size="small" onClick={() => handlePinRemove(props.obj)}>
             <DeleteIcon sx={{ fontSize: '12px' }} />
           </IconButton>
