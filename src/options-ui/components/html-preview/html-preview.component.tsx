@@ -203,24 +203,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     document.title = `pin - ${snapshot.info.title}`;
     const html = await IframeHtmlFactory.computeHtml(segment, snapshot.info.title);
 
-    const doc = iframe.contentWindow.document;
-    await renderIframe(html, doc);
-    setIsPreLoading(false);
+    await writeDoc(iframe.contentWindow.document, html, segment.assets || []);
 
-    if (segment.assets) {
-      fnConsoleLog('RENDER CONTENT', segment.assets.length);
-      for (const hash of segment.assets) {
-        const elList = doc.querySelectorAll(`[data-pin-hash="${hash}"]`);
-        const elArray = Array.from(elList);
-        try {
-          for (const el of elArray) {
-            await renderAsset(hash, el);
-          }
-        } catch (e) {
-          fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, hash);
-        }
-      }
-    }
+    setIsPreLoading(false);
     fnConsoleLog('DONE');
     setIsLoading(false);
   };
@@ -238,36 +223,46 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     }
   };
 
-  const renderIframe = async (html: string, doc: Document): Promise<void> => {
-    await fnSleep(10);
+  const writeDoc = async (doc: Document, html: string, assets: string[]): Promise<void> => {
     doc.write(html);
     doc.close();
+    if (doc.readyState !== 'complete') {
+      doc.addEventListener('readystatechange', async () => {
+        if (doc.readyState === 'complete') await renderAssetList(assets || [], doc);
+      });
+    } else {
+      await renderAssetList(assets || [], doc);
+    }
+  };
+
+  const renderAssetList = async (assets: string[], doc: Document): Promise<void> => {
+    fnConsoleLog('RENDER CONTENT', assets.length);
+    for (const hash of assets) {
+      const elList = doc.querySelectorAll(`[data-pin-hash="${hash}"]`);
+      const elArray = Array.from(elList);
+      try {
+        for (const el of elArray) {
+          await renderAsset(hash, el);
+        }
+      } catch (e) {
+        fnConsoleLog('htmlPreview->renderAssetList->ERROR', e, hash);
+      }
+    }
   };
 
   const renderAsset = async (hash: string, el: Element): Promise<void> => {
     const dto = await new PageSegmentGetCommand(hash).execute();
     if (!dto) {
-      fnConsoleLog('asyncEmbedContent->missing->hash', hash);
+      fnConsoleLog('renderAsset->missing->hash', hash);
       return;
     }
     await fnSleep(2);
     if (dto.type === SegmentType.IFRAME) {
       const iframe: SegmentPage = dto.content as SegmentPage;
-      const iframeDoc = (el as HTMLIFrameElement).contentWindow?.document;
-      if (iframeDoc) {
-        const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
-        iframeDoc.write(iframeHtml);
-        iframeDoc.close();
-        for (const iframeHash of iframe.assets) {
-          const elList = iframeDoc.querySelectorAll(`[data-pin-hash="${iframeHash}"]`);
-          const iel = elList[0];
-          try {
-            if (iel) await renderAsset(iframeHash, iel);
-          } catch (e) {
-            fnConsoleLog('htmlPreview->asyncEmbedContent->ERROR', e, iframeHash);
-          }
-        }
-      }
+      const doc = (el as HTMLIFrameElement).contentWindow?.document;
+      if (!doc) return;
+      const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
+      await writeDoc(doc, iframeHtml, iframe.assets);
     } else if (dto.type === SegmentType.IMG) {
       const img = el as HTMLImageElement;
       img.src = (dto.content as SegmentImg).src;
