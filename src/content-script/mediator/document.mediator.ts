@@ -296,23 +296,22 @@ export class DocumentMediator {
   };
 
   private static addElementSnapshot = async (element: HTMLElement, canvas?: PageCanvasDto): Promise<void> => {
-    if (element) {
-      PinAddFactory.clearStyles();
+    if (!element) return;
+    PinAddFactory.clearStyles();
 
-      await this.sleepUntilClearStyles();
-      const skipUid = this.showPreloader();
+    await this.sleepUntilClearStyles();
+    const skipUid = this.showPreloader();
 
-      const url = UrlFactory.newUrl();
-      const dto = await new ContentPageSnapshotCreateCommand(
-        ContentSettingsStore.settings,
-        url,
-        element,
-        [skipUid],
-        canvas
-      ).execute();
-      await new PageSnapshotAddCommand(dto, ObjTypeDto.PageElementSnapshot).execute();
-      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_ELEMENT_SNAPSHOT_ADD });
-    }
+    const url = UrlFactory.newUrl();
+    const dto = await new ContentPageSnapshotCreateCommand(
+      ContentSettingsStore.settings,
+      url,
+      element,
+      [skipUid],
+      canvas
+    ).execute();
+    await new PageSnapshotAddCommand(dto, ObjTypeDto.PageElementSnapshot).execute();
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_ELEMENT_SNAPSHOT_ADD });
   };
 
   private static sleepUntilClearStyles = async (): Promise<void> => {

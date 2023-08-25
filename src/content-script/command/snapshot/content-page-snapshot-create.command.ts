@@ -45,6 +45,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     PinStore.each((v) => v.hide());
     let title = '';
     let rect: ObjRectangleDto;
+    let xpath: string | undefined;
     if (this.element === document.body) {
       title = document.title || this.url.origin || this.element.innerText.substring(0, 100);
       // document.body can have 0 height and display page correctly - looking at you youtube
@@ -52,6 +53,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     } else {
       title = this.element.innerText.substring(0, 100) || document.title || this.url.origin;
       rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
+      xpath = XpathFactory.newXPathString(this.element);
     }
 
     const screenshot = await ScreenshotFactory.takeScreenshot(
@@ -81,7 +83,8 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
 
     const data: Partial<PageSnapshotDataDto> = {
       screenshot,
-      canvas: this.canvas
+      canvas: this.canvas,
+      xpath
     };
     data.hash = fnSha256Object(data);
 

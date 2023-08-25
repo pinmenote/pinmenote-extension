@@ -32,6 +32,7 @@ export interface PageSnapshotInfoDto {
 
 export interface PageSnapshotDataDto {
   hash: string;
+  xpath?: string;
   canvas?: PageCanvasDto;
   screenshot: string;
 }
