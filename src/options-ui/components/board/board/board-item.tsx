@@ -22,8 +22,9 @@ export const BoardItem: FunctionComponent<React.PropsWithChildren> = (props) => 
       style={{
         display: 'flex',
         flexDirection: 'column',
-        maxWidth: '380px',
-        minWidth: '380px',
+        maxWidth: 380,
+        minWidth: 380,
+        maxHeight: 380,
         border: '1px solid #eeeeee',
         padding: 5
       }}

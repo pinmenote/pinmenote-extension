@@ -61,7 +61,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
         removeCallback={handleRemove}
       />
       <img
-        style={{ height: '100%', width: '100%', objectFit: 'contain' }}
+        style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
         src={props.dto.data.snapshot.data.screenshot}
       />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
