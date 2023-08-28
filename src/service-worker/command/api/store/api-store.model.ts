@@ -19,6 +19,17 @@ export interface BeginTxResponse {
   redirectAddress?: string;
   locked: boolean;
   lockedBy?: string;
-  lockExpire?: number;
+  lockExpire: number;
   lockReason?: string;
+}
+
+enum HashOperation {
+  ADD = 'ADD',
+  DEL = 'DEL'
+}
+
+export interface HashChange {
+  createdAt: number;
+  operation: HashOperation;
+  hash: string;
 }

@@ -25,13 +25,13 @@ export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
   async execute(): Promise<SyncProgress> {
     const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
     if (!sync) {
-      const obj = await this.getFirstObject();
+      const obj = await SyncGetProgressCommand.getFirstObject();
       return { state: 'update', timestamp: obj.createdAt, id: obj.id };
     }
     return sync;
   }
 
-  async getFirstObject(): Promise<ObjDto> {
+  static async getFirstObject(): Promise<ObjDto> {
     let id = undefined;
     let i = 1;
     // find first not empty list
@@ -42,7 +42,6 @@ export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
       i++;
     }
     // get object timestamp
-    const obj = await new ObjGetCommand(id).execute();
-    return obj;
+    return await new ObjGetCommand(id).execute();
   }
 }

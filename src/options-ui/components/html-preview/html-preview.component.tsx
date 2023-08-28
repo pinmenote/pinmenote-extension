@@ -257,19 +257,29 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       return;
     }
     await fnSleep(2);
-    if (dto.type === SegmentType.IFRAME) {
-      const iframe: SegmentPage = dto.content as SegmentPage;
-      const doc = (el as HTMLIFrameElement).contentWindow?.document;
-      if (!doc) return;
-      const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
-      await writeDoc(doc, iframeHtml, iframe.assets);
-    } else if (dto.type === SegmentType.IMG) {
-      const img = el as HTMLImageElement;
-      img.src = (dto.content as SegmentImg).src;
-      approximatePictureSize(img);
-    } else if (dto.type === SegmentType.SHADOW) {
-      const content = dto.content as SegmentShadow;
-      renderShadow(el, content);
+    switch (dto.type) {
+      case SegmentType.IFRAME: {
+        const iframe: SegmentPage = dto.content as SegmentPage;
+        const doc = (el as HTMLIFrameElement).contentWindow?.document;
+        if (!doc) return;
+        const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
+        await writeDoc(doc, iframeHtml, iframe.assets);
+        break;
+      }
+      case SegmentType.IMG: {
+        const img = el as HTMLImageElement;
+        img.src = (dto.content as SegmentImg).src;
+        approximatePictureSize(img);
+        break;
+      }
+      case SegmentType.SHADOW: {
+        const content = dto.content as SegmentShadow;
+        renderShadow(el, content);
+        break;
+      }
+      default:
+        fnConsoleLog('UNSUPPORTED TYPE', dto.type, dto);
+        break;
     }
   };
 

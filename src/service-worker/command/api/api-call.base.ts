@@ -15,8 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto, TokenDataDto } from '../../../common/model/shared/token.dto';
-import { RefreshTokenParams } from '@pinmenote/fetch-service';
+import { FetchHeaders, RefreshTokenParams } from '@pinmenote/fetch-service';
 import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
+import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
 import { environmentConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import jwtDecode from 'jwt-decode';
@@ -47,8 +48,23 @@ export class ApiCallBase {
         method: 'PUT',
         url: `${this.apiUrl}/api/v1/auth/refresh-token`
       },
-      successCallback: (data, headers) => {
-        fnConsoleLog('refreshParams->successCallback', data, headers);
+      successCallback: (res) => {
+        if (res.status === 200) {
+          const value: AccessTokenDto = JSON.parse(res.data);
+          new TokenStorageSetCommand(value)
+            .execute()
+            .then(() => {
+              /* IGNORE */
+            })
+            .catch(() => {
+              /* IGNORE */
+            });
+          return {
+            Authorization: `Bearer ${value.access_token}`
+          } as FetchHeaders;
+        }
+        fnConsoleLog('refreshParams->successCallback', res);
+        return {};
       },
       errorCallback: (error) => {
         fnConsoleLog('refreshParams->errorCallback', error);
@@ -56,7 +72,7 @@ export class ApiCallBase {
     };
   }
 
-  protected getAuthHeaders(): { [key: string]: string } {
+  protected getAuthHeaders(): FetchHeaders {
     if (!this.token) return {};
     return {
       Authorization: `Bearer ${this.token.access_token}`

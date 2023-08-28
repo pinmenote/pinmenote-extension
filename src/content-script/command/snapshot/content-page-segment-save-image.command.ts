@@ -19,6 +19,7 @@ import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnSha256 } from '../../../common/fn/fn-hash';
 
 export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<string>> {
@@ -38,7 +39,8 @@ export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<stri
         /*IGNORE*/
       },
       iframeStore: IFrameStore.getInstance(),
-      skipCssImageSizeMB: ContentSettingsStore.skipCssImageSize
+      skipCssImageSizeMB: ContentSettingsStore.skipCssImageSize,
+      dispatcher: TinyDispatcher.getInstance()
     });
 
     const html = `<img src="${value}" />`;

@@ -14,7 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+export enum ObjIndexOp {
+  CREATE = 1,
+  UPDATE,
+  DELETE
+}
+
+export interface ObjIndexHash {
+  hash: string;
+  ref: string[];
+}
+
 export interface ObjDateIndex {
   id: number;
   dt: number;
+  op: ObjIndexOp;
+  data?: ObjIndexHash;
 }

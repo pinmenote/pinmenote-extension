@@ -21,12 +21,17 @@ import { BeginTxResponse } from '../api/store/api-store.model';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../common/model/obj-index.model';
+import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
+import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
 import { SyncProgress } from './sync.model';
+import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
+import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
+import { fnSleep } from '../../../common/fn/fn-sleep';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
@@ -34,10 +39,14 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     if (!(await this.shouldSync())) return;
     try {
+      // await new SyncResetProgressCommand().execute();
+
       SyncServerCommand.isInSync = true;
+
       const a = Date.now();
       const progress = await new SyncGetProgressCommand().execute();
       await this.sync(progress);
+
       fnConsoleLog('SyncServerCommand->execute-progress', progress, 'in', Date.now() - a);
     } finally {
       SyncServerCommand.isInSync = false;
@@ -47,25 +56,66 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   private async sync(progress: SyncProgress): Promise<void> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
-    await this.begin();
     while (dt <= lastDay) {
       const yearMonth = fnDateKeyFormat(dt);
-      await this.syncMonth(yearMonth);
+      await this.syncMonth(progress, yearMonth);
       dt.setMonth(dt.getMonth() + 1);
       fnConsoleLog('sync dt', dt, 'lastDay', lastDay);
     }
+  }
+
+  private async syncMonth(progress: SyncProgress, yearMonth: string): Promise<void> {
+    fnConsoleLog('SyncServerCommand->syncMonth', yearMonth);
+
+    const updatedDt = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;
+    const indexList = await this.getList(updatedDt);
+    fnConsoleLog('syncMonth->syncList', indexList);
+    if (indexList.length === 0) return;
+    await new SyncSetProgressCommand({
+      id: indexList[0].id,
+      timestamp: indexList[0].dt,
+      state: 'update'
+    }).execute();
+
+    const nextObjectIndex = indexList.findIndex((value) => value.id === progress.id);
+    fnConsoleLog('syncMonth->AAA', nextObjectIndex, indexList.length, progress, indexList[nextObjectIndex]);
+
+    await this.begin();
+
+    for (let i = nextObjectIndex; i < indexList.length; i++) {
+      const index = indexList[i];
+      await this.syncObject(progress, index);
+    }
+
     await this.commit();
   }
 
-  private async syncMonth(yearMonth: string): Promise<void> {
-    fnConsoleLog('SyncServerCommand->syncMonth', yearMonth);
-    const updatedDt = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;
-    const updated = await this.getList(updatedDt);
-    fnConsoleLog('syncMonth->updated', updated);
-    const removedDt = `${ObjectStoreKeys.REMOVED_DT}:${yearMonth}`;
-    const removed = await this.getList(removedDt);
-    fnConsoleLog('syncMonth->removed', removed);
-  }
+  private syncObject = async (progress: SyncProgress, index: ObjDateIndex) => {
+    const obj = await new ObjGetCommand(index.id).execute();
+    if (!obj) {
+      fnConsoleLog('syncObject EMPTY', index.id);
+      return;
+    }
+    switch (obj.type) {
+      case ObjTypeDto.PageSnapshot:
+      case ObjTypeDto.PageElementSnapshot: {
+        // const data = obj.data as ObjPageDto;
+        // const pageSegment = await new PageSegmentGetCommand<SegmentPage>(data.snapshot.segmentHash).execute();
+        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
+        break;
+      }
+      case ObjTypeDto.PageElementPin: {
+        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
+        break;
+      }
+      default: {
+        fnConsoleLog('PROBLEM');
+        break;
+      }
+    }
+    await fnSleep(10);
+    await new SyncSetProgressCommand({ id: index.id, timestamp: index.dt, state: 'update' }).execute();
+  };
 
   private async shouldSync(): Promise<boolean> {
     if (SyncServerCommand.isInSync) return false;
@@ -76,17 +126,17 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
 
       const loggedIn = await this.isLoggedIn();
       fnConsoleLog('SyncServerCommand->loggedIn', loggedIn);
-      if (!loggedIn) return false;
-
-      return true;
+      return loggedIn;
     }
     return false;
   }
 
   private async begin(): Promise<BeginTxResponse | undefined> {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
-    fnConsoleLog('begin', tx);
-    if (tx) return tx;
+    const expired = tx?.lockExpire ? tx?.lockExpire < Date.now() : false;
+    fnConsoleLog('SyncServerCommand->begin', tx, 'tx expired', expired);
+    if (!expired && tx) return tx;
+    fnConsoleLog('SyncServerCommand->begin->ApiStoreBeginCommand');
     const txResponse = await new ApiStoreBeginCommand().execute();
     if (txResponse?.locked) return undefined;
     await BrowserStorage.set(ObjectStoreKeys.SYNC_TX, txResponse);
@@ -95,8 +145,8 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
 
   private async commit(): Promise<void> {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
-    fnConsoleLog('commit', tx);
     if (!tx) return;
+    fnConsoleLog('SyncServerCommand->commit', tx);
     await new ApiStoreCommitCommand(tx.tx).execute();
     await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
   }

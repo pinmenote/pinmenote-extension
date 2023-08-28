@@ -36,12 +36,12 @@ export class IframeScript {
   private readonly href: string;
   private timeoutId = 0;
 
-  constructor(private readonly id: string) {
+  constructor(private readonly uid: string) {
     this.href = UrlFactory.normalizeHref(window.location.href);
 
-    fnConsoleLog('IframeScript->constructor', this.id, this.href);
+    fnConsoleLog('IframeScript->constructor', this.uid, this.href);
 
-    IframeScriptMessageHandler.start(this.href, this.id);
+    IframeScriptMessageHandler.start(this.href, this.uid);
 
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     document.addEventListener('mouseout', this.handleMouseOut);
@@ -57,7 +57,7 @@ export class IframeScript {
   };
 
   private handleVisibilityChange = async (): Promise<void> => {
-    fnConsoleLog('IframeScript->handleVisibilityChange', this.id);
+    fnConsoleLog('IframeScript->handleVisibilityChange', this.uid);
     await this.invalidateContentScript();
   };
 
@@ -66,7 +66,7 @@ export class IframeScript {
       await BrowserStorage.get('foo');
       return true;
     } catch (e) {
-      fnConsoleLog('IframeScript->Error', this.id, e);
+      fnConsoleLog('IframeScript->Error', this.uid, e);
       this.cleanup();
     }
     return false;
@@ -74,7 +74,7 @@ export class IframeScript {
 
   private handleMouseOut = async () => {
     if (DocumentMediator.active) {
-      fnConsoleLog('IframeScript->handleMouseOut', this.id);
+      fnConsoleLog('IframeScript->handleMouseOut', this.uid);
       DocumentMediator.stopListeners();
       await this.iframeMouseOut();
     }
@@ -84,7 +84,7 @@ export class IframeScript {
     const index = fnIframeIndex();
     await BrowserApi.sendRuntimeMessage<IFrameIndexMessage | IFrameListenerMessage>({
       type: BusMessageType.IFRAME_MOUSE_OUT,
-      data: { index, uid: this.id, type: DocumentMediator.type }
+      data: { index, uid: this.uid, type: DocumentMediator.type }
     });
   };
 

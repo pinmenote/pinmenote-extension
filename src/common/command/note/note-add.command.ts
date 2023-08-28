@@ -19,6 +19,7 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
+import { ObjIndexOp } from '../../model/obj-index.model';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
@@ -54,6 +55,6 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
       await LinkHrefStore.noteAdd(this.note.url, id);
     }
 
-    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
+    await new ObjAddIdCommand({ id, dt, op: ObjIndexOp.CREATE }, ObjectStoreKeys.OBJECT_LIST).execute();
   }
 }

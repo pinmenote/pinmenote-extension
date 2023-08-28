@@ -39,8 +39,10 @@ class PinMeScript {
   private href: string;
   private timeoutId = 0;
 
-  constructor(private readonly id: string, private ms: number) {
+  constructor(private readonly uid: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
+
+    // @see iframe/iframe-script.ts for iframe
     ContentMessageHandler.start(this.href);
 
     fnConsoleLog('PinMeScript->constructor', this.href, 'referrer', document.referrer);
@@ -71,7 +73,7 @@ class PinMeScript {
   };
 
   private handleVisibilityChange = async (): Promise<void> => {
-    fnConsoleLog('PinMeScript->handleVisibilityChange', this.id);
+    fnConsoleLog('PinMeScript->handleVisibilityChange', this.uid);
     if (await this.invalidateContentScript()) {
       await this.invalidatePins();
       this.initTimeout();
@@ -98,7 +100,7 @@ class PinMeScript {
       await BrowserStorage.get('foo');
       return true;
     } catch (e) {
-      fnConsoleLog('PinMeScript->Error', this.id, e);
+      fnConsoleLog('PinMeScript->Error', this.uid, e);
       this.cleanup();
     }
     return false;

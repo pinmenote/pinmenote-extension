@@ -15,24 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
-import { ICommand } from '../../model/shared/common.dto';
-import { ObjDto } from '../../model/obj/obj.dto';
-import { ObjPageDto } from '../../model/obj/obj-page.dto';
-import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { fnConsoleLog } from '../../fn/fn-console';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { SyncGetProgressCommand } from './sync-get-progress.command';
+import { SyncProgress } from '../sync.model';
 
-export class PageSnapshotUpdateCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPageDto>) {}
-
+export class SyncResetProgressCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    fnConsoleLog('PageSnapshotUpdateCommand->execute', this.obj);
-    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
-
-    this.obj.updatedAt = Date.now();
-
-    await BrowserStorage.set(key, this.obj);
-
-    await new ObjUpdateIndexAddCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
+    const obj = await SyncGetProgressCommand.getFirstObject();
+    await BrowserStorage.set<SyncProgress>(ObjectStoreKeys.SYNC_PROGRESS, {
+      state: 'update',
+      timestamp: obj.createdAt,
+      id: obj.id
+    });
   }
 }

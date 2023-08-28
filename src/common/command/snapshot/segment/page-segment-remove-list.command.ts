@@ -19,16 +19,21 @@ import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnConsoleLog } from '../../../fn/fn-console';
 
-export class PageSegmentRemoveListCommand implements ICommand<Promise<void>> {
+export class PageSegmentRemoveListCommand implements ICommand<Promise<string[]>> {
   constructor(private hashList: string[]) {}
 
-  async execute(): Promise<void> {
+  async execute(): Promise<string[]> {
+    const removedHashes: string[] = [];
     for (const hash of this.hashList) {
       const key = `${ObjectStoreKeys.CONTENT_HASH}:${hash}`;
 
       const isLast = await this.decrementCount(hash);
-      if (isLast) await BrowserStorage.remove(key);
+      if (isLast) {
+        removedHashes.push(hash);
+        await BrowserStorage.remove(key);
+      }
     }
+    return removedHashes;
   }
 
   async decrementCount(hash: string): Promise<boolean> {

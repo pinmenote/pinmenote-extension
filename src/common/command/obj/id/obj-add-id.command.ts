@@ -16,7 +16,6 @@
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjCreateIndexAddCommand } from '../date-index/obj-create-index-add.command';
 import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjUpdateIndexAddCommand } from '../date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
@@ -43,7 +42,6 @@ export class ObjAddIdCommand implements ICommand<Promise<void>> {
 
     await BrowserStorage.set(key, ids);
 
-    await new ObjCreateIndexAddCommand(this.index).execute();
     await new ObjUpdateIndexAddCommand(this.index).execute();
   }
 

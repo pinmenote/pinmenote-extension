@@ -21,6 +21,7 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjAddIdCommand } from '../../../common/command/obj/id/obj-add-id.command';
+import { ObjIndexOp } from '../../../common/model/obj-index.model';
 import { ObjNextIdCommand } from '../../../common/command/obj/id/obj-next-id.command';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
@@ -54,7 +55,7 @@ export class PinAddCommand implements ICommand<Promise<ObjDto<ObjPinDto>>> {
     await LinkHrefStore.pinAdd(this.pin.data.url, id);
     if (this.pin.data.iframe) await LinkHrefStore.pinAdd(this.pin.data.iframe.url, id);
 
-    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.PIN_LIST).execute();
+    await new ObjAddIdCommand({ id, dt, op: ObjIndexOp.CREATE }, ObjectStoreKeys.PIN_LIST).execute();
 
     // Send stop - iframe loads own content scripts
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_STOP_LISTENERS });
