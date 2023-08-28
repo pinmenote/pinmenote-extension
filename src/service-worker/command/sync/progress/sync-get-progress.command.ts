@@ -16,17 +16,33 @@
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjGetCommand } from '../../../../common/command/obj/obj-get.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { SyncFirstDateCommand } from '../sync-first-date.command';
 import { SyncProgress } from '../sync.model';
 
 export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
   async execute(): Promise<SyncProgress> {
     const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
     if (!sync) {
-      const timestamp = await new SyncFirstDateCommand().execute();
-      return { state: 'update', timestamp };
+      const obj = await this.getFirstObject();
+      return { state: 'update', timestamp: obj.createdAt, id: obj.id };
     }
     return sync;
+  }
+
+  async getFirstObject(): Promise<ObjDto> {
+    let id = undefined;
+    let i = 1;
+    // find first not empty list
+    while (!id) {
+      const key = `${ObjectStoreKeys.OBJECT_LIST}:${i}`;
+      const list = await BrowserStorage.get<number[]>(key);
+      id = list.shift();
+      i++;
+    }
+    // get object timestamp
+    const obj = await new ObjGetCommand(id).execute();
+    return obj;
   }
 }

@@ -23,7 +23,7 @@ export class PopupTokenStore {
 
   static init = async () => {
     this.tokenValue = await new TokenStorageGetCommand().execute();
-    LogManager.log(`TOKEN !!! ${JSON.stringify(this.tokenValue)}`);
+    LogManager.log(`PopupTokenStore->init ${JSON.stringify(this.tokenValue)}`);
   };
 
   static get token(): AccessTokenDto | undefined {

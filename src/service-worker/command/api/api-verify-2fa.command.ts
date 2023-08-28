@@ -17,19 +17,24 @@
 import { AccessTokenDto, VerifyTokenDto } from '../../../common/model/shared/token.dto';
 import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../api/api-helper';
+import { ApiCallBase } from './api-call.base';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
-export class ApiVerify2faCommand implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>> {
-  constructor(private data: VerifyTokenDto) {}
+export class ApiVerify2faCommand
+  extends ApiCallBase
+  implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>>
+{
+  constructor(private data: VerifyTokenDto) {
+    super();
+  }
 
   async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
     fnConsoleLog('ApiVerify2faCommand->execute');
-    const url = `${ApiHelper.apiUrl}/api/v1/auth/2fa/verify`;
+    const url = `${this.apiUrl}/api/v1/auth/2fa/verify`;
     try {
       return await FetchService.fetch<AccessTokenDto>(url, {
         method: 'POST',
-        data: this.data
+        body: JSON.stringify(this.data)
       });
     } catch (e) {
       return {

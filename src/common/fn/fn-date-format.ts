@@ -24,8 +24,7 @@ export const fnDateFormat = (dt: Date): string => {
   )}:${pad(dt.getSeconds())}`;
 };
 
-export const fnTimestampKeyFormat = (timestamp: number): string => {
-  const dt = new Date(timestamp);
+export const fnDateKeyFormat = (dt: Date): string => {
   return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}`;
 };
 

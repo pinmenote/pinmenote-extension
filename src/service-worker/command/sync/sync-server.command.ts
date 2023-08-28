@@ -15,17 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/fn-date';
-import { ApiHelper } from '../../api/api-helper';
+import { ApiStoreBeginCommand } from '../api/store/api-store-begin.command';
+import { ApiStoreCommitCommand } from '../api/store/api-store-commit.command';
+import { BeginTxResponse } from '../api/store/api-store.model';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjDateIndex } from '../../../common/model/obj-index.model';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
 import { SyncProgress } from './sync.model';
-import { SyncRemoteCommand } from './remote/sync-remote.command';
-import { SyncRemoveListCommand } from './remove/sync-remove-list.command';
-import { SyncUpdateListCommand } from './update/sync-update-list.command';
+import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { fnTimestampKeyFormat } from '../../../common/fn/fn-date-format';
+import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
@@ -46,18 +47,24 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   private async sync(progress: SyncProgress): Promise<void> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
-    while (dt < lastDay) {
-      const yearMonth = fnTimestampKeyFormat(progress.timestamp);
-      fnConsoleLog('SyncServerCommand->sync-loop', yearMonth);
+    await this.begin();
+    while (dt <= lastDay) {
+      const yearMonth = fnDateKeyFormat(dt);
       await this.syncMonth(yearMonth);
       dt.setMonth(dt.getMonth() + 1);
+      fnConsoleLog('sync dt', dt, 'lastDay', lastDay);
     }
-    await new SyncRemoteCommand().execute();
+    await this.commit();
   }
 
   private async syncMonth(yearMonth: string): Promise<void> {
-    await new SyncUpdateListCommand(yearMonth).execute();
-    await new SyncRemoveListCommand(yearMonth).execute();
+    fnConsoleLog('SyncServerCommand->syncMonth', yearMonth);
+    const updatedDt = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;
+    const updated = await this.getList(updatedDt);
+    fnConsoleLog('syncMonth->updated', updated);
+    const removedDt = `${ObjectStoreKeys.REMOVED_DT}:${yearMonth}`;
+    const removed = await this.getList(removedDt);
+    fnConsoleLog('syncMonth->removed', removed);
   }
 
   private async shouldSync(): Promise<boolean> {
@@ -67,12 +74,40 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (Date.now() - interval > 5_000) {
       await BrowserStorage.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
 
-      const loggedIn = await ApiHelper.isLoggedIn();
+      const loggedIn = await this.isLoggedIn();
       fnConsoleLog('SyncServerCommand->loggedIn', loggedIn);
       if (!loggedIn) return false;
 
       return true;
     }
     return false;
+  }
+
+  private async begin(): Promise<BeginTxResponse | undefined> {
+    const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
+    fnConsoleLog('begin', tx);
+    if (tx) return tx;
+    const txResponse = await new ApiStoreBeginCommand().execute();
+    if (txResponse?.locked) return undefined;
+    await BrowserStorage.set(ObjectStoreKeys.SYNC_TX, txResponse);
+    return txResponse;
+  }
+
+  private async commit(): Promise<void> {
+    const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
+    fnConsoleLog('commit', tx);
+    if (!tx) return;
+    await new ApiStoreCommitCommand(tx.tx).execute();
+    await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
+  }
+
+  private async isLoggedIn(): Promise<boolean> {
+    const token = await new TokenStorageGetCommand().execute();
+    return !!token;
+  }
+
+  private async getList(key: string): Promise<ObjDateIndex[]> {
+    const value = await BrowserStorage.get<ObjDateIndex[] | undefined>(key);
+    return value || [];
   }
 }

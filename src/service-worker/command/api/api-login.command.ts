@@ -17,19 +17,28 @@
 import { AccessTokenDto, LoginDto } from '../../../common/model/shared/token.dto';
 import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../api/api-helper';
+import { ApiCallBase } from './api-call.base';
 import { apiResponseError } from './api.model';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
-export class ApiLoginCommand implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>> {
-  constructor(private data: LoginDto) {}
+export class ApiLoginCommand
+  extends ApiCallBase
+  implements ICommand<Promise<FetchResponse<AccessTokenDto | ServerErrorDto>>>
+{
+  constructor(private data: LoginDto) {
+    super();
+  }
 
   async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
     fnConsoleLog('ApiLoginCommand->execute');
-    const url = `${ApiHelper.apiUrl}/api/v1/auth/login`;
+    const url = `${this.apiUrl}/api/v1/auth/login`;
     try {
-      return await FetchService.fetch<AccessTokenDto | ServerErrorDto>(url, { method: 'POST', data: this.data });
+      return await FetchService.fetch<AccessTokenDto | ServerErrorDto>(url, {
+        method: 'POST',
+        body: JSON.stringify(this.data)
+      });
     } catch (e) {
+      fnConsoleLog('ApiLoginCommand', e, url);
       return { url, ...apiResponseError };
     }
   }

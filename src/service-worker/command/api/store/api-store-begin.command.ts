@@ -14,26 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
-import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
-import { ApiHelper } from '../../../api/api-helper';
-import { apiResponseError } from '../api.model';
+import { ApiCallBase } from '../api-call.base';
+import { BeginTxResponse } from './api-store.model';
+import { FetchService } from '@pinmenote/fetch-service';
+import { ICommand } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
-export class ApiPrivateKeyGetCommand implements ICommand<Promise<FetchResponse<{ key: string } | ServerErrorDto>>> {
-  async execute(): Promise<FetchResponse<{ key: string } | ServerErrorDto>> {
-    fnConsoleLog('ApiPrivateKeyGetCommand->execute');
-
-    const storeUrl = await ApiHelper.getStoreUrl();
-    const url = `${storeUrl}/api/v1/key/private`;
-
+export class ApiStoreBeginCommand extends ApiCallBase implements ICommand<Promise<BeginTxResponse | undefined>> {
+  async execute(): Promise<BeginTxResponse | undefined> {
+    await this.initTokenData();
+    if (!this.storeUrl) return;
     try {
-      const headers = await ApiHelper.getAuthHeaders();
-      return await FetchService.fetch<{ key: string }>(url, {
-        headers
-      });
+      const resp = await FetchService.fetch<BeginTxResponse>(
+        `${this.storeUrl}/api/v1/obj/begin`,
+        { headers: this.getAuthHeaders() },
+        this.refreshParams()
+      );
+      fnConsoleLog('ApiStoreBeginCommand->response', resp);
+      return resp.data;
     } catch (e) {
-      return { url, ...apiResponseError };
+      fnConsoleLog('ApiStoreBeginCommand->Error', e);
     }
   }
 }

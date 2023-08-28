@@ -63,7 +63,7 @@
     "@mui/material": "^5.9.3",
     "@mui/x-date-pickers": "^6.1.0",
     "@pinmenote/browser-api": "^0.0.5",
-    "@pinmenote/fetch-service": "^0.0.4",
+    "@pinmenote/fetch-service": "file:../fetch-service",
     "@pinmenote/page-compute": "file:../page-compute",
     "@pinmenote/tiny-dispatcher": "^0.0.4",
     "css": "^3.0.0",

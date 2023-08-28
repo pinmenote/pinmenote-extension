@@ -46,8 +46,8 @@ interface LoginComponentProps {
 }
 
 export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSuccess }) => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('foobar5@example.local');
+  const [password, setPassword] = useState<string>('asdQWE123!@#');
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
@@ -77,6 +77,7 @@ export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSu
 
   const handleLoginClick = async (): Promise<void> => {
     setResponseError(undefined);
+    LogManager.log('LoginComponent->handleLoginClick');
     await BrowserApi.sendRuntimeMessage<LoginDto>({
       type: BusMessageType.POPUP_LOGIN,
       data: { email, password, source: 'EXTENSION' }

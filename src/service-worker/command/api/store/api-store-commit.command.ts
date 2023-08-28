@@ -14,29 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
-import { ApiHelper } from '../../../api/api-helper';
+import { ApiCallBase } from '../api-call.base';
+import { BeginTxResponse } from './api-store.model';
+import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
-interface ChangesDto {
-  data: number[];
-}
-
-export class ApiStoreChangesCommand implements ICommand<Promise<FetchResponse<ChangesDto> | undefined>> {
-  constructor(private dt: string) {}
-
-  async execute(): Promise<FetchResponse<ChangesDto> | undefined> {
-    fnConsoleLog('ApiStoreChangesCommand->execute');
-    const storeUrl = await ApiHelper.getStoreUrl();
-
-    const url = `${storeUrl}/api/v1/changes?dt=${this.dt}`;
-
+export class ApiStoreCommitCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
+  constructor(private tx: string) {
+    super();
+  }
+  async execute(): Promise<boolean> {
+    await this.initTokenData();
+    if (!this.storeUrl) return false;
     try {
-      const headers = await ApiHelper.getAuthHeaders();
-      return await FetchService.fetch<ChangesDto>(url, { headers });
+      const resp = await FetchService.fetch<BeginTxResponse>(
+        `${this.storeUrl}/api/v1/obj/tx/${this.tx}/commit`,
+        {
+          type: 'TEXT',
+          headers: this.getAuthHeaders()
+        },
+        this.refreshParams()
+      );
+      fnConsoleLog('ApiStoreCommitCommand->response', resp);
+      return resp.ok;
     } catch (e) {
-      fnConsoleLog('ApiStoreChangesCommand->Error', e);
+      fnConsoleLog('ApiStoreBeginCommand->Error', e);
     }
+    return false;
   }
 }

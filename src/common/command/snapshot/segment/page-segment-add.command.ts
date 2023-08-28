@@ -18,6 +18,7 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { SegmentData } from '@pinmenote/page-compute';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class PageSegmentAddCommand<T> implements ICommand<Promise<void>> {
   constructor(private content: SegmentData<T>) {}
@@ -32,6 +33,7 @@ export class PageSegmentAddCommand<T> implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${this.content.hash}`;
     let count = (await BrowserStorage.get<number | undefined>(key)) || 0;
     count++;
+    fnConsoleLog('PageSegmentAddCommand->incrementCount', count);
     await BrowserStorage.set(key, count);
   }
 }

@@ -18,13 +18,13 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
-import { fnTimestampKeyFormat } from '../../../fn/fn-date-format';
+import { fnDateKeyFormat } from '../../../fn/fn-date-format';
 
 export class ObjCreateIndexAddCommand implements ICommand<Promise<void>> {
   constructor(private index: ObjDateIndex) {}
 
   async execute(): Promise<void> {
-    const yearMonth = fnTimestampKeyFormat(this.index.dt);
+    const yearMonth = fnDateKeyFormat(new Date(this.index.dt));
     const key = `${ObjectStoreKeys.CREATED_DT}:${yearMonth}`;
 
     const ids = await this.getList(key);

@@ -17,6 +17,7 @@
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class PageSegmentRemoveListCommand implements ICommand<Promise<void>> {
   constructor(private hashList: string[]) {}
@@ -34,6 +35,7 @@ export class PageSegmentRemoveListCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${hash}`;
     let count = (await BrowserStorage.get<number | undefined>(key)) || 0;
     count--;
+    fnConsoleLog('PageSegmentRemoveListCommand->decrementCount', count);
     if (count === 0) {
       await BrowserStorage.remove(key);
       return true;

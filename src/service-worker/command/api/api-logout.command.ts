@@ -16,19 +16,26 @@
  */
 import { BoolDto, ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
-import { ApiHelper } from '../../api/api-helper';
+import { ApiCallBase } from './api-call.base';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
-export class ApiLogoutCommand implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>> {
+export class ApiLogoutCommand
+  extends ApiCallBase
+  implements ICommand<Promise<FetchResponse<BoolDto | ServerErrorDto>>>
+{
   async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {
-    const url = `${ApiHelper.apiUrl}/api/v1/auth/logout`;
+    await this.initTokenData();
+    const url = `${this.apiUrl}/api/v1/auth/logout`;
     fnConsoleLog('ApiLogoutCommand->execute', url);
     try {
-      const headers = await ApiHelper.getAuthHeaders();
-      return await FetchService.fetch<BoolDto>(url, {
-        method: 'POST',
-        headers
-      });
+      return await FetchService.fetch<BoolDto>(
+        url,
+        {
+          method: 'POST',
+          headers: this.getAuthHeaders()
+        },
+        this.refreshParams()
+      );
     } catch (e) {
       fnConsoleLog('ERROR', e);
       return {

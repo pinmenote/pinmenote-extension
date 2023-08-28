@@ -25,6 +25,7 @@ import { LogManager } from '../../../common/popup/log.manager';
 import { PopupTokenStore } from '../../store/popup-token.store';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { TokenDataDto } from '../../../common/model/shared/token.dto';
+import { TokenStorageRemoveCommand } from '../../../common/command/server/token/token-storage-remove.command';
 import Typography from '@mui/material/Typography';
 import jwtDecode from 'jwt-decode';
 
@@ -43,23 +44,22 @@ export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentP
     }
     const loginSuccessKey = TinyDispatcher.getInstance().addListener(
       BusMessageType.POPUP_LOGIN_SUCCESS,
-      async (event, key, value) => {
+      async (event, key) => {
         TinyDispatcher.getInstance().removeListener(event, key);
         await PopupTokenStore.init();
         if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
-        // TODO upload keys ???
-        LogManager.log(`${JSON.stringify(value)}`);
       }
     );
     const logoutKey = TinyDispatcher.getInstance().addListener<FetchResponse<BoolDto | ServerErrorDto>>(
       BusMessageType.POPUP_LOGOUT,
-      (event, key, value) => {
+      async (event, key, value) => {
         LogManager.log('POPUP_LOGOUT_RESPONSE');
         if (value.ok) {
           logoutSuccess();
         } else {
           setResponseError(value.data as ServerErrorDto);
         }
+        await new TokenStorageRemoveCommand().execute();
       }
     );
     return () => {

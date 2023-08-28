@@ -14,14 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ApiStoreRemoveObjectCommand } from '../../api/store/api-store-remove-object.command';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
-
-export class SyncRemoveObjectCommand implements ICommand<Promise<void>> {
-  constructor(private id: number) {}
-  async execute(): Promise<void> {
-    const resp = await new ApiStoreRemoveObjectCommand(this.id).execute();
-    fnConsoleLog('SyncRemoveObjectCommand->execute', this.id, resp);
-  }
+export interface BeginTxResponse {
+  tx: string;
+  redirectAddress?: string;
+  locked: boolean;
+  lockedBy?: string;
+  lockExpire?: number;
+  lockReason?: string;
 }
