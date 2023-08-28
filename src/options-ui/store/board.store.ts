@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { BrowserStorage } from '@pinmenote/browser-api';
-import { ObjDto } from '../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../common/model/obj/obj-page.dto';
+import { ObjPdfDto } from '../../common/model/obj/obj-pdf.dto';
 import { ObjRangeRequest } from '../../common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../command/options-obj-get-range.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
+import { PdfRemoveCommand } from '../../common/command/pdf/pdf-remove.command';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class BoardStore {
@@ -60,9 +62,23 @@ export class BoardStore {
   static removeObj = async (value: ObjDto): Promise<boolean> => {
     for (let i = 0; i < this.objData.length; i++) {
       if (this.objData[i].id == value.id) {
+        switch (value.type) {
+          case ObjTypeDto.PageSnapshot:
+          case ObjTypeDto.PageElementSnapshot: {
+            await new PageSnapshotRemoveCommand(value as ObjDto<ObjPageDto>).execute();
+            break;
+          }
+          case ObjTypeDto.Pdf: {
+            await new PdfRemoveCommand(value.id, value.data as ObjPdfDto).execute();
+            break;
+          }
+          default: {
+            fnConsoleLog('removeObj->NOT SUPPORTED');
+            break;
+          }
+        }
         this.keySet.delete(value.id);
         this.objData.splice(i, 1);
-        await new PageSnapshotRemoveCommand(value as ObjDto<ObjPageDto>).execute();
         return true;
       }
     }

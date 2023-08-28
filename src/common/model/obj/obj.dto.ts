@@ -17,8 +17,8 @@
 import { ObjBinaryDto } from './obj-binary.dto';
 import { ObjNoteDto } from './obj-note.dto';
 import { ObjPageDto } from './obj-page.dto';
+import { ObjPdfDto } from './obj-pdf.dto';
 import { ObjPinDto } from './obj-pin.dto';
-import { ObjTaskDto } from './obj-task.dto';
 
 export const OBJ_DTO_VERSION = 1;
 
@@ -46,8 +46,8 @@ export enum ObjTypeDto {
   Image = 'IMAGE'
 }
 
-export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjBinaryDto;
-export type ObjPageDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjTaskDto;
+export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjBinaryDto | ObjPdfDto;
+export type ObjPageDataDto = ObjPageDto | ObjNoteDto | ObjPinDto;
 
 export interface ObjDto<T = ObjDataDto> {
   id: number;

@@ -18,6 +18,8 @@ export class ObjectStoreKeys {
   static readonly CONTENT_HASH = 'o:ch';
   static readonly CONTENT_HASH_COUNT = 'o:chc';
 
+  static readonly PDF_DATA = 'o:pdf';
+
   static readonly PIN_LIST_ID = 'o:p:list:id';
   static readonly PIN_LIST = 'o:p:list';
   static readonly PIN_COMMENT = 'o:p:c';
@@ -28,7 +30,9 @@ export class ObjectStoreKeys {
 
   static readonly CREATED_DT = 'o:dt:c';
   static readonly UPDATED_DT = 'o:dt:u';
-  static readonly TX_LOG = 'o:tx';
+
+  static readonly TX_ID = 'tx:id';
+  static readonly TX_LOG = 'tx:log';
 
   // INDEX
   static readonly SEARCH_INDEX = 's:i';

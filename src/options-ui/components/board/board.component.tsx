@@ -20,7 +20,9 @@ import { BoardStore } from '../../store/board.store';
 import { NoteElement } from './note/note.element';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
+import { PdfElement } from './pdf/pdf.element';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export const BoardComponent: FunctionComponent = () => {
@@ -74,8 +76,10 @@ export const BoardComponent: FunctionComponent = () => {
         );
         break;
       }
-      case ObjTypeDto.PageElementPin: {
-        fnConsoleLog('PIN !!!!!!!!!!!!!!');
+      case ObjTypeDto.Pdf: {
+        boardElements.push(
+          <PdfElement key={obj.id} dto={obj as ObjDto<ObjPdfDto>} refreshBoardCallback={refreshBoardCallback} />
+        );
         break;
       }
       case ObjTypeDto.PageNote: {

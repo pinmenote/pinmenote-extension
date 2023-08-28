@@ -1,0 +1,72 @@
+/*
+ * This file is part of the pinmenote-extension distribution (https://github.com/pinmenote/pinmenote-extension).
+ * Copyright (c) 2023 Michal Szczepanski.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+import { OBJ_DTO_VERSION, ObjDto, ObjTypeDto } from '../../model/obj/obj.dto';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ContentSettingsStore } from '../../../content-script/store/content-settings.store';
+import { FetchResponse } from '@pinmenote/fetch-service';
+import { ICommand } from '../../model/shared/common.dto';
+import { LinkHrefStore } from '../../store/link-href.store';
+import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
+import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
+import { ObjPdfDto } from '../../model/obj/obj-pdf.dto';
+import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { ScreenshotFactory } from '../../factory/screenshot.factory';
+import { UrlFactory } from '../../factory/url.factory';
+import { fnSha256 } from '../../fn/fn-hash';
+
+export class PdfAddCommand implements ICommand<Promise<void>> {
+  constructor(private value: FetchResponse<string>) {}
+  async execute(): Promise<void> {
+    const id = await new ObjNextIdCommand().execute();
+    const dt = Date.now();
+
+    const hash = fnSha256(this.value.data);
+    const screenshot = await ScreenshotFactory.takeScreenshot({
+      document,
+      window,
+      settings: ContentSettingsStore.settings
+    });
+
+    const url = UrlFactory.newUrl();
+
+    const data: ObjPdfDto = {
+      hash,
+      screenshot,
+      rawUrl: this.value.url,
+      url,
+      hashtags: []
+    };
+
+    const dto: ObjDto<ObjPdfDto> = {
+      id,
+      type: ObjTypeDto.Pdf,
+      createdAt: dt,
+      updatedAt: dt,
+      data,
+      version: OBJ_DTO_VERSION,
+      local: {}
+    };
+
+    await BrowserStorage.set(`${ObjectStoreKeys.PDF_DATA}:${hash}`, this.value.data);
+
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
+    await BrowserStorage.set(key, dto);
+    await LinkHrefStore.add(url, id);
+
+    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
+  }
+}

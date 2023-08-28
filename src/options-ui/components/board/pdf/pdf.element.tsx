@@ -14,34 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { BoardItem } from '../board/board-item';
 import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
 import { BoardStore } from '../../../store/board.store';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
+import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { marked } from 'marked';
 
 interface Props {
-  dto: ObjDto<ObjNoteDto>;
+  dto: ObjDto<ObjPdfDto>;
   refreshBoardCallback: () => void;
 }
 
-export const NoteElement: FunctionComponent<Props> = (props) => {
+export const PdfElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.hashtags);
+  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.hashtags || []);
 
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    ref.current.innerHTML = marked(props.dto.data.description);
-  }, []);
+  const a = props.dto.data.url.pathname.split('/');
+  const title = a[a.length - 1];
 
   const handleEdit = () => {
     setEdit(true);
+  };
+
+  const handleHtml = () => {
+    window.location.hash = `pdf/${props.dto.id}`;
   };
 
   const handleRemove = async () => {
@@ -58,18 +57,19 @@ export const NoteElement: FunctionComponent<Props> = (props) => {
 
   return (
     <BoardItem>
-      <BoardItemTitle title={props.dto.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
-      <div>
-        <div ref={ref}></div>
-      </div>
+      <BoardItemTitle title={title} htmlCallback={handleHtml} editCallback={handleEdit} removeCallback={handleRemove} />
+      <img
+        style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
+        src={props.dto.data.screenshot}
+      />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
-        title="page note"
         saveTags={handleTagSave}
-        tags={props.dto.data.hashtags}
+        title="page snapshot"
         createdAt={props.dto.createdAt}
-        words={props.dto.data.words}
-        url={props.dto.data.url?.href}
+        tags={hashtags}
+        words={[]}
+        url={props.dto.data.rawUrl}
       />
     </BoardItem>
   );

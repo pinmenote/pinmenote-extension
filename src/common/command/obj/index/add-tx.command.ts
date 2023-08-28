@@ -20,30 +20,26 @@ import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnDateKeyFormat } from '../../../fn/fn-date-format';
 
 export interface TxObj {
+  id: number;
+  op: 'add' | 'upd' | 'del';
   type: string;
   updatedAt: number;
   createdAt: number;
 }
 
-export enum TxSegmentType {
-  IFRAME = 1
-}
-
-export interface TxSegment {
+export interface HashTxSegment {
   op: 'add' | 'del';
-  hash: string;
-  type: TxSegmentType;
+  hash: [];
 }
 
 export interface TxLogMessage {
   id: number;
-  dt: number;
   obj?: TxObj;
-  segment?: TxSegment;
+  segment?: HashTxSegment;
 }
 
 export class AddTxCommand implements ICommand<Promise<void>> {
-  constructor(private message: TxLogMessage) {}
+  constructor(private obj: TxObj, private segment: HashTxSegment) {}
   async execute(): Promise<void> {
     const yearMonth = fnDateKeyFormat(new Date());
 
@@ -51,7 +47,8 @@ export class AddTxCommand implements ICommand<Promise<void>> {
 
     const log = await this.getList(key);
 
-    log.push(this.message);
+    const id = await this.nextId();
+    log.push({ id, obj: this.obj, segment: this.segment });
 
     await BrowserStorage.set(key, log);
   }
@@ -59,5 +56,15 @@ export class AddTxCommand implements ICommand<Promise<void>> {
   private async getList(key: string): Promise<TxLogMessage[]> {
     const value = await BrowserStorage.get<TxLogMessage[] | undefined>(key);
     return value || [];
+  }
+
+  private async nextId(): Promise<number> {
+    const value = await BrowserStorage.get<number | undefined>(ObjectStoreKeys.TX_ID);
+    if (value) {
+      await BrowserStorage.set(ObjectStoreKeys.TX_ID, value + 1);
+      return value + 1;
+    }
+    await BrowserStorage.set(ObjectStoreKeys.TX_ID, 1);
+    return 1;
   }
 }
