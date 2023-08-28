@@ -20,6 +20,7 @@ import { LinkOriginStore } from '../../../store/link-origin.store';
 import { ObjGetCommand } from '../obj-get.command';
 import { ObjNoteDto } from '../../../model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../model/obj/obj-page.dto';
+import { ObjPdfDto } from '../../../model/obj/obj-pdf.dto';
 import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
 import { fnConsoleLog } from '../../../fn/fn-console';
@@ -46,6 +47,8 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
         if ((obj.data as ObjNoteDto).url?.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageTask) {
         if ((obj.data as ObjTaskDto).url?.href === this.data.href) continue;
+      } else if (obj.type === ObjTypeDto.Pdf) {
+        if ((obj.data as ObjPdfDto).rawUrl === this.data.href) continue;
       }
       out.push(obj);
       // TODO pagination - now show last 10

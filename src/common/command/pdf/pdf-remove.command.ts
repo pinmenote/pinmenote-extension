@@ -16,6 +16,7 @@
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
+import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjPdfDto } from '../../model/obj/obj-pdf.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
@@ -24,6 +25,8 @@ export class PdfRemoveCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private dto: ObjPdfDto) {}
   async execute(): Promise<void> {
     if (this.dto.hash) await BrowserStorage.remove(`${ObjectStoreKeys.PDF_DATA}:${this.dto.hash}`);
+
+    await LinkHrefStore.del(this.dto.url, this.id);
 
     await new ObjRemoveIdCommand(this.id, ObjectStoreKeys.OBJECT_LIST).execute();
   }

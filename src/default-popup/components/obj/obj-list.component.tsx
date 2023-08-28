@@ -18,12 +18,16 @@ import { ObjDto, ObjPageDataDto, ObjTypeDto } from '../../../common/model/obj/ob
 import React, { FunctionComponent, useState } from 'react';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { LogManager } from '../../../common/popup/log.manager';
 import { NoteListElementComponent } from './note-list-element.component';
 import { NoteRemoveCommand } from '../../../common/command/note/note-remove.command';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PageSnapshotRemoveCommand } from '../../../common/command/snapshot/page-snapshot-remove.command';
+import { PdfListElementComponent } from './pdf-list-element.component';
+import { PdfRemoveCommand } from '../../../common/command/pdf/pdf-remove.command';
 import { PinListElement } from './pin-list-element.component';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { SnapshotListElement } from './snapshot-list-element.component';
@@ -49,6 +53,11 @@ export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props
 
   const handleNoteRemove = async (data: ObjDto<ObjNoteDto>) => {
     await new NoteRemoveCommand(data).execute();
+    handleRemove(data.id);
+  };
+
+  const handlePdfRemove = async (data: ObjDto<ObjPdfDto>) => {
+    await new PdfRemoveCommand(data.id, data.data).execute();
     handleRemove(data.id);
   };
 
@@ -85,6 +94,12 @@ export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props
           />
         );
         break;
+      case ObjTypeDto.Pdf:
+        objs.push(<PdfListElementComponent obj={obj as ObjDto<ObjPdfDto>} removeCallback={handlePdfRemove} />);
+        break;
+      default: {
+        LogManager.log(`UNSUPPORTED ${obj.type}`);
+      }
     }
   }
   return (

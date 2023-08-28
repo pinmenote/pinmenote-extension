@@ -47,7 +47,7 @@ export enum ObjTypeDto {
 }
 
 export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjBinaryDto | ObjPdfDto;
-export type ObjPageDataDto = ObjPageDto | ObjNoteDto | ObjPinDto;
+export type ObjPageDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjPdfDto;
 
 export interface ObjDto<T = ObjDataDto> {
   id: number;
