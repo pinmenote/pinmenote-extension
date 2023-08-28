@@ -18,11 +18,9 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjDto } from '../../model/obj/obj.dto';
-import { ObjIndexOp } from '../../model/obj-index.model';
 import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjRemoveHashtagsCommand } from '../obj/hashtag/obj-remove-hashtags.command';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
-import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PageSegmentGetCommand } from './segment/page-segment-get.command';
 import { PageSegmentRemoveListCommand } from './segment/page-segment-remove-list.command';
@@ -66,14 +64,5 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
 
     // remove snapshot
     await new PageSegmentRemoveListCommand([segmentHash]).execute();
-    await new ObjUpdateIndexAddCommand({
-      id: this.obj.id,
-      dt: this.obj.updatedAt,
-      op: ObjIndexOp.DELETE,
-      data: {
-        hash: segmentHash,
-        ref
-      }
-    }).execute();
   };
 }

@@ -21,7 +21,6 @@ import { BusMessageType } from '../../model/bus.model';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
-import { ObjIndexOp } from '../../model/obj-index.model';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
@@ -54,7 +53,7 @@ export class PageSnapshotAddCommand implements ICommand<Promise<void>> {
 
     await LinkHrefStore.add(this.dto.info.url, id);
 
-    await new ObjAddIdCommand({ id, dt, op: ObjIndexOp.CREATE }, ObjectStoreKeys.OBJECT_LIST).execute();
+    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
 
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_STOP_LISTENERS });
   }

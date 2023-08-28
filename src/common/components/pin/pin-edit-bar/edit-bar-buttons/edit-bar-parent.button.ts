@@ -56,7 +56,7 @@ export class EditBarParentButton implements HtmlComponent<HTMLElement> {
     if (this.model.ref.parentElement) {
       this.model.ref = this.model.ref.parentElement;
 
-      this.model.object.data.xpath = XpathFactory.newXPathString(this.model.ref);
+      this.model.object.data.data.xpath = XpathFactory.newXPathString(this.model.ref);
 
       await new PinUpdateCommand(this.model.object).execute();
       this.resizeCallback();

@@ -16,9 +16,13 @@
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjDateIndex } from '../../../model/obj-index.model';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { fnDateKeyFormat } from '../../../fn/fn-date-format';
+
+export interface ObjDateIndex {
+  id: number;
+  dt: number;
+}
 
 export class ObjUpdateIndexAddCommand implements ICommand<Promise<void>> {
   constructor(private index: ObjDateIndex) {}

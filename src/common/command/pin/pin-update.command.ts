@@ -17,9 +17,8 @@
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjDto } from '../../model/obj/obj.dto';
-import { ObjIndexOp } from '../../model/obj-index.model';
 import { ObjPinDto } from '../../model/obj/obj-pin.dto';
-import { ObjUpdateIndexAddCommand } from '../obj/date-index/obj-update-index-add.command';
+import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { fnConsoleLog } from '../../fn/fn-console';
 
@@ -33,6 +32,6 @@ export class PinUpdateCommand implements ICommand<void> {
 
     await BrowserStorage.set(key, this.obj);
 
-    await new ObjUpdateIndexAddCommand({ id: this.obj.id, dt: this.obj.updatedAt, op: ObjIndexOp.UPDATE }).execute();
+    await new ObjUpdateIndexAddCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
   }
 }

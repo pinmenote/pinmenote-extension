@@ -25,7 +25,10 @@ export class ObjectStoreKeys {
   static readonly OBJECT_ID = 'o:id';
   static readonly OBJECT_LIST_ID = 'o:list:id';
   static readonly OBJECT_LIST = 'o:list';
+
+  static readonly CREATED_DT = 'o:dt:c';
   static readonly UPDATED_DT = 'o:dt:u';
+  static readonly TX_LOG = 'o:tx';
 
   // INDEX
   static readonly SEARCH_INDEX = 's:i';

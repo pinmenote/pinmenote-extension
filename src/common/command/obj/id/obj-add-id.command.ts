@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDateIndex, ObjUpdateIndexAddCommand } from '../index/obj-update-index-add.command';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjDateIndex } from '../../../model/obj-index.model';
-import { ObjUpdateIndexAddCommand } from '../date-index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { environmentConfig } from '../../../environment';
 
