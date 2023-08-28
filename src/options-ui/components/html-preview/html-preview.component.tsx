@@ -203,9 +203,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     document.title = `pin - ${snapshot.info.title}`;
     const html = await IframeHtmlFactory.computeHtml(segment, snapshot.info.title);
 
-    await writeDoc(iframe.contentWindow.document, html, segment.assets || []);
+    await writeDoc(iframe.contentWindow.document, html, segment.assets || [], true);
 
-    setIsPreLoading(false);
     fnConsoleLog('DONE');
     setIsLoading(false);
   };
@@ -223,9 +222,10 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     }
   };
 
-  const writeDoc = async (doc: Document, html: string, assets: string[]): Promise<void> => {
+  const writeDoc = async (doc: Document, html: string, assets: string[], cleanLoader = false): Promise<void> => {
     doc.write(html);
     doc.close();
+    if (cleanLoader) setIsPreLoading(false);
     if (doc.readyState !== 'complete') {
       doc.addEventListener('readystatechange', async () => {
         if (doc.readyState === 'complete') await renderAssetList(assets || [], doc);
