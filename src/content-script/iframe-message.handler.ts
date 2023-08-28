@@ -45,7 +45,7 @@ export class IFrameMessageHandler {
       }
       case PageComputeMessage.IFRAME_FETCH: {
         if (iframe && msg.data.uid === uid && href) {
-          await new ContentFetchIframeCommand(href, uid, msg.data.depth).execute();
+          await new ContentFetchIframeCommand(href, uid).execute();
         } else {
           TinyDispatcher.getInstance().dispatch(msg.type, msg.data);
         }

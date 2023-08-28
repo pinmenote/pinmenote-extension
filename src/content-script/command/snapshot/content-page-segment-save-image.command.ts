@@ -28,7 +28,6 @@ export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<stri
   async execute(): Promise<string> {
     const value = await HtmlImgFactory.computeImgValue(this.element as HTMLImageElement, {
       ref: this.element,
-      depth: 1,
       visitedUrl: {},
       skipAttributes: [],
       skipTagCache: new Set<string>(),

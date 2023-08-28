@@ -27,17 +27,10 @@ import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   private savedHash = new Set<string>();
 
-  constructor(private href: string, private uid: string, private depth: number) {}
+  constructor(private href: string, private uid: string) {}
 
   async execute(): Promise<void> {
-    fnConsoleLog(
-      'ContentFetchIframeCommand->execute',
-      this.href,
-      this.uid,
-      this.depth,
-      'children',
-      document.body.children.length
-    );
+    fnConsoleLog('ContentFetchIframeCommand->execute', this.href, this.uid, 'children', document.body.children.length);
     const snapshot = await PageCompute.compute(
       document.body,
       this.contentCallback,

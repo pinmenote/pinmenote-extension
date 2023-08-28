@@ -53,7 +53,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   private async sync(progress: SyncProgress): Promise<void> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
-    while (dt <= lastDay) {
+    while (dt < lastDay) {
       const yearMonth = fnDateKeyFormat(dt);
       await this.syncMonth(progress, yearMonth);
       dt.setMonth(dt.getMonth() + 1);
@@ -68,21 +68,28 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     const indexList = await SyncTxHelper.getList(updatedDt);
     fnConsoleLog('syncMonth->syncList', indexList);
     if (indexList.length === 0) return;
-    await new SyncSetProgressCommand({
-      id: indexList[0].id,
-      timestamp: indexList[0].dt,
-      state: 'update'
-    }).execute();
 
-    const nextObjectIndex = indexList.findIndex((value) => value.id === progress.id);
+    let nextObjectIndex = indexList.findIndex((value) => value.id === progress.id);
     fnConsoleLog('syncMonth->AAA', nextObjectIndex, indexList.length, progress, indexList[nextObjectIndex]);
 
+    if (nextObjectIndex === -1) nextObjectIndex = 0;
+
     await SyncTxHelper.begin();
+
+    let timestamp = 0;
 
     for (let i = nextObjectIndex; i < indexList.length; i++) {
       const index = indexList[i];
       await this.syncObject(progress, index);
+      timestamp = index.dt;
     }
+
+    // set to -1 for next list
+    await new SyncSetProgressCommand({
+      id: -1,
+      timestamp,
+      state: 'update'
+    }).execute();
 
     await SyncTxHelper.commit();
   }
@@ -114,7 +121,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
         break;
       }
     }
-    await fnSleep(10);
+    await fnSleep(1);
     await new SyncSetProgressCommand({ id: index.id, timestamp: index.dt, state: 'update' }).execute();
   };
 }

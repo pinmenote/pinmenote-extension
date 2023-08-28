@@ -25,13 +25,19 @@ export interface TxObj {
   createdAt: number;
 }
 
+export enum TxSegmentType {
+  IFRAME = 1
+}
+
 export interface TxSegment {
   op: 'add' | 'del';
   hash: string;
-  ref: string[];
+  type: TxSegmentType;
 }
 
 export interface TxLogMessage {
+  id: number;
+  dt: number;
   obj?: TxObj;
   segment?: TxSegment;
 }
