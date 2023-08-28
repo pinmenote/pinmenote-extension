@@ -17,15 +17,13 @@
 import { environmentConfig } from '../environment';
 
 export const fnConsoleLog = (...args: any[]) => {
-  if (!environmentConfig.isProduction) {
-    //eslint-disable-next-line no-console
-    console.log(...args);
-  }
+  if (environmentConfig.isProduction) return;
+  //eslint-disable-next-line no-console
+  console.log(...args);
 };
 
 export const fnConsoleError = (...args: any[]) => {
-  if (!environmentConfig.isProduction) {
-    //eslint-disable-next-line no-console
-    console.error(...args);
-  }
+  if (environmentConfig.isProduction) return;
+  //eslint-disable-next-line no-console
+  console.error(...args);
 };

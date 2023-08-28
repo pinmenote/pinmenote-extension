@@ -46,6 +46,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     let title = '';
     let rect: ObjRectangleDto;
     let xpath: string | undefined;
+    let isPartial = false;
     if (this.element === document.body) {
       title = document.title || this.url.origin || this.element.innerText.substring(0, 100);
       // document.body can have 0 height and display page correctly - looking at you youtube
@@ -54,6 +55,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
       title = this.element.innerText.substring(0, 100) || document.title || this.url.origin;
       rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
       xpath = XpathFactory.newXPathString(this.element);
+      isPartial = true;
     }
 
     const screenshot = await ScreenshotFactory.takeScreenshot(
@@ -66,7 +68,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     let segmentHash = undefined;
 
     if (!this.canvas) {
-      const res = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes).execute();
+      const res = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes, isPartial).execute();
       segmentHash = res.hash;
       words = res.words;
     } else if (this.element instanceof HTMLImageElement) {

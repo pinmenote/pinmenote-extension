@@ -113,7 +113,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
         break;
       }
       case ObjTypeDto.PageElementPin: {
-        // fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
+        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
         break;
       }
       default: {

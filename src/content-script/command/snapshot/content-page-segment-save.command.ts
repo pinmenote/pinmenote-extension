@@ -42,7 +42,8 @@ export class ContentPageSegmentSaveCommand implements ICommand<Promise<SnapshotR
       this.contentCallback,
       IFrameStore.getInstance(),
       skipAttributes,
-      TinyDispatcher.getInstance()
+      TinyDispatcher.getInstance(),
+      this.isPartial
     );
     await this.contentCallback(snapshot);
     const words = AutoTagMediator.computeTags(this.element);
