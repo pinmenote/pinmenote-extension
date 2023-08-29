@@ -24,7 +24,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 export class PdfRemoveCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private dto: ObjPdfDto) {}
   async execute(): Promise<void> {
-    if (this.dto.hash) await BrowserStorage.remove(`${ObjectStoreKeys.PDF_DATA}:${this.dto.hash}`);
+    await BrowserStorage.remove(`${ObjectStoreKeys.PDF_DATA}:${this.dto.hash}`);
 
     await LinkHrefStore.del(this.dto.url, this.id);
 

@@ -19,12 +19,13 @@ import { fnConsoleError, fnConsoleLog } from '../common/fn/fn-console';
 import { BoardComponent } from './components/board/board.component';
 import { BoardDrawer } from './components/board/board/board-drawer';
 import { BoardMenu } from './components/board/board/board-menu';
-import { HtmlPreviewComponent } from './components/html-preview/html-preview.component';
+import { HtmlPreviewComponent } from './components/preview/html-preview.component';
 import { MuiThemeFactory } from '../common/components/react/mui-theme.factory';
 import { ObjGetCommand } from '../common/command/obj/obj-get.command';
 import { ObjPageDto } from '../common/model/obj/obj-page.dto';
 import { ObjTypeDto } from '../common/model/obj/obj.dto';
 import { OptionsMessageHandler } from './options-message.handler';
+import { PdfPreviewComponent } from './components/preview/pdf-preview.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { createRoot } from 'react-dom/client';
@@ -34,23 +35,27 @@ const theme = MuiThemeFactory.createTheme();
 enum CurrentView {
   SETTINGS,
   BOARD,
-  OBJ_DETAILS
+  OBJ_DETAILS,
+  PDF_DETAILS
 }
 
 const getView = () => {
   const hash = window.location.hash.substring(1);
   if (hash === 'settings') return CurrentView.SETTINGS;
   if (hash.startsWith('obj')) return CurrentView.OBJ_DETAILS;
+  if (hash.startsWith('pdf')) return CurrentView.PDF_DETAILS;
   return CurrentView.BOARD;
 };
 
 const OptionsUI: FunctionComponent = () => {
   const [currentView, setCurrentView] = useState<CurrentView>(getView());
   const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [showPdfPreview, setShowPdfPreview] = useState<boolean>(false);
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
   useEffect(() => {
     if (currentView === CurrentView.OBJ_DETAILS) setShowPreview(true);
+    if (currentView === CurrentView.PDF_DETAILS) setShowPdfPreview(true);
     window.addEventListener('hashchange', handleHashChange);
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
@@ -62,8 +67,12 @@ const OptionsUI: FunctionComponent = () => {
     setCurrentView(view);
     if (view === CurrentView.OBJ_DETAILS) {
       await renderDetails();
+    } else if (view === CurrentView.PDF_DETAILS) {
+      setShowPreview(false);
+      setShowPdfPreview(true);
     } else {
       setShowPreview(false);
+      setShowPdfPreview(false);
     }
   };
 
@@ -75,8 +84,9 @@ const OptionsUI: FunctionComponent = () => {
       const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
       if ([ObjTypeDto.PageElementPin, ObjTypeDto.PageElementSnapshot, ObjTypeDto.PageSnapshot].includes(obj.type)) {
         setShowPreview(true);
+        setShowPdfPreview(false);
       } else {
-        fnConsoleLog('TODO Implement !!!!');
+        alert('NOT Implemented !!!!');
         window.location.hash = '';
       }
     } catch (e) {
@@ -120,6 +130,7 @@ const OptionsUI: FunctionComponent = () => {
           <SettingsComponent />
         </div>
         <HtmlPreviewComponent visible={showPreview} />
+        <PdfPreviewComponent visible={showPdfPreview} />
       </ThemeProvider>
     </div>
   );

@@ -58,10 +58,11 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     setVisible(props.visible);
     if (props.visible !== visible && props.visible) {
-      const idhash = window.location.hash.split('/')[1];
+      const idhash = window.location.hash.split('/');
+      if (!idhash[0].startsWith('#obj')) return;
       try {
         fnConsoleLog('HtmlPreviewComponent->useEffect->render', props.visible, visible);
-        render(parseInt(idhash));
+        render(parseInt(idhash[1]));
       } catch (e) {
         fnConsoleLog('Error render or parseInt', e);
       }
