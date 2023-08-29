@@ -40,6 +40,7 @@ export class PageSegmentRemoveListCommand implements ICommand<Promise<string[]>>
     const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${hash}`;
     let count = (await BrowserStorage.get<number | undefined>(key)) || 0;
     count--;
+    count = Math.max(count, 0);
     fnConsoleLog('PageSegmentRemoveListCommand->decrementCount', count);
     if (count === 0) {
       await BrowserStorage.remove(key);
