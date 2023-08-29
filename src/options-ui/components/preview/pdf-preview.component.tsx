@@ -41,7 +41,13 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
       try {
         if (!idhash[0].startsWith('#pdf')) return;
         fnConsoleLog('PdfPreviewComponent->useEffect->render', props.visible, visible);
-        await render(parseInt(idhash[1]));
+        render(parseInt(idhash[1]))
+          .then(() => {
+            /* IGNORE */
+          })
+          .catch(() => {
+            /* IGNORE */
+          });
       } catch (e) {
         fnConsoleLog('Error render or parseInt', e);
       }

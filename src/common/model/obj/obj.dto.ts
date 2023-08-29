@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjBinaryDto } from './obj-binary.dto';
 import { ObjNoteDto } from './obj-note.dto';
 import { ObjPageDto } from './obj-page.dto';
 import { ObjPdfDto } from './obj-pdf.dto';
@@ -46,7 +45,7 @@ export enum ObjTypeDto {
   Image = 'IMAGE'
 }
 
-export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjBinaryDto | ObjPdfDto;
+export type ObjDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjPdfDto;
 export type ObjPageDataDto = ObjPageDto | ObjNoteDto | ObjPinDto | ObjPdfDto;
 
 export interface ObjDto<T = ObjDataDto> {

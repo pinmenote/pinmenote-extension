@@ -16,18 +16,14 @@
  */
 import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/fn-date';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
-import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
-import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
+import { SyncMonthCommand } from './sync-month.command';
 import { SyncProgress } from './sync.model';
 import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
-import { fnSleep } from '../../../common/fn/fn-sleep';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
@@ -36,7 +32,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (SyncServerCommand.isInSync) return;
     if (!(await SyncTxHelper.shouldSync())) return;
     try {
-      await new SyncResetProgressCommand().execute();
+      // await new SyncResetProgressCommand().execute();
 
       SyncServerCommand.isInSync = true;
 
@@ -53,75 +49,28 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   private async sync(progress: SyncProgress): Promise<void> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
+
+    let lastIndex = { id: progress.id, dt: progress.timestamp };
+
     while (dt < lastDay) {
       const yearMonth = fnDateKeyFormat(dt);
-      await this.syncMonth(progress, yearMonth);
+      lastIndex = await new SyncMonthCommand(progress, yearMonth).execute();
       dt.setMonth(dt.getMonth() + 1);
       fnConsoleLog('sync dt', dt, 'lastDay', lastDay);
-    }
-  }
 
-  private async syncMonth(progress: SyncProgress, yearMonth: string): Promise<void> {
-    fnConsoleLog('SyncServerCommand->syncMonth', yearMonth);
-
-    const updatedDt = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;
-    const indexList = await SyncTxHelper.getList(updatedDt);
-    fnConsoleLog('syncMonth->syncList', indexList);
-    if (indexList.length === 0) return;
-
-    let nextObjectIndex = indexList.findIndex((value) => value.id === progress.id);
-    fnConsoleLog('syncMonth->AAA', nextObjectIndex, indexList.length, progress, indexList[nextObjectIndex]);
-
-    if (nextObjectIndex === -1) nextObjectIndex = 0;
-
-    await SyncTxHelper.begin();
-
-    let timestamp = 0;
-
-    for (let i = nextObjectIndex; i < indexList.length; i++) {
-      const index = indexList[i];
-      await this.syncObject(progress, index);
-      timestamp = index.dt;
+      // reset id so we start next month from 0
+      await new SyncSetProgressCommand({
+        id: -1,
+        timestamp: lastIndex.dt,
+        state: 'update'
+      }).execute();
     }
 
-    // set to -1 for next list
+    // set as last one at the end of current month, so we don't start from 0
     await new SyncSetProgressCommand({
-      id: -1,
-      timestamp,
+      id: lastIndex.id,
+      timestamp: lastIndex.dt,
       state: 'update'
     }).execute();
-
-    await SyncTxHelper.commit();
   }
-
-  private syncObject = async (progress: SyncProgress, index: ObjDateIndex) => {
-    if (!index) {
-      fnConsoleLog('PROBLEM', index, progress);
-      return;
-    }
-    const obj = await new ObjGetCommand(index.id).execute();
-    if (!obj) {
-      fnConsoleLog('syncObject EMPTY', index.id);
-      return;
-    }
-    switch (obj.type) {
-      case ObjTypeDto.PageSnapshot:
-      case ObjTypeDto.PageElementSnapshot: {
-        // const data = obj.data as ObjPageDto;
-        // const pageSegment = await new PageSegmentGetCommand<SegmentPage>(data.snapshot.segmentHash).execute();
-        // fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
-        break;
-      }
-      case ObjTypeDto.PageElementPin: {
-        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
-        break;
-      }
-      default: {
-        fnConsoleLog('PROBLEM', obj.type, 'index', index);
-        break;
-      }
-    }
-    await fnSleep(1);
-    await new SyncSetProgressCommand({ id: index.id, timestamp: index.dt, state: 'update' }).execute();
-  };
 }
