@@ -66,9 +66,9 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
           <IconButton title="Show / Hide tags" onClick={handleTagIconClick}>
             <TagIcon style={{ color: tagsVisible ? COLOR_DEFAULT_RED : COLOR_DEFAULT_GREY }} />
           </IconButton>
-          <IconButton style={{ marginTop: 4 }} title="Show / Hide comments">
+          {/*<IconButton style={{ marginTop: 4 }} title="Show / Hide comments">
             <CommentIcon />
-          </IconButton>
+          </IconButton>*/}
         </div>
       </div>
       <div style={{ display: wordsVisible ? 'inline-block' : 'none' }}>{props.words.join(', ')}</div>
