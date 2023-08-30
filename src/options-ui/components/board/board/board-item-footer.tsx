@@ -71,7 +71,9 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
           </IconButton>*/}
         </div>
       </div>
-      <div style={{ display: wordsVisible ? 'inline-block' : 'none' }}>{props.words.join(', ')}</div>
+      <div style={{ display: wordsVisible ? 'inline-block' : 'none', maxHeight: 100, overflow: 'auto' }}>
+        {props.words.join(', ')}
+      </div>
       <div style={{ display: tagsVisible ? 'inline-block' : 'none' }}>
         <TagEditor tags={props.tags} saveCallback={props.saveTags} />
       </div>
