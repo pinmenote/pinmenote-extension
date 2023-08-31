@@ -30,6 +30,7 @@ import { PinStore } from '../../store/pin.store';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SettingsConfig } from '../../../common/environment';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256Object } from '../../../common/fn/fn-hash';
 
 export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSnapshotDto>> {
@@ -68,6 +69,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     let segmentHash = undefined;
 
     if (!this.canvas) {
+      fnConsoleLog('ContentPageSnapshotCreateCommand->isPartial', isPartial);
       const res = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes, isPartial).execute();
       segmentHash = res.hash;
       words = res.words;

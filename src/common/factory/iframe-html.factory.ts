@@ -29,7 +29,7 @@ export class IframeHtmlFactory {
       const dto = await new PageSegmentGetCommand<SegmentCss>(hash).execute();
       if (dto) {
         const css: SegmentCss = dto.content;
-        style += '<style';
+        style += `<style hash="${hash}"`;
         css.media ? (style += ` media="${css.media}">`) : (style += '>');
         style += css.data + '</style>';
       }
