@@ -15,15 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { SegmentCss, SegmentImg, SegmentPage, SegmentShadow, SegmentType } from '@pinmenote/page-compute';
-import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
-import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
-import { PageSegmentGetCommand } from '../../../common/command/snapshot/segment/page-segment-get.command';
-import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
+import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
+import { SyncProgress } from '../sync.model';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class SyncSnapshotCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPageDto>, private index: ObjDateIndex) {}
+  constructor(private obj: ObjDto<ObjPageDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
   async execute(): Promise<void> {
     const snapshot = this.obj.data.snapshot;
     // fnConsoleLog('SyncSnapshotCommand->comments', this.obj.data.comments);

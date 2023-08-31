@@ -14,18 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
-import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
-import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { SyncObjectCommand } from './obj/sync-object.command';
 import { SyncProgress } from './sync.model';
-import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
-import { SyncSnapshotCommand } from './sync-snapshot.command';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { fnSleep } from '../../../common/fn/fn-sleep';
 
 export class SyncMonthCommand implements ICommand<Promise<ObjDateIndex>> {
   constructor(private progress: SyncProgress, private yearMonth: string) {}
@@ -60,51 +55,10 @@ export class SyncMonthCommand implements ICommand<Promise<ObjDateIndex>> {
 
     for (let i = nextObjectIndex; i < indexList.length; i++) {
       index = indexList[i];
-      await this.syncObject(this.progress, index);
+      await new SyncObjectCommand(this.progress, index).execute();
     }
 
     await SyncTxHelper.commit();
     return index;
   }
-
-  private syncObject = async (progress: SyncProgress, index: ObjDateIndex) => {
-    if (!index) {
-      fnConsoleLog('PROBLEM', index, progress);
-      return;
-    }
-    const obj = await new ObjGetCommand(index.id).execute();
-    if (!obj) {
-      fnConsoleLog('syncObject EMPTY', index.id);
-      return;
-    }
-    switch (obj.type) {
-      case ObjTypeDto.PageSnapshot:
-      case ObjTypeDto.PageElementSnapshot: {
-        await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, index).execute();
-        break;
-      }
-      case ObjTypeDto.PageElementPin: {
-        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
-        break;
-      }
-      case ObjTypeDto.Pdf: {
-        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
-        break;
-      }
-      case ObjTypeDto.Note: {
-        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
-        break;
-      }
-      case ObjTypeDto.PageNote: {
-        fnConsoleLog(obj.type, obj.id, 'index', index, 'obj', obj);
-        break;
-      }
-      default: {
-        fnConsoleLog('PROBLEM', obj.type, 'index', index);
-        break;
-      }
-    }
-    await fnSleep(100);
-    await new SyncSetProgressCommand({ id: index.id, timestamp: index.dt, state: 'update' }).execute();
-  };
 }

@@ -29,11 +29,11 @@ enum CurrentView {
   NOTE_EDIT = 'NOTE_EDIT'
 }
 
-interface NoteComponentProps {
+interface Props {
   currentView: string;
 }
 
-export const NoteComponent: FunctionComponent<NoteComponentProps> = ({ currentView }) => {
+export const NoteComponent: FunctionComponent<Props> = ({ currentView }) => {
   const [state, setState] = useState<CurrentView>(currentView as CurrentView);
   const [editNote, setEditNote] = useState<ObjDto<ObjNoteDto> | undefined>();
   const handleAddNote = () => {

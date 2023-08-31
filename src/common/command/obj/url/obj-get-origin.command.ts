@@ -18,8 +18,8 @@ import { ObjDto, ObjPageDataDto, ObjTypeDto, ObjUrlDto } from '../../../model/ob
 import { ICommand } from '../../../model/shared/common.dto';
 import { LinkOriginStore } from '../../../store/link-origin.store';
 import { ObjGetCommand } from '../obj-get.command';
-import { ObjNoteDto } from '../../../model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../model/obj/obj-page.dto';
+import { ObjPageNoteDto } from '../../../model/obj/obj-note.dto';
 import { ObjPdfDto } from '../../../model/obj/obj-pdf.dto';
 import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
@@ -44,7 +44,7 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
       } else if (obj.type === ObjTypeDto.PageElementPin) {
         if ((obj.data as ObjPinDto).data.url.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageNote) {
-        if ((obj.data as ObjNoteDto).url?.href === this.data.href) continue;
+        if ((obj.data as ObjPageNoteDto).url.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageTask) {
         if ((obj.data as ObjTaskDto).url?.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.Pdf) {

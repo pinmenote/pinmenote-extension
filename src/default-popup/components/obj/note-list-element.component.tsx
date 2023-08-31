@@ -23,19 +23,19 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { NoteListExpandComponent } from './note-list-expand.component';
 import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import Typography from '@mui/material/Typography';
 
-interface NoteListElementComponentProps {
-  obj: ObjDto<ObjNoteDto>;
-  editCallback: (obj: ObjDto<ObjNoteDto>) => void;
-  removeCallback: (note: ObjDto<ObjNoteDto>) => void;
+interface Props {
+  obj: ObjDto<ObjPageNoteDto>;
+  editCallback: (obj: ObjDto<ObjPageNoteDto>) => void;
+  removeCallback: (note: ObjDto<ObjPageNoteDto>) => void;
 }
 
-export const NoteListElementComponent: FunctionComponent<NoteListElementComponentProps> = (props) => {
+export const NoteListElementComponent: FunctionComponent<Props> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleNoteRemove = (data: ObjDto<ObjNoteDto>): void => {
+  const handleNoteRemove = (data: ObjDto<ObjPageNoteDto>): void => {
     props.removeCallback(data);
   };
 

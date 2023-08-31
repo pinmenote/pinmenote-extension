@@ -14,9 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export interface SyncProgress {
-  timestamp: number;
-  state: 'update' | 'remove' | 'remote';
-  id: number;
-  hash?: string;
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
+import { SyncProgress } from '../sync.model';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
+
+export class SyncPdfCommand implements ICommand<Promise<void>> {
+  constructor(private obj: ObjDto<ObjPdfDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async execute(): Promise<void> {
+    fnConsoleLog('SyncPdfCommand');
+  }
 }

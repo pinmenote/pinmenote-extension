@@ -18,8 +18,8 @@ import { COLOR_DEFAULT_BORDER, DEFAULT_BORDER_RADIUS } from '../../../../common/
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { EditorView } from 'prosemirror-view';
-import { NoteAddCommand } from '../../../../common/command/note/note-add.command';
-import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
+import { PageNoteAddCommand } from '../../../../common/command/page-note/page-note-add.command';
 import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { StyledInput } from '../../../../common/components/react/styled.input';
 import { WordIndex } from '../../../../common/text/word.index';
@@ -72,10 +72,11 @@ export const NoteAddComponent: FunctionComponent<NoteAddComponentProps> = (props
 
   const handleAdd = async () => {
     const url = PopupActiveTabStore.url;
+    if (!url) return;
     const description = LocalModel.description;
     const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(description)]);
     const hash = fnSha256(title + description + (url?.href || ''));
-    const note: ObjNoteDto = {
+    const note: ObjPageNoteDto = {
       hash,
       title,
       description,
@@ -83,7 +84,7 @@ export const NoteAddComponent: FunctionComponent<NoteAddComponentProps> = (props
       words: Array.from(words),
       hashtags: []
     };
-    await new NoteAddCommand(note).execute();
+    await new PageNoteAddCommand(note).execute();
     props.addCallback();
   };
 

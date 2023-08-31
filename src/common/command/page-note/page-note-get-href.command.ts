@@ -18,19 +18,19 @@ import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjGetCommand } from '../obj/obj-get.command';
-import { ObjNoteDto } from '../../model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../fn/fn-console';
 
-export class NoteGetHrefCommand implements ICommand<Promise<ObjDto<ObjNoteDto>[]>> {
+export class PageNoteGetHrefCommand implements ICommand<Promise<ObjDto<ObjPageNoteDto>[]>> {
   constructor(private data: ObjUrlDto) {}
 
-  async execute(): Promise<ObjDto<ObjNoteDto>[]> {
+  async execute(): Promise<ObjDto<ObjPageNoteDto>[]> {
     const ids = (await LinkHrefStore.noteIds(this.data.href)).reverse();
     fnConsoleLog('NoteGetHrefCommand->execute', this.data.href, 'ids->', ids);
-    const out: ObjDto<ObjNoteDto>[] = [];
+    const out: ObjDto<ObjPageNoteDto>[] = [];
 
     for (const id of ids) {
-      const obj = await new ObjGetCommand<ObjNoteDto>(id).execute();
+      const obj = await new ObjGetCommand<ObjPageNoteDto>(id).execute();
       out.push(obj);
     }
     return out;

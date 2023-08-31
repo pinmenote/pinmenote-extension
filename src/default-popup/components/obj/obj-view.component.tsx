@@ -20,16 +20,16 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjGetHrefCommand } from '../../../common/command/obj/url/obj-get-href.command';
 import { ObjGetOriginCommand } from '../../../common/command/obj/url/obj-get-origin.command';
 import { ObjListComponent } from './obj-list.component';
-import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import Typography from '@mui/material/Typography';
 
-interface ObjViewComponent {
-  editNoteCallback: (obj: ObjDto<ObjNoteDto>) => void;
+interface Props {
+  editNoteCallback: (obj: ObjDto<ObjPageNoteDto>) => void;
 }
 
-export const ObjViewComponent: FunctionComponent<ObjViewComponent> = (props) => {
+export const ObjViewComponent: FunctionComponent<Props> = (props) => {
   const [originObjs, setOriginObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
   const [hrefObjs, setHrefObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
   const [initialized, setInitialized] = useState<boolean>(false);

@@ -29,7 +29,7 @@ interface Props {
   refreshBoardCallback: () => void;
 }
 
-export const NoteElement: FunctionComponent<Props> = (props) => {
+export const PageNoteElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [hashtags, setHashtags] = useState<string[]>(props.dto.data.hashtags);
 

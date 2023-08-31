@@ -16,28 +16,25 @@
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
+import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjDto } from '../../model/obj/obj.dto';
-import { ObjNoteDto } from '../../model/obj/obj-note.dto';
-import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
+import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
+import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
-import { fnSha256 } from '../../fn/fn-hash';
 
-export class NoteUpdateCommand implements ICommand<void> {
-  constructor(private obj: ObjDto<ObjNoteDto>, private oldWords: string[]) {}
+export class PageNoteRemoveCommand implements ICommand<void> {
+  constructor(private obj: ObjDto<ObjPageNoteDto>) {}
   async execute(): Promise<void> {
-    fnConsoleLog('NoteUpdateCommand->execute', this.obj);
-    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
-    this.obj.data.hash = fnSha256(this.obj.data.title + this.obj.data.description);
+    fnConsoleLog('NoteRemoveCommand->execute', this.obj);
+    await BrowserStorage.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
 
-    this.obj.updatedAt = Date.now();
+    await LinkHrefStore.del(this.obj.data.url, this.obj.id);
+    await LinkHrefStore.noteDel(this.obj.data.url, this.obj.id);
 
-    await WordIndex.removeFlat(this.oldWords, this.obj.id);
-    await WordIndex.indexFlat(this.obj.data.words, this.obj.id);
+    await WordIndex.removeFlat(this.obj.data.words, this.obj.id);
 
-    await BrowserStorage.set(key, this.obj);
-
-    await new ObjUpdateIndexAddCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
+    await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
   }
 }

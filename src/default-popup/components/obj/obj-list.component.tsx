@@ -20,11 +20,11 @@ import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { LogManager } from '../../../common/popup/log.manager';
 import { NoteListElementComponent } from './note-list-element.component';
-import { NoteRemoveCommand } from '../../../common/command/note/note-remove.command';
-import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
+import { PageNoteRemoveCommand } from '../../../common/command/page-note/page-note-remove.command';
 import { PageSnapshotRemoveCommand } from '../../../common/command/snapshot/page-snapshot-remove.command';
 import { PdfListElementComponent } from './pdf-list-element.component';
 import { PdfRemoveCommand } from '../../../common/command/pdf/pdf-remove.command';
@@ -32,12 +32,12 @@ import { PinListElement } from './pin-list-element.component';
 import { PinRemoveCommand } from '../../../common/command/pin/pin-remove.command';
 import { SnapshotListElement } from './snapshot-list-element.component';
 
-interface ObjListComponentProps {
-  editNoteCallback: (obj: ObjDto<ObjNoteDto>) => void;
+interface Props {
+  editNoteCallback: (obj: ObjDto<ObjPageNoteDto>) => void;
   objList: ObjDto<ObjPageDataDto>[];
 }
 
-export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props) => {
+export const ObjListComponent: FunctionComponent<Props> = (props) => {
   const [reRender, setReRender] = useState(false);
 
   const handlePinRemove = async (data: ObjDto<ObjPinDto>) => {
@@ -51,8 +51,8 @@ export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props
     handleRemove(data.id);
   };
 
-  const handleNoteRemove = async (data: ObjDto<ObjNoteDto>) => {
-    await new NoteRemoveCommand(data).execute();
+  const handleNoteRemove = async (data: ObjDto<ObjPageNoteDto>) => {
+    await new PageNoteRemoveCommand(data).execute();
     handleRemove(data.id);
   };
 
@@ -89,7 +89,7 @@ export const ObjListComponent: FunctionComponent<ObjListComponentProps> = (props
         objs.push(
           <NoteListElementComponent
             editCallback={props.editNoteCallback}
-            obj={obj as ObjDto<ObjNoteDto>}
+            obj={obj as ObjDto<ObjPageNoteDto>}
             removeCallback={handleNoteRemove}
           />
         );

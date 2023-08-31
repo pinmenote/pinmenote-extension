@@ -14,15 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjUrlDto } from './obj.dto';
-export interface ObjPageNoteDto extends ObjNoteDto {
-  url: ObjUrlDto;
-}
+import { ICommand } from '../../../../common/model/shared/common.dto';
+import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
+import { SyncProgress } from '../sync.model';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
-export interface ObjNoteDto {
-  hash: string;
-  title: string;
-  description: string;
-  words: string[];
-  hashtags: string[];
+export class SyncPageNoteCommand implements ICommand<Promise<void>> {
+  constructor(private obj: ObjDto<ObjPageNoteDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async execute(): Promise<void> {
+    fnConsoleLog('SyncPageNoteCommand');
+  }
 }

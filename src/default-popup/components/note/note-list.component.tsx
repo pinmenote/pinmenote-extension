@@ -17,17 +17,17 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { LogManager } from '../../../common/popup/log.manager';
 import { NoteElementComponent } from './note-element.component';
-import { NoteGetHrefCommand } from '../../../common/command/note/note-get-href.command';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { PageNoteGetHrefCommand } from '../../../common/command/page-note/page-note-get-href.command';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 
-interface NoteListComponentProps {
-  editCallback: (obj: ObjDto<ObjNoteDto>) => void;
+interface Props {
+  editCallback: (obj: ObjDto<ObjPageNoteDto>) => void;
 }
 
-export const NoteListComponent: FunctionComponent<NoteListComponentProps> = (props) => {
-  const [noteList, setNoteList] = useState<ObjDto<ObjNoteDto>[]>([]);
+export const NoteListComponent: FunctionComponent<Props> = (props) => {
+  const [noteList, setNoteList] = useState<ObjDto<ObjPageNoteDto>[]>([]);
   useEffect(() => {
     const url = PopupActiveTabStore.url;
     LogManager.log(`NoteListComponent->url ${url?.href || ''}`);
@@ -35,7 +35,7 @@ export const NoteListComponent: FunctionComponent<NoteListComponentProps> = (pro
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     (async () => {
-      const list = await new NoteGetHrefCommand(url).execute();
+      const list = await new PageNoteGetHrefCommand(url).execute();
       setNoteList(list);
     })();
   }, []);

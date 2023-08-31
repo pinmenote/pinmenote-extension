@@ -20,13 +20,13 @@ import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
-import { ObjNoteDto } from '../../model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
 
-export class NoteAddCommand implements ICommand<Promise<void>> {
-  constructor(private note: ObjNoteDto) {}
+export class PageNoteAddCommand implements ICommand<Promise<void>> {
+  constructor(private note: ObjPageNoteDto) {}
 
   async execute(): Promise<void> {
     fnConsoleLog('NoteAddCommand->execute', this.note);
@@ -34,7 +34,7 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
     const id = await new ObjNextIdCommand().execute();
     const dt = Date.now();
 
-    const dto: ObjDto<ObjNoteDto> = {
+    const dto: ObjDto<ObjPageNoteDto> = {
       id,
       type: ObjTypeDto.PageNote,
       createdAt: dt,
@@ -49,10 +49,8 @@ export class NoteAddCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
 
     await BrowserStorage.set(key, dto);
-    if (this.note.url) {
-      await LinkHrefStore.add(this.note.url, id);
-      await LinkHrefStore.noteAdd(this.note.url, id);
-    }
+    await LinkHrefStore.add(this.note.url, id);
+    await LinkHrefStore.noteAdd(this.note.url, id);
 
     await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
   }

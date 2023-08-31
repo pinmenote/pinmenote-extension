@@ -23,9 +23,8 @@ import { MainHeaderComponent } from './main-header.component';
 import { MainMenuListComponent } from './main-menu-list.component';
 import { MainViewEnum } from '../component-model';
 import { NoteComponent } from '../note/note.component';
-import { NoteEditComponent } from '../note/add/note-edit.component';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjViewComponent } from '../obj/obj-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
 import { TaskComponent } from '../task/task.component';
@@ -33,14 +32,14 @@ import { TaskComponent } from '../task/task.component';
 export const MainViewComponent: FunctionComponent = () => {
   const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
   const [currentView, setCurrentView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
-  const [editNote, setEditNote] = useState<ObjDto<ObjNoteDto> | undefined>();
+  const [editNote, setEditNote] = useState<ObjDto<ObjPageNoteDto> | undefined>();
 
   const changeMainTab = (viewType: MainViewEnum) => {
     setPreviousView(currentView);
     setCurrentView(viewType);
   };
 
-  const editNoteCallback = (obj: ObjDto<ObjNoteDto>) => {
+  const editNoteCallback = (obj: ObjDto<ObjPageNoteDto>) => {
     setEditNote(obj);
     setCurrentView(MainViewEnum.NOTE_EDIT);
   };
@@ -65,14 +64,6 @@ export const MainViewComponent: FunctionComponent = () => {
         return <TaskComponent />;
       case MainViewEnum.NOTE:
         return <NoteComponent currentView={'NOTE_ADD'} />;
-      case MainViewEnum.NOTE_EDIT:
-        return (
-          <NoteEditComponent
-            saveCallback={editNoteActionCallback}
-            cancelCallback={editNoteActionCallback}
-            obj={editNote}
-          />
-        );
       case MainViewEnum.FUNCTION:
         return <PopupFunctionsComponent />;
     }

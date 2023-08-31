@@ -21,15 +21,15 @@ import IconButton from '@mui/material/IconButton';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { NoteListExpandComponent } from '../obj/note-list-expand.component';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import Typography from '@mui/material/Typography';
 
-interface NoteElementComponentProps {
-  obj: ObjDto<ObjNoteDto>;
-  editCallback: (obj: ObjDto<ObjNoteDto>) => void;
+interface Props {
+  obj: ObjDto<ObjPageNoteDto>;
+  editCallback: (obj: ObjDto<ObjPageNoteDto>) => void;
 }
 
-export const NoteElementComponent: FunctionComponent<NoteElementComponentProps> = ({ obj, editCallback }) => {
+export const NoteElementComponent: FunctionComponent<Props> = ({ obj, editCallback }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handlePopover = (): void => {
