@@ -18,7 +18,6 @@ import React, { FunctionComponent, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import { NoteAddComponent } from './add/note-add.component';
-import { NoteEditComponent } from './add/note-edit.component';
 import { NoteListComponent } from './note-list.component';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
@@ -55,8 +54,6 @@ export const NoteComponent: FunctionComponent<Props> = ({ currentView }) => {
         return <NoteAddComponent addCallback={handleAddNote} cancelCallback={handleCancel} />;
       case CurrentView.NOTE_LIST:
         return <NoteListComponent editCallback={handleEdit} />;
-      case CurrentView.NOTE_EDIT:
-        return <NoteEditComponent obj={editNote} saveCallback={handleCancel} cancelCallback={handleCancel} />;
     }
   };
 
