@@ -295,7 +295,7 @@ export class DocumentMediator {
     new PinComponentAddCommand(element, obj, true).execute();
   };
 
-  private static addElementSnapshot = async (element: HTMLElement, canvas?: PageCanvasDto): Promise<void> => {
+  static addElementSnapshot = async (element: HTMLElement, canvas?: PageCanvasDto): Promise<void> => {
     if (!element) return;
     PinAddFactory.clearStyles();
 
@@ -346,7 +346,7 @@ export class DocumentMediator {
     return { key, value: 'true' };
   };
 
-  private static hidePreloader = (): void => {
+  static hidePreloader = (): void => {
     try {
       document.body.removeChild(this.preloader);
     } catch (e) {

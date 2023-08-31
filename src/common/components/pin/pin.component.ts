@@ -16,6 +16,7 @@
  */
 import { HtmlComponent, PageComponent, PinDocument } from './model/pin-view.model';
 import { BottomBarComponent } from './bottom-bar/bottom-bar.component';
+import { DocumentMediator } from '../../../content-script/mediator/document.mediator';
 import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
 import { DrawContainerComponent } from './draw-container.component';
@@ -27,6 +28,7 @@ import { PinEditManager } from './pin-edit.manager';
 import { PinEditModel } from './model/pin-edit.model';
 import { PinMouseManager } from './pin-mouse.manager';
 import { PinPointFactory } from '../../factory/pin-point.factory';
+import { PinRemoveCommand } from '../../command/pin/pin-remove.command';
 import { TextContainerComponent } from './text/text-container.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { applyStylesToElement } from '../../style.utils';
@@ -56,7 +58,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly model: PinEditModel;
 
-  constructor(ref: HTMLElement, object: ObjDto<ObjPinDto>, private doc: PinDocument, toSnapshotHandler?: () => void) {
+  constructor(ref: HTMLElement, object: ObjDto<ObjPinDto>, private doc: PinDocument) {
     this.top = this.doc.document.createElement('div');
     this.bottom = this.doc.document.createElement('div');
     this.border = this.doc.document.createElement('div');
@@ -73,8 +75,15 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.downloadBar = new DownloadBarComponent(this.edit, this.model);
 
-    this.editBar = new PinEditBarComponent(this.model, this.resize, toSnapshotHandler);
+    this.editBar = new PinEditBarComponent(this.model, this.resize, this.toSnapshotHandler);
   }
+
+  private toSnapshotHandler = async () => {
+    await new PinRemoveCommand(this.model.id, this.model.url).execute();
+    this.cleanup();
+    await DocumentMediator.addElementSnapshot(this.model.ref);
+    DocumentMediator.hidePreloader();
+  };
 
   focus(): void {
     this.handleMouseOver();

@@ -50,7 +50,7 @@ export const environmentConfig: EnvironmentConfig = {
   isProduction: process.env.IS_PRODUCTION === 'true',
   settings: {
     version: parseInt(process.env.VERSION || '1'),
-    screenshotFormat: 'jpeg',
+    screenshotFormat: 'png',
     screenshotQuality: 90,
     borderStyle: 'none',
     newElementStyle: '2px solid #ff0000',
