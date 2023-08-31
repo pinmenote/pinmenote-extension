@@ -18,13 +18,15 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
+import { SyncObjectDataCommand } from './sync-object-data.command';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class SyncPinCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto<ObjPinDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
-  // eslint-disable-next-line @typescript-eslint/require-await
   async execute(): Promise<void> {
     fnConsoleLog('SyncPinCommand');
+    const data = this.obj.data;
+    await new SyncObjectDataCommand(this.obj, data.data.hash, this.progress, this.index).execute();
   }
 }

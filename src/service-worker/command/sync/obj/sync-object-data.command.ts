@@ -17,17 +17,26 @@
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
-import { SyncObjectDataCommand } from './sync-object-data.command';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
-export class SyncNoteCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjNoteDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
+export class SyncObjectDataCommand implements ICommand<Promise<void>> {
+  constructor(
+    private obj: ObjDto,
+    private initialHash: string,
+    private progress: SyncProgress,
+    private index: ObjDateIndex
+  ) {}
   // eslint-disable-next-line @typescript-eslint/require-await
   async execute(): Promise<void> {
-    fnConsoleLog('SyncNoteCommand');
-    const data = this.obj.data;
-    await new SyncObjectDataCommand(this.obj, data.hash, this.progress, this.index).execute();
+    fnConsoleLog(
+      'SyncObjectDataCommand',
+      this.obj.id,
+      this.obj.type,
+      this.obj.createdAt,
+      this.obj.updatedAt,
+      this.obj.version,
+      this.initialHash
+    );
   }
 }
