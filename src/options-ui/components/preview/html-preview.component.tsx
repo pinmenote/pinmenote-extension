@@ -358,9 +358,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           <div style={{ display: isLoading ? 'flex' : 'none' }}>
             <CircularProgress />
           </div>
-          <IconButton onClick={handleDownload}>
+          {/*<IconButton onClick={handleDownload}>
             <DownloadIcon />
-          </IconButton>
+          </IconButton>*/}
           <IconButton onClick={handleClose}>
             <ClearIcon />
           </IconButton>

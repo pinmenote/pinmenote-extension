@@ -26,8 +26,13 @@ export class ContentTakeScreenshotCommand implements ICommand<void> {
   constructor(private url: string) {}
   async execute(): Promise<void> {
     try {
-      fnConsoleLog('ContentTakeScreenshotCommand->execute', this.url);
       const settings = await BrowserStorage.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
+      fnConsoleLog(
+        'ContentTakeScreenshotCommand->execute',
+        this.url,
+        settings.screenshotFormat,
+        settings.screenshotQuality
+      );
       const data = await BrowserApi.tabs.captureVisibleTab({
         format: settings.screenshotFormat,
         quality: settings.screenshotQuality
