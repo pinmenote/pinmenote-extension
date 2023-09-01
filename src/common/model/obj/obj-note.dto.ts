@@ -21,6 +21,7 @@ export interface ObjPageNoteDto extends ObjNoteDto {
 
 export interface ObjNoteDto {
   hash: string;
+  prev?: string;
   title: string;
   description: string;
   words: string[];

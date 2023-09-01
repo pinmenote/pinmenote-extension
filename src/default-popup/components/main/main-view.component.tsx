@@ -41,7 +41,7 @@ export const MainViewComponent: FunctionComponent = () => {
 
   const editNoteCallback = (obj: ObjDto<ObjPageNoteDto>) => {
     setEditNote(obj);
-    setCurrentView(MainViewEnum.NOTE_EDIT);
+    setCurrentView(MainViewEnum.NOTE);
   };
 
   const editNoteActionCallback = () => {
@@ -63,7 +63,14 @@ export const MainViewComponent: FunctionComponent = () => {
       case MainViewEnum.TASK:
         return <TaskComponent />;
       case MainViewEnum.NOTE:
-        return <NoteComponent currentView={'NOTE_ADD'} />;
+        return (
+          <NoteComponent
+            currentView={'NOTE_ADD'}
+            editNote={editNote}
+            addCallback={() => setCurrentView(MainViewEnum.PAGE_OBJECTS)}
+            cancelCallback={() => setCurrentView(MainViewEnum.PAGE_OBJECTS)}
+          />
+        );
       case MainViewEnum.FUNCTION:
         return <PopupFunctionsComponent />;
     }

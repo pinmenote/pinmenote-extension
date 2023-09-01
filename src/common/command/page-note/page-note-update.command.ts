@@ -25,15 +25,18 @@ import { fnConsoleLog } from '../../fn/fn-console';
 import { fnSha256 } from '../../fn/fn-hash';
 
 export class PageNoteUpdateCommand implements ICommand<void> {
-  constructor(private obj: ObjDto<ObjPageNoteDto>, private oldWords: string[]) {}
+  constructor(private obj: ObjDto<ObjPageNoteDto>, private title: string, private description: string) {}
   async execute(): Promise<void> {
     fnConsoleLog('NoteUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
-    this.obj.data.hash = fnSha256(this.obj.data.title + this.obj.data.description);
+    this.obj.data.prev = this.obj.data.hash;
+    this.obj.data.hash = fnSha256(this.title + this.description);
 
+    this.obj.data.title = this.title;
+    this.obj.data.description = this.description;
     this.obj.updatedAt = Date.now();
 
-    await WordIndex.removeFlat(this.oldWords, this.obj.id);
+    await WordIndex.removeFlat(this.obj.data.words, this.obj.id);
     await WordIndex.indexFlat(this.obj.data.words, this.obj.id);
 
     await BrowserStorage.set(key, this.obj);

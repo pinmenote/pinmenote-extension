@@ -18,16 +18,15 @@ import { COLOR_DEFAULT_BORDER, DEFAULT_BORDER_RADIUS } from '../../../../common/
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { EditorView } from 'prosemirror-view';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
-import { PageNoteAddCommand } from '../../../../common/command/page-note/page-note-add.command';
-import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
+import { PageNoteUpdateCommand } from '../../../../common/command/page-note/page-note-update.command';
 import { StyledInput } from '../../../../common/components/react/styled.input';
-import { WordIndex } from '../../../../common/text/word.index';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
-import { fnSha256 } from '../../../../common/fn/fn-hash';
 
 interface Props {
+  editNote: ObjDto<ObjPageNoteDto>;
   addCallback: () => void;
   cancelCallback: () => void;
 }
@@ -43,8 +42,8 @@ class LocalModel {
   }
 }
 
-export const NoteAddComponent: FunctionComponent<Props> = (props) => {
-  const [title, setTitle] = useState<string>('');
+export const NoteEditComponent: FunctionComponent<Props> = (props) => {
+  const [title, setTitle] = useState<string>(props.editNote.data.title);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
   }, []);
 
   const create = (el: HTMLDivElement): void => {
-    let state = createTextEditorState('');
+    let state = createTextEditorState(props.editNote.data.description);
     LocalModel.editorView = new EditorView(el, {
       state,
       handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
@@ -70,27 +69,14 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
     });
   };
 
-  const handleAdd = async () => {
-    const url = PopupActiveTabStore.url;
-    if (!url) return;
-    const description = LocalModel.description;
-    const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(description)]);
-    const hash = fnSha256(title + description + (url?.href || ''));
-    const note: ObjPageNoteDto = {
-      hash,
-      title,
-      description,
-      url,
-      words: Array.from(words),
-      hashtags: []
-    };
-    await new PageNoteAddCommand(note).execute();
+  const handleUpdate = async () => {
+    await new PageNoteUpdateCommand(props.editNote, title, LocalModel.description).execute();
     props.addCallback();
   };
 
   return (
     <div style={{ marginTop: 5 }}>
-      <h2>Add Note</h2>
+      <h2>Edit Note</h2>
       <div
         style={{
           marginTop: 5,
@@ -117,8 +103,8 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
         <Button variant="outlined" onClick={props.cancelCallback}>
           Cancel
         </Button>
-        <Button variant="outlined" onClick={handleAdd}>
-          Add
+        <Button variant="outlined" onClick={handleUpdate}>
+          Update
         </Button>
       </div>
     </div>

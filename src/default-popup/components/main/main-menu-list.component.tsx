@@ -152,7 +152,7 @@ export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props)
             <ListItemIcon>
               <NoteOutlinedIcon />
             </ListItemIcon>
-            <ListItemText primary="Note" />
+            <ListItemText primary="Add Note" />
           </ListItemButton>
         </ListItem>
       </List>
