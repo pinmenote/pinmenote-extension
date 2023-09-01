@@ -127,8 +127,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     // Pin Edit
     this.top.appendChild(this.editBar.render());
 
-    this.doc.document.body.appendChild(this.top);
     this.doc.document.body.appendChild(this.bottom);
+    this.doc.document.body.appendChild(this.top);
     this.mouseManager.start(this.model.ref);
     this.handleMouseOut();
 
