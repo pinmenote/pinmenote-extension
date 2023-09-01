@@ -50,7 +50,6 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
 
   return (
     <div>
-      <p>Tags {tagsChanged}</p>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ width: 378 }}>
           <Autocomplete
