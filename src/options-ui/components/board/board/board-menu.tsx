@@ -69,9 +69,9 @@ export const BoardMenu: FunctionComponent<Props> = (props) => {
             pinmenote
           </Typography>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 10, flexGrow: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'row', marginLeft: 10, flexGrow: 1, marginRight: 20 }}>
           <BoardInputSearch value={BoardStore.search} searchCallback={handleSearch}></BoardInputSearch>
-          <BoardAddElementSearch></BoardAddElementSearch>
+          {/*<BoardAddElementSearch></BoardAddElementSearch>*/}
         </div>
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <IconButton
