@@ -29,7 +29,7 @@ export class ApiStoreCommitCommand extends ApiCallBase implements ICommand<Promi
     if (!this.storeUrl) return false;
     try {
       const resp = await FetchService.fetch<BeginTxResponse>(
-        `${this.storeUrl}/api/v1/obj/tx/${this.tx}/commit`,
+        `${this.storeUrl}/api/v1/tx/${this.tx}/commit`,
         {
           type: 'TEXT',
           headers: this.getAuthHeaders()

@@ -26,7 +26,7 @@ export class ApiStoreBeginCommand extends ApiCallBase implements ICommand<Promis
     if (!this.storeUrl) return;
     try {
       const resp = await FetchService.fetch<BeginTxResponse>(
-        `${this.storeUrl}/api/v1/obj/begin`,
+        `${this.storeUrl}/api/v1/tx/begin`,
         { headers: this.getAuthHeaders() },
         this.refreshParams()
       );
