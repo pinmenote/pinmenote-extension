@@ -217,7 +217,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     }
     if (urlRef.current) {
       urlRef.current.innerHTML = `
-    <a href="${snapshot.info.url.href}" style="word-break: break-all">
+    <a href="${snapshot.info.url.href}" target="_blank" style="word-break: break-all">
         ${snapshot.info.url.href}
     </a><span style="margin-left: 10px;">Created At : ${dayjs(obj.createdAt).format(DATE_YEAR_SECOND)}</span>`;
     }
