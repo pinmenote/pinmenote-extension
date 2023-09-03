@@ -249,6 +249,10 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         fnConsoleLog('htmlPreview->renderAssetList->ERROR', e, hash);
       }
     }
+    const elList = Array.from(doc.querySelectorAll(`[data-pmn-shadow]`));
+    for (const el of elList) {
+      renderTemplate(el);
+    }
   };
 
   const renderAsset = async (hash: string, el: Element): Promise<void> => {
@@ -273,11 +277,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         approximatePictureSize(img);
         break;
       }
-      case SegmentType.SHADOW: {
-        const content = dto.content as SegmentShadow;
-        renderShadow(el, content);
-        break;
-      }
       default:
         fnConsoleLog('UNSUPPORTED TYPE', dto.type, dto);
         break;
@@ -292,11 +291,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     const rect = img.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) img.style.width = '100%';
     if (rect.width > window.innerWidth) img.style.width = '100%';
-  };
-
-  const renderShadow = (el: Element, content: SegmentShadow) => {
-    el.innerHTML = content.html + el.innerHTML;
-    renderTemplate(el);
   };
 
   const renderTemplate = (el: Element) => {
