@@ -304,6 +304,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           renderTemplate(child);
         }
       }
+      // needed for download for now
       //template.remove();
     }
   };
