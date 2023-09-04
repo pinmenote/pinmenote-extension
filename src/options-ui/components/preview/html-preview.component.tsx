@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { SegmentImg, SegmentPage, SegmentShadow, SegmentType } from '@pinmenote/page-compute';
+import { SegmentImg, SegmentPage, SegmentType } from '@pinmenote/page-compute';
 import { BrowserApi } from '@pinmenote/browser-api';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClearIcon from '@mui/icons-material/Clear';

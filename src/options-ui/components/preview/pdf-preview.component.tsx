@@ -14,8 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserApi, BrowserStorage } from '@pinmenote/browser-api';
+import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
+// eslint-disable-next-line sort-imports
+import { EventBus, PDFPageView } from 'pdfjs-dist/web/pdf_viewer';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { BrowserStorage } from '@pinmenote/browser-api';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
@@ -23,6 +26,8 @@ import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnUid } from '../../../common/fn/fn-uid';
+import pdfWorkerUrl from 'url:../../../../node_modules/pdfjs-dist/build/pdf.worker.js';
 
 interface Props {
   visible: boolean;
@@ -62,27 +67,62 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
 
     titleRef.current.innerText = `${a[a.length - 1]}`;
 
-    const el = document.createElement('iframe');
-    el.width = '100%';
-    el.height = '100%';
-    el.setAttribute('src', data || '');
-    pdfRef.current.appendChild(el);
+    try {
+      GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
+      // remove data:application/pdf;base64,
+      const loadingTask = getDocument({ data: atob(data?.substring(28)) });
+      const pdf = await loadingTask.promise;
+
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = pdfRef.current.clientWidth / ((viewport.width * 96) / 72);
+      const eventBus = new EventBus();
+      // TODO fix rendering all pages
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const pageView = new PDFPageView({
+          container: pdfRef.current,
+          id: i,
+          scale,
+          defaultViewport: viewport,
+          eventBus
+        });
+        pageView.setPdfPage(page);
+        await pageView.draw();
+      }
+    } catch (e) {
+      fnConsoleLog('render->ERROR', e);
+      // eslint-disable-next-line
+      pdfRef.current.innerHTML = `<h1>ERROR RENDERING PDF</h1><br /><p>${e.toString()}</p>`;
+    }
   };
 
-  const handleDownload = () => {
-    alert('download');
-    /*const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
-        const filename = `${fnUid()}.pdf`;
-        await BrowserApi.downloads.download({
-            url,
-            filename,
-            conflictAction: 'uniquify'
-        });*/
+  const handleDownload = async () => {
+    try {
+      const idhash = window.location.hash.split('/');
+      const obj = await new ObjGetCommand<ObjPdfDto>(parseInt(idhash[1])).execute();
+      const data = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${obj.data.hash}`);
+      const pdf = atob(data?.substring(28));
+      const buffer = new ArrayBuffer(pdf.length);
+      const view = new Uint8Array(buffer);
+      for (let i = 0; i < pdf.length; i++) {
+        view[i] = pdf.charCodeAt(i);
+      }
+      const url = window.URL.createObjectURL(new Blob([view], { type: 'application/pdf' }));
+      const filename = `${fnUid()}.pdf`;
+      await BrowserApi.downloads.download({
+        url,
+        filename,
+        conflictAction: 'uniquify'
+      });
+    } catch (e) {
+      fnConsoleLog('handleDownload->ERROR', e);
+    }
   };
 
   const handleClose = () => {
     document.title = 'pin board';
     window.location.hash = '';
+    if (pdfRef.current) pdfRef.current.innerHTML = '';
   };
 
   return (
@@ -98,7 +138,15 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
         left: '0px'
       }}
     >
-      <div style={{ backgroundColor: '#ffffff', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+      <div
+        style={{
+          backgroundColor: '#ffffff',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid #000'
+        }}
+      >
         <div style={{ marginLeft: '10px', marginBottom: '5px' }}>
           <h2 style={{ marginTop: '5px', marginBottom: '5px' }} ref={titleRef}></h2>
           <div ref={urlRef}></div>
@@ -112,7 +160,18 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
           </IconButton>
         </div>
       </div>
-      <div style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }} ref={pdfRef}></div>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#ffffff',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+        ref={pdfRef}
+      ></div>
     </div>
   );
 };

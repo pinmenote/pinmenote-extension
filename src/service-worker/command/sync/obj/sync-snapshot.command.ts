@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { SegmentCss, SegmentImg, SegmentPage, SegmentShadow, SegmentType } from '@pinmenote/page-compute';
+import { SegmentCss, SegmentImg, SegmentPage, SegmentType } from '@pinmenote/page-compute';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
@@ -60,11 +60,6 @@ export class SyncSnapshotCommand implements ICommand<Promise<void>> {
       case SegmentType.IMG: {
         // fnConsoleLog('IMG');
         const content = segment.content as SegmentImg;
-        break;
-      }
-      case SegmentType.SHADOW: {
-        // fnConsoleLog('SHADOW');
-        const content = segment.content as SegmentShadow;
         break;
       }
       case SegmentType.IFRAME: {

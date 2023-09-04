@@ -61,7 +61,7 @@ export const ContentSettingsComponent: FunctionComponent = () => {
         content
       </Typography>
       <Typography fontSize="2em" style={{ marginBottom: 10 }}>
-        pin page appearance
+        pin appearance
       </Typography>
       <div style={borderContainer}>
         <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
