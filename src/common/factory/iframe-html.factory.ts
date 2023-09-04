@@ -16,7 +16,6 @@
  */
 import { SegmentCss, SegmentPage } from '@pinmenote/page-compute';
 import { PageSegmentGetCommand } from '../command/snapshot/segment/page-segment-get.command';
-import { PageSnapshotDto } from '../model/obj/page-snapshot.dto';
 
 export class IframeHtmlFactory {
   static computeHtml = async (snapshot: SegmentPage, title?: string): Promise<string> => {
@@ -55,11 +54,48 @@ export class IframeHtmlFactory {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     ${style}
   </head>
+  <script>
+    if (document.readyState !== 'complete') {
+        document.addEventListener('readystatechange', async () => {
+          if (document.readyState === 'complete') renderTemplates();
+        });
+    } else {
+        renderTemplates();
+    }
+    const renderTemplates = () => {
+        const elList = Array.from(document.querySelectorAll('[data-pmn-shadow]'));
+        for (const el of elList) {
+          renderTemplate(el);
+        }        
+    }    
+    const renderTemplate = (el) => {
+      const templates = Array.from(el.querySelectorAll('template'));
+      for (const template of templates) {
+        if (template.parentElement) {
+          const mode = template.getAttribute('data-mode');
+          const shadow = template.parentElement.attachShadow({ mode: mode });
+          shadow.appendChild(template.content.cloneNode(true));
+          for (const child of Array.from(shadow.children)) {
+            renderTemplate(child);
+          }
+        }
+      }
+    };  
+  </script>
   ${snapshot.html.html}
 </html>`;
   };
 
-  static computeDownload = (snapshot: PageSnapshotDto, data: SegmentPage): string => {
-    return '';
+  static computeDownload = (pageSegment: SegmentPage, iframe: HTMLIFrameElement): string => {
+    if (!iframe.contentWindow) return '';
+    return `<!doctype html>
+<html ${pageSegment.html.htmlAttr}>
+  <head>
+      ${iframe.contentWindow.document.head.innerHTML}
+  </head>
+  <body>
+    ${iframe.contentWindow.document.body.innerHTML}  
+  </body>
+</html>`;
   };
 }

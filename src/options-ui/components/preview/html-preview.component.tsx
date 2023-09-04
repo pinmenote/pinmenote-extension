@@ -304,13 +304,15 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           renderTemplate(child);
         }
       }
-      template.remove();
+      //template.remove();
     }
   };
 
   const handleDownload = async () => {
     if (!pageSegment || !pageSnapshot) return;
-    const html = IframeHtmlFactory.computeDownload(pageSnapshot, pageSegment);
+    if (!htmlRef.current) return;
+    const iframe = htmlRef.current.lastChild as HTMLIFrameElement;
+    const html = IframeHtmlFactory.computeDownload(pageSegment, iframe);
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
     const filename = `${fnUid()}.html`;
@@ -352,9 +354,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
           <div style={{ display: isLoading ? 'flex' : 'none' }}>
             <CircularProgress />
           </div>
-          {/*<IconButton onClick={handleDownload}>
+          <IconButton onClick={handleDownload}>
             <DownloadIcon />
-          </IconButton>*/}
+          </IconButton>
           <IconButton onClick={handleClose}>
             <ClearIcon />
           </IconButton>
