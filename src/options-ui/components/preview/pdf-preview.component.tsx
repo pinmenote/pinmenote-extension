@@ -75,7 +75,10 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
 
       const page = await pdf.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
+
+      // https://stackoverflow.com/questions/35987398/pdf-js-how-to-make-pdf-js-viewer-canvas-responsive
       const scale = pdfRef.current.clientWidth / ((viewport.width * 96) / 72);
+
       const eventBus = new EventBus();
       // TODO fix rendering all pages
       for (let i = 1; i <= pdf.numPages; i++) {
