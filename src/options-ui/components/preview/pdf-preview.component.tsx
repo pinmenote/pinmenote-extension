@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserApi, BrowserStorage } from '@pinmenote/browser-api';
-import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
+import { GlobalWorkerOptions, PDFPageProxy, PageViewport, getDocument } from 'pdfjs-dist';
 // eslint-disable-next-line sort-imports
 import { EventBus, PDFPageView } from 'pdfjs-dist/web/pdf_viewer';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
@@ -73,30 +73,52 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
       const loadingTask = getDocument({ data: atob(data?.substring(28)) });
       const pdf = await loadingTask.promise;
 
-      const page = await pdf.getPage(1);
+      let currentPage = 1;
+
+      const page = await pdf.getPage(currentPage);
       const viewport = page.getViewport({ scale: 1 });
 
       // https://stackoverflow.com/questions/35987398/pdf-js-how-to-make-pdf-js-viewer-canvas-responsive
       const scale = pdfRef.current.clientWidth / ((viewport.width * 96) / 72);
 
       const eventBus = new EventBus();
-      // TODO fix rendering all pages
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const pageView = new PDFPageView({
-          container: pdfRef.current,
-          id: i,
-          scale,
-          defaultViewport: viewport,
-          eventBus
-        });
-        pageView.setPdfPage(page);
-        await pageView.draw();
+      await renderPage(page, viewport, 1, eventBus, scale);
+
+      // Deferred render
+      if (pdf.numPages > 1) {
+        const pageRenderInterval = setInterval(async () => {
+          currentPage++;
+          const p = await pdf.getPage(currentPage);
+          await renderPage(p, viewport, currentPage, eventBus, scale);
+          if (currentPage >= pdf.numPages) {
+            clearInterval(pageRenderInterval);
+          }
+        }, 250);
       }
     } catch (e) {
       fnConsoleLog('render->ERROR', e);
       // eslint-disable-next-line
       pdfRef.current.innerHTML = `<h1>ERROR RENDERING PDF</h1><br /><p>${e.toString()}</p>`;
     }
+  };
+
+  const renderPage = async (
+    page: PDFPageProxy,
+    viewport: PageViewport,
+    index: number,
+    eventBus: EventBus,
+    scale: number
+  ) => {
+    if (!pdfRef.current) return;
+    const pageView = new PDFPageView({
+      container: pdfRef.current,
+      id: index,
+      scale,
+      defaultViewport: viewport,
+      eventBus
+    });
+    pageView.setPdfPage(page);
+    await pageView.draw();
   };
 
   const handleDownload = async () => {
