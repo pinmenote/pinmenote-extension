@@ -313,6 +313,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (!pageSegment || !pageSnapshot) return;
     if (!htmlRef.current) return;
     const iframe = htmlRef.current.lastChild as HTMLIFrameElement;
+    // TODO gather all iframe hashes and pass here with content
     const html = IframeHtmlFactory.computeDownload(pageSegment, iframe);
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));

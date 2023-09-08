@@ -54,6 +54,19 @@ export class IframeHtmlFactory {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     ${style}
   </head>
+  ${snapshot.html.html}
+</html>`;
+  };
+
+  static computeDownload = (pageSegment: SegmentPage, iframe: HTMLIFrameElement): string => {
+    if (!iframe.contentWindow) return '';
+    return `<!doctype html>
+<html ${pageSegment.html.htmlAttr}>
+  <head>
+      ${iframe.contentWindow.document.head.innerHTML}
+  </head>
+  <body>
+  
   <script>
     if (document.readyState !== 'complete') {
         document.addEventListener('readystatechange', async () => {
@@ -82,18 +95,6 @@ export class IframeHtmlFactory {
       }
     };  
   </script>
-  ${snapshot.html.html}
-</html>`;
-  };
-
-  static computeDownload = (pageSegment: SegmentPage, iframe: HTMLIFrameElement): string => {
-    if (!iframe.contentWindow) return '';
-    return `<!doctype html>
-<html ${pageSegment.html.htmlAttr}>
-  <head>
-      ${iframe.contentWindow.document.head.innerHTML}
-  </head>
-  <body>
     ${iframe.contentWindow.document.body.innerHTML}  
   </body>
 </html>`;
