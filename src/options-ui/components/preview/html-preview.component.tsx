@@ -206,7 +206,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
     await writeDoc(iframe.contentWindow.document, html, segment.assets || [], true);
 
-    fnConsoleLog('DONE');
+    fnConsoleLog('DONE', obj, 'segment', segment);
     setIsLoading(false);
   };
 

@@ -17,10 +17,12 @@
 import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ObjPageDto } from '../../common/model/obj/obj-page.dto';
+import { ObjPageNoteDto } from '../../common/model/obj/obj-note.dto';
 import { ObjPdfDto } from '../../common/model/obj/obj-pdf.dto';
 import { ObjRangeRequest } from '../../common/model/obj-request.model';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { OptionsObjGetRangeCommand } from '../command/options-obj-get-range.command';
+import { PageNoteRemoveCommand } from '../../common/command/page-note/page-note-remove.command';
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { PdfRemoveCommand } from '../../common/command/pdf/pdf-remove.command';
 import { fnConsoleLog } from '../../common/fn/fn-console';
@@ -72,6 +74,9 @@ export class BoardStore {
             await new PdfRemoveCommand(value.id, value.data as ObjPdfDto).execute();
             break;
           }
+          case ObjTypeDto.PageNote:
+            await new PageNoteRemoveCommand(value as ObjDto<ObjPageNoteDto>).execute();
+            break;
           default: {
             fnConsoleLog('removeObj->NOT SUPPORTED');
             break;

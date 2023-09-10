@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjRemovedDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
-import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
@@ -28,13 +28,38 @@ export class PageNoteRemoveCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPageNoteDto>) {}
   async execute(): Promise<void> {
     fnConsoleLog('NoteRemoveCommand->execute', this.obj);
-    await BrowserStorage.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`);
+    const data = this.obj.data;
 
-    await LinkHrefStore.del(this.obj.data.url, this.obj.id);
-    await LinkHrefStore.noteDel(this.obj.data.url, this.obj.id);
+    const hash = await this.cleanPrevHash(data);
 
-    await WordIndex.removeFlat(this.obj.data.words, this.obj.id);
+    const removed: ObjDto<ObjRemovedDto> = {
+      ...this.obj,
+      type: ObjTypeDto.Removed,
+      data: {
+        type: this.obj.type,
+        hash
+      }
+    };
+    await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, removed);
+
+    await LinkHrefStore.del(data.url, this.obj.id);
+    await LinkHrefStore.noteDel(data.url, this.obj.id);
+
+    await WordIndex.removeFlat(data.words, this.obj.id);
 
     await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
+  }
+
+  private async cleanPrevHash(data: ObjPageNoteDto): Promise<string[]> {
+    const out = [data.hash];
+    let prevHash = data.prev;
+    while (prevHash) {
+      const prevKey = `${ObjectStoreKeys.NOTE_HASH}:${prevHash}`;
+      const prevData = await BrowserStorage.get<ObjPageNoteDto | undefined>(prevKey);
+      out.push(prevHash);
+      prevHash = prevData?.prev;
+      await BrowserStorage.remove(prevKey);
+    }
+    return out;
   }
 }

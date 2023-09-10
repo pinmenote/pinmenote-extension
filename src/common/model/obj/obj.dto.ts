@@ -42,10 +42,16 @@ export enum ObjTypeDto {
   PageAlter = 'PAGE_ALTER',
   PageTask = 'PAGE_TASK',
   Note = 'NOTE',
-  Pdf = 'PDF'
+  Pdf = 'PDF',
+  Removed = 'REMOVED'
 }
 
-export type ObjDataDto = ObjPageDto | ObjPinDto | ObjPdfDto | ObjNoteDto | ObjPageNoteDto;
+export interface ObjRemovedDto {
+  type: ObjTypeDto;
+  hash: string[];
+}
+
+export type ObjDataDto = ObjPageDto | ObjPinDto | ObjPdfDto | ObjNoteDto | ObjPageNoteDto | ObjRemovedDto;
 export type ObjPageDataDto = ObjPageDto | ObjPageNoteDto | ObjPinDto | ObjPdfDto;
 
 export interface ObjDto<T = ObjDataDto> {

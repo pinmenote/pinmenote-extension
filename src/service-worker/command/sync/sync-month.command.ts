@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { SyncObjectCommand, SyncObjectStatus } from './obj/sync-object.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { SyncObjectCommand } from './obj/sync-object.command';
 import { SyncProgress } from './sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
@@ -29,8 +29,8 @@ export class SyncMonthCommand implements ICommand<Promise<ObjDateIndex>> {
 
     let index = { dt: this.progress.timestamp, id: this.progress.id };
 
-    const updatedDt = `${ObjectStoreKeys.UPDATED_DT}:${this.yearMonth}`;
-    const indexList = await SyncTxHelper.getList(updatedDt);
+    const indexListKey = `${ObjectStoreKeys.UPDATED_DT}:${this.yearMonth}`;
+    const indexList = await SyncTxHelper.getList(indexListKey);
     fnConsoleLog('SyncMonthCommand->syncList', indexList);
 
     if (indexList.length === 0) return index;
@@ -53,10 +53,17 @@ export class SyncMonthCommand implements ICommand<Promise<ObjDateIndex>> {
 
     await SyncTxHelper.begin();
 
+    const newIndexList = [];
+
     for (let i = nextObjectIndex; i < indexList.length; i++) {
       index = indexList[i];
-      await new SyncObjectCommand(this.progress, index).execute();
+      const status = await new SyncObjectCommand(this.progress, index).execute();
+      if (![SyncObjectStatus.INDEX_NOT_EXISTS, SyncObjectStatus.OBJECT_NOT_EXISTS].includes(status)) {
+        newIndexList.push(index);
+      }
     }
+
+    await SyncTxHelper.setList(indexListKey, newIndexList);
 
     await SyncTxHelper.commit();
     return index;

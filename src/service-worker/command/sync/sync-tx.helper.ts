@@ -66,4 +66,8 @@ export class SyncTxHelper {
     const value = await BrowserStorage.get<ObjDateIndex[] | undefined>(key);
     return value || [];
   }
+
+  static async setList(key: string, value: ObjDateIndex[]) {
+    await BrowserStorage.set(key, value);
+  }
 }

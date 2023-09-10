@@ -29,12 +29,17 @@ export class PageNoteUpdateCommand implements ICommand<void> {
   async execute(): Promise<void> {
     fnConsoleLog('NoteUpdateCommand->execute', this.obj);
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
+    const dt = Date.now();
+
+    // allow access to previous values
+    await BrowserStorage.set<ObjPageNoteDto>(`${ObjectStoreKeys.NOTE_HASH}:${this.obj.data.hash}`, this.obj.data);
+
     this.obj.data.prev = this.obj.data.hash;
-    this.obj.data.hash = fnSha256(this.title + this.description);
+    this.obj.data.hash = fnSha256(this.title + this.description + (this.obj.data.url?.href || '') + dt.toString());
 
     this.obj.data.title = this.title;
     this.obj.data.description = this.description;
-    this.obj.updatedAt = Date.now();
+    this.obj.updatedAt = dt;
 
     await WordIndex.removeFlat(this.obj.data.words, this.obj.id);
     await WordIndex.indexFlat(this.obj.data.words, this.obj.id);

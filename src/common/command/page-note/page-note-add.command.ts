@@ -26,19 +26,18 @@ import { WordIndex } from '../../text/word.index';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PageNoteAddCommand implements ICommand<Promise<void>> {
-  constructor(private note: ObjPageNoteDto) {}
+  constructor(private note: ObjPageNoteDto, private dt: number) {}
 
   async execute(): Promise<void> {
     fnConsoleLog('NoteAddCommand->execute', this.note);
 
     const id = await new ObjNextIdCommand().execute();
-    const dt = Date.now();
 
     const dto: ObjDto<ObjPageNoteDto> = {
       id,
       type: ObjTypeDto.PageNote,
-      createdAt: dt,
-      updatedAt: dt,
+      createdAt: this.dt,
+      updatedAt: this.dt,
       data: this.note,
       version: OBJ_DTO_VERSION,
       local: {}
@@ -52,6 +51,6 @@ export class PageNoteAddCommand implements ICommand<Promise<void>> {
     await LinkHrefStore.add(this.note.url, id);
     await LinkHrefStore.noteAdd(this.note.url, id);
 
-    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
+    await new ObjAddIdCommand({ id, dt: this.dt }, ObjectStoreKeys.OBJECT_LIST).execute();
   }
 }

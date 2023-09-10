@@ -75,7 +75,8 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
     if (!url) return;
     const description = LocalModel.description;
     const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(description)]);
-    const hash = fnSha256(title + description + (url?.href || ''));
+    const dt = Date.now();
+    const hash = fnSha256(title + description + (url?.href || '') + dt.toString());
     const note: ObjPageNoteDto = {
       hash,
       title,
@@ -84,7 +85,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
       words: Array.from(words),
       hashtags: []
     };
-    await new PageNoteAddCommand(note).execute();
+    await new PageNoteAddCommand(note, dt).execute();
     props.addCallback();
   };
 
