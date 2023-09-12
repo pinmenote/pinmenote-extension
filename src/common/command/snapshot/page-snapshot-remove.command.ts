@@ -25,7 +25,8 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PageSegmentGetCommand } from './segment/page-segment-get.command';
 import { PageSegmentRemoveListCommand } from './segment/page-segment-remove-list.command';
 import { SegmentPage } from '@pinmenote/page-compute';
-import { WordIndex } from '../../text/word.index';
+import { SwTaskStore } from '../../store/sw-task.store';
+import { SwTaskType } from '../../model/sw-task.model';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
@@ -43,7 +44,10 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
 
     if (snapshot.segmentHash) await this.removeSnapshot(snapshot.segmentHash);
 
-    await WordIndex.removeFlat(this.obj.data.snapshot.info.words, this.obj.id);
+    await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
+      words: this.obj.data.snapshot.info.words,
+      objectId: this.obj.id
+    });
 
     await new ObjRemoveHashtagsCommand(this.obj.id, snapshot.info.hashtags).execute();
   }

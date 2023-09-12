@@ -21,7 +21,8 @@ import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { WordIndex } from '../../text/word.index';
+import { SwTaskStore } from '../../store/sw-task.store';
+import { SwTaskType } from '../../model/sw-task.model';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PageNoteRemoveCommand implements ICommand<void> {
@@ -45,7 +46,10 @@ export class PageNoteRemoveCommand implements ICommand<void> {
     await LinkHrefStore.del(data.url, this.obj.id);
     await LinkHrefStore.noteDel(data.url, this.obj.id);
 
-    await WordIndex.removeFlat(data.words, this.obj.id);
+    await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
+      words: data.words,
+      objectId: this.obj.id
+    });
 
     await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
   }

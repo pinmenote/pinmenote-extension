@@ -23,16 +23,11 @@ import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
-interface SnapshotResult {
-  hash: string;
-  words: string[];
-}
-
-export class ContentPageSegmentSaveCommand implements ICommand<Promise<SnapshotResult>> {
+export class ContentPageSegmentSaveCommand implements ICommand<Promise<string>> {
   private savedHash = new Set<string>();
 
   constructor(private element: HTMLElement, private skipAttributes: PageSkipAttribute[], private isPartial = true) {}
-  async execute(): Promise<SnapshotResult> {
+  async execute(): Promise<string> {
     fnConsoleLog('SnapshotContentSaveCommand->START', window.location.href);
     const skipAttributes = HtmlConstraints.SKIP_URLS[location.hostname] || [];
     skipAttributes.push(...this.skipAttributes);
@@ -48,7 +43,7 @@ export class ContentPageSegmentSaveCommand implements ICommand<Promise<SnapshotR
     await this.contentCallback(snapshot);
     const words = AutoTagMediator.computeTags(this.element);
     fnConsoleLog('TAGS DONE');
-    return { hash: snapshot.hash, words };
+    return snapshot.hash;
   }
 
   private contentCallback = async (content: SegmentData) => {

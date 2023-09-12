@@ -20,6 +20,7 @@ import {
   PageSnapshotDto,
   PageSnapshotInfoDto
 } from '../../../common/model/obj/page-snapshot.dto';
+import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { ContentPageSegmentSaveCommand } from './content-page-segment-save.command';
 import { ContentPageSegmentSaveImageCommand } from './content-page-segment-save-image.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
@@ -65,17 +66,15 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
       this.url
     );
 
-    let words: string[] = [];
     let segmentHash = undefined;
 
     if (!this.canvas) {
       fnConsoleLog('ContentPageSnapshotCreateCommand->isPartial', isPartial);
-      const res = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes, isPartial).execute();
-      segmentHash = res.hash;
-      words = res.words;
+      segmentHash = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes, isPartial).execute();
     } else if (this.element instanceof HTMLImageElement) {
       segmentHash = await new ContentPageSegmentSaveImageCommand(this.element).execute();
     }
+    const words = AutoTagMediator.computeTags(this.element);
 
     const info: Partial<PageSnapshotInfoDto> = {
       title,

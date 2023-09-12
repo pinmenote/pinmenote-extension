@@ -20,7 +20,9 @@ import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { WordIndex } from '../../text/word.index';
+import { SwTaskStore } from '../../store/sw-task.store';
+import { SwTaskType } from '../../model/sw-task.model';
+import { WordFactory } from '../../text/word.factory';
 import { fnConsoleLog } from '../../fn/fn-console';
 import { fnSha256 } from '../../fn/fn-hash';
 
@@ -41,8 +43,20 @@ export class PageNoteUpdateCommand implements ICommand<void> {
     this.obj.data.description = this.description;
     this.obj.updatedAt = dt;
 
-    await WordIndex.removeFlat(this.obj.data.words, this.obj.id);
-    await WordIndex.indexFlat(this.obj.data.words, this.obj.id);
+    // Remove words from index
+    await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
+      words: this.obj.data.words,
+      objectId: this.obj.id
+    });
+
+    // Update words
+    const words = new Set<string>([...WordFactory.toWordList(this.title), ...WordFactory.toWordList(this.description)]);
+    this.obj.data.words = Array.from(words);
+
+    await SwTaskStore.addTask(SwTaskType.WORDS_ADD_INDEX, {
+      words: this.obj.data.words,
+      objectId: this.obj.id
+    });
 
     await BrowserStorage.set(key, this.obj);
 

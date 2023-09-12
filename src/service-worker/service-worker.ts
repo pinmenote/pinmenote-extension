@@ -34,6 +34,7 @@ import { PopupVerify2faCommand } from './command/popup/popup-verify-2fa.command'
 import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
 import { SyncServerCommand } from './command/sync/sync-server.command';
+import { TaskExecutor } from './task/task.executor';
 import { fnConsoleLog } from '../common/fn/fn-console';
 
 const handleMessage = async (
@@ -110,6 +111,7 @@ const handleMessage = async (
   ) {
     await new SyncServerCommand().execute();
   }
+  await TaskExecutor.dequeue();
 };
 
 const handleInstalled = async (event: unknown): Promise<void> => {

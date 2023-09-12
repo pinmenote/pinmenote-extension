@@ -47,4 +47,7 @@ export class ObjectStoreKeys {
 
   // SETTINGS
   static readonly CONTENT_SETTINGS_KEY = 'content-settings';
+
+  // TASK
+  static readonly TASK_QUEUE = 'task:queue';
 }

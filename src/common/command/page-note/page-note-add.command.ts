@@ -22,7 +22,8 @@ import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
 import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
-import { WordIndex } from '../../text/word.index';
+import { SwTaskStore } from '../../store/sw-task.store';
+import { SwTaskType } from '../../model/sw-task.model';
 import { fnConsoleLog } from '../../fn/fn-console';
 
 export class PageNoteAddCommand implements ICommand<Promise<void>> {
@@ -43,7 +44,10 @@ export class PageNoteAddCommand implements ICommand<Promise<void>> {
       local: {}
     };
 
-    await WordIndex.indexFlat(this.note.words, id);
+    await SwTaskStore.addTask(SwTaskType.WORDS_ADD_INDEX, {
+      words: this.note.words,
+      objectId: id
+    });
 
     const key = `${ObjectStoreKeys.OBJECT_ID}:${id}`;
 

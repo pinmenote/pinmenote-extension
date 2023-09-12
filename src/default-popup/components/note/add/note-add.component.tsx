@@ -22,7 +22,7 @@ import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { PageNoteAddCommand } from '../../../../common/command/page-note/page-note-add.command';
 import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { StyledInput } from '../../../../common/components/react/styled.input';
-import { WordIndex } from '../../../../common/text/word.index';
+import { WordFactory } from '../../../../common/text/word.factory';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnSha256 } from '../../../../common/fn/fn-hash';
@@ -74,7 +74,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
     const url = PopupActiveTabStore.url;
     if (!url) return;
     const description = LocalModel.description;
-    const words = new Set<string>([...WordIndex.toWordList(title), ...WordIndex.toWordList(description)]);
+    const words = new Set<string>([...WordFactory.toWordList(title), ...WordFactory.toWordList(description)]);
     const dt = Date.now();
     const hash = fnSha256(title + description + (url?.href || '') + dt.toString());
     const note: ObjPageNoteDto = {

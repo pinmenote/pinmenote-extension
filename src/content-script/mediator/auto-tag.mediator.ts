@@ -16,7 +16,7 @@
  */
 import { DetectLanguage } from '../../common/text/detect-language';
 import { StopWordRemove } from '../../common/text/stop-word/stop-word-remove';
-import { WordIndex } from '../../common/text/word.index';
+import { WordFactory } from '../../common/text/word.factory';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 
 export class AutoTagMediator {
@@ -51,7 +51,7 @@ export class AutoTagMediator {
   };
 
   private static calculateNeighbours(keywords: string[], language?: string): string[] {
-    const tagList = WordIndex.toWordList(document.body.innerText.split('\n').join(' '));
+    const tagList = WordFactory.toWordList(document.body.innerText.split('\n').join(' '));
     const keySet = new Set<string>(keywords);
     const newTags = new Set<string>();
     for (let i = 1; i < tagList.length - 1; i++) {
@@ -70,7 +70,7 @@ export class AutoTagMediator {
   }
 
   private static calculateTags(sentence: string, language?: string): string[] {
-    let tagList = WordIndex.toWordList(sentence);
+    let tagList = WordFactory.toWordList(sentence);
 
     fnConsoleLog('LANGUAGE', language, 'WITH STOPWORDS', tagList);
     // TODO maybe check if anything removed - if not maybe take second guess from detected language
