@@ -41,11 +41,11 @@ function getWebsiteUrl(uri: string): string {
   return `${environmentConfig.defaultServer}${uri}`;
 }
 
-interface LoginComponentProps {
+interface Props {
   loginSuccess: (res: AccessTokenDto) => void;
 }
 
-export const LoginComponent: FunctionComponent<LoginComponentProps> = ({ loginSuccess }) => {
+export const LoginComponent: FunctionComponent<Props> = ({ loginSuccess }) => {
   const [email, setEmail] = useState<string>('foobar5@example.local');
   const [password, setPassword] = useState<string>('asdQWE123!@#');
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);

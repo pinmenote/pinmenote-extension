@@ -18,11 +18,11 @@ import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 
-interface PinExpandProps {
+interface Props {
   pin: ObjDto<ObjPinDto>;
 }
 
-export const PinListExpandComponent: FunctionComponent<PinExpandProps> = ({ pin }) => {
+export const PinListExpandComponent: FunctionComponent<Props> = ({ pin }) => {
   return (
     <div
       style={{

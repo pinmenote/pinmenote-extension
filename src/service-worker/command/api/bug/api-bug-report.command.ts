@@ -14,21 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export enum MainViewEnum {
-  CREATE_LIST = 1,
-  PAGE_OBJECTS,
-  TASK,
-  NOTE,
-  NOTE_EDIT,
-  ENCRYPT,
-  DECRYPT,
-  CALENDAR,
-  FUNCTION,
-  BUG_REPORT,
-  HTML
-}
+import { BugReportDto, BugReportResponseDto } from '../../../../common/model/bug-report.model';
+import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
+import { FetchResponse } from '@pinmenote/fetch-service';
+import { fnSleep } from '../../../../common/fn/fn-sleep';
 
-export interface EncryptMessage {
-  message: string;
-  username: string;
+export class ApiBugReportCommand implements ICommand<Promise<FetchResponse<BugReportResponseDto | ServerErrorDto>>> {
+  constructor(private data: BugReportDto) {}
+  async execute(): Promise<FetchResponse<BugReportResponseDto | ServerErrorDto>> {
+    // TODO implement
+    await fnSleep(1000);
+    return {
+      ok: true,
+      status: 200,
+      data: { description: '#123' },
+      url: '',
+      type: 'TEXT'
+    };
+  }
 }

@@ -21,7 +21,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 
-interface CalendarAddHourComponentProps {
+interface Props {
   addCallback: (hours: number) => void;
 }
 
@@ -29,7 +29,7 @@ const formatHour = (h: number) => {
   return h > 9 ? `${h}:00` : `0${h}:00`;
 };
 
-export const CalendarAddHourComponent: FunctionComponent<CalendarAddHourComponentProps> = (props) => {
+export const CalendarAddHourComponent: FunctionComponent<Props> = (props) => {
   const ref = useRef<HTMLUListElement>(null);
 
   useEffect(() => {

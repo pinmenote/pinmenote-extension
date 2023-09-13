@@ -52,11 +52,11 @@ const StyledStaticDatePicker = styled(StaticDatePicker)({
   }
 });
 
-interface CalendarAddComponentProps {
+interface Props {
   acceptCallback: (dt: Date) => void;
 }
 
-export const CalendarAddDayComponent: FunctionComponent<CalendarAddComponentProps> = (props) => {
+export const CalendarAddDayComponent: FunctionComponent<Props> = (props) => {
   const [date, setDate] = useState<Date>(new Date());
 
   const handleDateChange = (event: any) => {

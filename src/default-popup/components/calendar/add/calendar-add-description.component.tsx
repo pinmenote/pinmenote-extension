@@ -27,7 +27,7 @@ import Typography from '@mui/material/Typography';
 import UpdateIcon from '@mui/icons-material/Update';
 import dayjs from 'dayjs';
 
-interface CalendarAddDescriptionComponentProps {
+interface Props {
   event: CalendarEvent;
   addCallback: (event: CalendarEvent) => void;
   changeCallback: (event: CalendarEvent) => void;
@@ -36,7 +36,7 @@ interface CalendarAddDescriptionComponentProps {
   changeTypeCallback: (type: CalendarDateType) => void;
 }
 
-export const CalendarAddDescriptionComponent: FunctionComponent<CalendarAddDescriptionComponentProps> = (props) => {
+export const CalendarAddDescriptionComponent: FunctionComponent<Props> = (props) => {
   const [startDate, setStartDate] = useState<string>(dayjs(props.event.startDate).format(DATE_YEAR_SECOND));
   const [endDate, setEndDate] = useState<string>(dayjs(props.event.endDate).format(DATE_YEAR_SECOND));
   const [title, setTitle] = useState<string>(props.event.title);

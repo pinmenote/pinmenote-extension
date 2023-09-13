@@ -14,21 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export enum MainViewEnum {
-  CREATE_LIST = 1,
-  PAGE_OBJECTS,
-  TASK,
-  NOTE,
-  NOTE_EDIT,
-  ENCRYPT,
-  DECRYPT,
-  CALENDAR,
-  FUNCTION,
-  BUG_REPORT,
-  HTML
+export interface BugReportDto {
+  description: string;
+  url?: string;
 }
 
-export interface EncryptMessage {
-  message: string;
-  username: string;
+export interface BugReportResponseDto {
+  description: string;
 }

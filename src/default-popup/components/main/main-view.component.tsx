@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, ReactElement, useState } from 'react';
+import { BugReportComponent } from '../bug-report/bug-report.component';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { DecryptComponent } from '../decrypt/decrypt.component';
 import { EncryptComponent } from '../encrypt/encrypt.component';
@@ -44,10 +45,6 @@ export const MainViewComponent: FunctionComponent = () => {
     setCurrentView(MainViewEnum.NOTE);
   };
 
-  const editNoteActionCallback = () => {
-    changeMainTab(MainViewEnum.PAGE_OBJECTS);
-  };
-
   const getViewComponent = (viewType: MainViewEnum): ReactElement | undefined => {
     switch (viewType) {
       case MainViewEnum.CREATE_LIST:
@@ -62,6 +59,8 @@ export const MainViewComponent: FunctionComponent = () => {
         return <CalendarComponent />;
       case MainViewEnum.TASK:
         return <TaskComponent />;
+      case MainViewEnum.BUG_REPORT:
+        return <BugReportComponent cancelCallback={() => setCurrentView(MainViewEnum.PAGE_OBJECTS)} />;
       case MainViewEnum.NOTE:
         return (
           <NoteComponent
@@ -88,7 +87,7 @@ export const MainViewComponent: FunctionComponent = () => {
         />
         <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110 }}>{currentComponent}</div>
       </div>
-      <MainFooterButton />
+      <MainFooterButton openBugReport={() => setCurrentView(MainViewEnum.BUG_REPORT)} />
     </div>
   );
 };

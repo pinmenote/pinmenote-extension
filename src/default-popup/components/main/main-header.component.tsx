@@ -27,13 +27,13 @@ import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
-interface CreateComponentProps {
+interface Props {
   currentView: MainViewEnum;
   previousView: MainViewEnum;
   changeMainTabCallback: (viewType: MainViewEnum) => void;
 }
 
-export const MainHeaderComponent: FunctionComponent<CreateComponentProps> = (props) => {
+export const MainHeaderComponent: FunctionComponent<Props> = (props) => {
   const [isAdding, setIsAdding] = useState<boolean>(PopupActiveTabStore.isAdding);
 
   useEffect(() => {

@@ -41,12 +41,12 @@ function getWebsiteUrl(uri: string): string {
   return `${environmentConfig.defaultServer}${uri}`;
 }
 
-interface Verify2faComponentProps {
+interface Props {
   loginSuccess: (res: AccessTokenDto) => void;
   verifyToken: string;
 }
 
-export const Verify2faComponent: FunctionComponent<Verify2faComponentProps> = ({ loginSuccess, verifyToken }) => {
+export const Verify2faComponent: FunctionComponent<Props> = ({ loginSuccess, verifyToken }) => {
   const [totp, setTotp] = useState<string>('');
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 

@@ -18,12 +18,12 @@ import React, { FunctionComponent } from 'react';
 import Button from '@mui/material/Button';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 
-interface DecryptedValueComponentProps {
+interface Props {
   backCallback: () => void;
   message: string;
 }
 
-export const DecryptedValueComponent: FunctionComponent<DecryptedValueComponentProps> = (props) => {
+export const DecryptedValueComponent: FunctionComponent<Props> = (props) => {
   return (
     <div>
       <h1>Decrypted value</h1>

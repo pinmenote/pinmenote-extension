@@ -26,6 +26,7 @@ import { ContentTakeScreenshotCommand } from './command/content/content-take-scr
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { IframePassMessageCommand } from './command/iframe/iframe-pass-message.command';
 import { PageComputeMessage } from '@pinmenote/page-compute';
+import { PopupBugReportCommand } from './command/popup/popup-bug-report.command';
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLoginSuccessCommand } from './command/popup/popup-login-success.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
@@ -73,6 +74,9 @@ const handleMessage = async (
       break;
     case BusMessageType.CONTENT_FETCH_PDF:
       await new ContentFetchPDFCommand(msg.data).execute();
+      break;
+    case BusMessageType.POPUP_BUG_REPORT:
+      await new PopupBugReportCommand(msg.data).execute();
       break;
     case BusMessageType.POPUP_LOGIN:
       await new PopupLoginCommand(msg.data).execute();

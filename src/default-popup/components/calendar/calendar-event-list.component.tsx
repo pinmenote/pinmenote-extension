@@ -18,11 +18,11 @@ import React, { FunctionComponent } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 
-interface CalendarEventListComponentProps {
+interface Props {
   addEventCallback: () => void;
 }
 
-export const CalendarEventListComponent: FunctionComponent<CalendarEventListComponentProps> = (props) => {
+export const CalendarEventListComponent: FunctionComponent<Props> = (props) => {
   return (
     <div>
       <IconButton onClick={() => props.addEventCallback()}>

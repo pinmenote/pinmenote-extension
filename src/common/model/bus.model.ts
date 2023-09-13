@@ -32,6 +32,7 @@ export enum BusMessageType {
   WORKER_ACK = 'worker.ack',
   // Popup
   POPUP_API_ERROR = 'popup.api.error',
+  POPUP_BUG_REPORT = 'popup.bug.report',
   POPUP_CAPTURE_ELEMENT_START = 'popup.capture.element.start',
   POPUP_INIT = 'popup.init',
   POPUP_LOGIN = 'popup.login',

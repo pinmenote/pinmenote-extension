@@ -42,7 +42,7 @@ const zeroPad = {
   padding: 0
 };
 
-interface CreateListProps {
+interface Props {
   closeListCallback: (viewType: MainViewEnum) => void;
 }
 
@@ -51,7 +51,7 @@ enum IsLoadingType {
   PageSave
 }
 
-export const MainMenuListComponent: FunctionComponent<CreateListProps> = (props) => {
+export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
   const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
 
   const handleSavePageClick = async () => {

@@ -32,12 +32,12 @@ import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-interface PinListElementProps {
+interface Props {
   obj: ObjDto<ObjPinDto>;
   removeCallback: (pin: ObjDto<ObjPinDto>) => void;
 }
 
-export const PinListElement: FunctionComponent<PinListElementProps> = (props) => {
+export const PinListElement: FunctionComponent<Props> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(props.obj.local?.visible);
 

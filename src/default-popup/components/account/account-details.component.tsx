@@ -29,11 +29,11 @@ import { TokenStorageRemoveCommand } from '../../../common/command/server/token/
 import Typography from '@mui/material/Typography';
 import jwtDecode from 'jwt-decode';
 
-interface AccountDetailsComponentProps {
+interface Props {
   logoutSuccess: () => void;
 }
 
-export const AccountDetailsComponent: FunctionComponent<AccountDetailsComponentProps> = ({ logoutSuccess }) => {
+export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSuccess }) => {
   const [tokenData, setTokenData] = useState<TokenDataDto | undefined>();
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 

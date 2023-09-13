@@ -18,12 +18,12 @@ import React, { FunctionComponent } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-interface CalendarAddRepeatComponentProps {
+interface Props {
   repeat: string;
   addCallback: (value: string) => void;
 }
 
-export const CalendarAddRepeatComponent: FunctionComponent<CalendarAddRepeatComponentProps> = (props) => {
+export const CalendarAddRepeatComponent: FunctionComponent<Props> = (props) => {
   const handleAdd = (value: string) => {
     props.addCallback(value);
   };

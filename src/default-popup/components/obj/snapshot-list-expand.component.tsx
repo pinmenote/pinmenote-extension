@@ -18,11 +18,11 @@ import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 
-interface SnapshotExpandProps {
+interface Props {
   obj: ObjDto<ObjPageDto>;
 }
 
-export const SnapshotListExpandComponent: FunctionComponent<SnapshotExpandProps> = ({ obj }) => {
+export const SnapshotListExpandComponent: FunctionComponent<Props> = ({ obj }) => {
   return (
     <div
       style={{
