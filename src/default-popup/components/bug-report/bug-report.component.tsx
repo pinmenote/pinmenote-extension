@@ -59,7 +59,7 @@ export const BugReportComponent: FunctionComponent<Props> = (props) => {
       type: BusMessageType.POPUP_BUG_REPORT,
       data: { description, url }
     });
-    LogManager.log('handleReportBug 1');
+    LogManager.log(`handleReportBug 1 ${url || ''}`);
   };
 
   let component;
