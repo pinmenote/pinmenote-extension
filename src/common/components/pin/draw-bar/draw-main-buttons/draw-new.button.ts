@@ -14,46 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlComponent } from '../../../model/pin-view.model';
-import { PinEditManager } from '../../../pin-edit.manager';
-import { PinEditModel } from '../../../model/pin-edit.model';
-import { applyStylesToElement } from '../../../../../style.utils';
-import { fnConsoleLog } from '../../../../../fn/fn-console';
-import { iconButtonStyles } from '../../../styles/icon-button.styles';
+import { HtmlComponent } from '../../model/pin-view.model';
+import { PinEditManager } from '../../pin-edit.manager';
+import { PinEditModel } from '../../model/pin-edit.model';
+import { applyStylesToElement } from '../../../../style.utils';
 
-export class ActionDrawActionButton implements HtmlComponent<HTMLElement> {
+export class DrawNewButton implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;
-
-  private fillColor: string;
-
   constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
-    this.fillColor = model.local.drawVisible ? '#ff0000' : '#000000';
   }
 
   render(): HTMLElement {
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-</svg>`;
+    this.el.innerText = 'New';
     this.el.addEventListener('click', this.handleClick);
-    applyStylesToElement(this.el, iconButtonStyles);
-    if (!this.model.local.drawVisible) this.hide();
+
+    applyStylesToElement(this.el, {
+      cursor: 'pointer',
+      color: '#000',
+      'font-size': '1em',
+      'font-weight': 'bold',
+      'margin-left': '10px'
+    });
     return this.el;
   }
+
+  handleClick = () => {
+    this.edit.newDraw();
+  };
 
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
   }
-
-  show(): void {
-    if (this.model.local.drawVisible) this.el.style.display = 'inline-block';
-  }
-
-  hide(): void {
-    this.el.style.display = 'none';
-  }
-
-  handleClick = () => {
-    fnConsoleLog('draw action button');
-  };
 }

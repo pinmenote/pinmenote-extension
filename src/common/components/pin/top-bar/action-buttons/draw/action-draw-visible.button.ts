@@ -57,12 +57,10 @@ export class ActionDrawVisibleButton implements HtmlComponent<HTMLElement> {
       this.fillColor = '#000000';
       this.model.local.drawVisible = false;
       this.edit.hideDraw();
-      this.model.topBar.drawActionIcon.hide();
     } else {
       this.fillColor = '#ff0000';
       this.model.local.drawVisible = true;
       this.edit.showDraw();
-      this.model.topBar.drawActionIcon.show();
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
     await new PinUpdateCommand(this.model.object).execute();

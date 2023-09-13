@@ -19,6 +19,7 @@ import { BottomBarComponent } from './bottom-bar/bottom-bar.component';
 import { DocumentMediator } from '../../../content-script/mediator/document.mediator';
 import { DownloadBarComponent } from './download-bar/download-bar.component';
 import { DrawBarComponent } from './draw-bar/draw-bar.component';
+import { DrawBarMainComponent } from './draw-bar/draw-bar-main.component';
 import { DrawContainerComponent } from './draw-container.component';
 import { DrawToolDto } from '../../model/obj/obj-draw.dto';
 import { ObjDto } from '../../model/obj/obj.dto';
@@ -49,6 +50,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   readonly drawComponent: DrawContainerComponent;
   readonly drawBar: DrawBarComponent;
+  readonly drawMain: DrawBarMainComponent;
 
   readonly downloadBar: DownloadBarComponent;
 
@@ -71,6 +73,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.text = new TextContainerComponent(this.model);
 
     this.drawBar = new DrawBarComponent(this.model);
+    this.drawMain = new DrawBarMainComponent(this.edit, this.model);
     this.drawComponent = new DrawContainerComponent(this.model);
 
     this.downloadBar = new DownloadBarComponent(this.edit, this.model);
@@ -113,9 +116,12 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     // Draw
     this.top.appendChild(this.drawComponent.render());
+    this.top.appendChild(this.drawMain.render());
     this.top.appendChild(this.drawBar.render());
+
     this.drawBar.setSize(4);
     this.drawBar.setTool(DrawToolDto.Pencil);
+
     if (this.model.local.drawVisible) {
       this.drawComponent.focusin();
       this.drawComponent.drawArea.canDraw = false;
@@ -162,8 +168,11 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.text.resize();
     this.topBar.resize();
     this.bottomBar.resize();
+
     this.drawComponent.resize();
     this.drawBar.resize();
+    this.drawMain.resize();
+
     this.downloadBar.resize();
     this.editBar.resize();
   };
@@ -182,6 +191,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
     this.drawComponent.cleanup();
     this.drawBar.cleanup();
+    this.drawMain.cleanup();
     this.editBar.cleanup();
   }
 

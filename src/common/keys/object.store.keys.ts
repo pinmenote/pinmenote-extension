@@ -38,6 +38,11 @@ export class ObjectStoreKeys {
   static readonly SEARCH_WORD = 's:w';
   static readonly SEARCH_START = 's:s';
 
+  // TAG
+  static readonly TAG_INDEX = 't:i';
+  static readonly TAG_WORD = 't:w';
+  static readonly TAG_START = 't:s';
+
   static readonly ACCESS_TOKEN = 'accessToken';
 
   // SYNC

@@ -19,6 +19,7 @@ import { fnConsoleLog } from '../../fn/fn-console';
 
 enum VisibleState {
   None = 1,
+  DrawMain,
   DrawBar,
   PinEditBar,
   DownloadBar
@@ -36,17 +37,23 @@ export class PinEditManager {
   }
 
   startDraw = () => {
-    this.parent.drawComponent.drawArea.canDraw = true;
     this.parent.topBar.drawVisibleIcon.hide();
-    this.parent.topBar.drawActionIcon.hide();
+    this.changeVisibleBar(VisibleState.DrawMain);
+  };
+
+  newDraw = () => {
+    this.parent.drawComponent.drawArea.canDraw = true;
     this.changeVisibleBar(VisibleState.DrawBar);
+  };
+
+  cancelDraw = () => {
+    this.stopEdit();
+    this.parent.topBar.drawVisibleIcon.show();
   };
 
   stopDraw = () => {
     this.parent.drawComponent.drawArea.canDraw = false;
-    this.stopEdit();
-    this.parent.topBar.drawVisibleIcon.show();
-    this.parent.topBar.drawActionIcon.show();
+    this.cancelDraw();
   };
 
   showDraw = () => {
@@ -96,6 +103,9 @@ export class PinEditManager {
       this.parent.drawBar.hide();
       this.parent.topBar.drawTurnoff();
     }
+    if (this.prevState === VisibleState.DrawMain) {
+      this.parent.drawMain.hide();
+    }
 
     // Edit cleanup
     if (this.prevState === VisibleState.PinEditBar) {
@@ -119,6 +129,11 @@ export class PinEditManager {
 
         this.parent.editBar.show();
         break;
+      case VisibleState.DrawMain: {
+        this.parent.topBar.moveup();
+        this.parent.drawMain.show();
+        break;
+      }
       case VisibleState.DrawBar:
         this.parent.topBar.moveup();
         this.parent.drawComponent.focusin();

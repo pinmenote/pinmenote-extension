@@ -28,7 +28,7 @@ import { DrawUndoButton } from './draw-buttons/draw-undo.button';
 import { PinEditModel } from '../model/pin-edit.model';
 import { applyStylesToElement } from '../../../style.utils';
 
-const drawBarStyles = {
+const barStyles = {
   top: '-24px',
   height: '24px',
   position: 'absolute',
@@ -178,7 +178,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   }
 
   render(): HTMLElement {
-    const style = Object.assign({ width: `${this.model.rect.width}px` }, drawBarStyles);
+    const style = Object.assign({ width: `${this.model.rect.width}px` }, barStyles);
     applyStylesToElement(this.el, style);
 
     this.placeComponent(this.pencil.render(), 5);
