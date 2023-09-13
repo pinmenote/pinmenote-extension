@@ -20,12 +20,12 @@ import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
 import { BoardStore } from '../../../store/board.store';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
+import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { marked } from 'marked';
 
 interface Props {
-  dto: ObjDto<ObjNoteDto>;
+  dto: ObjDto<ObjPageNoteDto>;
   refreshBoardCallback: () => void;
 }
 

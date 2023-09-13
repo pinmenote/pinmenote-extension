@@ -17,10 +17,12 @@
 import { SwTaskData, SwTaskDataType, SwTaskType } from '../model/sw-task.model';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ObjectStoreKeys } from '../keys/object.store.keys';
+import { fnConsoleLog } from '../fn/fn-console';
 import { fnUid } from '../fn/fn-uid';
 
 export class SwTaskStore {
   static addTask = async (type: SwTaskType, data: SwTaskDataType): Promise<void> => {
+    fnConsoleLog('SwTaskStore->addTask', type, data);
     const queue = await this.getQueue();
     queue.push({
       uid: fnUid(),

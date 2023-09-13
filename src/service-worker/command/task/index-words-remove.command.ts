@@ -37,6 +37,7 @@ export class IndexWordsRemoveCommand implements ICommand<Promise<void>> {
 
       await this.updateCallback(this.task);
     }
+    fnConsoleLog('IndexWordsRemoveCommand->complete');
   }
 
   private removeStorage = async (value: string, id: number) => {
