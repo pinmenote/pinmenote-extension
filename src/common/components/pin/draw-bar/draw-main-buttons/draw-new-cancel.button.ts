@@ -26,16 +26,20 @@ export class DrawNewCancelButton implements HtmlComponent<HTMLElement> {
   }
 
   render(): HTMLElement {
-    this.el.innerText = 'Cancel';
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62 20">
+<style>.ft {
+    color: #000;
+    font-size: 1em;
+    font-weight: normal;
+    margin-left: 10px;
+    line-height: 1.5;
+    font-family: Roboto, sans-serif;
+}</style>
+<text x="5" y="17" class="ft">Cancel</text>
+</svg>`;
     this.el.addEventListener('click', this.handleClick);
 
-    applyStylesToElement(this.el, {
-      cursor: 'pointer',
-      color: '#000',
-      'font-size': '1em',
-      'font-weight': 'bold',
-      'margin-left': '10px'
-    });
+    applyStylesToElement(this.el, { cursor: 'pointer', width: '62px' });
     return this.el;
   }
 

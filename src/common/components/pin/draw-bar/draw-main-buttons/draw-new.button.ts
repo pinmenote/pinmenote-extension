@@ -26,16 +26,20 @@ export class DrawNewButton implements HtmlComponent<HTMLElement> {
   }
 
   render(): HTMLElement {
-    this.el.innerText = 'New';
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 20">
+<style>.ft {
+    color: #000;
+    font-size: 1em;
+    font-weight: normal;
+    margin-left: 10px;
+    line-height: 1.5;
+    font-family: Roboto, sans-serif;
+}</style>
+<text x="5" y="17" class="ft">New</text>
+</svg>`;
     this.el.addEventListener('click', this.handleClick);
 
-    applyStylesToElement(this.el, {
-      cursor: 'pointer',
-      color: '#000',
-      'font-size': '1em',
-      'font-weight': 'bold',
-      'margin-left': '10px'
-    });
+    applyStylesToElement(this.el, { cursor: 'pointer', width: '40px' });
     return this.el;
   }
 

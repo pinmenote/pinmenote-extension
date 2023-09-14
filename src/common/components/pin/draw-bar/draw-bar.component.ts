@@ -203,8 +203,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
     // this.placeComponent(this.drawTest.render(), 220);
 
-    this.placeComponent(this.drawSave.render(), this.model.rect.width - 56);
-    this.placeComponent(this.drawCancel.render(), this.model.rect.width - 28);
+    this.placeComponent(this.drawSave.render(), 222);
+    this.placeComponent(this.drawCancel.render(), 244);
 
     this.adjustTop();
 
