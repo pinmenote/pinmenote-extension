@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { DrawEditButton } from './draw-main-buttons/draw-edit.button';
 import { DrawNewButton } from './draw-main-buttons/draw-new.button';
 import { DrawNewCancelButton } from './draw-main-buttons/draw-new-cancel.button';
 import { HtmlComponent } from '../model/pin-view.model';
@@ -34,20 +35,25 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
 
   private visible = false;
 
-  private readonly newDraw: DrawNewButton;
+  private readonly newDraw?: DrawNewButton;
+  private readonly editDraw?: DrawEditButton;
   private readonly cancelDraw: DrawNewCancelButton;
 
   constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
-
-    this.newDraw = new DrawNewButton(edit, model);
+    if (model.draw.data.currentData.length > 0) {
+      this.editDraw = new DrawEditButton(edit, model);
+    } else {
+      this.newDraw = new DrawNewButton(edit, model);
+    }
     this.cancelDraw = new DrawNewCancelButton(edit, model);
   }
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.model.rect.width}px` }, barStyles);
     applyStylesToElement(this.el, style);
 
-    this.el.appendChild(this.newDraw.render());
+    if (this.newDraw) this.el.appendChild(this.newDraw.render());
+    if (this.editDraw) this.el.appendChild(this.editDraw.render());
     this.el.appendChild(this.cancelDraw.render());
 
     this.adjustTop();
@@ -56,7 +62,8 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
   }
 
   cleanup(): void {
-    this.newDraw.cleanup();
+    this.newDraw?.cleanup();
+    this.editDraw?.cleanup();
   }
 
   resize(): void {

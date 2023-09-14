@@ -14,25 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { DrawBarComponent } from '../draw-bar.component';
-import { HtmlComponent } from '../../model/pin-view.model';
+import { PinEditManager } from '../../pin-edit.manager';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { applyStylesToElement } from '../../../../style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawRedoButton implements HtmlComponent<HTMLElement> {
+export class DrawSaveCancelButton {
   private readonly el: HTMLDivElement;
 
-  private canRedo = false;
-
-  constructor(private drawBar: DrawBarComponent, model: PinEditModel) {
+  constructor(private edit: PinEditManager, model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
   }
 
   render(): HTMLElement {
-    const fill = this.canRedo ? '#ff0000' : '#000000';
-    this.el.innerHTML = `<svg fill="${fill}" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-<path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/>
+    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
 </svg>`;
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
@@ -44,17 +40,7 @@ export class DrawRedoButton implements HtmlComponent<HTMLElement> {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  select(): void {
-    this.canRedo = true;
-    (this.el.firstChild as SVGElement).setAttribute('fill', '#ff0000');
-  }
-
-  unselect(): void {
-    this.canRedo = false;
-    (this.el.firstChild as SVGElement).setAttribute('fill', '#000000');
-  }
-
   private handleClick = () => {
-    this.drawBar.redo();
+    this.edit.stopDraw();
   };
 }

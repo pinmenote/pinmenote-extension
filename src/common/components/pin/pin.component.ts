@@ -72,7 +72,7 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.bottomBar = new BottomBarComponent(this.edit, this.model);
     this.text = new TextContainerComponent(this.model);
 
-    this.drawBar = new DrawBarComponent(this.model);
+    this.drawBar = new DrawBarComponent(this.edit, this.model);
     this.drawMain = new DrawBarMainComponent(this.edit, this.model);
     this.drawComponent = new DrawContainerComponent(this.model);
 

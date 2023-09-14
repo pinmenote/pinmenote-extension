@@ -22,9 +22,12 @@ import { DrawFillButton } from './draw-buttons/draw-fill.button';
 import { DrawLineButton } from './draw-buttons/draw-line.button';
 import { DrawPencilButton } from './draw-buttons/draw-pencil.button';
 import { DrawRedoButton } from './draw-buttons/draw-redo.button';
+import { DrawSaveButton } from './draw-buttons/draw-save.button';
+import { DrawSaveCancelButton } from './draw-buttons/draw-save-cancel.button';
 import { DrawTestButton } from './draw-buttons/draw-test.button';
 import { DrawToolDto } from '../../../model/obj/obj-draw.dto';
 import { DrawUndoButton } from './draw-buttons/draw-undo.button';
+import { PinEditManager } from '../pin-edit.manager';
 import { PinEditModel } from '../model/pin-edit.model';
 import { applyStylesToElement } from '../../../style.utils';
 
@@ -58,9 +61,12 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   private readonly undoButton: DrawUndoButton;
   private readonly redoButton: DrawRedoButton;
 
+  private readonly drawSave: DrawSaveButton;
+  private readonly drawCancel: DrawSaveCancelButton;
+
   private readonly drawTest: DrawTestButton;
 
-  constructor(private model: PinEditModel) {
+  constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
     this.pencil = new DrawPencilButton(this, model);
     this.line = new DrawLineButton(this, model);
@@ -72,6 +78,9 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
     this.undoButton = new DrawUndoButton(this, model);
     this.redoButton = new DrawRedoButton(this, model);
+
+    this.drawSave = new DrawSaveButton(edit, model);
+    this.drawCancel = new DrawSaveCancelButton(edit, model);
 
     // TODO move logic to model
     this.model.draw.setUndoButton(this.undoButton);
@@ -193,6 +202,9 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
     this.placeComponent(this.redoButton.render(), 193);
 
     // this.placeComponent(this.drawTest.render(), 220);
+
+    this.placeComponent(this.drawSave.render(), this.model.rect.width - 56);
+    this.placeComponent(this.drawCancel.render(), this.model.rect.width - 28);
 
     this.adjustTop();
 

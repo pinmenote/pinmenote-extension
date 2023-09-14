@@ -52,17 +52,26 @@ export class ActionDrawVisibleButton implements HtmlComponent<HTMLElement> {
     this.el.style.display = 'none';
   }
 
+  turnOn(): void {
+    this.fillColor = '#ff0000';
+    this.model.local.drawVisible = true;
+    this.edit.showDraw();
+    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+  }
+
+  turnOff(): void {
+    this.fillColor = '#000000';
+    this.model.local.drawVisible = false;
+    this.edit.hideDraw();
+    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
+  }
+
   handleClick = async () => {
     if (this.model.local.drawVisible) {
-      this.fillColor = '#000000';
-      this.model.local.drawVisible = false;
-      this.edit.hideDraw();
+      this.turnOff();
     } else {
-      this.fillColor = '#ff0000';
-      this.model.local.drawVisible = true;
-      this.edit.showDraw();
+      this.turnOn();
     }
-    (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);
     await new PinUpdateCommand(this.model.object).execute();
   };
 }
