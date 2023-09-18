@@ -18,7 +18,7 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
-import { SyncObjectDataCommand } from './sync-object-data.command';
+import { SyncObjectCommand } from './sync-object.command';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
@@ -27,6 +27,6 @@ export class SyncPdfCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('SyncPdfCommand');
     const data = this.obj.data;
-    await new SyncObjectDataCommand(this.obj, data.hash, this.progress, this.index).execute();
+    await new SyncObjectCommand(this.obj, data.hash, this.progress, this.index).execute();
   }
 }

@@ -23,6 +23,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 export class ContentThemeCommand implements ICommand<void> {
   constructor(private data: ContentExtensionData) {}
   async execute(): Promise<void> {
+    fnConsoleLog('ContentThemeCommand', this.data);
     try {
       if (this.data.theme === ExtensionThemeDto.DARK) {
         await BrowserApi.browserAction.setIcon(appLightIcons());

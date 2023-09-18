@@ -14,84 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjRemovedDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import { ObjNoteDto, ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
-import { ObjGetCommand } from '../../../../common/command/obj/obj-get.command';
-import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
-import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
-import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
-import { SyncNoteCommand } from './sync-note.command';
-import { SyncPageNoteCommand } from './sync-page-note.command';
-import { SyncPdfCommand } from './sync-pdf.command';
-import { SyncPinCommand } from './sync-pin.command';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { SyncProgress } from '../sync.model';
-import { SyncRemovedCommand } from './sync-removed.command';
-import { SyncSetProgressCommand } from '../progress/sync-set-progress.command';
-import { SyncSnapshotCommand } from './sync-snapshot.command';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { fnSleep } from '../../../../common/fn/fn-sleep';
 
-export enum SyncObjectStatus {
-  SERVER_ERROR = -3,
-  INDEX_NOT_EXISTS,
-  OBJECT_NOT_EXISTS,
-  OK
-}
-
-export class SyncObjectCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private progress: SyncProgress, private index?: ObjDateIndex) {}
-
-  async execute(): Promise<SyncObjectStatus> {
-    if (!this.index) {
-      fnConsoleLog('SyncObjectCommand->PROBLEM', this.index, this.progress);
-      return SyncObjectStatus.INDEX_NOT_EXISTS;
-    }
-    const obj = await new ObjGetCommand(this.index.id).execute();
-    if (!obj) {
-      fnConsoleLog('SyncObjectCommand->syncObject EMPTY', this.index.id);
-      return SyncObjectStatus.OBJECT_NOT_EXISTS;
-    }
-    switch (obj.type) {
-      case ObjTypeDto.PageSnapshot:
-      case ObjTypeDto.PageElementSnapshot: {
-        fnConsoleLog('SyncSnapshotCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.progress, this.index).execute();
-        break;
-      }
-      case ObjTypeDto.PageElementPin: {
-        fnConsoleLog('SyncPinCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.progress, this.index).execute();
-        break;
-      }
-      case ObjTypeDto.Pdf: {
-        fnConsoleLog('SyncPdfCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.progress, this.index).execute();
-        break;
-      }
-      case ObjTypeDto.Note: {
-        fnConsoleLog('SyncNoteCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.progress, this.index).execute();
-        break;
-      }
-      case ObjTypeDto.PageNote: {
-        fnConsoleLog('SyncPageNoteCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.progress, this.index).execute();
-        break;
-      }
-      case ObjTypeDto.Removed: {
-        fnConsoleLog('SyncRemovedCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.progress, this.index).execute();
-        break;
-      }
-      default: {
-        fnConsoleLog('SyncObjectCommand->PROBLEM', obj.type, 'index', this.index);
-        break;
-      }
-    }
-    await fnSleep(100);
-    await new SyncSetProgressCommand({ id: this.index.id, timestamp: this.index.dt, state: 'update' }).execute();
-    return SyncObjectStatus.OK;
+export class SyncObjectCommand implements ICommand<Promise<void>> {
+  constructor(
+    private obj: ObjDto,
+    private initialHash: string,
+    private progress: SyncProgress,
+    private index: ObjDateIndex
+  ) {}
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async execute(): Promise<void> {
+    fnConsoleLog(
+      'SyncObjectDataCommand',
+      this.obj.id,
+      this.obj.type,
+      this.obj.createdAt,
+      this.obj.updatedAt,
+      this.obj.version,
+      this.initialHash
+    );
   }
 }

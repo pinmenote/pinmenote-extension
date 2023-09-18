@@ -88,7 +88,7 @@ const colorInputStyles = {
   top: '175px',
   left: '-1px',
   outline: 'none',
-  'font-size': '1em',
+  'font-size': '14px',
   'background-color': '#ffffff',
   color: '#000000',
   border: '1px solid #000000',

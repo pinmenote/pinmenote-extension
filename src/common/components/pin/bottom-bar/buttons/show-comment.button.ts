@@ -22,7 +22,8 @@ import { applyStylesToElement } from '../../../../style.utils';
 const elStyles = {
   color: '#000000',
   'margin-right': '5px',
-  'font-size': '0.8em',
+  'font-size': '12px',
+  'font-family': 'Roboto, sans-serif',
   'text-decoration': 'underline',
   'user-select': 'none',
   cursor: 'pointer'

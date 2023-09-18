@@ -33,7 +33,7 @@ const inputStyles = {
   border: '2px solid #000000',
   'background-color': '#ffffff',
   color: '#000000',
-  'font-size': '1em'
+  'font-size': '14px'
 };
 
 export class DrawBrushSize implements HtmlComponent<HTMLElement> {

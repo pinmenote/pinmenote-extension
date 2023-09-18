@@ -19,7 +19,6 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
 import { SyncMonthCommand } from './sync-month.command';
 import { SyncProgress } from './sync.model';
-import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
@@ -50,11 +49,16 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
 
-    let lastIndex = { id: progress.id, dt: progress.timestamp };
+    const lastIndex = { id: progress.id, dt: progress.timestamp };
 
     while (dt < lastDay) {
       const yearMonth = fnDateKeyFormat(dt);
-      lastIndex = await new SyncMonthCommand(progress, yearMonth).execute();
+      const syncResult = await new SyncMonthCommand(progress, yearMonth).execute();
+      if (syncResult.status < 0) {
+        fnConsoleLog('SyncServerCommand->sync->SyncObjectStatus->error', syncResult);
+        return;
+      }
+
       dt.setMonth(dt.getMonth() + 1);
       fnConsoleLog('sync dt', dt, 'lastDay', lastDay);
 

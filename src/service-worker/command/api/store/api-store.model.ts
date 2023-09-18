@@ -28,7 +28,7 @@ enum HashOperation {
   DEL = 'DEL'
 }
 
-export interface HashChange {
+export interface HashChangeResponse {
   createdAt: number;
   operation: HashOperation;
   hash: string;

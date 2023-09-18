@@ -17,10 +17,12 @@
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusDownloadMessage } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentDownloadDataCommand implements ICommand<Promise<void>> {
   constructor(private data: BusDownloadMessage) {}
   async execute(): Promise<void> {
+    fnConsoleLog('ContentDownloadDataCommand->execute');
     await BrowserApi.downloads.download({
       url: this.data.url,
       filename: this.data.filename,

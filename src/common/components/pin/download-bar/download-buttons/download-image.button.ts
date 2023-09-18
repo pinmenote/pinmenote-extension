@@ -60,9 +60,7 @@ export class DownloadImageButton {
 
     setTimeout(async () => {
       let rect: ObjRectangleDto = this.model.ref.getBoundingClientRect();
-      if (this.model.canvas) {
-        rect = this.model.canvas.rect;
-      }
+      if (this.model.canvas) rect = this.model.canvas.rect;
       const screenshot = await ScreenshotFactory.takeScreenshot(this.model.doc, rect);
       await this.downloadScreenshot(screenshot);
 
@@ -76,12 +74,14 @@ export class DownloadImageButton {
   private downloadScreenshot = async (screenshot: string): Promise<void> => {
     let url = '';
     let filename = '';
-    if (this.model.doc.settings.screenshotFormat == 'jpeg') {
-      url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/jpeg'));
-      filename = `${fnUid()}.jpg`;
-    } else {
-      url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/png'));
-      filename = `${fnUid()}.png`;
+    switch (this.model.doc.settings.screenshotFormat) {
+      case 'jpeg':
+        url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/jpeg'));
+        filename = `${fnUid()}.jpg`;
+        break;
+      default:
+        url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/png'));
+        filename = `${fnUid()}.png`;
     }
     const data = { url, filename };
     await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({ type: BusMessageType.CONTENT_DOWNLOAD_DATA, data });

@@ -26,7 +26,7 @@ export class CommentFooterComponent {
   }
 
   render(): HTMLElement {
-    this.el.style.fontSize = '0.7em';
+    this.el.style.fontSize = '11px';
     let value = 'updated ' + fnDateFormat(new Date(this.comment.updatedAt));
     if (this.comment.prev) value += ` (edited)`;
     this.el.innerHTML = value;

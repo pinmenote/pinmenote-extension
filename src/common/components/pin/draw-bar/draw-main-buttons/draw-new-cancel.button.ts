@@ -19,6 +19,17 @@ import { PinEditManager } from '../../pin-edit.manager';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { applyStylesToElement } from '../../../../style.utils';
 
+const elStyles = {
+  color: '#000000',
+  'margin-left': '5px',
+  'margin-top': '5px',
+  'font-size': '12px',
+  'font-family': 'Roboto, sans-serif',
+  'text-decoration': 'none',
+  'user-select': 'none',
+  cursor: 'pointer'
+};
+
 export class DrawNewCancelButton implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;
   constructor(private edit: PinEditManager, private model: PinEditModel) {
@@ -26,20 +37,9 @@ export class DrawNewCancelButton implements HtmlComponent<HTMLElement> {
   }
 
   render(): HTMLElement {
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62 20">
-<style>.ft {
-    color: #000;
-    font-size: 1em;
-    font-weight: normal;
-    margin-left: 10px;
-    line-height: 1.5;
-    font-family: Roboto, sans-serif;
-}</style>
-<text x="5" y="17" class="ft">Cancel</text>
-</svg>`;
+    applyStylesToElement(this.el, elStyles);
+    this.el.innerText = 'cancel';
     this.el.addEventListener('click', this.handleClick);
-
-    applyStylesToElement(this.el, { cursor: 'pointer', width: '62px' });
     return this.el;
   }
 

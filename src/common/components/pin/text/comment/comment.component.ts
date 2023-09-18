@@ -29,7 +29,7 @@ const viewStyles = {
   display: 'flex',
   'flex-direction': 'row',
   'justify-content': 'space-between',
-  'font-size': '1em',
+  'font-size': '14px',
   color: '#000',
   width: '100%'
 };

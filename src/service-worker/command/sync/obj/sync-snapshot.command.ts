@@ -20,7 +20,7 @@ import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-in
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
-import { SyncObjectDataCommand } from './sync-object-data.command';
+import { SyncObjectCommand } from './sync-object.command';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
@@ -32,7 +32,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<void>> {
     // fnConsoleLog('SyncSnapshotCommand->snapshot', this.obj.id, 'index', this.index, 'obj', this.obj);
     if (!snapshot.segmentHash) return;
 
-    await new SyncObjectDataCommand(this.obj, snapshot.segmentHash, this.progress, this.index).execute();
+    await new SyncObjectCommand(this.obj, snapshot.segmentHash, this.progress, this.index).execute();
 
     await this.syncSegment(snapshot.segmentHash);
   }

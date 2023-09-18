@@ -14,29 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { ApiCallBase } from '../api-call.base';
 import { FetchService } from '@pinmenote/fetch-service';
 import { HashChangeResponse } from './api-store.model';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
-export class ApiStoreChangesCommand
-  extends ApiCallBase
-  implements ICommand<Promise<{ data: HashChangeResponse[] } | undefined>>
-{
-  async execute(): Promise<{ data: HashChangeResponse[] } | undefined> {
+export interface ObjAddRequest {
+  type: ObjTypeDto;
+  localId: number;
+  initialHash: string;
+}
+
+export class ApiStoreSyncObjCommand extends ApiCallBase implements ICommand<Promise<void>> {
+  constructor(private obj: ObjDto, private initialHash: string) {
+    super();
+  }
+  async execute(): Promise<void> {
     await this.initTokenData();
     if (!this.storeUrl) return;
-    try {
-      const resp = await FetchService.fetch<{ data: HashChangeResponse[] }>(
-        `${this.storeUrl}/api/v1/obj/changes`,
-        { headers: this.getAuthHeaders() },
-        this.refreshParams()
-      );
-      fnConsoleLog('ApiStoreChangesCommand->response', resp);
-      return resp.data;
-    } catch (e) {
-      fnConsoleLog('ApiStoreChangesCommand->Error', e);
-    }
+    const resp = await FetchService.fetch<{ data: HashChangeResponse[] }>(
+      `${this.storeUrl}/api/v1/obj/add`,
+      {
+        headers: this.getAuthHeaders(),
+        method: 'POST',
+        body: JSON.stringify({
+          type: this.obj.type,
+          localId: this.obj.id,
+          initialHash: this.initialHash
+        })
+      },
+      this.refreshParams()
+    );
+    fnConsoleLog('ApiStoreSyncInfoCommand->response', resp);
   }
 }
