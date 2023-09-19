@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { SyncIndex, SyncIndexCommand, SyncObjectStatus } from './sync-index.command';
+import { SyncIndex, SyncIndexCommand } from './sync-index.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { SyncProgress } from './sync.model';
+import { SyncObjectStatus, SyncProgress } from './sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';

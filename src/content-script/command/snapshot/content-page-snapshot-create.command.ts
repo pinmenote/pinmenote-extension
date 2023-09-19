@@ -93,7 +93,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
 
     PinStore.each((v) => v.show());
 
-    const pageSnapshot: PageSnapshotDto = {
+    const pageSnapshot: Omit<PageSnapshotDto, 'hash'> = {
       info: info as PageSnapshotInfoDto,
       data: data as PageSnapshotDataDto,
       segment
