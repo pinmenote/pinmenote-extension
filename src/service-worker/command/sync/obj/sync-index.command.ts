@@ -64,32 +64,26 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
     switch (obj.type) {
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
-        fnConsoleLog('SyncSnapshotCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        return await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.progress).execute();
+        return await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.progress, this.tx).execute();
       }
       case ObjTypeDto.PageElementPin: {
-        fnConsoleLog('SyncPinCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.progress, this.index).execute();
+        await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.progress, this.tx).execute();
         break;
       }
       case ObjTypeDto.Pdf: {
-        fnConsoleLog('SyncPdfCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.progress, this.index).execute();
+        await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.progress, this.tx).execute();
         break;
       }
       case ObjTypeDto.Note: {
-        fnConsoleLog('SyncNoteCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.progress, this.index).execute();
+        await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.progress, this.tx).execute();
         break;
       }
       case ObjTypeDto.PageNote: {
-        fnConsoleLog('SyncPageNoteCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.progress, this.index).execute();
+        await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.progress, this.tx).execute();
         break;
       }
       case ObjTypeDto.Removed: {
-        fnConsoleLog('SyncRemovedCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.progress, this.index).execute();
+        await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.progress, this.tx).execute();
         break;
       }
       default: {
@@ -97,8 +91,9 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
         break;
       }
     }
-    await fnSleep(100);
+    return SyncObjectStatus.SERVER_ERROR;
+    /*await fnSleep(100);
     await new SyncSetProgressCommand({ id: this.index.id, timestamp: this.index.dt, state: 'update' }).execute();
-    return SyncObjectStatus.OK;
+    return SyncObjectStatus.OK;*/
   }
 }

@@ -28,6 +28,6 @@ export class SyncPinCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('SyncPinCommand');
     const data = this.obj.data;
-    await new SyncObjectCommand(this.obj, data.data.hash, this.progress).execute();
+    await new SyncObjectCommand(this.obj, data.data.hash, this.tx).execute();
   }
 }

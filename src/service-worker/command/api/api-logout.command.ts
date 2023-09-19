@@ -18,6 +18,7 @@ import { BoolDto, ICommand, ServerErrorDto } from '../../../common/model/shared/
 import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ApiCallBase } from './api-call.base';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { ApiErrorCode } from '../../../common/model/shared/api.error-code';
 
 export class ApiLogoutCommand
   extends ApiCallBase
@@ -43,7 +44,7 @@ export class ApiLogoutCommand
         url,
         status: 500,
         type: 'JSON',
-        data: { message: 'Send request problem' }
+        data: { code: ApiErrorCode.INTERNAL, message: 'Send request problem' }
       };
     }
   }

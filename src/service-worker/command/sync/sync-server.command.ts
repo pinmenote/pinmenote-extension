@@ -61,7 +61,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
       }
 
       dt.setMonth(dt.getMonth() + 1);
-      fnConsoleLog('sync dt', dt, 'lastDay', lastDay);
+      fnConsoleLog('sync dt', dt, 'lastDay', lastDay, 'syncResult', syncResult);
 
       // reset id so we start next month from 0
       await new SyncSetProgressCommand({

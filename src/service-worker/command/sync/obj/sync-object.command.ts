@@ -14,19 +14,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
+import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { ApiStoreSyncObjCommand } from '../../api/store/api-store-sync-obj.command';
+import { ApiAddObjCommand, ObjAddResponse } from '../../api/store/obj/api-add-obj.command';
 import { BeginTxResponse } from '../../api/store/api-store.model';
+import { ApiErrorCode } from '../../../../common/model/shared/api.error-code';
+import { ApiObjGetByHashCommand, ObjSingleChange } from '../../api/store/obj/api-obj-get-by-hash.command';
 
 export class SyncObjectCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
-  // eslint-disable-next-line @typescript-eslint/require-await
+
   async execute(): Promise<void> {
-    fnConsoleLog('SyncObjectDataCommand');
-    await new ApiStoreSyncObjCommand(this.obj, this.hash, this.tx.tx).execute();
+    fnConsoleLog('SyncObjectCommand', this.tx);
+    if (this.obj.server?.id) return;
+    const resp: ObjAddResponse | ServerErrorDto = await new ApiAddObjCommand(this.obj, this.hash, this.tx.tx).execute();
+    if ('serverId' in resp) {
+      return await this.saveServerId(resp.serverId);
+    } else if ('code' in resp && resp.code === ApiErrorCode.SYNC_DUPLICATED_HASH) {
+      return await this.setByHash();
+    }
+    throw new Error('PROBLEM !!!!!!!!!!!!!!!');
+  }
+
+  private async setByHash(): Promise<void> {
+    const resp: ObjSingleChange | ServerErrorDto = await new ApiObjGetByHashCommand(this.hash).execute();
+    if ('serverId' in resp) {
+      await this.saveServerId(resp.serverId);
+      return;
+    }
+    fnConsoleLog('SyncObjectCommand->setByHash');
+    throw new Error('PROBLEM !!!!!!!!!!!!!!!');
+  }
+  // eslint-disable-next-line @typescript-eslint/require-await
+  private async saveServerId(serverId: number): Promise<void> {
+    this.obj.server = { id: serverId };
+    fnConsoleLog('SyncObjectCommand->saveServerId', this.obj, serverId);
   }
 }

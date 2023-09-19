@@ -21,12 +21,13 @@ import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { SyncObjectCommand } from './sync-object.command';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export class SyncPdfCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPdfDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
+  constructor(private obj: ObjDto<ObjPdfDto>, private progress: SyncProgress, private tx: BeginTxResponse) {}
   async execute(): Promise<void> {
     fnConsoleLog('SyncPdfCommand');
     const data = this.obj.data;
-    await new SyncObjectCommand(this.obj, data.hash, this.progress).execute();
+    await new SyncObjectCommand(this.obj, data.hash, this.tx).execute();
   }
 }

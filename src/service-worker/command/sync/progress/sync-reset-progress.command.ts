@@ -61,14 +61,23 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
 
     // sort objects inside
     for (const yearMonth of toSortSet) {
-      let list = await this.getList(yearMonth);
-      list = list.sort((a, b) => {
+      const list = await this.getList(yearMonth);
+      const s = new Set<number>();
+      let newList = [];
+      for (const el of list) {
+        if (!s.has(el.id)) {
+          s.add(el.id);
+          newList.push(el);
+        }
+      }
+      newList = newList.sort((a, b) => {
         if (a.dt > b.dt) return 1;
         if (a.dt < b.dt) return -1;
         if (a.id > b.id) return 1;
         if (a.id < b.id) return -1;
         return 0;
       });
+      await this.setList(yearMonth, newList);
     }
     fnConsoleLog('SyncResetProgressCommand->complete in ', Date.now() - a);
   }

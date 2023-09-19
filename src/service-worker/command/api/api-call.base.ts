@@ -72,10 +72,15 @@ export class ApiCallBase {
     };
   }
 
-  protected getAuthHeaders(): FetchHeaders {
+  protected getAuthHeaders(json = true): FetchHeaders {
     if (!this.token) return {};
-    return {
-      Authorization: `Bearer ${this.token.access_token}`
-    };
+    return json
+      ? {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.token.access_token}`
+        }
+      : {
+          Authorization: `Bearer ${this.token.access_token}`
+        };
   }
 }

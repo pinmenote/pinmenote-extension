@@ -21,20 +21,41 @@ import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
 import { SyncObjectCommand } from './sync-object.command';
 import { SyncObjectStatus } from './sync-index.command';
-import { SyncProgress } from '../sync.model';
+import { SyncHashType, SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { BeginTxResponse } from '../../api/store/api-store.model';
+import { ObjCommentListDto } from '../../../../common/model/obj/obj-comment.dto';
+import { PageSnapshotDto } from '../../../../common/model/obj/page-snapshot.dto';
+import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
 
 export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private obj: ObjDto<ObjPageDto>, private progress: SyncProgress) {}
+  constructor(private obj: ObjDto<ObjPageDto>, private progress: SyncProgress, private tx: BeginTxResponse) {}
   async execute(): Promise<SyncObjectStatus> {
-    const snapshot = this.obj.data.snapshot;
+    const page = this.obj.data;
+    const snapshot = page.snapshot;
     if (!snapshot.segmentHash) {
-      console.log('PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', snapshot);
+      fnConsoleLog('SyncSnapshotCommand', snapshot);
+      throw new Error('PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
       return SyncObjectStatus.SERVER_ERROR;
     }
-    await new SyncObjectCommand(this.obj, snapshot.segmentHash, this.progress).execute();
+    await new SyncObjectCommand(this.obj, snapshot.segmentHash, this.tx).execute();
+    await this.syncSnapshot(snapshot, snapshot.segmentHash);
+    await this.syncComments(page.comments, snapshot.segmentHash);
     return SyncObjectStatus.SERVER_ERROR;
     // await this.syncSegment(snapshot.segmentHash);
+  }
+
+  private async syncSnapshot(snapshot: PageSnapshotDto, hash: string): Promise<void> {
+    await new ApiSegmentAddCommand(this.tx.tx, JSON.stringify(snapshot.info), {
+      hash: snapshot.info.hash,
+      parent: hash,
+      type: SyncHashType.PageSnapshotInfoDto,
+      key: 'foo'
+    }).execute();
+  }
+  // eslint-disable-next-line @typescript-eslint/require-await
+  private async syncComments(commentList: ObjCommentListDto, hash: string): Promise<void> {
+    fnConsoleLog('SyncSnapshotCommand->syncComments');
   }
 
   private async syncSegment(hash: string) {

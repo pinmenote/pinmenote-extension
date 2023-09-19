@@ -20,3 +20,8 @@ export interface SyncProgress {
   id: number;
   hash?: string;
 }
+
+export enum SyncHashType {
+  PageSnapshotDataDto = '1',
+  PageSnapshotInfoDto = '2'
+}

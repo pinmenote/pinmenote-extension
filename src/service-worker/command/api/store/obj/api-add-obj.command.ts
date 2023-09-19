@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import { ApiCallBase } from '../api-call.base';
+import { ObjDto, ObjTypeDto } from '../../../../../common/model/obj/obj.dto';
+import { ApiCallBase } from '../../api-call.base';
 import { FetchService } from '@pinmenote/fetch-service';
-import { HashChangeResponse } from './api-store.model';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
+import { fnConsoleLog } from '../../../../../common/fn/fn-console';
+import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 
 export interface ObjAddRequest {
   type: ObjTypeDto;
@@ -27,15 +27,19 @@ export interface ObjAddRequest {
   initialHash: string;
 }
 
-export class ApiStoreSyncObjCommand extends ApiCallBase implements ICommand<Promise<void>> {
+export interface ObjAddResponse {
+  serverId: number;
+}
+
+export class ApiAddObjCommand extends ApiCallBase implements ICommand<Promise<ObjAddResponse | ServerErrorDto>> {
   constructor(private obj: ObjDto, private hash: string, private tx: string) {
     super();
   }
-  async execute(): Promise<void> {
+  async execute(): Promise<ObjAddResponse | ServerErrorDto> {
     await this.initTokenData();
-    if (!this.storeUrl) return;
-    const resp = await FetchService.fetch<{ data: HashChangeResponse[] }>(
-      `${this.storeUrl}/api/v1/obj/add`,
+    if (!this.storeUrl) return { code: ApiErrorCode.INTERNAL, message: 'ApiStoreAddObjCommand' };
+    const resp = await FetchService.fetch<ObjAddResponse | ServerErrorDto>(
+      `${this.storeUrl}/api/v1/obj/${this.tx}`,
       {
         headers: this.getAuthHeaders(),
         method: 'POST',
@@ -48,5 +52,6 @@ export class ApiStoreSyncObjCommand extends ApiCallBase implements ICommand<Prom
       this.refreshParams()
     );
     fnConsoleLog('ApiStoreSyncInfoCommand->response', resp);
+    return resp.data;
   }
 }

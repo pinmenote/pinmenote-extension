@@ -19,6 +19,7 @@ import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
 import { ApiCallBase } from './api-call.base';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { ApiErrorCode } from '../../../common/model/shared/api.error-code';
 
 export class ApiVerify2faCommand
   extends ApiCallBase
@@ -42,7 +43,7 @@ export class ApiVerify2faCommand
         url,
         status: 500,
         type: 'JSON',
-        data: { message: 'Send request problem' }
+        data: { code: ApiErrorCode.INTERNAL, message: 'Send request problem' }
       };
     }
   }

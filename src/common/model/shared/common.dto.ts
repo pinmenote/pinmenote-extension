@@ -23,6 +23,6 @@ export interface BoolDto {
 }
 
 export interface ServerErrorDto {
-  code?: number;
-  message?: string;
+  code: number;
+  message: string;
 }

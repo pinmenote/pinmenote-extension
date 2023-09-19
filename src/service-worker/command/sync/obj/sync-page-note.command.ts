@@ -21,12 +21,13 @@ import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { SyncObjectCommand } from './sync-object.command';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export class SyncPageNoteCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPageNoteDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
+  constructor(private obj: ObjDto<ObjPageNoteDto>, private progress: SyncProgress, private tx: BeginTxResponse) {}
   async execute(): Promise<void> {
     fnConsoleLog('SyncPageNoteCommand');
     const data = this.obj.data;
-    await new SyncObjectCommand(this.obj, data.hash, this.progress).execute();
+    await new SyncObjectCommand(this.obj, data.hash, this.tx).execute();
   }
 }
