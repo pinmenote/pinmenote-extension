@@ -27,6 +27,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { ScreenshotFactory } from '../../factory/screenshot.factory';
 import { UrlFactory } from '../../factory/url.factory';
 import { fnSha256 } from '../../fn/fn-hash';
+import { ImageResizeFactory } from '../../factory/image-resize.factory';
 
 export class PdfAddCommand implements ICommand<Promise<void>> {
   constructor(private value: FetchResponse<string>) {}
@@ -35,11 +36,13 @@ export class PdfAddCommand implements ICommand<Promise<void>> {
     const dt = Date.now();
 
     const hash = fnSha256(this.value.data);
-    const screenshot = await ScreenshotFactory.takeScreenshot({
+    let screenshot = await ScreenshotFactory.takeScreenshot(document, window, ContentSettingsStore.settings);
+    screenshot = await ImageResizeFactory.resize2(
       document,
-      window,
-      settings: ContentSettingsStore.settings
-    });
+      ScreenshotFactory.THUMB_SETTINGS,
+      ScreenshotFactory.THUMB_SIZE,
+      screenshot
+    );
 
     const url = UrlFactory.newUrl();
 

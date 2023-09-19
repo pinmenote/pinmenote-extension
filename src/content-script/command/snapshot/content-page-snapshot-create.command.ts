@@ -61,15 +61,12 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
       isPartial = true;
     }
 
-    let screenshot = await ScreenshotFactory.takeScreenshot(
-      { settings: this.settings, document, window },
-      rect,
-      this.url
-    );
+    let screenshot = await ScreenshotFactory.takeScreenshot(document, window, this.settings, rect, this.url);
     if (rect.width > 640 || rect.height > 360) {
       screenshot = await ImageResizeFactory.resize2(
-        { settings: this.settings, document, window },
-        { width: 640, height: 360 },
+        document,
+        ScreenshotFactory.THUMB_SETTINGS,
+        ScreenshotFactory.THUMB_SIZE,
         screenshot
       );
     }

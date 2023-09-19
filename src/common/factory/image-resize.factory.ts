@@ -17,23 +17,33 @@
 import { ObjRectangleDto, ObjSizeDto } from '../model/obj/obj-utils.dto';
 import { PinDocument } from '../components/pin/model/pin-view.model';
 import { fnConsoleLog } from '../fn/fn-console';
+import { ScreenshotFormat } from '../environment';
+
+export interface ScreenshotSettings {
+  screenshotFormat: ScreenshotFormat;
+  screenshotQuality: number;
+}
 
 export class ImageResizeFactory {
-  static resize2 = (doc: PinDocument, size: ObjSizeDto, b64image: string): Promise<string> => {
+  static resize2 = (
+    doc: Document,
+    settings: ScreenshotSettings,
+    size: ObjSizeDto,
+    b64image: string
+  ): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
-          const can = doc.document.createElement('canvas');
+          const can = doc.createElement('canvas');
           const wr = size.width / img.naturalWidth;
           const hr = size.height / img.naturalHeight;
-          fnConsoleLog('AAAAAAAAAAAAAAAAAAAAAAAAAaa', wr, hr);
           can.width = img.naturalWidth * wr;
           can.height = img.naturalHeight * hr;
           const ctx = can.getContext('2d');
           ctx?.drawImage(img, 0, 0, can.width, can.height);
-          b64image = can.toDataURL(`image/${doc.settings.screenshotFormat}`, doc.settings.screenshotQuality);
+          b64image = can.toDataURL(`image/${settings.screenshotFormat}`, settings.screenshotQuality);
         } finally {
           window.URL.revokeObjectURL(b64image);
           img.onerror = null;
@@ -52,23 +62,29 @@ export class ImageResizeFactory {
       img.src = b64image;
     });
   };
-  static resize = (doc: PinDocument, size: ObjRectangleDto, b64image: string): Promise<string> => {
+  static resize = (
+    doc: Document,
+    win: Window,
+    settings: ScreenshotSettings,
+    size: ObjRectangleDto,
+    b64image: string
+  ): Promise<string> => {
     const rect = {
       x: size.x,
       y: size.y,
       width: size.width,
-      height: Math.min(size.height, doc.window.innerHeight - size.y)
+      height: Math.min(size.height, win.innerHeight - size.y)
     };
     return new Promise<string>((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
-          const can = doc.document.createElement('canvas');
+          const can = doc.createElement('canvas');
           can.width = rect.width;
           can.height = rect.height;
-          const wr = img.naturalWidth / doc.window.innerWidth;
-          const hr = img.naturalHeight / doc.window.innerHeight;
+          const wr = img.naturalWidth / win.innerWidth;
+          const hr = img.naturalHeight / win.innerHeight;
           const ctx = can.getContext('2d');
           ctx?.drawImage(
             img,
@@ -81,7 +97,7 @@ export class ImageResizeFactory {
             rect.width,
             rect.height
           );
-          b64image = can.toDataURL(`image/${doc.settings.screenshotFormat}`, doc.settings.screenshotQuality);
+          b64image = can.toDataURL(`image/${settings.screenshotFormat}`, settings.screenshotQuality);
         } finally {
           window.URL.revokeObjectURL(b64image);
           img.onerror = null;

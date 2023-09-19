@@ -35,11 +35,9 @@ export class PinFactory {
   ): Promise<ObjPinDto> => {
     const rect = canvas ? canvas.rect : XpathFactory.computeRect(ref);
     const screenshot = await ScreenshotFactory.takeScreenshot(
-      {
-        settings: ContentSettingsStore.settings,
-        document,
-        window
-      },
+      document,
+      window,
+      ContentSettingsStore.settings,
       rect,
       url
     );

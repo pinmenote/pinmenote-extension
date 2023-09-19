@@ -61,7 +61,12 @@ export class DownloadImageButton {
     setTimeout(async () => {
       let rect: ObjRectangleDto = this.model.ref.getBoundingClientRect();
       if (this.model.canvas) rect = this.model.canvas.rect;
-      const screenshot = await ScreenshotFactory.takeScreenshot(this.model.doc, rect);
+      const screenshot = await ScreenshotFactory.takeScreenshot(
+        this.model.doc.document,
+        this.model.doc.window,
+        this.model.doc.settings,
+        rect
+      );
       await this.downloadScreenshot(screenshot);
 
       this.edit.showScreenshot();

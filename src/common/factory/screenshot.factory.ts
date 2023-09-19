@@ -16,22 +16,36 @@
  */
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../model/bus.model';
-import { ImageResizeFactory } from './image-resize.factory';
-import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
+import { ImageResizeFactory, ScreenshotSettings } from './image-resize.factory';
+import { ObjRectangleDto, ObjSizeDto } from '../model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../model/obj/obj.dto';
-import { PinDocument } from '../components/pin/model/pin-view.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../fn/fn-console';
 
 export class ScreenshotFactory {
-  static takeScreenshot = async (doc: PinDocument, rect?: ObjRectangleDto, url?: ObjUrlDto): Promise<string> => {
+  static readonly THUMB_SETTINGS: ScreenshotSettings = {
+    screenshotFormat: 'jpeg',
+    screenshotQuality: 80
+  };
+
+  static readonly THUMB_SIZE: ObjSizeDto = {
+    width: 640,
+    height: 360
+  };
+  static takeScreenshot = async (
+    doc: Document,
+    win: Window,
+    settings: ScreenshotSettings,
+    rect?: ObjRectangleDto,
+    url?: ObjUrlDto
+  ): Promise<string> => {
     return new Promise((resolve, reject) => {
       // Crop screenshot function
       TinyDispatcher.getInstance().addListener<string>(
         BusMessageType.CONTENT_TAKE_SCREENSHOT,
         async (event: string, key: string, screenshot: string) => {
           TinyDispatcher.getInstance().removeListener(event, key);
-          if (rect) screenshot = await ImageResizeFactory.resize(doc, rect, screenshot);
+          if (rect) screenshot = await ImageResizeFactory.resize(doc, win, settings, rect, screenshot);
           resolve(screenshot);
         }
       );
@@ -47,7 +61,7 @@ export class ScreenshotFactory {
       .then(() => {
         // We handle it above, inside dispatcher
       })
-      .catch((e) => {
+      .catch((e: any) => {
         fnConsoleLog('ScreenshotFactory->sendTakeScreenshot->error', e);
         reject('PROBLEM !!!');
       });
