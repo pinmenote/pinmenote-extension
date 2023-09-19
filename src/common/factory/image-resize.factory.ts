@@ -14,11 +14,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
+import { ObjRectangleDto, ObjSizeDto } from '../model/obj/obj-utils.dto';
 import { PinDocument } from '../components/pin/model/pin-view.model';
 import { fnConsoleLog } from '../fn/fn-console';
 
 export class ImageResizeFactory {
+  static resize2 = (doc: PinDocument, size: ObjSizeDto, b64image: string): Promise<string> => {
+    return new Promise<string>((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const can = doc.document.createElement('canvas');
+          const wr = size.width / img.naturalWidth;
+          const hr = size.height / img.naturalHeight;
+          fnConsoleLog('AAAAAAAAAAAAAAAAAAAAAAAAAaa', wr, hr);
+          can.width = img.naturalWidth * wr;
+          can.height = img.naturalHeight * hr;
+          const ctx = can.getContext('2d');
+          ctx?.drawImage(img, 0, 0, can.width, can.height);
+          b64image = can.toDataURL(`image/${doc.settings.screenshotFormat}`, doc.settings.screenshotQuality);
+        } finally {
+          window.URL.revokeObjectURL(b64image);
+          img.onerror = null;
+          img.onload = null;
+          // Resolve here
+          resolve(b64image);
+        }
+      };
+      img.onerror = (event, source, lineno, colno, error) => {
+        window.URL.revokeObjectURL(b64image);
+        img.onerror = null;
+        img.onload = null;
+        reject(error);
+        fnConsoleLog('ImageResizeFactory->resize', error);
+      };
+      img.src = b64image;
+    });
+  };
   static resize = (doc: PinDocument, size: ObjRectangleDto, b64image: string): Promise<string> => {
     const rect = {
       x: size.x,
@@ -28,6 +61,7 @@ export class ImageResizeFactory {
     };
     return new Promise<string>((resolve, reject) => {
       const img = new Image();
+      img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
           const can = doc.document.createElement('canvas');

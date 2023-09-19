@@ -62,7 +62,7 @@
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.3",
     "@mui/x-date-pickers": "^6.1.0",
-    "@pinmenote/browser-api": "^0.0.5",
+    "@pinmenote/browser-api": "file:../browser-api",
     "@pinmenote/fetch-service": "file:../fetch-service",
     "@pinmenote/page-compute": "file:../page-compute",
     "@pinmenote/tiny-dispatcher": "^0.0.4",

@@ -33,6 +33,7 @@ import { SettingsConfig } from '../../../common/environment';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256Object } from '../../../common/fn/fn-hash';
+import { ImageResizeFactory } from '../../../common/factory/image-resize.factory';
 
 export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSnapshotDto>> {
   constructor(
@@ -60,11 +61,18 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
       isPartial = true;
     }
 
-    const screenshot = await ScreenshotFactory.takeScreenshot(
+    let screenshot = await ScreenshotFactory.takeScreenshot(
       { settings: this.settings, document, window },
       rect,
       this.url
     );
+    if (rect.width > 640 || rect.height > 360) {
+      screenshot = await ImageResizeFactory.resize2(
+        { settings: this.settings, document, window },
+        { width: 640, height: 360 },
+        screenshot
+      );
+    }
 
     let segment = undefined;
 

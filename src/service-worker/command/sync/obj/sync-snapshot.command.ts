@@ -20,7 +20,7 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncHashType, SyncObjectStatus, SyncProgress } from '../sync.model';
+import { SyncHashType, SyncObjectStatus } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 import { PageSnapshotDto } from '../../../../common/model/obj/page-snapshot.dto';
