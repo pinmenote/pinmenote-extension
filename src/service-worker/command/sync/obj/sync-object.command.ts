@@ -19,24 +19,14 @@ import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-in
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { ApiStoreSyncObjCommand } from '../../api/store/api-store-sync-obj.command';
+import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export class SyncObjectCommand implements ICommand<Promise<void>> {
-  constructor(
-    private obj: ObjDto,
-    private initialHash: string,
-    private progress: SyncProgress,
-    private index: ObjDateIndex
-  ) {}
+  constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
   // eslint-disable-next-line @typescript-eslint/require-await
   async execute(): Promise<void> {
-    fnConsoleLog(
-      'SyncObjectDataCommand',
-      this.obj.id,
-      this.obj.type,
-      this.obj.createdAt,
-      this.obj.updatedAt,
-      this.obj.version,
-      this.initialHash
-    );
+    fnConsoleLog('SyncObjectDataCommand');
+    await new ApiStoreSyncObjCommand(this.obj, this.hash, this.tx.tx).execute();
   }
 }

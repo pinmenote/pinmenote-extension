@@ -16,28 +16,28 @@
  */
 import { SegmentCss, SegmentImg, SegmentPage, SegmentType } from '@pinmenote/page-compute';
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
 import { SyncObjectCommand } from './sync-object.command';
+import { SyncObjectStatus } from './sync-index.command';
 import { SyncProgress } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
-export class SyncSnapshotCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPageDto>, private progress: SyncProgress, private index: ObjDateIndex) {}
-  async execute(): Promise<void> {
+export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> {
+  constructor(private obj: ObjDto<ObjPageDto>, private progress: SyncProgress) {}
+  async execute(): Promise<SyncObjectStatus> {
     const snapshot = this.obj.data.snapshot;
-    // fnConsoleLog('SyncSnapshotCommand->comments', this.obj.data.comments);
-    // fnConsoleLog('SyncSnapshotCommand->snapshot', this.obj.id, 'index', this.index, 'obj', this.obj);
-    if (!snapshot.segmentHash) return;
-
-    await new SyncObjectCommand(this.obj, snapshot.segmentHash, this.progress, this.index).execute();
-
-    await this.syncSegment(snapshot.segmentHash);
+    if (!snapshot.segmentHash) {
+      console.log('PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', snapshot);
+      return SyncObjectStatus.SERVER_ERROR;
+    }
+    await new SyncObjectCommand(this.obj, snapshot.segmentHash, this.progress).execute();
+    return SyncObjectStatus.SERVER_ERROR;
+    // await this.syncSegment(snapshot.segmentHash);
   }
 
-  private async syncSegment(hash: string, nested = false) {
+  private async syncSegment(hash: string) {
     const segment = await new PageSegmentGetCommand(hash).execute();
     if (!segment) return;
     switch (segment.type) {
@@ -64,15 +64,11 @@ export class SyncSnapshotCommand implements ICommand<Promise<void>> {
       }
       case SegmentType.IFRAME: {
         const content = segment.content as SegmentPage;
-        const matched = content.html.html.matchAll(/(data-pin-hash=")([a-z\d]+")/g);
-        const a = Array.from(matched);
-        // if (content.assets.length > 0) fnConsoleLog('IFRAME', a, content);
-        if (a.length > 0) fnConsoleLog('IFRAME', nested, content, 'MATCHED', a);
         for (const css of content.css) {
           await this.syncSegment(css);
         }
         for (const asset of content.assets) {
-          await this.syncSegment(asset, true);
+          await this.syncSegment(asset);
         }
         break;
       }

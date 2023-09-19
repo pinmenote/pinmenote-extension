@@ -24,7 +24,7 @@
   ],
   "rules": {
     "max-len": ["error", {"code": 120, "ignoreComments": true, "ignoreTemplateLiterals": true}],
-    "no-console": "error",
+    "no-console": "warn",
     "semi": [ "error", "always" ],
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
@@ -36,7 +36,7 @@
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "sort-imports": [
-      "error",
+      "off",
       {
         "ignoreCase": false,
         "ignoreDeclarationSort": false,

@@ -19,6 +19,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
 import { SyncMonthCommand } from './sync-month.command';
 import { SyncProgress } from './sync.model';
+import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
@@ -31,7 +32,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (SyncServerCommand.isInSync) return;
     if (!(await SyncTxHelper.shouldSync())) return;
     try {
-      // await new SyncResetProgressCommand().execute();
+      await new SyncResetProgressCommand().execute();
 
       SyncServerCommand.isInSync = true;
 

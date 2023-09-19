@@ -27,6 +27,6 @@ export class SyncPageNoteCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('SyncPageNoteCommand');
     const data = this.obj.data;
-    await new SyncObjectCommand(this.obj, data.hash, this.progress, this.index).execute();
+    await new SyncObjectCommand(this.obj, data.hash, this.progress).execute();
   }
 }

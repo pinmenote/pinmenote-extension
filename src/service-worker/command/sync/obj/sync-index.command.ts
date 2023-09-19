@@ -32,6 +32,7 @@ import { SyncSetProgressCommand } from '../progress/sync-set-progress.command';
 import { SyncSnapshotCommand } from './sync-snapshot.command';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { fnSleep } from '../../../../common/fn/fn-sleep';
+import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export enum SyncObjectStatus {
   TX_LOCKED,
@@ -48,7 +49,7 @@ export interface SyncIndex extends ObjDateIndex {
 }
 
 export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private progress: SyncProgress, private index?: ObjDateIndex) {}
+  constructor(private progress: SyncProgress, private tx: BeginTxResponse, private index?: ObjDateIndex) {}
 
   async execute(): Promise<SyncObjectStatus> {
     if (!this.index) {
@@ -64,8 +65,7 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
         fnConsoleLog('SyncSnapshotCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);
-        await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.progress, this.index).execute();
-        break;
+        return await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.progress).execute();
       }
       case ObjTypeDto.PageElementPin: {
         fnConsoleLog('SyncPinCommand', obj.type, obj.id, 'index', this.index, 'obj', obj);

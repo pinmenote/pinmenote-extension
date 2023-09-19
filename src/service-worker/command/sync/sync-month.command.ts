@@ -54,17 +54,19 @@ export class SyncMonthCommand implements ICommand<Promise<SyncIndex>> {
     const begin = await SyncTxHelper.begin();
     if (!begin) return { ...index, status: SyncObjectStatus.TX_LOCKED };
 
-    const newIndexList = [];
-
     for (let i = nextObjectIndex; i < indexList.length; i++) {
       index = { ...indexList[i], status: SyncObjectStatus.OK };
-      const status = await new SyncIndexCommand(this.progress, index).execute();
+      const status = await new SyncIndexCommand(this.progress, begin, index).execute();
+
+      if ([SyncObjectStatus.SERVER_ERROR].includes(status)) {
+        index = { ...index, status: SyncObjectStatus.SERVER_ERROR };
+        await SyncTxHelper.commit();
+        return index;
+      }
       if (![SyncObjectStatus.INDEX_NOT_EXISTS, SyncObjectStatus.OBJECT_NOT_EXISTS].includes(status)) {
-        newIndexList.push(index);
+        console.log('PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!', status);
       }
     }
-
-    await SyncTxHelper.setList(indexListKey, newIndexList);
 
     await SyncTxHelper.commit();
     return index;

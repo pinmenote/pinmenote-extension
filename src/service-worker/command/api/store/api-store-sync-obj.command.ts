@@ -28,7 +28,7 @@ export interface ObjAddRequest {
 }
 
 export class ApiStoreSyncObjCommand extends ApiCallBase implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto, private initialHash: string) {
+  constructor(private obj: ObjDto, private hash: string, private tx: string) {
     super();
   }
   async execute(): Promise<void> {
@@ -42,7 +42,7 @@ export class ApiStoreSyncObjCommand extends ApiCallBase implements ICommand<Prom
         body: JSON.stringify({
           type: this.obj.type,
           localId: this.obj.id,
-          initialHash: this.initialHash
+          hash: this.hash
         })
       },
       this.refreshParams()
