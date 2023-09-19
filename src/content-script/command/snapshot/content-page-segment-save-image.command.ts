@@ -44,7 +44,7 @@ export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<stri
 
     const html = `<img src="${value}" />`;
     const hash = fnSha256(html);
-    await this.contentCallback({
+    await new PageSegmentAddCommand({
       hash,
       type: SegmentType.SNAPSHOT,
       content: {
@@ -56,11 +56,7 @@ export class ContentPageSegmentSaveImageCommand implements ICommand<Promise<stri
         css: [],
         assets: []
       }
-    });
+    }).execute();
     return hash;
   }
-
-  private contentCallback = async (content: SegmentData) => {
-    await new PageSegmentAddCommand(content).execute();
-  };
 }

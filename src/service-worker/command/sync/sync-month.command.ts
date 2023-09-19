@@ -20,34 +20,40 @@ import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { SyncProgress } from './sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
 
 export class SyncMonthCommand implements ICommand<Promise<SyncIndex>> {
   constructor(private progress: SyncProgress, private yearMonth: string) {}
   async execute(): Promise<SyncIndex> {
     // fnConsoleLog('SyncMonthCommand->syncMonth', this.yearMonth);
 
-    let index = { dt: this.progress.timestamp, id: this.progress.id, status: SyncObjectStatus.OK };
-
     const indexListKey = `${ObjectStoreKeys.UPDATED_DT}:${this.yearMonth}`;
     const indexList = await SyncTxHelper.getList(indexListKey);
     fnConsoleLog('SyncMonthCommand->syncList', indexList);
 
-    if (indexList.length === 0) return { ...index, status: SyncObjectStatus.EMPTY_LIST };
+    if (indexList.length === 0)
+      return { dt: this.progress.timestamp, id: this.progress.id, status: SyncObjectStatus.EMPTY_LIST };
 
     const lastIndexElement = indexList[indexList.length - 1];
     // fnConsoleLog('SyncMonthCommand->last', lastIndexElement, 'progress', this.progress);
     // we are last so escape early, so we don't waste request for begin / commit
     if (this.progress.id === lastIndexElement.id && this.progress.timestamp === lastIndexElement.dt)
-      return { ...index, status: SyncObjectStatus.LAST_ELEMENT };
+      return { dt: this.progress.timestamp, id: this.progress.id, status: SyncObjectStatus.LAST_ELEMENT };
 
     let nextObjectIndex = indexList.findIndex((value) => value.id === this.progress.id);
 
     if (nextObjectIndex === -1) nextObjectIndex = 0;
 
+    return this.syncIndex(indexList, nextObjectIndex);
+  }
+
+  async syncIndex(indexList: ObjDateIndex[], start: number): Promise<SyncIndex> {
+    let index = { dt: this.progress.timestamp, id: this.progress.id, status: SyncObjectStatus.OK };
+
     const begin = await SyncTxHelper.begin();
     if (!begin) return { ...index, status: SyncObjectStatus.TX_LOCKED };
 
-    for (let i = nextObjectIndex; i < indexList.length; i++) {
+    for (let i = start; i < indexList.length; i++) {
       index = { ...indexList[i], status: SyncObjectStatus.OK };
       const status = await new SyncIndexCommand(this.progress, begin, index).execute();
       if ([SyncObjectStatus.SERVER_ERROR].includes(status)) {

@@ -66,13 +66,13 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
       this.url
     );
 
-    let segmentHash = undefined;
+    let segment = undefined;
 
     if (!this.canvas) {
       fnConsoleLog('ContentPageSnapshotCreateCommand->isPartial', isPartial);
-      segmentHash = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes, isPartial).execute();
+      segment = await new ContentPageSegmentSaveCommand(this.element, this.skipAttributes, isPartial).execute();
     } else if (this.element instanceof HTMLImageElement) {
-      segmentHash = await new ContentPageSegmentSaveImageCommand(this.element).execute();
+      segment = await new ContentPageSegmentSaveImageCommand(this.element).execute();
     }
     const words = AutoTagMediator.computeTags(this.element);
 
@@ -93,10 +93,14 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
 
     PinStore.each((v) => v.show());
 
-    return {
+    const pageSnapshot: PageSnapshotDto = {
       info: info as PageSnapshotInfoDto,
       data: data as PageSnapshotDataDto,
-      segmentHash
+      segment
     };
+
+    const hash = fnSha256Object(pageSnapshot);
+
+    return { ...pageSnapshot, hash };
   }
 }

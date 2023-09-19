@@ -40,7 +40,9 @@ export interface PageSnapshotDataDto {
 export interface PageSnapshotDto {
   data: PageSnapshotDataDto;
   info: PageSnapshotInfoDto;
-  segmentHash?: string; // SegmentSnapshotDto
+  segment?: string; // SegmentPage
+  hash?: string;
+  segmentHash?: string; // TODO remove
 }
 
 export interface ObjVideoDataDto {

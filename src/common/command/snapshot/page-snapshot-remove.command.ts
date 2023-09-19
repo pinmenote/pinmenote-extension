@@ -42,7 +42,7 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
 
     await LinkHrefStore.del(snapshot.info.url, this.obj.id);
 
-    if (snapshot.segmentHash) await this.removeSnapshot(snapshot.segmentHash);
+    if (snapshot.segment) await this.removeSnapshot(snapshot.segment);
 
     await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
       words: this.obj.data.snapshot.info.words,
@@ -52,10 +52,10 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
     await new ObjRemoveHashtagsCommand(this.obj.id, snapshot.info.hashtags).execute();
   }
 
-  private removeSnapshot = async (segmentHash: string) => {
-    const segment = await new PageSegmentGetCommand<SegmentPage>(segmentHash).execute();
+  private removeSnapshot = async (hash: string) => {
+    const segment = await new PageSegmentGetCommand<SegmentPage>(hash).execute();
     if (!segment) {
-      fnConsoleLog('PageSnapshotRemoveCommand->removeSnapshot->empty', segmentHash);
+      fnConsoleLog('PageSnapshotRemoveCommand->removeSnapshot->empty', hash);
       return;
     }
     const ref: string[] = [];
@@ -67,6 +67,6 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
     ref.push(...cssRefs);
 
     // remove snapshot
-    await new PageSegmentRemoveListCommand([segmentHash]).execute();
+    await new PageSegmentRemoveListCommand([hash]).execute();
   };
 }

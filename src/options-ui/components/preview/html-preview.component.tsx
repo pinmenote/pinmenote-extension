@@ -77,11 +77,11 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       setIsLoading(true);
       const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
       setPageSnapshot(obj.data.snapshot);
-      const pageSegment = await new PageSegmentGetCommand<SegmentPage>(obj.data.snapshot.segmentHash).execute();
+      const pageSegment = await new PageSegmentGetCommand<SegmentPage>(obj.data.snapshot.segment).execute();
       if (pageSegment) {
         setPageSegment(pageSegment.content);
       } else {
-        fnConsoleLog('NOT FOUND ', obj.data.snapshot, 'hash', obj.data.snapshot.segmentHash);
+        fnConsoleLog('NOT FOUND ', obj.data.snapshot, 'hash', obj.data.snapshot.segment);
       }
       if (obj.data.snapshot.data.canvas) {
         renderCanvas(obj);

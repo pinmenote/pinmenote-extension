@@ -19,10 +19,17 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from './sync-get-progress.command';
 import { SyncProgress } from '../sync.model';
-import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { fnDateKeyFormat } from '../../../../common/fn/fn-date-format';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
+import { fnSha256Object } from '../../../../common/fn/fn-hash';
+import {
+  PageSnapshotDataDto,
+  PageSnapshotDto,
+  PageSnapshotInfoDto
+} from '../../../../common/model/obj/page-snapshot.dto';
 
 export class SyncResetProgressCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

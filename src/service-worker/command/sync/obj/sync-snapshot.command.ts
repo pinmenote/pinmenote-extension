@@ -33,23 +33,31 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
   async execute(): Promise<SyncObjectStatus> {
     const page = this.obj.data;
     const snapshot = page.snapshot;
-    if (!snapshot.segmentHash) {
+    if (!snapshot.hash) {
       fnConsoleLog('SyncSnapshotCommand', snapshot);
       throw new Error('PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
       return SyncObjectStatus.SERVER_ERROR;
     }
-    await new SyncObjectCommand(this.obj, snapshot.segmentHash, this.tx).execute();
-    await this.syncSnapshot(snapshot, snapshot.segmentHash);
-    await this.syncComments(page.comments, snapshot.segmentHash);
+    await new SyncObjectCommand(this.obj, snapshot.hash, this.tx).execute();
+    await this.syncSnapshot(snapshot, snapshot.hash);
+    await this.syncComments(page.comments, snapshot.hash);
     return SyncObjectStatus.SERVER_ERROR;
-    // await this.syncSegment(snapshot.segmentHash);
+    // await this.syncSegment(snapshot.hash);
   }
 
   private async syncSnapshot(snapshot: PageSnapshotDto, hash: string): Promise<void> {
+    // snapshot->info
     await new ApiSegmentAddCommand(this.tx.tx, JSON.stringify(snapshot.info), {
       hash: snapshot.info.hash,
       parent: hash,
       type: SyncHashType.PageSnapshotInfoDto,
+      key: 'foo'
+    }).execute();
+    // snapshot->data
+    await new ApiSegmentAddCommand(this.tx.tx, JSON.stringify(snapshot.data), {
+      hash: snapshot.data.hash,
+      parent: hash,
+      type: SyncHashType.PageSnapshotDataDto,
       key: 'foo'
     }).execute();
   }
