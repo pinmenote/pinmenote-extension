@@ -46,6 +46,12 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
       const list = await BrowserStorage.get<number[]>(`${ObjectStoreKeys.OBJECT_LIST}:${listId}`);
       for (const id of list) {
         const obj = await BrowserStorage.get<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${id}`);
+
+        if (obj.server) {
+          delete obj['server'];
+          await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${id}`, obj);
+        }
+
         const yearMonth = fnDateKeyFormat(new Date(obj.updatedAt));
         toSortSet.add(yearMonth);
 

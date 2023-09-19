@@ -16,11 +16,10 @@
  */
 
 import { ApiCallBase } from '../../api-call.base';
-import { ObjDto, ObjTypeDto } from '../../../../../common/model/obj/obj.dto';
+import { ObjTypeDto } from '../../../../../common/model/obj/obj.dto';
 import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
 import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 import { FetchService } from '@pinmenote/fetch-service';
-import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
 export interface ObjSingleChange {
   serverId: number;
@@ -45,7 +44,7 @@ export class ApiObjGetByHashCommand extends ApiCallBase implements ICommand<Prom
       },
       this.refreshParams()
     );
-    fnConsoleLog('ApiStoreObjGetByHashCommand->response', resp);
+    // fnConsoleLog('ApiStoreObjGetByHashCommand->response', resp);
     return resp.data;
   }
 }

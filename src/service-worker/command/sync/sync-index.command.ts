@@ -51,29 +51,31 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
       fnConsoleLog('SyncObjectCommand->syncObject EMPTY', this.index.id);
       return SyncObjectStatus.OBJECT_NOT_EXISTS;
     }
+    let status = SyncObjectStatus.OK;
     switch (obj.type) {
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
-        return await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.progress, this.tx).execute();
+        status = await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.tx).execute();
+        break;
       }
       case ObjTypeDto.PageElementPin: {
-        await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.progress, this.tx).execute();
+        await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.Pdf: {
-        await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.progress, this.tx).execute();
+        await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.Note: {
-        await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.progress, this.tx).execute();
+        await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.PageNote: {
-        await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.progress, this.tx).execute();
+        await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.Removed: {
-        await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.progress, this.tx).execute();
+        await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.tx).execute();
         break;
       }
       default: {
@@ -81,9 +83,8 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
         break;
       }
     }
-    return SyncObjectStatus.SERVER_ERROR;
-    /*await fnSleep(100);
     await new SyncSetProgressCommand({ id: this.index.id, timestamp: this.index.dt, state: 'update' }).execute();
-    return SyncObjectStatus.OK;*/
+    await fnSleep(100);
+    return status;
   }
 }

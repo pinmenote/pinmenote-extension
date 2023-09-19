@@ -18,7 +18,6 @@ export interface SyncProgress {
   timestamp: number;
   state: 'update' | 'remove' | 'remote';
   id: number;
-  hash?: string;
 }
 
 export enum SyncObjectStatus {
@@ -33,5 +32,9 @@ export enum SyncObjectStatus {
 
 export enum SyncHashType {
   PageSnapshotDataDto = '1',
-  PageSnapshotInfoDto = '2'
+  PageSnapshotInfoDto = '2',
+  IFrame = '3',
+  Img = '4',
+  Css = '5',
+  Snapshot = '6'
 }

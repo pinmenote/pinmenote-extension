@@ -24,7 +24,7 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export class SyncPageNoteCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPageNoteDto>, private progress: SyncProgress, private tx: BeginTxResponse) {}
+  constructor(private obj: ObjDto<ObjPageNoteDto>, private tx: BeginTxResponse) {}
   async execute(): Promise<void> {
     fnConsoleLog('SyncPageNoteCommand');
     const data = this.obj.data;

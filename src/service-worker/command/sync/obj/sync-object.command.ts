@@ -21,6 +21,8 @@ import { ApiAddObjCommand, ObjAddResponse } from '../../api/store/obj/api-add-ob
 import { BeginTxResponse } from '../../api/store/api-store.model';
 import { ApiErrorCode } from '../../../../common/model/shared/api.error-code';
 import { ApiObjGetByHashCommand, ObjSingleChange } from '../../api/store/obj/api-obj-get-by-hash.command';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 
 export class SyncObjectCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
@@ -49,6 +51,7 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
   // eslint-disable-next-line @typescript-eslint/require-await
   private async saveServerId(serverId: number): Promise<void> {
     this.obj.server = { id: serverId };
-    fnConsoleLog('SyncObjectCommand->saveServerId', this.obj, serverId);
+    fnConsoleLog('SyncObjectCommand->saveServerId', serverId, 'objId', this.obj.id);
+    //BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
   }
 }

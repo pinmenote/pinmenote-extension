@@ -30,7 +30,6 @@ export class ApiStoreBeginCommand extends ApiCallBase implements ICommand<Promis
         { headers: this.getAuthHeaders() },
         this.refreshParams()
       );
-      fnConsoleLog('ApiStoreBeginCommand->response', resp);
       return resp.data;
     } catch (e) {
       fnConsoleLog('ApiStoreBeginCommand->Error', e);

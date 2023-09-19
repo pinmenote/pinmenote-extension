@@ -24,7 +24,7 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export class SyncPdfCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPdfDto>, private progress: SyncProgress, private tx: BeginTxResponse) {}
+  constructor(private obj: ObjDto<ObjPdfDto>, private tx: BeginTxResponse) {}
   async execute(): Promise<void> {
     fnConsoleLog('SyncPdfCommand');
     const data = this.obj.data;

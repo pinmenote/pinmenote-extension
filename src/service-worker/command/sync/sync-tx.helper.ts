@@ -26,11 +26,9 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 export class SyncTxHelper {
   static async begin(): Promise<BeginTxResponse | undefined> {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
-    const expired = tx?.lockExpire ? tx?.lockExpire < Date.now() : false;
-    fnConsoleLog('SyncServerCommand->begin', tx, 'tx expired', expired);
-    if (!expired && tx) return tx;
-    fnConsoleLog('SyncServerCommand->begin->ApiStoreBeginCommand');
+    if (tx) return tx;
     const txResponse = await new ApiStoreBeginCommand().execute();
+    fnConsoleLog('locked', txResponse?.locked);
     if (txResponse?.locked) return undefined;
     await BrowserStorage.set(ObjectStoreKeys.SYNC_TX, txResponse);
     return txResponse;

@@ -24,7 +24,7 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export class SyncPinCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPinDto>, private progress: SyncProgress, private tx: BeginTxResponse) {}
+  constructor(private obj: ObjDto<ObjPinDto>, private tx: BeginTxResponse) {}
   async execute(): Promise<void> {
     fnConsoleLog('SyncPinCommand');
     const data = this.obj.data;

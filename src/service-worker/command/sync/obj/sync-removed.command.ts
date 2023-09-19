@@ -21,9 +21,9 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 
 export class SyncRemovedCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjRemovedDto>, private progress: SyncProgress, private tx: BeginTxResponse) {}
+  constructor(private obj: ObjDto<ObjRemovedDto>, private tx: BeginTxResponse) {}
   // eslint-disable-next-line @typescript-eslint/require-await
   async execute(): Promise<void> {
-    fnConsoleLog('SyncRemovedCommand', this.obj, this.progress, this.tx);
+    fnConsoleLog('SyncRemovedCommand', this.obj, this.tx);
   }
 }

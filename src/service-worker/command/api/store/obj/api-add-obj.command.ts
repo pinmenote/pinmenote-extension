@@ -51,7 +51,7 @@ export class ApiAddObjCommand extends ApiCallBase implements ICommand<Promise<Ob
       },
       this.refreshParams()
     );
-    fnConsoleLog('ApiStoreSyncInfoCommand->response', resp);
+    // fnConsoleLog('ApiStoreSyncInfoCommand->response', resp);
     return resp.data;
   }
 }

@@ -32,7 +32,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (SyncServerCommand.isInSync) return;
     if (!(await SyncTxHelper.shouldSync())) return;
     try {
-      await new SyncResetProgressCommand().execute();
+      // await new SyncResetProgressCommand().execute();
 
       SyncServerCommand.isInSync = true;
 
@@ -50,7 +50,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
 
-    const lastIndex = { id: progress.id, dt: progress.timestamp };
+    let lastIndex = { id: progress.id, dt: progress.timestamp };
 
     while (dt < lastDay) {
       const yearMonth = fnDateKeyFormat(dt);
@@ -69,6 +69,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
         timestamp: lastIndex.dt,
         state: 'update'
       }).execute();
+      lastIndex = { id: syncResult.id, dt: syncResult.dt };
     }
 
     // set as last one at the end of current month, so we don't start from 0

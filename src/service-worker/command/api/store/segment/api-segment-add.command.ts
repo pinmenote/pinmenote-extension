@@ -28,18 +28,15 @@ export interface FileDataDto {
   type: SyncHashType;
 }
 
-export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promise<void>> {
+export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
   constructor(private tx: string, private file: string, private data: FileDataDto) {
     super();
   }
-  async execute(): Promise<void> {
+  async execute(): Promise<boolean> {
     await this.initTokenData();
-    if (!this.storeUrl) return;
-
-    fnConsoleLog('ApiSegmentAddCommand->execute');
-
-    if (await this.hasSegment()) return;
-    await this.addSegment();
+    if (!this.storeUrl) return false;
+    if (await this.hasSegment()) return true;
+    return await this.addSegment();
   }
 
   async hasSegment(): Promise<boolean> {
@@ -54,11 +51,10 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
       },
       this.refreshParams()
     );
-    fnConsoleLog('ApiSegmentAddCommand->hasSegment', resp);
     return resp.status === 200;
   }
 
-  async addSegment(): Promise<void> {
+  async addSegment(): Promise<boolean> {
     const formData = new FormData();
     const fileData = new Blob([this.file], { type: 'application/json' });
     formData.append('file', fileData);
@@ -69,7 +65,7 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
 
     const authHeaders = this.getAuthHeaders(false);
 
-    const resp = await FetchService.fetch<BeginTxResponse>(
+    const resp = await FetchService.fetch(
       `${this.storeUrl!}/api/v1/segment/add/${this.tx}`,
       {
         headers: {
@@ -81,6 +77,7 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
       },
       this.refreshParams()
     );
-    fnConsoleLog('ApiSegmentAddCommand->resp', resp);
+    // fnConsoleLog('ApiSegmentAddCommand->resp', resp);
+    return resp.status === 200;
   }
 }
