@@ -15,19 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncProgress } from '../sync.model';
+import { SyncObjectStatus } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 
-export class SyncPinCommand implements ICommand<Promise<void>> {
+export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjPinDto>, private tx: BeginTxResponse) {}
-  async execute(): Promise<void> {
+  async execute(): Promise<SyncObjectStatus> {
     fnConsoleLog('SyncPinCommand');
     const data = this.obj.data;
     await new SyncObjectCommand(this.obj, data.data.hash, this.tx).execute();
+    return SyncObjectStatus.SERVER_ERROR;
   }
 }

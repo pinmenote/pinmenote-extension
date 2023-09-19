@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjRectangleDto, ObjSizeDto } from '../model/obj/obj-utils.dto';
-import { PinDocument } from '../components/pin/model/pin-view.model';
 import { fnConsoleLog } from '../fn/fn-console';
 import { ScreenshotFormat } from '../environment';
 

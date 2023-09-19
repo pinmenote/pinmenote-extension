@@ -18,7 +18,6 @@ import { ObjDto, ObjTypeDto } from '../../../../../common/model/obj/obj.dto';
 import { ApiCallBase } from '../../api-call.base';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 
 export interface ObjAddRequest {

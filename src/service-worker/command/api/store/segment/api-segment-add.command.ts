@@ -18,7 +18,6 @@ import { ApiCallBase } from '../../api-call.base';
 import { BeginTxResponse } from '../api-store.model';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../../common/model/shared/common.dto';
-import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 import { SyncHashType } from '../../../sync/sync.model';
 
 export interface FileDataDto {

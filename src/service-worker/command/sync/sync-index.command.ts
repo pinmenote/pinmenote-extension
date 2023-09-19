@@ -59,19 +59,19 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
         break;
       }
       case ObjTypeDto.PageElementPin: {
-        await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.tx).execute();
+        status = await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.Pdf: {
-        await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.tx).execute();
+        status = await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.Note: {
-        await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.tx).execute();
+        status = await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.PageNote: {
-        await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.tx).execute();
+        status = await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.tx).execute();
         break;
       }
       case ObjTypeDto.Removed: {
@@ -83,6 +83,7 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
         break;
       }
     }
+    if (status < 0) return status;
     await new SyncSetProgressCommand({ id: this.index.id, timestamp: this.index.dt, state: 'update' }).execute();
     await fnSleep(100);
     return status;

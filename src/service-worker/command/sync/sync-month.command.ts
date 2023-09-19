@@ -64,6 +64,7 @@ export class SyncMonthCommand implements ICommand<Promise<SyncIndex>> {
       }
       if ([SyncObjectStatus.INDEX_NOT_EXISTS, SyncObjectStatus.OBJECT_NOT_EXISTS].includes(status)) {
         fnConsoleLog('syncIndex->PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!', status, 'index', index);
+        await SyncTxHelper.commit();
         throw new Error(`Status ERROR ${status}`);
       }
     }

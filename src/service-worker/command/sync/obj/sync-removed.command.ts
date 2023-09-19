@@ -16,14 +16,15 @@
  */
 import { ObjDto, ObjRemovedDto } from '../../../../common/model/obj/obj.dto';
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { SyncProgress } from '../sync.model';
+import { SyncObjectStatus } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 
-export class SyncRemovedCommand implements ICommand<Promise<void>> {
+export class SyncRemovedCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjRemovedDto>, private tx: BeginTxResponse) {}
   // eslint-disable-next-line @typescript-eslint/require-await
-  async execute(): Promise<void> {
+  async execute(): Promise<SyncObjectStatus> {
     fnConsoleLog('SyncRemovedCommand', this.obj, this.tx);
+    return SyncObjectStatus.SERVER_ERROR;
   }
 }
