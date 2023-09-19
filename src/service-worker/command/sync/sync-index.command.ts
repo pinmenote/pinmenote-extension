@@ -14,35 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjRemovedDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import { ObjNoteDto, ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
-import { ObjGetCommand } from '../../../../common/command/obj/obj-get.command';
-import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
-import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
-import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
-import { SyncNoteCommand } from './sync-note.command';
-import { SyncPageNoteCommand } from './sync-page-note.command';
-import { SyncPdfCommand } from './sync-pdf.command';
-import { SyncPinCommand } from './sync-pin.command';
-import { SyncProgress } from '../sync.model';
-import { SyncRemovedCommand } from './sync-removed.command';
-import { SyncSetProgressCommand } from '../progress/sync-set-progress.command';
-import { SyncSnapshotCommand } from './sync-snapshot.command';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { fnSleep } from '../../../../common/fn/fn-sleep';
-import { BeginTxResponse } from '../../api/store/api-store.model';
-
-export enum SyncObjectStatus {
-  TX_LOCKED,
-  SERVER_ERROR = -3,
-  INDEX_NOT_EXISTS,
-  OBJECT_NOT_EXISTS,
-  OK,
-  EMPTY_LIST,
-  LAST_ELEMENT
-}
+import { ObjDto, ObjRemovedDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import { ObjNoteDto, ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
+import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
+import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
+import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
+import { SyncNoteCommand } from './obj/sync-note.command';
+import { SyncPageNoteCommand } from './obj/sync-page-note.command';
+import { SyncPdfCommand } from './obj/sync-pdf.command';
+import { SyncPinCommand } from './obj/sync-pin.command';
+import { SyncObjectStatus, SyncProgress } from './sync.model';
+import { SyncRemovedCommand } from './obj/sync-removed.command';
+import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
+import { SyncSnapshotCommand } from './obj/sync-snapshot.command';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnSleep } from '../../../common/fn/fn-sleep';
+import { BeginTxResponse } from '../api/store/api-store.model';
 
 export interface SyncIndex extends ObjDateIndex {
   status: SyncObjectStatus;

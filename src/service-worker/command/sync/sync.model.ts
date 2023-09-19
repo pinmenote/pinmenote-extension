@@ -21,6 +21,16 @@ export interface SyncProgress {
   hash?: string;
 }
 
+export enum SyncObjectStatus {
+  TX_LOCKED,
+  SERVER_ERROR = -3,
+  INDEX_NOT_EXISTS,
+  OBJECT_NOT_EXISTS,
+  OK,
+  EMPTY_LIST,
+  LAST_ELEMENT
+}
+
 export enum SyncHashType {
   PageSnapshotDataDto = '1',
   PageSnapshotInfoDto = '2'
