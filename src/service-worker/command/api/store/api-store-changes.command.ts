@@ -24,6 +24,9 @@ export class ApiStoreChangesCommand
   extends ApiCallBase
   implements ICommand<Promise<{ data: HashChangeResponse[] } | undefined>>
 {
+  constructor() {
+    super();
+  }
   async execute(): Promise<{ data: HashChangeResponse[] } | undefined> {
     await this.initTokenData();
     if (!this.storeUrl) return;

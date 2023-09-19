@@ -21,7 +21,7 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiStoreCommitCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
-  constructor(private tx: string) {
+  constructor(private tx: BeginTxResponse) {
     super();
   }
   async execute(): Promise<boolean> {
@@ -29,7 +29,7 @@ export class ApiStoreCommitCommand extends ApiCallBase implements ICommand<Promi
     if (!this.storeUrl) return false;
     try {
       const resp = await FetchService.fetch<BeginTxResponse>(
-        `${this.storeUrl}/api/v1/tx/${this.tx}/commit`,
+        `${this.storeUrl}/api/v1/tx/${this.tx.tx}/commit`,
         {
           type: 'TEXT',
           headers: this.getAuthHeaders()

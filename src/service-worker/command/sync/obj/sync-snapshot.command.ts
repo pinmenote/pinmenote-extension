@@ -51,14 +51,14 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
 
   private async syncSnapshot(snapshot: PageSnapshotDto, parent: string): Promise<void> {
     // snapshot->info
-    await new ApiSegmentAddCommand(this.tx.tx, JSON.stringify(snapshot.info), {
+    await new ApiSegmentAddCommand(this.tx, JSON.stringify(snapshot.info), {
       hash: snapshot.info.hash,
       parent,
       type: SyncHashType.PageSnapshotInfoDto,
       key: TEMP_KEY
     }).execute();
     // snapshot->data
-    await new ApiSegmentAddCommand(this.tx.tx, JSON.stringify(snapshot.data), {
+    await new ApiSegmentAddCommand(this.tx, JSON.stringify(snapshot.data), {
       hash: snapshot.data.hash,
       parent,
       type: SyncHashType.PageSnapshotDataDto,
@@ -74,7 +74,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     const segment = await new PageSegmentGetCommand(hash).execute();
     if (!segment) return;
 
-    const isSynchronized = await new ApiSegmentAddCommand(this.tx.tx, JSON.stringify(segment), {
+    const isSynchronized = await new ApiSegmentAddCommand(this.tx, JSON.stringify(segment), {
       hash,
       parent,
       type: this.convertSegmentTypeSyncHashType(segment.type),

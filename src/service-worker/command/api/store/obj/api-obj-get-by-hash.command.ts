@@ -20,6 +20,7 @@ import { ObjTypeDto } from '../../../../../common/model/obj/obj.dto';
 import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
 import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 import { FetchService } from '@pinmenote/fetch-service';
+import { BeginTxResponse } from '../api-store.model';
 
 export interface ObjSingleChange {
   serverId: number;
@@ -30,7 +31,7 @@ export interface ObjSingleChange {
 }
 
 export class ApiObjGetByHashCommand extends ApiCallBase implements ICommand<Promise<ObjSingleChange | ServerErrorDto>> {
-  constructor(private hash: string) {
+  constructor(private hash: string, private tx: BeginTxResponse) {
     super();
   }
   async execute(): Promise<ObjSingleChange | ServerErrorDto> {

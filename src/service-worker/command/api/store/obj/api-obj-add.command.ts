@@ -19,6 +19,7 @@ import { ApiCallBase } from '../../api-call.base';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
 import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
+import { BeginTxResponse } from '../api-store.model';
 
 export interface ObjAddRequest {
   type: ObjTypeDto;
@@ -30,15 +31,15 @@ export interface ObjAddResponse {
   serverId: number;
 }
 
-export class ApiAddObjCommand extends ApiCallBase implements ICommand<Promise<ObjAddResponse | ServerErrorDto>> {
-  constructor(private obj: ObjDto, private hash: string, private tx: string) {
+export class ApiObjAddCommand extends ApiCallBase implements ICommand<Promise<ObjAddResponse | ServerErrorDto>> {
+  constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {
     super();
   }
   async execute(): Promise<ObjAddResponse | ServerErrorDto> {
     await this.initTokenData();
     if (!this.storeUrl) return { code: ApiErrorCode.INTERNAL, message: 'ApiStoreAddObjCommand' };
     const resp = await FetchService.fetch<ObjAddResponse | ServerErrorDto>(
-      `${this.storeUrl}/api/v1/obj/${this.tx}`,
+      `${this.storeUrl}/api/v1/obj/${this.tx.tx}`,
       {
         headers: this.getAuthHeaders(),
         method: 'POST',

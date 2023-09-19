@@ -16,7 +16,6 @@
  */
 export interface BeginTxResponse {
   tx: string;
-  redirectAddress?: string;
   locked: boolean;
   lockedBy?: string;
   lockExpire: number;

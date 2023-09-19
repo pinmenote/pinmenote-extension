@@ -38,7 +38,7 @@ export class SyncTxHelper {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
     if (!tx) return;
     fnConsoleLog('SyncServerCommand->commit', tx);
-    await new ApiStoreCommitCommand(tx.tx).execute();
+    await new ApiStoreCommitCommand(tx).execute();
     await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
   }
 

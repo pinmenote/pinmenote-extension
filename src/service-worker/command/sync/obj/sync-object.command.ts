@@ -17,7 +17,7 @@
 import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { ApiAddObjCommand, ObjAddResponse } from '../../api/store/obj/api-add-obj.command';
+import { ApiObjAddCommand, ObjAddResponse } from '../../api/store/obj/api-obj-add.command';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 import { ApiErrorCode } from '../../../../common/model/shared/api.error-code';
 import { ApiObjGetByHashCommand, ObjSingleChange } from '../../api/store/obj/api-obj-get-by-hash.command';
@@ -28,7 +28,7 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     fnConsoleLog('SyncObjectCommand', this.tx);
     if (this.obj.server?.id) return;
-    const resp: ObjAddResponse | ServerErrorDto = await new ApiAddObjCommand(this.obj, this.hash, this.tx.tx).execute();
+    const resp: ObjAddResponse | ServerErrorDto = await new ApiObjAddCommand(this.obj, this.hash, this.tx).execute();
     if ('serverId' in resp) {
       return await this.saveServerId(resp.serverId);
     } else if ('code' in resp && resp.code === ApiErrorCode.SYNC_DUPLICATED_HASH) {
@@ -38,7 +38,7 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
   }
 
   private async setByHash(): Promise<void> {
-    const resp: ObjSingleChange | ServerErrorDto = await new ApiObjGetByHashCommand(this.hash).execute();
+    const resp: ObjSingleChange | ServerErrorDto = await new ApiObjGetByHashCommand(this.hash, this.tx).execute();
     if ('serverId' in resp) {
       await this.saveServerId(resp.serverId);
       return;

@@ -19,6 +19,7 @@ import { BeginTxResponse } from '../api-store.model';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../../common/model/shared/common.dto';
 import { SyncHashType } from '../../../sync/sync.model';
+import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
 export interface FileDataDto {
   parent?: string;
@@ -28,14 +29,31 @@ export interface FileDataDto {
 }
 
 export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
-  constructor(private tx: string, private file: string, private data: FileDataDto) {
+  constructor(private tx: BeginTxResponse, private file: string, private data: FileDataDto) {
     super();
   }
   async execute(): Promise<boolean> {
     await this.initTokenData();
     if (!this.storeUrl) return false;
-    if (await this.hasSegment()) return true;
+    if (await this.hasSegment()) return this.addRef();
     return await this.addSegment();
+  }
+
+  async addRef(): Promise<boolean> {
+    if (!this.data.parent) return true;
+    const authHeaders = this.getAuthHeaders(false);
+    const resp = await FetchService.fetch<BeginTxResponse>(
+      `${this.storeUrl!}/api/v1/segment/ref/${this.tx.tx}/${this.data.hash}/${this.data.parent}`,
+      {
+        type: 'TEXT',
+        headers: {
+          ...authHeaders
+        }
+      },
+      this.refreshParams()
+    );
+    fnConsoleLog('ApiSegmentAddCommand->addRef', resp);
+    return true;
   }
 
   async hasSegment(): Promise<boolean> {
@@ -63,9 +81,8 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
     formData.append('type', this.data.type.toString());
 
     const authHeaders = this.getAuthHeaders(false);
-
     const resp = await FetchService.fetch(
-      `${this.storeUrl!}/api/v1/segment/add/${this.tx}`,
+      `${this.storeUrl!}/api/v1/segment/add/${this.tx.tx}`,
       {
         headers: {
           ...authHeaders
