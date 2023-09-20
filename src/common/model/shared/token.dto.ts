@@ -22,6 +22,7 @@ export enum TokenTypeDto {
 export interface RefreshTokenDto {
   token: string;
   iat: number;
+  syncToken: string;
 }
 
 export interface AccessTokenDto {

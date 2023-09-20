@@ -14,15 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorage } from '@pinmenote/browser-api';
-import { ICommand } from '../../model/shared/common.dto';
-import { LogManager } from '../../popup/log.manager';
-import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { ApiCallBase } from '../../api-call.base';
+import { FetchService } from '@pinmenote/fetch-service';
+import { ICommand } from '../../../../../common/model/shared/common.dto';
+import { ServerQuotaResponse } from '../../../../../common/model/sync-server.model';
 
-export class SyncClearServerCommand implements ICommand<Promise<void>> {
-  async execute(): Promise<void> {
-    // clear progress
-    await BrowserStorage.remove(ObjectStoreKeys.SYNC_PROGRESS);
-    LogManager.log(`SyncClearServerCommand->complete !!!`);
+export class ApiSegmentQuotaGetCommand extends ApiCallBase implements ICommand<Promise<ServerQuotaResponse>> {
+  constructor() {
+    super();
+  }
+  async execute(): Promise<ServerQuotaResponse> {
+    await this.initTokenData();
+    const resp = await FetchService.fetch<ServerQuotaResponse>(
+      `${this.storeUrl!}/api/v1/segment/quota`,
+      {
+        type: 'JSON',
+        headers: this.getAuthHeaders(true)
+      },
+      this.refreshParams()
+    );
+    return resp.data;
   }
 }

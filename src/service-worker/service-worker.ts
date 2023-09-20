@@ -30,7 +30,7 @@ import { PopupBugReportCommand } from './command/popup/popup-bug-report.command'
 import { PopupLoginCommand } from './command/popup/popup-login.command';
 import { PopupLoginSuccessCommand } from './command/popup/popup-login-success.command';
 import { PopupLogoutCommand } from './command/popup/popup-logout.command';
-import { PopupTakeScreenshotCommand } from './command/popup/popup-take-screenshot.command';
+import { PopupServerQuotaCommand } from './command/popup/popup-server-quota.command';
 import { PopupVerify2faCommand } from './command/popup/popup-verify-2fa.command';
 import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
@@ -90,8 +90,8 @@ const handleMessage = async (
     case BusMessageType.POPUP_LOGOUT:
       await new PopupLogoutCommand().execute();
       break;
-    case BusMessageType.POPUP_TAKE_SCREENSHOT:
-      await new PopupTakeScreenshotCommand().execute();
+    case BusMessageType.POPUP_SERVER_QUOTA:
+      await new PopupServerQuotaCommand().execute();
       break;
     case BusMessageType.IFRAME_INDEX:
     case BusMessageType.IFRAME_INDEX_REGISTER:

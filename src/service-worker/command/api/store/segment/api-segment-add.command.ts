@@ -19,7 +19,7 @@ import { BeginTxResponse } from '../api-store.model';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../../common/model/shared/common.dto';
 import { SyncHashType } from '../../../sync/sync.model';
-import { fnConsoleLog } from '../../../../../common/fn/fn-console';
+import { deflate } from 'pako';
 
 export interface FileDataDto {
   parent?: string;
@@ -57,9 +57,14 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
 
   async addSegment(): Promise<boolean> {
     const formData = new FormData();
-    let fileData = this.file;
-    if (!(this.file instanceof Blob)) fileData = new Blob([this.file], { type: 'application/json' });
-    formData.append('file', fileData);
+    if (this.file instanceof Blob) {
+      formData.append('file', this.file);
+    } else {
+      const fileData = deflate(this.file);
+      formData.append('file', new Blob([fileData], { type: 'application/zip' }));
+      console.log(`compression ${Math.round((fileData.length / this.file.length) * 100)}%`);
+    }
+
     if (this.data.parent) formData.append('parent', this.data.parent);
     formData.append('key', this.data.key);
     formData.append('hash', this.data.hash);

@@ -28,6 +28,8 @@ import { TokenDataDto } from '../../../common/model/shared/token.dto';
 import { TokenStorageRemoveCommand } from '../../../common/command/server/token/token-storage-remove.command';
 import Typography from '@mui/material/Typography';
 import jwtDecode from 'jwt-decode';
+import { ServerQuotaResponse } from '../../../common/model/sync-server.model';
+import { fnByteToGb } from '../../../common/fn/fn-byte-convert';
 
 interface Props {
   logoutSuccess: () => void;
@@ -35,22 +37,37 @@ interface Props {
 
 export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSuccess }) => {
   const [tokenData, setTokenData] = useState<TokenDataDto | undefined>();
+  const [serverQuota, setServerQuota] = useState<ServerQuotaResponse>();
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
     LogManager.log(`AccountDetailsComponent init`);
+
+    const dispatcher = TinyDispatcher.getInstance();
+
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
+      dispatcher.addListener<ServerQuotaResponse>(BusMessageType.POPUP_SERVER_QUOTA, (event, key, value) => {
+        LogManager.log(`${event} - ${JSON.stringify(value)}`);
+        dispatcher.removeListener(event, key);
+        setServerQuota(value);
+      });
+      BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_SERVER_QUOTA })
+        .then(() => {
+          /* */
+        })
+        .catch(() => {
+          /* */
+        });
     }
-    const loginSuccessKey = TinyDispatcher.getInstance().addListener(
-      BusMessageType.POPUP_LOGIN_SUCCESS,
-      async (event, key) => {
-        TinyDispatcher.getInstance().removeListener(event, key);
-        await PopupTokenStore.init();
-        if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
-      }
-    );
-    const logoutKey = TinyDispatcher.getInstance().addListener<FetchResponse<BoolDto | ServerErrorDto>>(
+
+    const loginSuccessKey = dispatcher.addListener(BusMessageType.POPUP_LOGIN_SUCCESS, async (event, key) => {
+      dispatcher.removeListener(event, key);
+      await PopupTokenStore.init();
+      if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
+    });
+
+    const logoutKey = dispatcher.addListener<FetchResponse<BoolDto | ServerErrorDto>>(
       BusMessageType.POPUP_LOGOUT,
       async (event, key, value) => {
         LogManager.log('POPUP_LOGOUT_RESPONSE');
@@ -63,8 +80,8 @@ export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSucces
       }
     );
     return () => {
-      TinyDispatcher.getInstance().removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
-      TinyDispatcher.getInstance().removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
+      dispatcher.removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
+      dispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
     };
   }, []);
 
@@ -77,9 +94,25 @@ export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSucces
 
   return (
     <div>
-      <Typography align="center" fontSize="1.5em" fontWeight="bold">
-        Welcome {tokenData?.data.username}
-      </Typography>
+      <div>
+        <div>
+          <Typography align="center" fontSize="1.5em" fontWeight="bold">
+            Welcome {tokenData?.data.username}
+          </Typography>
+        </div>
+        <div style={{ margin: 10 }}>
+          <Typography fontSize="1.2em" fontWeight="bold">
+            Account statistics{' '}
+          </Typography>
+          <Typography style={{ marginTop: 5 }} fontSize="1.2em">
+            {fnByteToGb(serverQuota?.used)} GB of {fnByteToGb(serverQuota?.available)} GB disk space used
+          </Typography>
+          <Typography style={{ marginTop: 5 }} fontSize="1.2em">
+            {serverQuota?.files} files and {serverQuota?.documents} documents archived
+          </Typography>
+        </div>
+      </div>
+
       <div style={{ position: 'absolute', bottom: 0, width: 300 }}>
         <div style={{ margin: 10 }}>
           <Typography style={{ fontSize: '8pt', color: COLOR_DEFAULT_RED }}>

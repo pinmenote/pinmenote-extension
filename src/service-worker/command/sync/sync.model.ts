@@ -21,8 +21,8 @@ export interface SyncProgress {
 }
 
 export enum SyncObjectStatus {
-  TX_LOCKED,
-  SERVER_ERROR = -3,
+  TX_LOCKED = -4,
+  SERVER_ERROR,
   INDEX_NOT_EXISTS,
   OBJECT_NOT_EXISTS,
   OK,

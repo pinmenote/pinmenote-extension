@@ -14,20 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ApiSegmentQuotaGetCommand, ServerQuotaResponse } from '../api/store/segment/api-segment-quota-get.command';
 import { BrowserApi } from '@pinmenote/browser-api';
-import { BrowserStorage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { SettingsConfig } from '../../../common/environment';
 
-export class PopupTakeScreenshotCommand implements ICommand<Promise<void>> {
+export class PopupServerQuotaCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
-    const settings = await BrowserStorage.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
-    const data = await BrowserApi.tabs.captureVisibleTab({
-      format: settings.screenshotFormat,
-      quality: settings.screenshotQuality
-    });
-    await BrowserApi.sendRuntimeMessage<string>({ type: BusMessageType.POPUP_TAKE_SCREENSHOT, data });
+    const data = await new ApiSegmentQuotaGetCommand().execute();
+    await BrowserApi.sendRuntimeMessage<ServerQuotaResponse>({ type: BusMessageType.POPUP_SERVER_QUOTA, data });
   }
 }

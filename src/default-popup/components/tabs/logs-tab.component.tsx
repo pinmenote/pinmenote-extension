@@ -19,7 +19,6 @@ import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import { LogManager } from '../../../common/popup/log.manager';
-import { SyncClearServerCommand } from '../../../common/command/sync/sync-clear-server.command';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import Typography from '@mui/material/Typography';
 
@@ -46,10 +45,6 @@ export const LogsTabComponent: FunctionComponent = () => {
   const handleClearLogs = () => {
     LogManager.clear();
   };
-
-  const handleClearServer = async () => {
-    await new SyncClearServerCommand().execute();
-  };
   return (
     <div style={{ height: '100%', margin: 5 }}>
       <Typography fontSize="2em">Debug</Typography>
@@ -61,11 +56,6 @@ export const LogsTabComponent: FunctionComponent = () => {
       <div style={{ margin: 10 }}>
         <Button sx={{ width: '100%' }} variant="outlined" onClick={handleClearLogs}>
           Clear logs
-        </Button>
-      </div>
-      <div style={{ margin: 10 }}>
-        <Button sx={{ width: '100%' }} variant="outlined" onClick={handleClearServer}>
-          Clear server
         </Button>
       </div>
       <Typography fontSize="1.5em" fontWeight="bold">

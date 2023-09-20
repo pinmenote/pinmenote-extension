@@ -14,18 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto } from '../../common/model/shared/token.dto';
-import { LogManager } from '../../common/popup/log.manager';
-import { TokenStorageGetCommand } from '../../common/command/server/token/token-storage-get.command';
-
-export class PopupTokenStore {
-  private static tokenValue: AccessTokenDto | undefined;
-
-  static init = async () => {
-    this.tokenValue = await new TokenStorageGetCommand().execute();
-  };
-
-  static get token(): AccessTokenDto | undefined {
-    return this.tokenValue;
-  }
+export interface ServerQuotaResponse {
+  used: number;
+  available: number;
+  files: number;
+  documents: number;
 }

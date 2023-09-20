@@ -7,7 +7,7 @@
   },
   "name": "pinmenote",
   "short_name": "pinmenote",
-  "description": "Pin note on website, modify, draw, comment and archive content.",
+  "description": "Pin note, modify, draw, comment and archive websites.",
   "homepage_url": "https://pinmenote.com",
   "version": "0.0.1",
   "icons": {

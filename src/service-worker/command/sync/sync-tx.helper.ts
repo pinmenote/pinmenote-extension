@@ -22,14 +22,31 @@ import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import jwtDecode from 'jwt-decode';
+import { TokenDataDto } from '../../../common/model/shared/token.dto';
 
 export class SyncTxHelper {
   static async begin(): Promise<BeginTxResponse | undefined> {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
     if (tx) return tx;
     const txResponse = await new ApiStoreBeginCommand().execute();
-    fnConsoleLog('locked', txResponse?.locked);
-    if (txResponse?.locked) return undefined;
+    if (txResponse?.locked) {
+      const token = await new TokenStorageGetCommand().execute();
+      if (!token) return undefined;
+      const tokenData = jwtDecode<TokenDataDto>(token.access_token);
+      fnConsoleLog(
+        'locked',
+        txResponse?.locked,
+        txResponse,
+        tokenData,
+        tokenData.refresh_token.syncToken === txResponse.lockedBy
+      );
+      if (tokenData.refresh_token.syncToken === txResponse.lockedBy) {
+        await BrowserStorage.set(ObjectStoreKeys.SYNC_TX, txResponse);
+        return txResponse;
+      }
+      return undefined;
+    }
     await BrowserStorage.set(ObjectStoreKeys.SYNC_TX, txResponse);
     return txResponse;
   }

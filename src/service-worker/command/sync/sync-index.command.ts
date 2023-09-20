@@ -52,6 +52,9 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
       return SyncObjectStatus.OBJECT_NOT_EXISTS;
     }
     let status = SyncObjectStatus.OK;
+    // Skip for now for those with index
+    if (obj.server?.id) return status;
+
     switch (obj.type) {
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
