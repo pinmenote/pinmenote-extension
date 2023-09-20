@@ -32,7 +32,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (SyncServerCommand.isInSync) return;
     if (!(await SyncTxHelper.shouldSync())) return;
     try {
-      // await new SyncResetProgressCommand().execute();
+      await new SyncResetProgressCommand().execute();
 
       SyncServerCommand.isInSync = true;
 

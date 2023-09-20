@@ -20,6 +20,8 @@ import { CryptoSettingsComponent } from './crypto/crypto-settings.component';
 import { DEFAULT_BORDER_RADIUS } from '../../../common/components/colors';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { OptionsConvertObjectsCommand } from '../../command/options-convert-objects.command';
 
 const containerStyle: CSSProperties = {
   margin: 10,
@@ -30,6 +32,9 @@ const containerStyle: CSSProperties = {
 };
 
 export const SettingsComponent: FunctionComponent = () => {
+  const handleConvert = async () => {
+    await new OptionsConvertObjectsCommand().execute();
+  };
   return (
     <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -47,6 +52,9 @@ export const SettingsComponent: FunctionComponent = () => {
         <div style={containerStyle}>
           <CryptoSettingsComponent></CryptoSettingsComponent>
         </div>
+        <Button style={{ display: 'none' }} variant="outlined" onClick={handleConvert}>
+          Convert
+        </Button>
       </div>
     </div>
   );

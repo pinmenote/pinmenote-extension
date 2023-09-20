@@ -35,6 +35,7 @@ export class ImageResizeFactory {
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
+          if (img.naturalWidth <= size.width && img.naturalHeight <= size.height) resolve(b64image);
           const can = doc.createElement('canvas');
           const wr = size.width / img.naturalWidth;
           const hr = size.height / img.naturalHeight;
