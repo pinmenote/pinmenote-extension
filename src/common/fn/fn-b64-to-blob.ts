@@ -14,8 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export const fnB64toBlob = (b64Data: string, contentType = '', sliceSize = 512): Blob => {
-  const byteCharacters = window.atob(b64Data.split(',')[1]);
+export const fnB64toBlob = (b64Data: string, sliceSize = 512): Blob => {
+  const a = b64Data.split(',');
+  const contentType = a[0].substring(5).split(';')[0];
+  let data = a[1];
+  if (data.endsWith('%3D')) data = data.replaceAll('%3D', '=');
+  // console.log('fnB64toBlob', 'contentType', contentType, 'data', data);
+  const byteCharacters = atob(data);
   const byteArrays = [];
 
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {

@@ -63,7 +63,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
     if (!pdfRef.current || !titleRef.current) return;
     const obj = await new ObjGetCommand<ObjPdfDto>(id).execute();
     const data = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${obj.data.hash}`);
-    const a = obj.data.url.pathname.split('/');
+    const a = obj.data.data.url.pathname.split('/');
 
     titleRef.current.innerText = `${a[a.length - 1]}`;
 
@@ -95,7 +95,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
           }
         }, 250);
       }
-    } catch (e) {
+    } catch (e: any) {
       fnConsoleLog('render->ERROR', e);
       // eslint-disable-next-line
       pdfRef.current.innerHTML = `<h1>ERROR RENDERING PDF</h1><br /><p>${e.toString()}</p>`;

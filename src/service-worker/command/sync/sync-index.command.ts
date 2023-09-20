@@ -79,7 +79,7 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
         break;
       }
       default: {
-        fnConsoleLog('SyncObjectCommand->PROBLEM', obj.type, 'index', this.index);
+        fnConsoleLog('SyncObjectCommand->PROBLEM', obj, 'index', this.index);
         break;
       }
     }

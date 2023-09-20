@@ -36,5 +36,8 @@ export enum SyncHashType {
   IFrame = '3',
   Img = '4',
   Css = '5',
-  Snapshot = '6'
+  Snapshot = '6',
+  ObjPdfDataDto = '7',
+  ObjPdf = '8',
+  ObjPageNoteDto = '9'
 }

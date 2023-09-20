@@ -30,9 +30,9 @@ interface Props {
 
 export const PdfElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.hashtags || []);
+  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.data.hashtags || []);
 
-  const a = props.dto.data.url.pathname.split('/');
+  const a = props.dto.data.data.url.pathname.split('/');
   const title = a[a.length - 1];
 
   const handleEdit = () => {
@@ -50,7 +50,7 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
   };
 
   const handleTagSave = (newTags: string[]) => {
-    props.dto.data.hashtags = newTags;
+    props.dto.data.data.hashtags = newTags;
     setHashtags(newTags);
     fnConsoleLog('PageSnapshotElement->handleTagSave->newTags', newTags);
   };
@@ -60,7 +60,7 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
       <BoardItemTitle title={title} htmlCallback={handleHtml} editCallback={handleEdit} removeCallback={handleRemove} />
       <img
         style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
-        src={props.dto.data.screenshot}
+        src={props.dto.data.data.screenshot}
       />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
@@ -69,7 +69,7 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
         createdAt={props.dto.createdAt}
         tags={hashtags}
         words={[]}
-        url={props.dto.data.rawUrl}
+        url={props.dto.data.data.rawUrl}
       />
     </BoardItem>
   );

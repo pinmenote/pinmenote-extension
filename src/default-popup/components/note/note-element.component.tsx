@@ -43,7 +43,7 @@ export const NoteElementComponent: FunctionComponent<Props> = ({ obj, editCallba
   );
   const expandComponent = isExpanded ? <NoteListExpandComponent note={obj} /> : '';
 
-  const title = obj.data.title.length > 50 ? `${obj.data.title.substring(0, 50)}...` : obj.data.title;
+  const title = obj.data.data.title.length > 50 ? `${obj.data.data.title.substring(0, 50)}...` : obj.data.data.title;
   return (
     <div
       style={{

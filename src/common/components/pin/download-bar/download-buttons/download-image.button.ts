@@ -77,15 +77,13 @@ export class DownloadImageButton {
   };
 
   private downloadScreenshot = async (screenshot: string): Promise<void> => {
-    let url = '';
+    const url = window.URL.createObjectURL(fnB64toBlob(screenshot));
     let filename = '';
     switch (this.model.doc.settings.screenshotFormat) {
       case 'jpeg':
-        url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/jpeg'));
         filename = `${fnUid()}.jpg`;
         break;
       default:
-        url = window.URL.createObjectURL(fnB64toBlob(screenshot, 'image/png'));
         filename = `${fnUid()}.png`;
     }
     const data = { url, filename };

@@ -28,7 +28,6 @@ import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjViewComponent } from '../obj/obj-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
-import { TaskComponent } from '../task/task.component';
 
 export const MainViewComponent: FunctionComponent = () => {
   const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
@@ -57,8 +56,6 @@ export const MainViewComponent: FunctionComponent = () => {
         return <DecryptComponent />;
       case MainViewEnum.CALENDAR:
         return <CalendarComponent />;
-      case MainViewEnum.TASK:
-        return <TaskComponent />;
       case MainViewEnum.BUG_REPORT:
         return <BugReportComponent cancelCallback={() => setCurrentView(MainViewEnum.PAGE_OBJECTS)} />;
       case MainViewEnum.NOTE:

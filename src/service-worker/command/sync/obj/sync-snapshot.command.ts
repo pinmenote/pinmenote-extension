@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { SegmentPage, SegmentType } from '@pinmenote/page-compute';
+import { SegmentPage, SegmentType, SegmentImg } from '@pinmenote/page-compute';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
@@ -25,6 +25,7 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 import { PageSnapshotDto } from '../../../../common/model/obj/page-snapshot.dto';
 import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
+import { fnB64toBlob } from '../../../../common/fn/fn-b64-to-blob';
 
 const TEMP_KEY = 'foo';
 
@@ -42,7 +43,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     await this.syncSnapshot(snapshot, snapshot.hash);
     // TODO await this.syncComments(page.comments, snapshot.hash);
     if (!snapshot.segment) {
-      fnConsoleLog('SyncSnapshotCommand->OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO', snapshot.segment, this.obj);
+      fnConsoleLog('SyncSnapshotCommand->!!!!!!!!!!!!1SEGMENT->EMPTY', snapshot.segment, this.obj);
       return SyncObjectStatus.OK;
     }
     await this.syncSegment(snapshot.segment, snapshot.hash);
@@ -73,14 +74,25 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
   private async syncSegment(hash: string, parent: string) {
     const segment = await new PageSegmentGetCommand(hash).execute();
     if (!segment) return;
+    let content: string | Blob | undefined;
+    if (segment.type === (3 as SegmentType)) return;
+    if (segment.type == SegmentType.IMG) {
+      const src = (segment.content as SegmentImg).src;
+      if (src.startsWith('data:image/svg') || src === 'data:') {
+        content = src;
+      } else {
+        content = fnB64toBlob(src);
+      }
+    } else {
+      content = JSON.stringify(segment.content);
+    }
 
-    const isSynchronized = await new ApiSegmentAddCommand(this.tx, JSON.stringify(segment), {
+    await new ApiSegmentAddCommand(this.tx, content, {
       hash,
       parent,
       type: this.convertSegmentTypeSyncHashType(segment.type),
       key: TEMP_KEY
     }).execute();
-    if (isSynchronized) return;
 
     switch (segment.type) {
       case SegmentType.SNAPSHOT: {
@@ -93,12 +105,11 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
         }
         break;
       }
+      case 3 as SegmentType: // FIXME - remove later - SHADOW - obsolete - no longer exists
       case SegmentType.CSS:
       case SegmentType.IMG: {
         break;
       }
-      case 3 as SegmentType: // FIXME - remove later - SHADOW - obsolete - no longer exists
-        return;
       case SegmentType.IFRAME: {
         const content = segment.content as SegmentPage;
         for (const css of content.css) {
@@ -126,6 +137,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
       case SegmentType.SNAPSHOT:
         return SyncHashType.Snapshot;
       default:
+        fnConsoleLog('convertSegmentTypeSyncHashType', type);
         throw new Error('PROBLEM !!!!!!!!!!!!!!!!!!!!');
     }
   }

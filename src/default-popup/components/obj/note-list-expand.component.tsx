@@ -27,7 +27,8 @@ export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ not
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!ref.current) return;
-    ref.current.innerHTML = marked(note.data.description);
+    const { data } = note.data;
+    ref.current.innerHTML = marked(data.description);
   });
 
   return (

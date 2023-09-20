@@ -29,7 +29,7 @@ export class SyncMonthCommand implements ICommand<Promise<SyncIndex>> {
 
     const indexListKey = `${ObjectStoreKeys.UPDATED_DT}:${this.yearMonth}`;
     const indexList = await SyncTxHelper.getList(indexListKey);
-    fnConsoleLog('SyncMonthCommand->syncList', indexList);
+    fnConsoleLog('SyncMonthCommand->syncList', this.yearMonth, 'size', indexList.length);
 
     if (indexList.length === 0)
       return { dt: this.progress.timestamp, id: this.progress.id, status: SyncObjectStatus.EMPTY_LIST };
@@ -64,8 +64,8 @@ export class SyncMonthCommand implements ICommand<Promise<SyncIndex>> {
       }
       if ([SyncObjectStatus.INDEX_NOT_EXISTS, SyncObjectStatus.OBJECT_NOT_EXISTS].includes(status)) {
         fnConsoleLog('syncIndex->PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!', status, 'index', index);
-        await SyncTxHelper.commit();
-        throw new Error(`Status ERROR ${status}`);
+        // await SyncTxHelper.commit();
+        // throw new Error(`Status ERROR ${status}`);
       }
     }
 

@@ -26,7 +26,6 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
 
   async execute(): Promise<void> {
-    fnConsoleLog('SyncObjectCommand', this.tx);
     if (this.obj.server?.id) return;
     const resp: ObjAddResponse | ServerErrorDto = await new ApiObjAddCommand(this.obj, this.hash, this.tx).execute();
     if ('serverId' in resp) {
@@ -34,6 +33,7 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
     } else if ('code' in resp && resp.code === ApiErrorCode.SYNC_DUPLICATED_HASH) {
       return await this.setByHash();
     }
+    fnConsoleLog('SyncObjectCommand', 'tx', this.tx, 'resp', resp);
     throw new Error('PROBLEM !!!!!!!!!!!!!!!');
   }
 

@@ -17,14 +17,14 @@
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjDto } from '../../model/obj/obj.dto';
-import { ObjPageNoteDto } from '../../model/obj/obj-note.dto';
+import { ObjNoteDataDto, ObjPageNoteDto } from '../../model/obj/obj-note.dto';
 import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { SwTaskStore } from '../../store/sw-task.store';
 import { SwTaskType } from '../../model/sw-task.model';
 import { WordFactory } from '../../text/word.factory';
 import { fnConsoleLog } from '../../fn/fn-console';
-import { fnSha256 } from '../../fn/fn-hash';
+import { fnSha256Object } from '../../fn/fn-hash';
 
 export class PageNoteUpdateCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPageNoteDto>, private title: string, private description: string) {}
@@ -37,24 +37,28 @@ export class PageNoteUpdateCommand implements ICommand<void> {
     await BrowserStorage.set<ObjPageNoteDto>(`${ObjectStoreKeys.NOTE_HASH}:${this.obj.data.hash}`, this.obj.data);
 
     this.obj.data.prev = this.obj.data.hash;
-    this.obj.data.hash = fnSha256(this.title + this.description + (this.obj.data.url?.href || '') + dt.toString());
 
-    this.obj.data.title = this.title;
-    this.obj.data.description = this.description;
+    const words = new Set<string>([...WordFactory.toWordList(this.title), ...WordFactory.toWordList(this.description)]);
+
+    const newData: ObjNoteDataDto = {
+      title: this.title,
+      description: this.description,
+      words: Array.from(words),
+      hashtags: this.obj.data.data.hashtags
+    };
+    this.obj.data.hash = fnSha256Object({ ...newData, url: this.obj.data.url, dt });
+
+    this.obj.data.data = newData;
     this.obj.updatedAt = dt;
 
     // Remove words from index
     await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
-      words: this.obj.data.words,
+      words: this.obj.data.data.words,
       objectId: this.obj.id
     });
 
-    // Update words
-    const words = new Set<string>([...WordFactory.toWordList(this.title), ...WordFactory.toWordList(this.description)]);
-    this.obj.data.words = Array.from(words);
-
     await SwTaskStore.addTask(SwTaskType.WORDS_ADD_INDEX, {
-      words: this.obj.data.words,
+      words: Array.from(words),
       objectId: this.obj.id
     });
 

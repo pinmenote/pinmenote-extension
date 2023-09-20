@@ -50,7 +50,7 @@ export const NoteListElementComponent: FunctionComponent<Props> = (props) => {
   );
   const expandComponent = isExpanded ? <NoteListExpandComponent note={props.obj} /> : '';
 
-  const value = props.obj.data.title;
+  const value = props.obj.data.data.title;
   const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
 
   return (

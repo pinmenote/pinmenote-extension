@@ -18,14 +18,14 @@ import { COLOR_DEFAULT_BORDER, DEFAULT_BORDER_RADIUS } from '../../../../common/
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { EditorView } from 'prosemirror-view';
-import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
+import { ObjNoteDataDto } from '../../../../common/model/obj/obj-note.dto';
 import { PageNoteAddCommand } from '../../../../common/command/page-note/page-note-add.command';
 import { PopupActiveTabStore } from '../../../store/popup-active-tab.store';
 import { StyledInput } from '../../../../common/components/react/styled.input';
 import { WordFactory } from '../../../../common/text/word.factory';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
-import { fnSha256 } from '../../../../common/fn/fn-hash';
+import { fnSha256Object } from '../../../../common/fn/fn-hash';
 
 interface Props {
   addCallback: () => void;
@@ -76,16 +76,21 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
     const description = LocalModel.description;
     const words = new Set<string>([...WordFactory.toWordList(title), ...WordFactory.toWordList(description)]);
     const dt = Date.now();
-    const hash = fnSha256(title + description + (url?.href || '') + dt.toString());
-    const note: ObjPageNoteDto = {
-      hash,
+    const data: ObjNoteDataDto = {
       title,
       description,
-      url,
       words: Array.from(words),
       hashtags: []
     };
-    await new PageNoteAddCommand(note, dt).execute();
+    const hash = fnSha256Object({ ...data, url, dt });
+    await new PageNoteAddCommand(
+      {
+        hash,
+        url,
+        data
+      },
+      dt
+    ).execute();
     props.addCallback();
   };
 

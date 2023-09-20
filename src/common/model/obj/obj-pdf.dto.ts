@@ -18,8 +18,13 @@ import { ObjUrlDto } from './obj.dto';
 
 export interface ObjPdfDto {
   hash: string;
+  data: ObjPdfDataDto;
+}
+
+export interface ObjPdfDataDto {
   screenshot: string;
   rawUrl: string;
   url: ObjUrlDto;
   hashtags: string[];
+  hash: string;
 }

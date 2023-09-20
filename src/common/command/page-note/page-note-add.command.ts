@@ -45,7 +45,7 @@ export class PageNoteAddCommand implements ICommand<Promise<void>> {
     };
 
     await SwTaskStore.addTask(SwTaskType.WORDS_ADD_INDEX, {
-      words: this.note.words,
+      words: this.note.data.words,
       objectId: id
     });
 

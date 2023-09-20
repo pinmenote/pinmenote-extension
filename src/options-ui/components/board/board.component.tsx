@@ -17,8 +17,8 @@
 import { ObjDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardStore } from '../../store/board.store';
-import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
 import { PageNoteElement } from './page-note/page-note.element';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
@@ -84,7 +84,11 @@ export const BoardComponent: FunctionComponent = () => {
       }
       case ObjTypeDto.PageNote: {
         boardElements.push(
-          <PageNoteElement key={obj.id} dto={obj as ObjDto<ObjNoteDto>} refreshBoardCallback={refreshBoardCallback} />
+          <PageNoteElement
+            key={obj.id}
+            dto={obj as ObjDto<ObjPageNoteDto>}
+            refreshBoardCallback={refreshBoardCallback}
+          />
         );
         break;
       }

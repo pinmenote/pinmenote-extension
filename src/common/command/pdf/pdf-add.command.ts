@@ -22,11 +22,11 @@ import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjAddIdCommand } from '../obj/id/obj-add-id.command';
 import { ObjNextIdCommand } from '../obj/id/obj-next-id.command';
-import { ObjPdfDto } from '../../model/obj/obj-pdf.dto';
+import { ObjPdfDataDto, ObjPdfDto } from '../../model/obj/obj-pdf.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { ScreenshotFactory } from '../../factory/screenshot.factory';
 import { UrlFactory } from '../../factory/url.factory';
-import { fnSha256 } from '../../fn/fn-hash';
+import { fnSha256, fnSha256Object } from '../../fn/fn-hash';
 import { ImageResizeFactory } from '../../factory/image-resize.factory';
 
 export class PdfAddCommand implements ICommand<Promise<void>> {
@@ -46,12 +46,16 @@ export class PdfAddCommand implements ICommand<Promise<void>> {
 
     const url = UrlFactory.newUrl();
 
-    const data: ObjPdfDto = {
-      hash,
+    const pdfData: Omit<ObjPdfDataDto, 'hash'> = {
       screenshot,
       rawUrl: this.value.url,
       url,
       hashtags: []
+    };
+    const pdfDataHash = fnSha256Object(pdfData);
+    const data: ObjPdfDto = {
+      hash,
+      data: { ...pdfData, hash: pdfDataHash }
     };
 
     const dto: ObjDto<ObjPdfDto> = {

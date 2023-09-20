@@ -17,9 +17,11 @@
 export interface BeginTxResponse {
   tx: string;
   locked: boolean;
-  lockedBy?: string;
   lockExpire: number;
+  lockedBy?: string;
   lockReason?: string;
+  refreshToken: boolean;
+  resetStorage: boolean;
 }
 
 enum HashOperation {

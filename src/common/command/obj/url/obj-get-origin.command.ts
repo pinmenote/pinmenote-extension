@@ -22,7 +22,6 @@ import { ObjPageDto } from '../../../model/obj/obj-page.dto';
 import { ObjPageNoteDto } from '../../../model/obj/obj-note.dto';
 import { ObjPdfDto } from '../../../model/obj/obj-pdf.dto';
 import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
-import { ObjTaskDto } from '../../../model/obj/obj-task.dto';
 import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
@@ -45,10 +44,8 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
         if ((obj.data as ObjPinDto).data.url.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageNote) {
         if ((obj.data as ObjPageNoteDto).url.href === this.data.href) continue;
-      } else if (obj.type === ObjTypeDto.PageTask) {
-        if ((obj.data as ObjTaskDto).url?.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.Pdf) {
-        if ((obj.data as ObjPdfDto).rawUrl === this.data.href) continue;
+        if ((obj.data as ObjPdfDto).data.rawUrl === this.data.href) continue;
       }
       out.push(obj);
       // TODO pagination - now show last 10

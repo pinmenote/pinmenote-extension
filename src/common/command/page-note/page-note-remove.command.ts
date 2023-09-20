@@ -47,7 +47,7 @@ export class PageNoteRemoveCommand implements ICommand<void> {
     await LinkHrefStore.noteDel(data.url, this.obj.id);
 
     await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
-      words: data.words,
+      words: data.data.words,
       objectId: this.obj.id
     });
 

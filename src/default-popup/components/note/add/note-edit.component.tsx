@@ -43,7 +43,7 @@ class LocalModel {
 }
 
 export const NoteEditComponent: FunctionComponent<Props> = (props) => {
-  const [title, setTitle] = useState<string>(props.editNote.data.title);
+  const [title, setTitle] = useState<string>(props.editNote.data.data.title);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export const NoteEditComponent: FunctionComponent<Props> = (props) => {
   }, []);
 
   const create = (el: HTMLDivElement): void => {
-    let state = createTextEditorState(props.editNote.data.description);
+    let state = createTextEditorState(props.editNote.data.data.description);
     LocalModel.editorView = new EditorView(el, {
       state,
       handleKeyDown: (view: EditorView, event: KeyboardEvent) => {

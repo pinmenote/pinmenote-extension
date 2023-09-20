@@ -29,37 +29,21 @@ export interface FileDataDto {
 }
 
 export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
-  constructor(private tx: BeginTxResponse, private file: string, private data: FileDataDto) {
+  constructor(private tx: BeginTxResponse, private file: string | Blob, private data: FileDataDto) {
     super();
   }
   async execute(): Promise<boolean> {
     await this.initTokenData();
     if (!this.storeUrl) return false;
-    if (await this.hasSegment()) return this.addRef();
+    if (await this.hasSegment()) return true;
     return await this.addSegment();
-  }
-
-  async addRef(): Promise<boolean> {
-    if (!this.data.parent) return true;
-    const authHeaders = this.getAuthHeaders(false);
-    const resp = await FetchService.fetch<BeginTxResponse>(
-      `${this.storeUrl!}/api/v1/segment/ref/${this.tx.tx}/${this.data.hash}/${this.data.parent}`,
-      {
-        type: 'TEXT',
-        headers: {
-          ...authHeaders
-        }
-      },
-      this.refreshParams()
-    );
-    fnConsoleLog('ApiSegmentAddCommand->addRef', resp);
-    return true;
   }
 
   async hasSegment(): Promise<boolean> {
     const authHeaders = this.getAuthHeaders();
+    const params = this.data.parent ? `?parent=${this.data.parent}` : '';
     const resp = await FetchService.fetch<BeginTxResponse>(
-      `${this.storeUrl!}/api/v1/segment/${this.data.hash}/has`,
+      `${this.storeUrl!}/api/v1/segment/has/${this.tx.tx}/${this.data.hash}${params}`,
       {
         type: 'TEXT',
         headers: {
@@ -73,7 +57,8 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
 
   async addSegment(): Promise<boolean> {
     const formData = new FormData();
-    const fileData = new Blob([this.file], { type: 'application/json' });
+    let fileData = this.file;
+    if (!(this.file instanceof Blob)) fileData = new Blob([this.file], { type: 'application/json' });
     formData.append('file', fileData);
     if (this.data.parent) formData.append('parent', this.data.parent);
     formData.append('key', this.data.key);

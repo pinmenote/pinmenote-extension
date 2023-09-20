@@ -16,18 +16,50 @@
  */
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
+import { ObjPdfDataDto, ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncObjectStatus } from '../sync.model';
+import { SyncHashType, SyncObjectStatus } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { fnB64toBlob } from '../../../../common/fn/fn-b64-to-blob';
+import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
+
+const TEMP_KEY = 'foo';
 
 export class SyncPdfCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjPdfDto>, private tx: BeginTxResponse) {}
   async execute(): Promise<SyncObjectStatus> {
-    fnConsoleLog('SyncPdfCommand');
     const data = this.obj.data;
     await new SyncObjectCommand(this.obj, data.hash, this.tx).execute();
-    return SyncObjectStatus.SERVER_ERROR;
+
+    await this.syncPdf(data.hash);
+    await this.syncData(data.data, data.hash);
+
+    return SyncObjectStatus.OK;
+  }
+
+  private async syncData(data: ObjPdfDataDto, parent: string): Promise<void> {
+    const content = JSON.stringify(data);
+    await new ApiSegmentAddCommand(this.tx, content, {
+      hash: data.hash,
+      parent,
+      type: SyncHashType.ObjPdfDataDto,
+      key: TEMP_KEY
+    }).execute();
+  }
+
+  private async syncPdf(parent: string): Promise<void> {
+    const pdfData = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${parent}`);
+    if (!pdfData) return;
+    const pdfBlob = fnB64toBlob(pdfData);
+    fnConsoleLog('SyncPdfCommand->syncPdf->blob', pdfBlob);
+    await new ApiSegmentAddCommand(this.tx, pdfBlob, {
+      hash: parent,
+      parent,
+      type: SyncHashType.ObjPdf,
+      key: TEMP_KEY
+    }).execute();
   }
 }

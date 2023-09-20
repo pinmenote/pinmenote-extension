@@ -37,8 +37,8 @@ export const PdfListElementComponent: FunctionComponent<Props> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleNavigate = async (data: ObjDto<ObjPdfDto>): Promise<void> => {
-    if (PopupActiveTabStore.url?.href !== data.data.url.href) {
-      await BrowserApi.setActiveTabUrl(data.data.url.href);
+    if (PopupActiveTabStore.url?.href !== data.data.data.url.href) {
+      await BrowserApi.setActiveTabUrl(data.data.data.url.href);
       window.close();
     }
   };
@@ -58,7 +58,7 @@ export const PdfListElementComponent: FunctionComponent<Props> = (props) => {
   );
   const expandComponent = isExpanded ? <PdfListExpandComponent obj={props.obj}></PdfListExpandComponent> : '';
 
-  const a = props.obj.data.url.pathname.split('/');
+  const a = props.obj.data.data.url.pathname.split('/');
   let title = a[a.length - 1];
   title = title.length > 30 ? `${title.substring(0, 30)}...` : title;
 

@@ -31,13 +31,13 @@ interface Props {
 
 export const PageNoteElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.hashtags);
+  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.data.hashtags);
 
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-    ref.current.innerHTML = marked(props.dto.data.description);
+    ref.current.innerHTML = marked(props.dto.data.data.description);
   }, []);
 
   const handleEdit = () => {
@@ -51,14 +51,14 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
   };
 
   const handleTagSave = (newTags: string[]) => {
-    props.dto.data.hashtags = newTags;
+    props.dto.data.data.hashtags = newTags;
     setHashtags(newTags);
     fnConsoleLog('PageSnapshotElement->handleTagSave->newTags', newTags);
   };
 
   return (
     <BoardItem>
-      <BoardItemTitle title={props.dto.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
+      <BoardItemTitle title={props.dto.data.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
       <div>
         <div ref={ref}></div>
       </div>
@@ -66,9 +66,9 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
       <BoardItemFooter
         title="page note"
         saveTags={handleTagSave}
-        tags={props.dto.data.hashtags}
+        tags={props.dto.data.data.hashtags}
         createdAt={props.dto.createdAt}
-        words={props.dto.data.words}
+        words={props.dto.data.data.words}
         url={props.dto.data.url?.href}
       />
     </BoardItem>

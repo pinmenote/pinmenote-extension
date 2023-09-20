@@ -85,6 +85,9 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
       });
       await this.setList(yearMonth, newList);
     }
+
+    // clear tx
+    await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
     fnConsoleLog('SyncResetProgressCommand->complete in ', Date.now() - a);
   }
 
