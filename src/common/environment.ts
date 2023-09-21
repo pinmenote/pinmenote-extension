@@ -51,7 +51,7 @@ export const environmentConfig: EnvironmentConfig = {
   settings: {
     version: parseInt(process.env.VERSION || '1'),
     screenshotFormat: 'png',
-    screenshotQuality: 100,
+    screenshotQuality: 90,
     borderStyle: 'none',
     newElementStyle: '2px solid #ff0000',
     borderRadius: '5px',

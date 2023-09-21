@@ -28,7 +28,6 @@ import { SyncPdfCommand } from './obj/sync-pdf.command';
 import { SyncPinCommand } from './obj/sync-pin.command';
 import { SyncObjectStatus, SyncProgress } from './sync.model';
 import { SyncRemovedCommand } from './obj/sync-removed.command';
-import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncSnapshotCommand } from './obj/sync-snapshot.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSleep } from '../../../common/fn/fn-sleep';
@@ -39,16 +38,12 @@ export interface SyncIndex extends ObjDateIndex {
 }
 
 export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private progress: SyncProgress, private tx: BeginTxResponse, private index?: ObjDateIndex) {}
+  constructor(private progress: SyncProgress, private tx: BeginTxResponse, private id: number) {}
 
   async execute(): Promise<SyncObjectStatus> {
-    if (!this.index) {
-      fnConsoleLog('SyncObjectCommand->PROBLEM', this.index, this.progress);
-      return SyncObjectStatus.INDEX_NOT_EXISTS;
-    }
-    const obj = await new ObjGetCommand(this.index.id).execute();
+    const obj = await new ObjGetCommand(this.id).execute();
     if (!obj) {
-      fnConsoleLog('SyncObjectCommand->syncObject EMPTY', this.index.id);
+      fnConsoleLog('SyncObjectCommand->syncObject EMPTY', this.id);
       return SyncObjectStatus.OBJECT_NOT_EXISTS;
     }
     let status = SyncObjectStatus.OK;
@@ -82,12 +77,11 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
         break;
       }
       default: {
-        fnConsoleLog('SyncObjectCommand->PROBLEM', obj, 'index', this.index);
+        fnConsoleLog('SyncObjectCommand->PROBLEM', obj, 'index', this.id);
         break;
       }
     }
     if (status < 0) return status;
-    await new SyncSetProgressCommand({ id: this.index.id, timestamp: this.index.dt, state: 'update' }).execute();
     await fnSleep(100);
     return status;
   }
