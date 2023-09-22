@@ -86,7 +86,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }} onClick={handlePopover}>
           <div style={{ color: '#777777' }}>
             {props.obj.type === ObjTypeDto.PageElementSnapshot ? (
-              <SaveElementIcon />
+              <SaveElementIcon size="16" />
             ) : (
               <WebOutlined sx={{ fontSize: '16px' }} />
             )}

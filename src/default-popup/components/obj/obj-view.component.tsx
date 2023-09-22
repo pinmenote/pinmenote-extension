@@ -54,13 +54,12 @@ export const ObjViewComponent: FunctionComponent<Props> = (props) => {
     setOriginIds(origin);
   };
   return (
-    <div style={{ maxHeight: '420px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ maxHeight: '420px', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
       <div style={{ fontWeight: 'bold', fontSize: '14px' }}>On this page</div>
-      <ObjListComponent idList={hrefIds} basis={true} editNoteCallback={props.editNoteCallback} />
+      <ObjListComponent idList={hrefIds} editNoteCallback={props.editNoteCallback} />
       <div style={{ fontWeight: 'bold', fontSize: '14px' }}>On {PopupActiveTabStore.url?.origin}</div>
       <ObjListComponent
         idList={originIds}
-        basis={false}
         href={PopupActiveTabStore.url?.href}
         editNoteCallback={props.editNoteCallback}
       />
