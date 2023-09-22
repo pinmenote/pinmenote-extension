@@ -14,27 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjPageDataDto, ObjUrlDto } from '../../../model/obj/obj.dto';
+import { ObjUrlDto } from '../../../model/obj/obj.dto';
 import { ICommand } from '../../../model/shared/common.dto';
 import { LinkHrefStore } from '../../../store/link-href.store';
-import { ObjGetCommand } from '../obj-get.command';
-import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 
-export class ObjGetHrefCommand implements ICommand<Promise<ObjDto<ObjPageDataDto>[]>> {
+export class ObjGetHrefCommand implements ICommand<Promise<number[]>> {
   constructor(private data: ObjUrlDto) {}
 
-  async execute(): Promise<ObjDto<ObjPageDataDto>[]> {
-    const out: ObjDto<ObjPageDataDto>[] = [];
-    const pinIds = (await LinkHrefStore.pinIds(this.data.href)).reverse();
-    for (const id of pinIds) {
-      const obj = await new ObjGetCommand<ObjPinDto>(id).execute();
-      out.push(obj);
-    }
-    const ids = (await LinkHrefStore.hrefIds(this.data.href)).reverse();
-    for (const id of ids) {
-      const obj = await new ObjGetCommand<ObjPageDataDto>(id).execute();
-      out.push(obj);
-    }
-    return out;
+  async execute(): Promise<number[]> {
+    const pinIds = (await LinkHrefStore.hrefIds(this.data.href)).reverse();
+    const objsIds = (await LinkHrefStore.pinIds(this.data.href)).reverse();
+    pinIds.push(...objsIds);
+    return pinIds;
   }
 }

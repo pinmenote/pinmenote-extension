@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjPageDataDto } from '../../../common/model/obj/obj.dto';
+import { ObjDto } from '../../../common/model/obj/obj.dto';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ObjGetHrefCommand } from '../../../common/command/obj/url/obj-get-href.command';
@@ -30,8 +30,8 @@ interface Props {
 }
 
 export const ObjViewComponent: FunctionComponent<Props> = (props) => {
-  const [originObjs, setOriginObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
-  const [hrefObjs, setHrefObjs] = useState<ObjDto<ObjPageDataDto>[]>([]);
+  const [originIds, setOriginIds] = useState<number[]>([]);
+  const [hrefIds, setHrefIds] = useState<number[]>([]);
   const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
@@ -51,19 +51,23 @@ export const ObjViewComponent: FunctionComponent<Props> = (props) => {
     setInitialized(true);
     const href = await new ObjGetHrefCommand(PopupActiveTabStore.url).execute();
     const origin = await new ObjGetOriginCommand(PopupActiveTabStore.url).execute();
-    setHrefObjs(href);
-    setOriginObjs(origin);
+    setHrefIds(href);
+    setOriginIds(origin);
   };
   return (
-    <div>
+    <div style={{ overflow: 'hidden' }}>
       <Typography fontWeight="bold" fontSize="14px">
         On this page
       </Typography>
-      <ObjListComponent objList={hrefObjs} editNoteCallback={props.editNoteCallback} />
+      <ObjListComponent idList={hrefIds} editNoteCallback={props.editNoteCallback} />
       <Typography fontWeight="bold" fontSize="14px">
         On {PopupActiveTabStore.url?.origin}
       </Typography>
-      <ObjListComponent objList={originObjs} editNoteCallback={props.editNoteCallback} />
+      <ObjListComponent
+        idList={originIds}
+        href={PopupActiveTabStore.url?.href}
+        editNoteCallback={props.editNoteCallback}
+      />
     </div>
   );
 };

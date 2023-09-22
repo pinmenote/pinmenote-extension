@@ -18,8 +18,6 @@ import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../common/model/bus.model';
 import { ExtensionPopupInitData } from '../../common/model/obj-request.model';
 import { LogManager } from '../../common/popup/log.manager';
-import { ObjGetHrefCommand } from '../../common/command/obj/url/obj-get-href.command';
-import { ObjGetOriginCommand } from '../../common/command/obj/url/obj-get-origin.command';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { UrlFactory } from '../../common/factory/url.factory';
@@ -30,9 +28,6 @@ export class PopupActiveTabStore {
   private static extensionUrl = false;
 
   private static isAddingValue = false;
-
-  private static hrefData: any[] = [];
-  private static originData: any[] = [];
 
   static get isAdding(): boolean {
     return this.isAddingValue;
@@ -61,8 +56,6 @@ export class PopupActiveTabStore {
         search: url.search
       };
       LogManager.log(`updateState URL : ${JSON.stringify(this.urlValue)}`);
-      this.hrefData = await new ObjGetHrefCommand(this.urlValue).execute();
-      this.originData = await new ObjGetOriginCommand(this.urlValue).execute();
       if (this.urlValue?.href.startsWith(BrowserApi.startUrl)) {
         this.extensionUrl = true;
         this.isError = true;
