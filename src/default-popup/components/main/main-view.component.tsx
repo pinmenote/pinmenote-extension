@@ -82,7 +82,7 @@ export const MainViewComponent: FunctionComponent = () => {
           previousView={previousView}
           changeMainTabCallback={changeMainTab}
         />
-        <div style={{ wordBreak: 'break-word', overflow: 'auto', marginBottom: 110 }}>{currentComponent}</div>
+        <div style={{ wordBreak: 'break-word', overflow: 'hidden', marginBottom: 110 }}>{currentComponent}</div>
       </div>
       <MainFooterButton openBugReport={() => setCurrentView(MainViewEnum.BUG_REPORT)} />
     </div>

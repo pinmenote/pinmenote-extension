@@ -65,7 +65,7 @@ export const NoteListElementComponent: FunctionComponent<Props> = (props) => {
       >
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <div style={{ color: '#777777' }}>
-            <NoteOutlinedIcon />
+            <NoteOutlinedIcon sx={{ fontSize: '16px' }} />
           </div>
           <IconButton size="small" onClick={handlePopover}>
             {expandIcon}

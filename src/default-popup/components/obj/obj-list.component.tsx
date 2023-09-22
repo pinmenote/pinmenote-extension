@@ -37,6 +37,7 @@ interface Props {
   editNoteCallback: (obj: ObjDto<ObjPageNoteDto>) => void;
   idList: number[];
   href?: string;
+  basis: boolean;
 }
 
 interface FetchObjectsResult {
@@ -146,15 +147,10 @@ export const ObjListComponent: FunctionComponent<Props> = (props) => {
       }
     }
   }
-
-  const handleScroll = () => {
-    LogManager.log('scroll');
-  };
+  // TODO add scroll handler
   return (
-    <div style={{ width: '100%' }}>
-      <div style={{ width: '100%' }} onScroll={handleScroll}>
-        {components}
-      </div>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ overflow: 'auto', maxHeight: '200px' }}>{components}</div>
     </div>
   );
 };

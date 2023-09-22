@@ -18,7 +18,7 @@ import React, { FunctionComponent } from 'react';
 
 export const SaveElementIcon: FunctionComponent = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="#777777" height="24" viewBox="0 0 24 24" width="24">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="#777777" height="16" viewBox="0 0 24 24" width="16">
       <g>
         <path
           d="M20,4H4C2.9,4,2.01,4.9,2.01,6L2,18c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6C22,4.9,21.1,4,20,4z
