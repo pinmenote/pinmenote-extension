@@ -88,16 +88,12 @@ export const PinListElement: FunctionComponent<Props> = (props) => {
           justifyContent: 'space-between'
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }} onClick={handlePopover}>
           <div style={{ color: '#777777' }}>
             <PushPinIcon sx={{ fontSize: '16px' }} />
           </div>
-          <IconButton size="small" onClick={handlePopover}>
-            {expandIcon}
-          </IconButton>
-          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }} onClick={handlePopover}>
-            {title}
-          </Typography>
+          <IconButton size="small">{expandIcon}</IconButton>
+          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }}>{title}</Typography>
         </div>
         <div
           style={{
