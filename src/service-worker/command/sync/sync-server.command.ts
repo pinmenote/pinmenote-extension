@@ -26,6 +26,7 @@ import { TokenStorageGetCommand } from '../../../common/command/server/token/tok
 import jwtDecode from 'jwt-decode';
 import { TokenDataDto } from '../../../common/model/shared/token.dto';
 import { ApiObjGetChangesCommand } from '../api/store/obj/api-obj-get-changes.command';
+import { SyncObjIncomingHashCommand } from './incoming/sync-obj-incoming-hash.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
@@ -57,7 +58,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     const changesResp = await new ApiObjGetChangesCommand().execute();
     if (!changesResp) return;
     for (const change of changesResp.data) {
-      console.log(change);
+      await new SyncObjIncomingHashCommand(change).execute();
       break;
     }
     const token = await new TokenStorageGetCommand().execute();

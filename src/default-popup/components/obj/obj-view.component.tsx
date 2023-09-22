@@ -23,7 +23,6 @@ import { ObjListComponent } from './obj-list.component';
 import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
-import Typography from '@mui/material/Typography';
 
 interface Props {
   editNoteCallback: (obj: ObjDto<ObjPageNoteDto>) => void;

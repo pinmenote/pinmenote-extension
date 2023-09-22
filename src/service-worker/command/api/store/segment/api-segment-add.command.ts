@@ -15,10 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ApiCallBase } from '../../api-call.base';
-import { BeginTxResponse } from '../api-store.model';
+import { BeginTxResponse, SyncHashType } from '../api-store.model';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../../common/model/shared/common.dto';
-import { SyncHashType } from '../../../sync/sync.model';
 import { deflate } from 'pako';
 
 export interface FileDataDto {

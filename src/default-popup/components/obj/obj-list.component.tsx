@@ -71,18 +71,21 @@ const fetchObjects = async (idList: number[], index: number, href?: string): Pro
 };
 
 export const ObjListComponent: FunctionComponent<Props> = (props) => {
-  const [reRender, setReRender] = useState(false);
   const [objList, setObjList] = useState<ObjDto<ObjPageDataDto>[]>([]);
   const [index, setIndex] = useState<number>(0);
 
   useEffect(() => {
+    refetch();
+  }, [props]);
+
+  const refetch = () => {
     fetchObjects(props.idList, index, props.href)
       .then((data) => {
         setObjList(data.objs);
         setIndex(data.index);
       })
       .catch(() => LogManager.log('error'));
-  }, [props]);
+  };
 
   const handlePinRemove = async (data: ObjDto<ObjPinDto>) => {
     await new PinRemoveCommand(data.id, data.data.data.url, data.data.data.iframe).execute();
@@ -109,7 +112,7 @@ export const ObjListComponent: FunctionComponent<Props> = (props) => {
     for (let i = 0; i < props.idList.length; i++) {
       if (props.idList[i] === id) {
         props.idList.splice(i, 1);
-        setReRender(!reRender);
+        refetch();
         break;
       }
     }

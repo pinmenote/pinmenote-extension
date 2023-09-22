@@ -38,3 +38,25 @@ export interface ObjSingleChange {
 export interface ObjChangesResponse {
   data: ObjSingleChange[];
 }
+
+export enum SyncHashType {
+  PageSnapshotDataDto = '1',
+  PageSnapshotInfoDto = '2',
+  IFrame = '3',
+  Img = '4',
+  Css = '5',
+  Snapshot = '6',
+  ObjPdfDataDto = '7',
+  ObjPdf = '8',
+  ObjPageNoteDto = '9'
+}
+
+export interface SegmentSingleHash {
+  hash: string;
+  type: SyncHashType;
+}
+
+export interface SegmentHashListResponse {
+  hash: string;
+  children: SegmentSingleHash[];
+}
