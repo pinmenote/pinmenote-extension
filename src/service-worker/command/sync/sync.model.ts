@@ -16,8 +16,8 @@
  */
 export interface SyncProgress {
   timestamp: number;
-  state: 'update' | 'remove' | 'remote';
   id: number;
+  serverId: number;
 }
 
 export enum SyncObjectStatus {

@@ -22,6 +22,10 @@ import { SyncProgress } from './sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
+import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
+import jwtDecode from 'jwt-decode';
+import { TokenDataDto } from '../../../common/model/shared/token.dto';
+import { ApiObjGetChangesCommand } from '../api/store/obj/api-obj-get-changes.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
@@ -32,11 +36,15 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     try {
       // await new SyncResetProgressCommand().execute();
 
+      const token = await new TokenStorageGetCommand().execute();
+      if (token) console.log(jwtDecode<TokenDataDto>(token.access_token));
+
       SyncServerCommand.isInSync = true;
 
       const a = Date.now();
       const progress = await new SyncGetProgressCommand().execute();
-      await this.sync(progress);
+      await this.syncOutgoing(progress);
+      await this.syncIncoming(progress);
 
       fnConsoleLog('SyncServerCommand->execute', progress, 'in', Date.now() - a);
     } finally {
@@ -44,7 +52,23 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     }
   }
 
-  private async sync(progress: SyncProgress): Promise<void> {
+  private async syncIncoming(progress: SyncProgress): Promise<void> {
+    fnConsoleLog('SyncServerCommand->syncIncoming');
+    const changesResp = await new ApiObjGetChangesCommand().execute();
+    if (!changesResp) return;
+    for (const change of changesResp.data) {
+      console.log(change);
+      break;
+    }
+    const token = await new TokenStorageGetCommand().execute();
+    if (!token) return;
+    const tokenData = jwtDecode(token.access_token);
+    console.log('tokenData', tokenData);
+  }
+
+  private async syncOutgoing(progress: SyncProgress): Promise<void> {
+    // Empty list - fresh install
+    if (progress.id == -1) return;
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
     const lastDay = fnMonthLastDay();
 

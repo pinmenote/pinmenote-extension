@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
+
 export interface BeginTxResponse {
   tx: string;
   locked: boolean;
@@ -24,13 +26,15 @@ export interface BeginTxResponse {
   resetStorage: boolean;
 }
 
-enum HashOperation {
-  ADD = 'ADD',
-  DEL = 'DEL'
+export interface ObjSingleChange {
+  localId: number;
+  serverId: number;
+  deletedId: number;
+  type: ObjTypeDto;
+  createdAt: number;
+  hash: string;
 }
 
-export interface HashChangeResponse {
-  createdAt: number;
-  operation: HashOperation;
-  hash: string;
+export interface ObjChangesResponse {
+  data: ObjSingleChange[];
 }

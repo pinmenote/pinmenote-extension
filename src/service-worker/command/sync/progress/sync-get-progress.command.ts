@@ -24,20 +24,20 @@ import { SyncProgress } from '../sync.model';
 export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
   async execute(): Promise<SyncProgress> {
     const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
-    if (!sync) {
-      const obj = await SyncGetProgressCommand.getFirstObject();
-      return { state: 'update', timestamp: obj.createdAt, id: obj.id };
-    }
-    return sync;
+    if (sync) return sync;
+    const obj = await SyncGetProgressCommand.getFirstObject();
+    if (!obj) return { timestamp: -1, id: -1, serverId: -1 };
+    return { timestamp: obj.createdAt, id: obj.id, serverId: -1 };
   }
 
-  static async getFirstObject(): Promise<ObjDto> {
+  static async getFirstObject(): Promise<ObjDto | undefined> {
     let id = undefined;
     let i = 1;
     // find first not empty list
     while (!id) {
       const key = `${ObjectStoreKeys.OBJECT_LIST}:${i}`;
       const list = await BrowserStorage.get<number[]>(key);
+      if (!list) return undefined;
       id = list.shift();
       i++;
     }

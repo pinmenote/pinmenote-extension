@@ -20,15 +20,7 @@ import { ObjTypeDto } from '../../../../../common/model/obj/obj.dto';
 import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
 import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 import { FetchService } from '@pinmenote/fetch-service';
-import { BeginTxResponse } from '../api-store.model';
-
-export interface ObjSingleChange {
-  serverId: number;
-  localId: number;
-  type: ObjTypeDto;
-  createdAt: number;
-  hash: string;
-}
+import { BeginTxResponse, ObjSingleChange } from '../api-store.model';
 
 export class ApiObjGetByHashCommand extends ApiCallBase implements ICommand<Promise<ObjSingleChange | ServerErrorDto>> {
   constructor(private hash: string, private tx: BeginTxResponse) {

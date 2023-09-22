@@ -1,10 +1,8 @@
 #!/bin/bash
 export NODE_ENV=production
 # swap manifests
-mv src/manifest.json src/manifest.dev.json
-mv src/manifest.ch.json src/manifest.json
+cp src/manifest.ch.json src/manifest.json
 # build
 npm run prod
 # swap manifests back
-mv src/manifest.json src/manifest.ch.json
-mv src/manifest.dev.json src/manifest.json
+cp src/manifest.dev.json src/manifest.json

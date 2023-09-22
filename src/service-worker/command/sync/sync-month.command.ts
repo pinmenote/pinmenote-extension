@@ -38,8 +38,10 @@ export class SyncMonthCommand implements ICommand<Promise<SyncObjectStatus>> {
     const lastIndexElement = indexList[indexList.length - 1];
     // fnConsoleLog('SyncMonthCommand->last', lastIndexElement, 'progress', this.progress);
     // we are last so escape early, so we don't waste request for begin / commit
-    if (this.progress.id === lastIndexElement.id && this.progress.timestamp === lastIndexElement.dt)
+    if (this.progress.id === lastIndexElement.id && this.progress.timestamp === lastIndexElement.dt) {
+      // TODO check if last object got deleted
       return SyncObjectStatus.LAST_ELEMENT;
+    }
 
     let nextObjectIndex = indexList.findIndex((value) => value.id === this.progress.id);
 

@@ -27,10 +27,12 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 export class SyncResetProgressCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     const obj = await SyncGetProgressCommand.getFirstObject();
+    const timestamp = obj?.createdAt || -1;
+    const id = obj?.id || -1;
     await BrowserStorage.set<SyncProgress>(ObjectStoreKeys.SYNC_PROGRESS, {
-      state: 'update',
-      timestamp: obj.createdAt,
-      id: obj.id
+      timestamp,
+      id,
+      serverId: -1
     });
     await this.resetObjects();
   }

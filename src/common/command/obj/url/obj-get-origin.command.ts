@@ -34,10 +34,6 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
     const out: ObjDto<ObjPageDataDto>[] = [];
     for (const id of pinIds) {
       const obj = await new ObjGetCommand<ObjPageDataDto | ObjPinDto>(id).execute();
-      if (!obj) {
-        fnConsoleLog('PROBLEM !!!!!!!!!');
-        continue;
-      }
       if ([ObjTypeDto.PageSnapshot, ObjTypeDto.PageElementSnapshot].includes(obj.type)) {
         if ((obj.data as ObjPageDto).snapshot.info.url.href === this.data.href) continue;
       } else if (obj.type === ObjTypeDto.PageElementPin) {
@@ -48,8 +44,6 @@ export class ObjGetOriginCommand implements ICommand<Promise<ObjDto<ObjPageDataD
         if ((obj.data as ObjPdfDto).data.rawUrl === this.data.href) continue;
       }
       out.push(obj);
-      // TODO pagination - now show last 10
-      if (out.length === 10) break;
     }
     return out;
   }
