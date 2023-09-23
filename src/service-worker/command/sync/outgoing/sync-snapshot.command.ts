@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { SegmentPage, SegmentType, SegmentImg } from '@pinmenote/page-compute';
+import { SegmentData, SegmentImg, SegmentPage, SegmentType } from '@pinmenote/page-compute';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
@@ -46,9 +46,23 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
       fnConsoleLog('SyncSnapshotCommand->!!!!!!!!!!!!1SEGMENT->EMPTY', snapshot.segment, this.obj);
       return SyncObjectStatus.OK;
     }
-    await this.syncSegment(snapshot.segment, snapshot.hash);
+    await this.syncAllSegments(snapshot, snapshot.hash);
     return SyncObjectStatus.OK;
   }
+
+  private syncAllSegments = async (snapshot: PageSnapshotDto, parent: string): Promise<void> => {
+    // Sync first segment
+    const segment = await new PageSegmentGetCommand(snapshot.segment).execute();
+    if (!segment) return;
+    const content = this.getSegmentContent(segment);
+    await new ApiSegmentAddCommand(this.tx, content!, {
+      hash: segment.hash,
+      parent,
+      type: SyncHashType.PageSnapshotFirstHash,
+      key: TEMP_KEY
+    }).execute();
+    await this.syncSegmentSnapshot(segment.content as SegmentPage, parent);
+  };
 
   private async syncSnapshot(snapshot: PageSnapshotDto, parent: string): Promise<void> {
     // snapshot->info
@@ -71,21 +85,11 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     fnConsoleLog('SyncSnapshotCommand->syncComments');
   }*/
 
-  private async syncSegment(hash: string, parent: string) {
+  private syncSegment = async (hash: string, parent: string) => {
     const segment = await new PageSegmentGetCommand(hash).execute();
     if (!segment) return;
-    let content: string | Blob | undefined;
-    if (segment.type === (3 as SegmentType)) return;
-    if (segment.type == SegmentType.IMG) {
-      const src = (segment.content as SegmentImg).src;
-      if (src.startsWith('data:image/svg') || src === 'data:') {
-        content = src;
-      } else {
-        content = fnB64toBlob(src);
-      }
-    } else {
-      content = JSON.stringify(segment.content);
-    }
+    const content = this.getSegmentContent(segment);
+    if (!content) return;
 
     await new ApiSegmentAddCommand(this.tx, content, {
       hash,
@@ -96,13 +100,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
 
     switch (segment.type) {
       case SegmentType.SNAPSHOT: {
-        const content = segment.content as SegmentPage;
-        for (const css of content.css) {
-          await this.syncSegment(css, parent);
-        }
-        for (const asset of content.assets) {
-          await this.syncSegment(asset, parent);
-        }
+        await this.syncSegmentSnapshot(segment.content as SegmentPage, parent);
         break;
       }
       case 3 as SegmentType: // FIXME - remove later - SHADOW - obsolete - no longer exists
@@ -124,7 +122,29 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
         fnConsoleLog('segment !!!', segment);
         throw new Error('SyncSnapshotCommand->Problem !!!!!!!!!!!!!!!!!!!!!!');
     }
-  }
+  };
+
+  private getSegmentContent = (segment: SegmentData<any>): string | Blob | undefined => {
+    if (segment.type === (3 as SegmentType)) return;
+    if (segment.type == SegmentType.IMG) {
+      const src = (segment.content as SegmentImg).src;
+      if (src.startsWith('data:image/svg') || src === 'data:') {
+        return src;
+      } else {
+        return fnB64toBlob(src);
+      }
+    }
+    return JSON.stringify(segment.content);
+  };
+
+  private syncSegmentSnapshot = async (content: SegmentPage, parent: string): Promise<void> => {
+    for (const css of content.css) {
+      await this.syncSegment(css, parent);
+    }
+    for (const asset of content.assets) {
+      await this.syncSegment(asset, parent);
+    }
+  };
 
   private convertSegmentTypeSyncHashType(type: SegmentType): SyncHashType {
     switch (type) {

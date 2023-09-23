@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { HtmlImgFactory, SegmentData, SegmentType } from '@pinmenote/page-compute';
+import { HtmlImgFactory, SegmentType } from '@pinmenote/page-compute';
 import { ContentSettingsStore } from '../../store/content-settings.store';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameStore } from '../../store/iframe.store';

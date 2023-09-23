@@ -27,6 +27,7 @@ import jwtDecode from 'jwt-decode';
 import { TokenDataDto } from '../../../common/model/shared/token.dto';
 import { ApiObjGetChangesCommand } from '../api/store/obj/api-obj-get-changes.command';
 import { SyncObjIncomingHashCommand } from './incoming/sync-obj-incoming-hash.command';
+import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;

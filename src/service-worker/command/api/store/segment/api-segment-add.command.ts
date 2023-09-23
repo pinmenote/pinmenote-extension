@@ -61,7 +61,7 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
     } else {
       const fileData = deflate(this.file);
       formData.append('file', new Blob([fileData], { type: 'application/zip' }));
-      console.log(`compression ${Math.round((fileData.length / this.file.length) * 100)}%`);
+      // console.log(`compression ${Math.round((fileData.length / this.file.length) * 100)}%`);
     }
 
     if (this.data.parent) formData.append('parent', this.data.parent);

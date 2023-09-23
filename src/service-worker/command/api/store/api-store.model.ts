@@ -42,13 +42,14 @@ export interface ObjChangesResponse {
 export enum SyncHashType {
   PageSnapshotDataDto = '1',
   PageSnapshotInfoDto = '2',
-  IFrame = '3',
-  Img = '4',
-  Css = '5',
-  Snapshot = '6',
-  ObjPdfDataDto = '7',
-  ObjPdf = '8',
-  ObjPageNoteDto = '9'
+  PageSnapshotFirstHash = '3',
+  IFrame = '4',
+  Img = '5',
+  Css = '6',
+  Snapshot = '7',
+  ObjPdfDataDto = '8',
+  ObjPdf = '9',
+  ObjPageNoteDto = '10'
 }
 
 export interface SegmentSingleHash {
