@@ -17,7 +17,6 @@
 import { ApiCallBase } from '../../api-call.base';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../../common/model/shared/common.dto';
-import { ObjSingleChange, SegmentHashListResponse } from '../api-store.model';
 import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
 export class ApiSegmentGetCommand extends ApiCallBase implements ICommand<Promise<Blob | undefined>> {
@@ -37,5 +36,6 @@ export class ApiSegmentGetCommand extends ApiCallBase implements ICommand<Promis
     } catch (e) {
       fnConsoleLog('ApiSegmentGetCommand->Error', e);
     }
+    throw new Error('ApiSegmentGetCommand->execute');
   }
 }

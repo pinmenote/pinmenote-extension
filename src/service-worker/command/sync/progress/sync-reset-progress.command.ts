@@ -39,7 +39,7 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
 
   async resetObjects(): Promise<void> {
     let listId = await BrowserStorage.get<number>(ObjectStoreKeys.OBJECT_LIST_ID);
-    console.log('SyncResetProgressCommand->start !!!!', listId);
+    fnConsoleLog('SyncResetProgressCommand->start !!!!', listId);
     const a = Date.now();
 
     const toSortSet: Set<string> = new Set<string>();
@@ -50,6 +50,7 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
         const obj = await BrowserStorage.get<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${id}`);
 
         if (obj.server) {
+          await BrowserStorage.remove(`${ObjectStoreKeys.SERVER_ID}:${obj.server.id}`);
           delete obj['server'];
           await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${id}`, obj);
         }

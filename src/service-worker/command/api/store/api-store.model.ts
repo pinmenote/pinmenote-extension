@@ -15,10 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
-import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
-import { ObjCommentDto } from '../../../../common/model/obj/obj-comment.dto';
-import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
-import { ObjVideoDataDto } from '../../../../common/model/obj/page-snapshot.dto';
 
 export interface BeginTxResponse {
   tx: string;

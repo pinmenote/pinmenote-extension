@@ -17,7 +17,6 @@
 import { ObjDto, ObjRemovedDto, ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto, ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
@@ -30,12 +29,7 @@ import { SyncObjectStatus, SyncProgress } from './sync.model';
 import { SyncRemovedCommand } from './outgoing/sync-removed.command';
 import { SyncSnapshotCommand } from './outgoing/sync-snapshot.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { fnSleep } from '../../../common/fn/fn-sleep';
 import { BeginTxResponse } from '../api/store/api-store.model';
-
-export interface SyncIndex extends ObjDateIndex {
-  status: SyncObjectStatus;
-}
 
 export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private progress: SyncProgress, private tx: BeginTxResponse, private id: number) {}
@@ -46,43 +40,33 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
       fnConsoleLog('SyncObjectCommand->syncObject EMPTY', this.id);
       return SyncObjectStatus.OBJECT_NOT_EXISTS;
     }
-    let status = SyncObjectStatus.OK;
     // Skip for now for those with index
-    if (obj.server?.id) return status;
+    if (obj.server?.id) return SyncObjectStatus.OK;
 
     switch (obj.type) {
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
-        status = await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.tx).execute();
-        break;
+        return await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.tx).execute();
       }
       case ObjTypeDto.PageElementPin: {
-        status = await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.tx).execute();
-        break;
+        return await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.tx).execute();
       }
       case ObjTypeDto.Pdf: {
-        status = await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.tx).execute();
-        break;
+        return await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.tx).execute();
       }
       case ObjTypeDto.Note: {
-        status = await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.tx).execute();
-        break;
+        return await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.tx).execute();
       }
       case ObjTypeDto.PageNote: {
-        status = await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.tx).execute();
-        break;
+        return await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.tx).execute();
       }
       case ObjTypeDto.Removed: {
-        await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.tx).execute();
-        break;
+        return await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.tx).execute();
       }
       default: {
         fnConsoleLog('SyncObjectCommand->PROBLEM', obj, 'index', this.id);
-        break;
+        return SyncObjectStatus.SERVER_ERROR;
       }
     }
-    if (status < 0) return status;
-    await fnSleep(100);
-    return status;
   }
 }

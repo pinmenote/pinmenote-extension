@@ -20,20 +20,22 @@ import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { SegmentData } from '@pinmenote/page-compute';
 import { fnConsoleLog } from '../../../fn/fn-console';
 
-export class PageSegmentAddCommand<T> implements ICommand<Promise<void>> {
-  constructor(private content: SegmentData<T>, private ref = true) {}
+export class PageSegmentAddRefCommand implements ICommand<Promise<boolean>> {
+  constructor(private hash: string) {}
 
-  async execute(): Promise<void> {
-    const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.content.hash}`;
-    await BrowserStorage.set<SegmentData<T>>(key, this.content);
-    if (this.ref) await this.incrementCount();
+  async execute(): Promise<boolean> {
+    const key = `${ObjectStoreKeys.CONTENT_HASH}:${this.hash}`;
+    const has = await BrowserStorage.get(key);
+    if (!has) return false;
+    await this.incrementCount();
+    return true;
   }
 
   async incrementCount(): Promise<void> {
-    const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${this.content.hash}`;
+    const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${this.hash}`;
     let count = (await BrowserStorage.get<number | undefined>(key)) || 0;
     count++;
-    fnConsoleLog('PageSegmentAddCommand->incrementCount', count);
+    fnConsoleLog('PageSegmentAddRefCommand->incrementCount', count);
     await BrowserStorage.set(key, count);
   }
 }

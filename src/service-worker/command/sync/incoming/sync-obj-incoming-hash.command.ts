@@ -31,6 +31,10 @@ import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { LinkHrefStore } from '../../../../common/store/link-href.store';
 import { ObjAddIdCommand } from '../../../../common/command/obj/id/obj-add-id.command';
 import { PageSegmentAddCommand } from '../../../../common/command/snapshot/segment/page-segment-add.command';
+import { ObjNextIdCommand } from '../../../../common/command/obj/id/obj-next-id.command';
+import { PageSegmentAddRefCommand } from '../../../../common/command/snapshot/segment/page-segment-add-ref.command';
+import { fnSleep } from '../../../../common/fn/fn-sleep';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface HashDataElement {
   hash: SegmentSingleHash;
@@ -40,11 +44,26 @@ interface HashDataElement {
 type HashData = { [key: string]: HashDataElement };
 type HashType = { [key: string]: string[] };
 
-export class SyncObjIncomingHashCommand implements ICommand<Promise<void>> {
+export class SyncObjIncomingHashCommand implements ICommand<Promise<boolean>> {
   constructor(private change: ObjSingleChange) {}
-  async execute(): Promise<void> {
+  // TODO store progress in ObjectStoreKeys.SYNC_IN
+  async execute(): Promise<boolean> {
+    try {
+      const result = await this.syncHashList();
+      if (!result) {
+        fnConsoleLog('PROBLEM syncHashList !!!!!!!!!!!!!!!!!!!', result);
+        return false;
+      }
+      return await this.toDto(result.hashMap, result.hashType);
+    } catch (e) {
+      fnConsoleLog('PROBLEM 222222222222 SyncObjIncomingHashCommand->syncHashList', e);
+      return false;
+    }
+  }
+
+  private syncHashList = async (): Promise<{ hashType: HashType; hashMap: HashData } | undefined> => {
     const hashList = await new ApiSegmentGetChildrenCommand(this.change.hash).execute();
-    if (!hashList) return;
+    if (!hashList) return undefined;
     hashList.children.sort((a, b) => {
       if (a.type > b.type) return 1;
       if (a.type < b.type) return -1;
@@ -59,6 +78,8 @@ export class SyncObjIncomingHashCommand implements ICommand<Promise<void>> {
       if (child.type.toString() === SyncHashType.Img) {
         const src = await UrlFactory.toDataUri(data);
         const content: SegmentImg = { src };
+        const has = new PageSegmentAddRefCommand(child.hash);
+        if (has) continue;
         await new PageSegmentAddCommand({ type: SegmentType.IMG, hash: child.hash, content }).execute();
         continue;
       }
@@ -67,12 +88,16 @@ export class SyncObjIncomingHashCommand implements ICommand<Promise<void>> {
       const content = new TextDecoder().decode(bytes);
 
       if (child.type.toString() === SyncHashType.Css) {
+        const has = new PageSegmentAddRefCommand(child.hash);
+        if (has) continue;
         await new PageSegmentAddCommand({
           type: SegmentType.CSS,
           hash: child.hash,
           content: JSON.parse(content)
         }).execute();
       } else if (child.type.toString() === SyncHashType.IFrame) {
+        const has = new PageSegmentAddRefCommand(child.hash);
+        if (has) continue;
         await new PageSegmentAddCommand({
           type: SegmentType.IFRAME,
           hash: child.hash,
@@ -84,65 +109,81 @@ export class SyncObjIncomingHashCommand implements ICommand<Promise<void>> {
         hashMap[child.hash] = { hash: child, data: JSON.parse(content) };
       }
     }
-    console.log('hashList', hashList, 'hashMap', hashMap, 'hashType', hashType);
-    await this.toDto(hashMap, hashType);
-  }
+    return { hashMap, hashType };
+  };
 
   private toDto = async (hashData: HashData, type: HashType) => {
     switch (this.change.type) {
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
-        const key = `${ObjectStoreKeys.OBJECT_ID}:${this.change.serverId}`;
-        const stored = await BrowserStorage.get(key);
-        if (stored) return;
-        const snapshot: PageSnapshotDto = {
-          data: hashData[type[SyncHashType.PageSnapshotDataDto][0]].data,
-          info: hashData[type[SyncHashType.PageSnapshotInfoDto][0]].data,
-          hash: this.change.hash,
-          segment: type[SyncHashType.PageSnapshotFirstHash][0]
-        };
-        const data: ObjPageDto = {
-          snapshot: snapshot,
-          comments: { data: [] }
-        };
-        const id = this.change.serverId;
-        const dt = Date.now();
-        // Add createdAt, updatedAt, VERSION ----> TO SERVER
-        const obj: ObjDto<ObjPageDto> = {
-          id,
-          data,
-          server: { id: this.change.serverId },
-          version: OBJ_DTO_VERSION,
-          createdAt: dt,
-          updatedAt: dt,
-          type: this.change.type,
-          local: {
-            visible: true,
-            drawVisible: false
-          }
-        };
-        await SwTaskStore.addTask(SwTaskType.WORDS_ADD_INDEX, {
-          words: snapshot.info.words,
-          objectId: id
-        });
-        await BrowserStorage.set(key, obj);
-        await LinkHrefStore.add(snapshot.info.url, id);
-        if (type[SyncHashType.PageSnapshotFirstHash]) {
-          for (const hash of type[SyncHashType.PageSnapshotFirstHash]) {
-            console.log('ADDDD !!!!!!!!!!!!!!!!', hash);
-            await new PageSegmentAddCommand({
-              type: SegmentType.SNAPSHOT,
-              content: hashData[hash].data,
-              hash: hash
-            }).execute();
-          }
-        }
-        await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
-        console.log('AAAAAAAAAAAAAAAAAAAAAA');
-        break;
+        return await this.saveSnapshotDto(hashData, type);
       }
       default:
         throw new Error(`Unsupported type ${this.change.type}`);
     }
+    await fnSleep(100);
+    return true;
+  };
+
+  private saveSnapshotDto = async (hashData: HashData, type: HashType): Promise<boolean> => {
+    const stored = await BrowserStorage.get(`${ObjectStoreKeys.SERVER_ID}:${this.change.serverId}`);
+    if (stored) return true;
+
+    const segmentArray = type[SyncHashType.PageSnapshotFirstHash];
+    let segment = undefined;
+    if (segmentArray && segmentArray.length === 1) {
+      segment = segmentArray[0];
+    }
+
+    const snapshot: PageSnapshotDto = {
+      data: hashData[type[SyncHashType.PageSnapshotDataDto][0]].data,
+      info: hashData[type[SyncHashType.PageSnapshotInfoDto][0]].data,
+      hash: this.change.hash,
+      segment
+    };
+    // TODO - sync incoming comments !!!!!!!!!!!
+    const data: ObjPageDto = {
+      snapshot: snapshot,
+      comments: { data: [] }
+    };
+    const id = await new ObjNextIdCommand().execute();
+    const dt = Date.now();
+    // Add createdAt, updatedAt, VERSION ----> TO SERVER
+    const obj: ObjDto<ObjPageDto> = {
+      id,
+      data,
+      server: { id: this.change.serverId },
+      version: OBJ_DTO_VERSION,
+      createdAt: dt,
+      updatedAt: dt,
+      type: this.change.type,
+      local: {
+        visible: true,
+        drawVisible: false
+      }
+    };
+    await SwTaskStore.addTask(SwTaskType.WORDS_ADD_INDEX, {
+      words: snapshot.info.words,
+      objectId: id
+    });
+
+    if (segment) {
+      for (const hash of type[SyncHashType.PageSnapshotFirstHash]) {
+        const has = new PageSegmentAddRefCommand(hash);
+        if (has) continue;
+        await new PageSegmentAddCommand({
+          type: SegmentType.SNAPSHOT,
+          content: hashData[hash].data,
+          hash
+        }).execute();
+      }
+    }
+
+    await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${id}`, obj);
+    await BrowserStorage.set(`${ObjectStoreKeys.SERVER_ID}:${this.change.serverId}`, id);
+    await LinkHrefStore.add(snapshot.info.url, id);
+    await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
+
+    return true;
   };
 }

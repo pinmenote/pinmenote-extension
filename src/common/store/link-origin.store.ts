@@ -46,14 +46,13 @@ export class LinkOriginStore {
   }
 
   static async originIds(keyPrefix: string, url: string): Promise<number[]> {
-    fnConsoleLog('LinkOriginStore->originIds', url);
+    // fnConsoleLog('LinkOriginStore->originIds', url);
     const key = `${keyPrefix}:${url}`;
     const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];
   }
 
   static async originList(): Promise<string[]> {
-    fnConsoleLog('LinkOriginStore->list');
     const value = await BrowserStorage.get<string[] | undefined>(this.ORIGIN_LIST);
     return value || [];
   }

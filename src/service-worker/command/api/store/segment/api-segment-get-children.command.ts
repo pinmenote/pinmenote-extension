@@ -36,10 +36,10 @@ export class ApiSegmentGetChildrenCommand
         { headers: this.getAuthHeaders() },
         this.refreshParams()
       );
-      fnConsoleLog('ApiSegmentGetChildrenCommand->response', resp);
       return resp.data;
     } catch (e) {
       fnConsoleLog('ApiSegmentGetChildrenCommand->Error', e);
     }
+    throw new Error('ApiSegmentGetChildrenCommand->execute');
   }
 }

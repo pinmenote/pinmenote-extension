@@ -19,7 +19,6 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPinDataDto, ObjPinDescription, ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { SyncObjectCommand } from './sync-object.command';
 import { SyncObjectStatus } from '../sync.model';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
 import { PinGetCommentCommand } from '../../../../common/command/pin/comment/pin-get-comment.command';

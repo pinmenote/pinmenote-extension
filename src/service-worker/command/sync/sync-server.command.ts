@@ -22,12 +22,9 @@ import { SyncProgress } from './sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
-import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
-import jwtDecode from 'jwt-decode';
-import { TokenDataDto } from '../../../common/model/shared/token.dto';
 import { ApiObjGetChangesCommand } from '../api/store/obj/api-obj-get-changes.command';
 import { SyncObjIncomingHashCommand } from './incoming/sync-obj-incoming-hash.command';
-import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
+import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;
@@ -38,8 +35,8 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     try {
       // await new SyncResetProgressCommand().execute();
 
-      const token = await new TokenStorageGetCommand().execute();
-      if (token) console.log(jwtDecode<TokenDataDto>(token.access_token));
+      /*const token = await new TokenStorageGetCommand().execute();
+      if (token) console.log(jwtDecode<TokenDataDto>(token.access_token));*/
 
       SyncServerCommand.isInSync = true;
 
@@ -56,16 +53,21 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
 
   private async syncIncoming(progress: SyncProgress): Promise<void> {
     fnConsoleLog('SyncServerCommand->syncIncoming');
-    const changesResp = await new ApiObjGetChangesCommand().execute();
+    const changesResp = await new ApiObjGetChangesCommand(progress.serverId).execute();
     if (!changesResp) return;
-    for (const change of changesResp.data) {
-      await new SyncObjIncomingHashCommand(change).execute();
-      break;
+    for (let i = 0; i < changesResp.data.length; i++) {
+      const change = changesResp.data[i];
+      if (progress.serverId > change.serverId) continue;
+      const result = await new SyncObjIncomingHashCommand(change).execute();
+      fnConsoleLog('syncIncoming', result, 'serverId', change.serverId, 'localId', change.localId);
+      if (result) {
+        progress.serverId = change.serverId;
+        await new SyncSetProgressCommand(progress).execute();
+      } else {
+        fnConsoleLog('SyncServerCommand->syncIncoming->ERROR !!!!!!!!!!!!!!!!!!!!1');
+        return;
+      }
     }
-    const token = await new TokenStorageGetCommand().execute();
-    if (!token) return;
-    const tokenData = jwtDecode(token.access_token);
-    console.log('tokenData', tokenData);
   }
 
   private async syncOutgoing(progress: SyncProgress): Promise<void> {

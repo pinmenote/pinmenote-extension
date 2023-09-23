@@ -19,12 +19,13 @@ import { IndexWordsAddCommand } from '../command/task/index-words-add.command';
 import { IndexWordsRemoveCommand } from '../command/task/index-words-remove.command';
 import { SwTaskStore } from '../../common/store/sw-task.store';
 import { fnConsoleLog } from '../../common/fn/fn-console';
+import { fnSleep } from '../../common/fn/fn-sleep';
 
 export class TaskExecutor {
   private static runningTask?: string;
   static async dequeue() {
-    fnConsoleLog('TaskExecutor.dequeue');
     const queue = await SwTaskStore.getQueue();
+    fnConsoleLog('TaskExecutor.dequeue', queue.length);
     await this.execute(queue);
   }
 
@@ -52,6 +53,11 @@ export class TaskExecutor {
     queue.shift();
     await SwTaskStore.saveQueue(queue);
     this.runningTask = undefined;
+    // Try empty queue
+    if (queue.length > 0) {
+      await fnSleep(1000);
+      await this.dequeue();
+    }
   }
 
   private static updateTask = async (task: SwTaskData): Promise<void> => {

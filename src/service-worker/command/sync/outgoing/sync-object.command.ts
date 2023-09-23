@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
@@ -21,6 +22,7 @@ import { ApiObjAddCommand, ObjAddResponse } from '../../api/store/obj/api-obj-ad
 import { BeginTxResponse, ObjSingleChange } from '../../api/store/api-store.model';
 import { ApiErrorCode } from '../../../../common/model/shared/api.error-code';
 import { ApiObjGetByHashCommand } from '../../api/store/obj/api-obj-get-by-hash.command';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 
 export class SyncObjectCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
@@ -46,10 +48,9 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
     fnConsoleLog('SyncObjectCommand->setByHash');
     throw new Error('PROBLEM !!!!!!!!!!!!!!!');
   }
-  // eslint-disable-next-line @typescript-eslint/require-await
   private async saveServerId(serverId: number): Promise<void> {
     this.obj.server = { id: serverId };
-    fnConsoleLog('SyncObjectCommand->saveServerId', serverId, 'objId', this.obj.id);
-    //BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
+    await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
+    await BrowserStorage.set(`${ObjectStoreKeys.SERVER_ID}:${serverId}`, this.obj.id);
   }
 }

@@ -26,7 +26,6 @@ export class LinkHrefStore {
 
   static async add(url: ObjUrlDto, id: number): Promise<void> {
     // Update hrefs
-    fnConsoleLog('LinkHrefStore->addHrefOriginId', url.href);
     const hrefIds = await this.hrefIds(url.href);
     hrefIds.push(id);
     await BrowserStorage.set(`${this.OBJ_HREF}:${url.href}`, hrefIds);
@@ -48,7 +47,6 @@ export class LinkHrefStore {
   }
 
   static async hrefIds(url: string): Promise<number[]> {
-    fnConsoleLog('LinkHrefStore->hrefIds', url);
     const key = `${this.OBJ_HREF}:${url}`;
     const value = await BrowserStorage.get<number[] | undefined>(key);
     return value || [];

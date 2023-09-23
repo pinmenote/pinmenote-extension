@@ -21,7 +21,7 @@ import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 import { ObjChangesResponse } from '../api-store.model';
 
 export class ApiObjGetChangesCommand extends ApiCallBase implements ICommand<Promise<ObjChangesResponse | undefined>> {
-  constructor() {
+  constructor(private serverId?: number) {
     super();
   }
   async execute(): Promise<ObjChangesResponse | undefined> {
@@ -29,7 +29,7 @@ export class ApiObjGetChangesCommand extends ApiCallBase implements ICommand<Pro
     if (!this.storeUrl) return;
     try {
       const resp = await FetchService.fetch<ObjChangesResponse>(
-        `${this.storeUrl}/api/v1/obj/changes`,
+        `${this.storeUrl}/api/v1/obj/changes?serverId=${this.serverId || 0}`,
         { headers: this.getAuthHeaders() },
         this.refreshParams()
       );
