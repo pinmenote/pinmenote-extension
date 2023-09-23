@@ -49,7 +49,7 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
     await new ApiSegmentAddCommand(this.tx, content, {
       hash: data.hash,
       parent,
-      type: SyncHashType.ObjDrawDto,
+      type: SyncHashType.ObjVideoDataDto,
       key: TEMP_KEY
     }).execute();
   };
