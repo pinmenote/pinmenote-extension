@@ -39,8 +39,9 @@ export class ImageResizeFactory {
           const can = doc.createElement('canvas');
           const wr = size.width / img.naturalWidth;
           const hr = size.height / img.naturalHeight;
-          can.width = img.naturalWidth * wr;
-          can.height = img.naturalHeight * hr;
+          const s = Math.min(wr, hr);
+          can.width = img.naturalWidth * s;
+          can.height = img.naturalHeight * s;
           const ctx = can.getContext('2d');
           ctx?.drawImage(img, 0, 0, can.width, can.height);
           b64image = can.toDataURL(`image/${settings.screenshotFormat}`, settings.screenshotQuality);
