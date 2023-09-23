@@ -102,7 +102,7 @@ export class SyncMonthCommand implements ICommand<Promise<SyncObjectStatus>> {
     await new SyncSetProgressCommand({
       id,
       timestamp,
-      state: 'update'
+      serverId: this.progress.serverId
     }).execute();
   }
 }

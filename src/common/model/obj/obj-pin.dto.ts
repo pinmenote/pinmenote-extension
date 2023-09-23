@@ -24,7 +24,7 @@ export interface PinIframeDto {
   url: ObjUrlDto;
 }
 
-interface ObjPinDataDto {
+export interface ObjPinDataDto {
   hash: string;
   url: ObjUrlDto;
   xpath: string;
@@ -34,7 +34,7 @@ interface ObjPinDataDto {
   canvas?: PageCanvasDto;
 }
 
-interface ObjPinDescription {
+export interface ObjPinDescription {
   hash: string;
   title: string;
 }

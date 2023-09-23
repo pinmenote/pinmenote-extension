@@ -18,9 +18,9 @@ import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { ApiObjAddCommand, ObjAddResponse } from '../../api/store/obj/api-obj-add.command';
-import { BeginTxResponse } from '../../api/store/api-store.model';
+import { BeginTxResponse, ObjSingleChange } from '../../api/store/api-store.model';
 import { ApiErrorCode } from '../../../../common/model/shared/api.error-code';
-import { ApiObjGetByHashCommand, ObjSingleChange } from '../../api/store/obj/api-obj-get-by-hash.command';
+import { ApiObjGetByHashCommand } from '../../api/store/obj/api-obj-get-by-hash.command';
 
 export class SyncObjectCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}

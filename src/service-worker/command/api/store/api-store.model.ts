@@ -15,6 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjTypeDto } from '../../../../common/model/obj/obj.dto';
+import { ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
+import { ObjCommentDto } from '../../../../common/model/obj/obj-comment.dto';
+import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
+import { ObjVideoDataDto } from '../../../../common/model/obj/page-snapshot.dto';
 
 export interface BeginTxResponse {
   tx: string;
@@ -49,7 +53,12 @@ export enum SyncHashType {
   Snapshot = '7',
   ObjPdfDataDto = '8',
   ObjPdf = '9',
-  ObjPageNoteDto = '10'
+  ObjPageNoteDto = '10',
+  ObjPinDataDto = '11',
+  ObjPinDescription = '12',
+  ObjCommentDto = '13',
+  ObjDrawDto = '14',
+  ObjVideoDataDto = '15'
 }
 
 export interface SegmentSingleHash {
