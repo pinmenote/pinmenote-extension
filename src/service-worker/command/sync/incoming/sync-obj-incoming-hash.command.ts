@@ -121,8 +121,7 @@ export class SyncObjIncomingHashCommand implements ICommand<Promise<boolean>> {
       default:
         throw new Error(`Unsupported type ${this.change.type}`);
     }
-    await fnSleep(100);
-    return true;
+    return false;
   };
 
   private saveSnapshotDto = async (hashData: HashData, type: HashType): Promise<boolean> => {
@@ -183,7 +182,7 @@ export class SyncObjIncomingHashCommand implements ICommand<Promise<boolean>> {
     await BrowserStorage.set(`${ObjectStoreKeys.SERVER_ID}:${this.change.serverId}`, id);
     await LinkHrefStore.add(snapshot.info.url, id);
     await new ObjAddIdCommand({ id, dt }, ObjectStoreKeys.OBJECT_LIST).execute();
-
+    await fnSleep(1000);
     return true;
   };
 }

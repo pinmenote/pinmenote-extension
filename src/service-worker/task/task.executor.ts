@@ -21,6 +21,8 @@ import { SwTaskStore } from '../../common/store/sw-task.store';
 import { fnConsoleLog } from '../../common/fn/fn-console';
 import { fnSleep } from '../../common/fn/fn-sleep';
 
+const NEXT_TASK_DELAY = 2000;
+
 export class TaskExecutor {
   private static runningTask?: string;
   static async dequeue() {
@@ -55,7 +57,7 @@ export class TaskExecutor {
     this.runningTask = undefined;
     // Try empty queue
     if (queue.length > 0) {
-      await fnSleep(1000);
+      await fnSleep(NEXT_TASK_DELAY);
       await this.dequeue();
     }
   }

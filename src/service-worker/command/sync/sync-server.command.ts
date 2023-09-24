@@ -64,7 +64,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
         progress.serverId = change.serverId;
         await new SyncSetProgressCommand(progress).execute();
       } else {
-        fnConsoleLog('SyncServerCommand->syncIncoming->ERROR !!!!!!!!!!!!!!!!!!!!1');
+        fnConsoleLog('SyncServerCommand->syncIncoming->ERROR !!!!!!!!!!!!!!!!!!!!1', change);
         return;
       }
     }
