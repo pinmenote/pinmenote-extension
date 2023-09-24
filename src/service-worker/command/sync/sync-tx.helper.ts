@@ -25,7 +25,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import jwtDecode from 'jwt-decode';
 import { TokenDataDto } from '../../../common/model/shared/token.dto';
 
-const SYNC_DELAY = 10_0000;
+const SYNC_DELAY = 10_000;
 
 export class SyncTxHelper {
   static async begin(): Promise<BeginTxResponse | undefined> {
