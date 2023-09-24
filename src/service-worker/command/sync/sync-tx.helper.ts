@@ -25,6 +25,8 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import jwtDecode from 'jwt-decode';
 import { TokenDataDto } from '../../../common/model/shared/token.dto';
 
+const SYNC_DELAY = 10_0000;
+
 export class SyncTxHelper {
   static async begin(): Promise<BeginTxResponse | undefined> {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
@@ -62,7 +64,7 @@ export class SyncTxHelper {
   static async shouldSync(): Promise<boolean> {
     const interval = (await BrowserStorage.get<number | undefined>(ObjectStoreKeys.SYNC_INTERVAL)) || 0;
     fnConsoleLog('SyncServerCommand->shouldSync', Date.now() - interval);
-    if (Date.now() - interval > 5_000) {
+    if (Date.now() - interval > SYNC_DELAY) {
       await BrowserStorage.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
 
       const loggedIn = await this.isLoggedIn();
