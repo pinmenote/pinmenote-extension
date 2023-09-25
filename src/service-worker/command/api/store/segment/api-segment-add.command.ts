@@ -19,6 +19,7 @@ import { BeginTxResponse, SyncHashType } from '../api-store.model';
 import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../../common/model/shared/common.dto';
 import { deflate } from 'pako';
+import { fnB64toBlob } from '../../../../../common/fn/fn-b64-to-blob';
 
 export interface FileDataDto {
   parent?: string;
@@ -28,7 +29,7 @@ export interface FileDataDto {
 }
 
 export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
-  constructor(private tx: BeginTxResponse, private file: string | Blob, private data: FileDataDto) {
+  constructor(private tx: BeginTxResponse, private file: string, private data: FileDataDto) {
     super();
   }
   async execute(): Promise<boolean> {
@@ -56,8 +57,14 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
 
   async addSegment(): Promise<boolean> {
     const formData = new FormData();
-    if (this.file instanceof Blob) {
-      formData.append('file', this.file);
+    if (this.data.type.toString() === SyncHashType.Img) {
+      if (this.file.startsWith('data:image/svg') || this.file === 'data:') {
+        formData.append('file', this.file);
+      } else {
+        formData.append('file', fnB64toBlob(this.file));
+      }
+    } else if (this.data.type.toString() === SyncHashType.ObjPdf) {
+      formData.append('file', fnB64toBlob(this.file));
     } else {
       const fileData = deflate(this.file);
       formData.append('file', new Blob([fileData], { type: 'application/zip' }));

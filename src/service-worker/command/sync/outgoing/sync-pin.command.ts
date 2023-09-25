@@ -24,8 +24,7 @@ import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.co
 import { PinGetCommentCommand } from '../../../../common/command/pin/comment/pin-get-comment.command';
 import { ObjDrawDto } from '../../../../common/model/obj/obj-draw.dto';
 import { ObjVideoDataDto } from '../../../../common/model/obj/page-snapshot.dto';
-
-const TEMP_KEY = 'foo';
+import { SyncCryptoFactory } from '../crypto/sync-crypto.factory';
 
 export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjPinDto>, private tx: BeginTxResponse) {}
@@ -49,7 +48,7 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
       hash: data.hash,
       parent,
       type: SyncHashType.ObjVideoDataDto,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
   };
 
@@ -61,7 +60,7 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
         hash: draw.hash,
         parent,
         type: SyncHashType.ObjDrawDto,
-        key: TEMP_KEY
+        key: await SyncCryptoFactory.newKey()
       }).execute();
     }
   };
@@ -75,7 +74,7 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
         hash: comment.hash,
         parent,
         type: SyncHashType.ObjCommentDto,
-        key: TEMP_KEY
+        key: await SyncCryptoFactory.newKey()
       }).execute();
     }
   };
@@ -86,7 +85,7 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
       hash: data.hash,
       parent: data.hash,
       type: SyncHashType.ObjPinDataDto,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
   };
 
@@ -96,7 +95,7 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
       hash: data.hash,
       parent,
       type: SyncHashType.ObjPinDescription,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
   };
 }

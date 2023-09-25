@@ -23,7 +23,7 @@ import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
 import { ApiObjGetChangesCommand } from '../api/store/obj/api-obj-get-changes.command';
-import { SyncObjIncomingHashCommand } from './incoming/sync-obj-incoming-hash.command';
+import { SyncObjIncomingCommand } from './incoming/sync-obj-incoming.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
@@ -58,7 +58,7 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     for (let i = 0; i < changesResp.data.length; i++) {
       const change = changesResp.data[i];
       if (progress.serverId > change.serverId) continue;
-      const result = await new SyncObjIncomingHashCommand(change).execute();
+      const result = await new SyncObjIncomingCommand(change).execute();
       fnConsoleLog('syncIncoming', result, 'serverId', change.serverId, 'localId', change.localId);
       if (result) {
         progress.serverId = change.serverId;

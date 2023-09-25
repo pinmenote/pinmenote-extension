@@ -19,14 +19,11 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPdfDataDto, ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { SyncObjectCommand } from './sync-object.command';
 import { SyncObjectStatus } from '../sync.model';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { BrowserStorage } from '@pinmenote/browser-api';
-import { fnB64toBlob } from '../../../../common/fn/fn-b64-to-blob';
 import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
-
-const TEMP_KEY = 'foo';
+import { SyncCryptoFactory } from '../crypto/sync-crypto.factory';
 
 export class SyncPdfCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjPdfDto>, private tx: BeginTxResponse) {}
@@ -46,20 +43,18 @@ export class SyncPdfCommand implements ICommand<Promise<SyncObjectStatus>> {
       hash: data.hash,
       parent,
       type: SyncHashType.ObjPdfDataDto,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
   }
 
   private async syncPdf(parent: string): Promise<void> {
     const pdfData = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${parent}`);
     if (!pdfData) return;
-    const pdfBlob = fnB64toBlob(pdfData);
-    fnConsoleLog('SyncPdfCommand->syncPdf->blob', pdfBlob);
-    await new ApiSegmentAddCommand(this.tx, pdfBlob, {
+    await new ApiSegmentAddCommand(this.tx, pdfData, {
       hash: parent,
       parent,
       type: SyncHashType.ObjPdf,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
   }
 }

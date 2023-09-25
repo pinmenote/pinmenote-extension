@@ -25,9 +25,7 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { PageSnapshotDto } from '../../../../common/model/obj/page-snapshot.dto';
 import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
-import { fnB64toBlob } from '../../../../common/fn/fn-b64-to-blob';
-
-const TEMP_KEY = 'foo';
+import { SyncCryptoFactory } from '../crypto/sync-crypto.factory';
 
 export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjPageDto>, private tx: BeginTxResponse) {}
@@ -55,11 +53,12 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     const segment = await new PageSegmentGetCommand(snapshot.segment).execute();
     if (!segment) return;
     const content = this.getSegmentContent(segment);
-    await new ApiSegmentAddCommand(this.tx, content!, {
+    if (!content) return;
+    await new ApiSegmentAddCommand(this.tx, content, {
       hash: segment.hash,
       parent,
       type: SyncHashType.PageSnapshotFirstHash,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
     await this.syncSegmentSnapshot(segment.content as SegmentPage, parent);
   };
@@ -70,14 +69,14 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
       hash: snapshot.info.hash,
       parent,
       type: SyncHashType.PageSnapshotInfoDto,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
     // snapshot->data
     await new ApiSegmentAddCommand(this.tx, JSON.stringify(snapshot.data), {
       hash: snapshot.data.hash,
       parent,
       type: SyncHashType.PageSnapshotDataDto,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
   }
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -95,7 +94,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
       hash,
       parent,
       type: this.convertSegmentTypeSyncHashType(segment.type),
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
 
     switch (segment.type) {
@@ -124,16 +123,9 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     }
   };
 
-  private getSegmentContent = (segment: SegmentData<any>): string | Blob | undefined => {
+  private getSegmentContent = (segment: SegmentData<any>): string | undefined => {
     if (segment.type === (3 as SegmentType)) return;
-    if (segment.type == SegmentType.IMG) {
-      const src = (segment.content as SegmentImg).src;
-      if (src.startsWith('data:image/svg') || src === 'data:') {
-        return src;
-      } else {
-        return fnB64toBlob(src);
-      }
-    }
+    if (segment.type == SegmentType.IMG) return (segment.content as SegmentImg).src;
     return JSON.stringify(segment.content);
   };
 

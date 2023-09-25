@@ -24,8 +24,7 @@ import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
-
-const TEMP_KEY = 'foo';
+import { SyncCryptoFactory } from '../crypto/sync-crypto.factory';
 
 export class SyncPageNoteCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjPageNoteDto>, private tx: BeginTxResponse) {}
@@ -45,7 +44,7 @@ export class SyncPageNoteCommand implements ICommand<Promise<SyncObjectStatus>> 
       hash: data.hash,
       parent: data.hash,
       type: SyncHashType.ObjPdfDataDto,
-      key: TEMP_KEY
+      key: await SyncCryptoFactory.newKey()
     }).execute();
     if (data.prev) {
       const prevData = await BrowserStorage.get<ObjPageNoteDto>(`${ObjectStoreKeys.NOTE_HASH}:${data.prev}`);
