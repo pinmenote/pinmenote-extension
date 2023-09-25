@@ -30,6 +30,7 @@ import { SyncRemovedCommand } from './outgoing/sync-removed.command';
 import { SyncSnapshotCommand } from './outgoing/sync-snapshot.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { BeginTxResponse } from '../api/store/api-store.model';
+import { fnSleep } from '../../../common/fn/fn-sleep';
 
 export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private progress: SyncProgress, private tx: BeginTxResponse, private id: number) {}

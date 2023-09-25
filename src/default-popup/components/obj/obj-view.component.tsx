@@ -52,7 +52,6 @@ const hrefFilter = (obj: ObjDto<ObjPageDataDto>, href?: string) => {
 };
 
 const fetchObjects = async (idList: number[], index: number, href?: string): Promise<FetchObjectsResult> => {
-  LogManager.log(`aaa ${href || 'undefined'} bbb ${idList.length} ccc ${index}`);
   if (index >= idList.length) return { objs: [], index };
   const objs: ObjDto<ObjPageDataDto>[] = [];
   for (index; index < idList.length; index++) {

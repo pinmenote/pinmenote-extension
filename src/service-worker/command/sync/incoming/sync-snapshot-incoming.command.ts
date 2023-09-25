@@ -112,9 +112,16 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
       if (!segmentData) continue;
       switch (child.type.toString()) {
         case SyncHashType.Img: {
-          const src = await UrlFactory.toDataUri(segmentData);
           const has = await new PageSegmentAddRefCommand(child.hash).execute();
           if (has) break;
+          let src = 'data:';
+          try {
+            src = await UrlFactory.toDataUri(segmentData);
+          } catch (e) {
+            const buffer = await segmentData.arrayBuffer();
+            const textData = new TextDecoder().decode(buffer);
+            console.log('ERROR !!!!!!!!! AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa !!!!!!!!!!!!!!!!!!!!!!!!!!!', textData);
+          }
           const content: SegmentImg = { src };
           await new PageSegmentAddCommand({ type: SegmentType.IMG, hash: child.hash, content }).execute();
           break;

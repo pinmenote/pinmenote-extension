@@ -20,6 +20,7 @@ import { FetchService } from '@pinmenote/fetch-service';
 import { ICommand } from '../../../../../common/model/shared/common.dto';
 import { deflate } from 'pako';
 import { fnB64toBlob } from '../../../../../common/fn/fn-b64-to-blob';
+import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
 export interface FileDataDto {
   parent?: string;
@@ -58,10 +59,16 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
   async addSegment(): Promise<boolean> {
     const formData = new FormData();
     if (this.data.type.toString() === SyncHashType.Img) {
-      if (this.file.startsWith('data:image/svg') || this.file === 'data:') {
-        formData.append('file', this.file);
+      if (this.file === 'data:') {
+        fnConsoleLog('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', this.file);
+        formData.append('file', new Blob([this.file], { type: 'image/svg+xml' }));
       } else {
-        formData.append('file', fnB64toBlob(this.file));
+        try {
+          formData.append('file', fnB64toBlob(this.file));
+        } catch (e) {
+          console.log(this.file, this.data, e);
+          throw new Error('aaaaaaaaaaaaaaaaaaaaa');
+        }
       }
     } else if (this.data.type.toString() === SyncHashType.ObjPdf) {
       formData.append('file', fnB64toBlob(this.file));

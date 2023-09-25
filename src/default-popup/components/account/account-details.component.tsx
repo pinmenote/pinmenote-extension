@@ -35,7 +35,7 @@ interface Props {
   logoutSuccess: () => void;
 }
 
-export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSuccess }) => {
+export const AccountDetailsComponent: FunctionComponent<Props> = (props) => {
   const [tokenData, setTokenData] = useState<TokenDataDto | undefined>();
   const [serverQuota, setServerQuota] = useState<ServerQuotaResponse>();
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
@@ -44,14 +44,18 @@ export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSucces
     LogManager.log(`AccountDetailsComponent init`);
 
     const dispatcher = TinyDispatcher.getInstance();
+    let quotaKey: string | undefined = undefined;
 
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
-      dispatcher.addListener<ServerQuotaResponse>(BusMessageType.POPUP_SERVER_QUOTA, (event, key, value) => {
-        LogManager.log(`${event} - ${JSON.stringify(value)}`);
-        dispatcher.removeListener(event, key);
-        setServerQuota(value);
-      });
+      quotaKey = dispatcher.addListener<ServerQuotaResponse>(
+        BusMessageType.POPUP_SERVER_QUOTA,
+        (event, key, value) => {
+          LogManager.log(`${event} - ${JSON.stringify(value)}`);
+          setServerQuota(value);
+        },
+        true
+      );
       BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_SERVER_QUOTA })
         .then(() => {
           /* */
@@ -61,33 +65,38 @@ export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSucces
         });
     }
 
-    const loginSuccessKey = dispatcher.addListener(BusMessageType.POPUP_LOGIN_SUCCESS, async (event, key) => {
-      dispatcher.removeListener(event, key);
-      await PopupTokenStore.init();
-      if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
-    });
+    const loginSuccessKey = dispatcher.addListener(
+      BusMessageType.POPUP_LOGIN_SUCCESS,
+      async (event, key) => {
+        await PopupTokenStore.init();
+        if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
+      },
+      true
+    );
 
     const logoutKey = dispatcher.addListener<FetchResponse<BoolDto | ServerErrorDto>>(
       BusMessageType.POPUP_LOGOUT,
       async (event, key, value) => {
         LogManager.log('POPUP_LOGOUT_RESPONSE');
         if (value.ok) {
-          logoutSuccess();
+          props.logoutSuccess();
         } else {
           setResponseError(value.data as ServerErrorDto);
         }
         await new TokenStorageRemoveCommand().execute();
+        setTokenData(undefined);
       }
     );
     return () => {
       dispatcher.removeListener(BusMessageType.POPUP_LOGIN_SUCCESS, loginSuccessKey);
       dispatcher.removeListener(BusMessageType.POPUP_LOGOUT, logoutKey);
+      if (quotaKey) dispatcher.removeListener(BusMessageType.POPUP_SERVER_QUOTA, quotaKey);
     };
-  }, []);
+  }, [props]);
 
   const handleLogout = async (): Promise<void> => {
     LogManager.log('AccountDetailsComponent->handleLogout');
-    await BrowserApi.sendRuntimeMessage<undefined>({
+    await BrowserApi.sendRuntimeMessage({
       type: BusMessageType.POPUP_LOGOUT
     });
   };
@@ -108,7 +117,7 @@ export const AccountDetailsComponent: FunctionComponent<Props> = ({ logoutSucces
             {fnByteToGb(serverQuota?.used)} GB of {fnByteToGb(serverQuota?.available)} GB disk space used
           </Typography>
           <Typography style={{ marginTop: 5 }} fontSize="1.2em">
-            {serverQuota?.files} files and {serverQuota?.documents} documents archived
+            {serverQuota?.files || '0'} files and {serverQuota?.documents || '0'} documents archived
           </Typography>
         </div>
       </div>

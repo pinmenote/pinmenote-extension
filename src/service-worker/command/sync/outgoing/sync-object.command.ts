@@ -23,6 +23,7 @@ import { BeginTxResponse, ObjSingleChange } from '../../api/store/api-store.mode
 import { ApiErrorCode } from '../../../../common/model/shared/api.error-code';
 import { ApiObjGetByHashCommand } from '../../api/store/obj/api-obj-get-by-hash.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { fnSleep } from '../../../../common/fn/fn-sleep';
 
 export class SyncObjectCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
@@ -52,5 +53,7 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
     this.obj.server = { id: serverId };
     await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
     await BrowserStorage.set(`${ObjectStoreKeys.SERVER_ID}:${serverId}`, this.obj.id);
+    await fnSleep(500);
+    fnConsoleLog('SyncObjectCommand->saveServerId', serverId, 'obj->id', this.obj.id);
   }
 }

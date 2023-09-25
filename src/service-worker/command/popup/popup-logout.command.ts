@@ -24,6 +24,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 export class PopupLogoutCommand implements ICommand<void> {
   async execute(): Promise<void> {
     try {
+      fnConsoleLog('PopupLogoutCommand->execute');
       const res = await new ApiLogoutCommand().execute();
 
       await BrowserApi.sendRuntimeMessage<FetchResponse<BoolDto | ServerErrorDto>>({

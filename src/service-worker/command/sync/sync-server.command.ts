@@ -25,6 +25,7 @@ import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
 import { ApiObjGetChangesCommand } from '../api/store/obj/api-obj-get-changes.command';
 import { SyncObjIncomingCommand } from './incoming/sync-obj-incoming.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
+import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   private static isInSync = false;

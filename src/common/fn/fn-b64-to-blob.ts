@@ -16,10 +16,16 @@
  */
 export const fnB64toBlob = (b64Data: string, sliceSize = 512): Blob => {
   const a = b64Data.split(',');
-  const contentType = a[0].substring(5).split(';')[0];
-  let data = a[1];
+  const b = a[0].substring(5).split(';');
+  const contentType = b[0];
+  if (b[1] === 'base64') return b64ToBlob(a[1], contentType, sliceSize);
+  if (['utf8', 'charset=utf8', 'charset=utf-8', undefined].includes(b[1]))
+    return new Blob([a[1]], { type: contentType });
+  throw new Error(`Unsupported content type ${contentType} - ${b[1]}`);
+};
+
+const b64ToBlob = (data: string, contentType: string, sliceSize: number): Blob => {
   if (data.endsWith('%3D')) data = data.replaceAll('%3D', '=');
-  // console.log('fnB64toBlob', 'contentType', contentType, 'data', data);
   const byteCharacters = atob(data);
   const byteArrays = [];
 
