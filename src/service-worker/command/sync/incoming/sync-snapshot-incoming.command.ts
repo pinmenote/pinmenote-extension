@@ -106,23 +106,23 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
   private getSnapshot = async (hashList: SegmentHashListResponse): Promise<PageSnapshotDto | undefined> => {
     let data: PageSnapshotDataDto | undefined;
     let info: PageSnapshotInfoDto | undefined;
-    const segment: string | undefined = undefined;
+    let segment: string | undefined = undefined;
     for (const child of hashList.children) {
-      const segment = await new ApiSegmentGetCommand(child.hash).execute();
-      if (!segment) continue;
+      const segmentData = await new ApiSegmentGetCommand(child.hash).execute();
+      if (!segmentData) continue;
       switch (child.type.toString()) {
         case SyncHashType.Img: {
-          const src = await UrlFactory.toDataUri(segment);
-          const has = new PageSegmentAddRefCommand(child.hash);
+          const src = await UrlFactory.toDataUri(segmentData);
+          const has = await new PageSegmentAddRefCommand(child.hash).execute();
           if (has) break;
           const content: SegmentImg = { src };
           await new PageSegmentAddCommand({ type: SegmentType.IMG, hash: child.hash, content }).execute();
           break;
         }
         case SyncHashType.Css: {
-          const has = new PageSegmentAddRefCommand(child.hash);
+          const has = await new PageSegmentAddRefCommand(child.hash).execute();
           if (has) break;
-          const content = await this.getString(segment);
+          const content = await this.getString(segmentData);
           await new PageSegmentAddCommand({
             type: SegmentType.CSS,
             hash: child.hash,
@@ -131,9 +131,9 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
           break;
         }
         case SyncHashType.IFrame: {
-          const has = new PageSegmentAddRefCommand(child.hash);
+          const has = await new PageSegmentAddRefCommand(child.hash).execute();
           if (has) break;
-          const content = await this.getString(segment);
+          const content = await this.getString(segmentData);
           await new PageSegmentAddCommand({
             type: SegmentType.IFRAME,
             hash: child.hash,
@@ -142,19 +142,20 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
           break;
         }
         case SyncHashType.PageSnapshotDataDto: {
-          const content = await this.getString(segment);
+          const content = await this.getString(segmentData);
           data = JSON.parse(content);
           break;
         }
         case SyncHashType.PageSnapshotInfoDto: {
-          const content = await this.getString(segment);
+          const content = await this.getString(segmentData);
           info = JSON.parse(content);
           break;
         }
         case SyncHashType.PageSnapshotFirstHash: {
-          const content = await this.getString(segment);
+          segment = child.hash;
+          const content = await this.getString(segmentData);
           const html: SegmentHtml = JSON.parse(content);
-          fnConsoleLog('SyncSnapshotIncomingCommand->getSnapshot->PageSnapshotFirstHash', html.hash, child.hash);
+          fnConsoleLog('SyncSnapshotIncomingCommand->getSnapshot->PageSnapshotFirstHash', html, child.hash);
           await new PageSegmentAddCommand({
             type: SegmentType.SNAPSHOT,
             content: html,

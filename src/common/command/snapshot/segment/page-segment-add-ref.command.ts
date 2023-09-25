@@ -35,7 +35,6 @@ export class PageSegmentAddRefCommand implements ICommand<Promise<boolean>> {
     const key = `${ObjectStoreKeys.CONTENT_HASH_COUNT}:${this.hash}`;
     let count = (await BrowserStorage.get<number | undefined>(key)) || 0;
     count++;
-    fnConsoleLog('PageSegmentAddRefCommand->incrementCount', count);
     await BrowserStorage.set(key, count);
   }
 }
