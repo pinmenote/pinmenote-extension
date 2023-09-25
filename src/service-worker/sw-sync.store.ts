@@ -14,20 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export class PingStore {
-  private static data: { [key: string]: () => void } = {};
-
-  static register(url: string, successHandler: () => void): void {
-    this.data[url] = successHandler;
-  }
-
-  static success(url: string) {
-    if (url in this.data) {
-      this.data[url]();
-    }
-  }
-
-  static remove(url: string): void {
-    delete this.data[url];
-  }
+export class SwSyncStore {
+  static isInSync = false;
 }

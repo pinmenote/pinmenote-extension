@@ -57,6 +57,7 @@ export enum BusMessageType {
   CONTENT_FETCH_PDF = 'content.fetch.pdf',
   CONTENT_THEME = 'content.theme',
   // Iframe
+  OPTIONS_SYNC_INCOMING_CHANGES = 'options.sync.incoming.changes',
   OPTIONS_SYNC_OUTGOING_OBJECT = 'options.sync.outgoing.object',
   // Iframe content script
   IFRAME_INDEX = 'iframe.index',

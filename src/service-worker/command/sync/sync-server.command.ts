@@ -14,79 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/fn-date';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
-import { SyncMonthCommand } from './sync-month.command';
-import { SyncProgress } from '../../../common/model/sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
-import { ApiObjGetChangesCommand } from '../api/store/obj/api-obj-get-changes.command';
-import { SyncObjIncomingCommand } from './incoming/sync-obj-incoming.command';
-import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
+import { SyncServerIncomingCommand } from './sync-server-incoming.command';
+import { SwSyncStore } from '../../sw-sync.store';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
-  private static isInSync = false;
-
   async execute(): Promise<void> {
-    if (SyncServerCommand.isInSync) return;
+    if (SwSyncStore.isInSync) return;
     if (!(await SyncTxHelper.shouldSync())) return;
     try {
       await new SyncResetProgressCommand(false).execute();
-
-      SyncServerCommand.isInSync = true;
-
       const a = Date.now();
       const progress = await new SyncGetProgressCommand().execute();
-      // await this.syncOutgoing(progress);
-      await this.syncIncoming(progress);
+      // await new SyncServerOutgoingCommand(progress).execute()
+      await new SyncServerIncomingCommand(progress).execute();
 
       fnConsoleLog('SyncServerCommand->execute', progress, 'in', Date.now() - a);
     } finally {
-      SyncServerCommand.isInSync = false;
+      SwSyncStore.isInSync = false;
     }
-  }
-
-  private async syncIncoming(progress: SyncProgress): Promise<void> {
-    const changesResp = await new ApiObjGetChangesCommand(progress.serverId).execute();
-    fnConsoleLog('SyncServerCommand->syncIncoming', changesResp);
-    if ('code' in changesResp) return;
-    for (let i = 0; i < changesResp.data.length; i++) {
-      const change = changesResp.data[i];
-      if (progress.serverId > change.serverId) continue;
-      const result = await new SyncObjIncomingCommand(change).execute();
-      fnConsoleLog('syncIncoming', result, 'serverId', change.serverId, 'localId', change.localId);
-      if (result) {
-        progress.serverId = change.serverId;
-        await new SyncSetProgressCommand(progress).execute();
-      } else {
-        fnConsoleLog('SyncServerCommand->syncIncoming->ERROR !!!!!!!!!!!!!!!!!!!!1', change);
-        return;
-      }
-    }
-    fnConsoleLog('SyncServerCommand->syncIncoming->COMPLETE !!!');
-  }
-
-  private async syncOutgoing(progress: SyncProgress): Promise<void> {
-    fnConsoleLog('SyncServerCommand->syncOutgoing');
-    // Empty list - fresh install
-    if (progress.id == -1) return;
-    const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
-    const lastDay = fnMonthLastDay();
-
-    while (dt < lastDay) {
-      const yearMonth = fnDateKeyFormat(dt);
-      const status = await new SyncMonthCommand(progress, yearMonth).execute();
-      fnConsoleLog('sync', yearMonth, 'status', status);
-      if (status < 0) {
-        fnConsoleLog('SyncServerCommand->sync->SyncObjectStatus->error', status);
-        return;
-      }
-
-      dt.setMonth(dt.getMonth() + 1);
-    }
-    fnConsoleLog('SyncServerCommand->syncOutgoing->COMPLETE !!!');
   }
 }

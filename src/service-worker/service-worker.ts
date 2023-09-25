@@ -38,6 +38,8 @@ import { SyncServerCommand } from './command/sync/sync-server.command';
 import { TaskExecutor } from './task/task.executor';
 import { fnConsoleLog } from '../common/fn/fn-console';
 import { SyncManualOutgoingCommand } from './command/sync/manual/sync-manual-outgoing.command';
+import { SyncServerIncomingCommand } from './command/sync/sync-server-incoming.command';
+import { SyncGetProgressCommand } from './command/sync/progress/sync-get-progress.command';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -98,6 +100,11 @@ const handleMessage = async (
       await new SyncManualOutgoingCommand(msg.data).execute();
       break;
     }
+    case BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES: {
+      const progress = await new SyncGetProgressCommand().execute();
+      await new SyncServerIncomingCommand(progress).execute();
+      break;
+    }
     case BusMessageType.IFRAME_INDEX:
     case BusMessageType.IFRAME_INDEX_REGISTER:
     case BusMessageType.IFRAME_START_LISTENERS:
@@ -117,7 +124,8 @@ const handleMessage = async (
     ![
       PageComputeMessage.CONTENT_FETCH_CSS,
       PageComputeMessage.CONTENT_FETCH_IMAGE,
-      BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT
+      BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT,
+      BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES
     ].includes(msg.type as any)
   ) {
     await new SyncServerCommand().execute();

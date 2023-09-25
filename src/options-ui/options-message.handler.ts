@@ -24,6 +24,9 @@ export class OptionsMessageHandler {
   static init(): void {
     BrowserApi.runtime.onMessage.addListener(this.handleRemoteMessage);
     TinyDispatcher.getInstance().addListener(BusMessageType.POPUP_OPEN, this.handlePopupOpen);
+    BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES }).catch((e) =>
+      fnConsoleLog('OPTIONS_SYNC_INCOMING_CHANGES->ERROR', e)
+    );
   }
 
   private static handleRemoteMessage = (
