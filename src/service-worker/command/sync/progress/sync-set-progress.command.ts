@@ -17,7 +17,7 @@
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { SyncProgress } from '../sync.model';
+import { SyncProgress } from '../../../../common/model/sync.model';
 
 export class SyncSetProgressCommand implements ICommand<Promise<void>> {
   constructor(protected progress: SyncProgress) {}

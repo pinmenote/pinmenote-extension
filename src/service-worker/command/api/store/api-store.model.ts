@@ -58,8 +58,9 @@ export enum SyncHashType {
 }
 
 export interface SegmentSingleHash {
-  hash: string;
   type: SyncHashType;
+  hash: string;
+  mimeType?: string;
 }
 
 export interface SegmentHashListResponse {

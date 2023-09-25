@@ -20,15 +20,16 @@ import { ICommand } from '../../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
 export class ApiSegmentGetCommand extends ApiCallBase implements ICommand<Promise<Blob | undefined>> {
-  constructor(private hash: string) {
+  constructor(private hash: string, private mimeType?: string) {
     super();
   }
   async execute(): Promise<Blob | undefined> {
     await this.initTokenData();
     if (!this.storeUrl) return;
     try {
+      const mimeType = this.mimeType ? `?mimeType=${encodeURI(this.mimeType)}` : '';
       const resp = await FetchService.fetch<Blob>(
-        `${this.storeUrl}/api/v1/segment/${this.hash}`,
+        `${this.storeUrl}/api/v1/segment/${this.hash}${mimeType}`,
         { headers: this.getAuthHeaders(), type: 'BLOB' },
         this.refreshParams()
       );

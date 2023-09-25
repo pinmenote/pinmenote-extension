@@ -17,7 +17,7 @@
 import { SyncIndexCommand } from './sync-index.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
-import { SyncObjectStatus, SyncProgress } from './sync.model';
+import { SyncObjectStatus, SyncProgress } from '../../../common/model/sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
@@ -56,7 +56,7 @@ export class SyncMonthCommand implements ICommand<Promise<SyncObjectStatus>> {
     let i = start;
     let status = SyncObjectStatus.OK;
     for (i; i < indexList.length; i++) {
-      status = await new SyncIndexCommand(this.progress, begin, indexList[i].id).execute();
+      status = await new SyncIndexCommand(begin, indexList[i].id).execute();
       switch (status) {
         case SyncObjectStatus.SERVER_ERROR: {
           fnConsoleLog('SERVER_ERROR !!!!!!!!!!!!!!!!!!!');

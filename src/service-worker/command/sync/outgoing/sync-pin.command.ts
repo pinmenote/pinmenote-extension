@@ -18,7 +18,7 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPinDataDto, ObjPinDescription, ObjPinDto } from '../../../../common/model/obj/obj-pin.dto';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncObjectStatus } from '../sync.model';
+import { SyncObjectStatus } from '../../../../common/model/sync.model';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.command';
 import { PinGetCommentCommand } from '../../../../common/command/pin/comment/pin-get-comment.command';
@@ -45,10 +45,10 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
     if (!data) return;
     const content = JSON.stringify(data);
     await new ApiSegmentAddCommand(this.tx, content, {
-      hash: data.hash,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjVideoDataDto,
-      key: await SyncCryptoFactory.newKey()
+      hash: data.hash,
+      parent
     }).execute();
   };
 
@@ -57,10 +57,10 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
       // TODO SYNC DRAW LIKE COMMENTS
       const content = JSON.stringify(draw);
       await new ApiSegmentAddCommand(this.tx, content, {
-        hash: draw.hash,
-        parent,
+        key: await SyncCryptoFactory.newKey(),
         type: SyncHashType.ObjDrawDto,
-        key: await SyncCryptoFactory.newKey()
+        hash: draw.hash,
+        parent
       }).execute();
     }
   };
@@ -71,10 +71,10 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
       if (!comment) continue;
       const content = JSON.stringify(comment);
       await new ApiSegmentAddCommand(this.tx, content, {
-        hash: comment.hash,
-        parent,
+        key: await SyncCryptoFactory.newKey(),
         type: SyncHashType.ObjCommentDto,
-        key: await SyncCryptoFactory.newKey()
+        hash: comment.hash,
+        parent
       }).execute();
     }
   };
@@ -82,20 +82,19 @@ export class SyncPinCommand implements ICommand<Promise<SyncObjectStatus>> {
   private syncPinData = async (data: ObjPinDataDto) => {
     const content = JSON.stringify(data);
     await new ApiSegmentAddCommand(this.tx, content, {
-      hash: data.hash,
-      parent: data.hash,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPinDataDto,
-      key: await SyncCryptoFactory.newKey()
+      hash: data.hash
     }).execute();
   };
 
   private syncPinDescription = async (data: ObjPinDescription, parent: string) => {
     const content = JSON.stringify(data);
     await new ApiSegmentAddCommand(this.tx, content, {
-      hash: data.hash,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPinDescription,
-      key: await SyncCryptoFactory.newKey()
+      hash: data.hash,
+      parent
     }).execute();
   };
 }

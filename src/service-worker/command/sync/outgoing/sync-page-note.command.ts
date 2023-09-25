@@ -19,7 +19,7 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncObjectStatus } from '../sync.model';
+import { SyncObjectStatus } from '../../../../common/model/sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
@@ -41,10 +41,9 @@ export class SyncPageNoteCommand implements ICommand<Promise<SyncObjectStatus>> 
   private async syncNote(data: ObjPageNoteDto): Promise<void> {
     const content = JSON.stringify(data);
     await new ApiSegmentAddCommand(this.tx, content, {
-      hash: data.hash,
-      parent: data.hash,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPdfDataDto,
-      key: await SyncCryptoFactory.newKey()
+      hash: data.hash
     }).execute();
     if (data.prev) {
       const prevData = await BrowserStorage.get<ObjPageNoteDto>(`${ObjectStoreKeys.NOTE_HASH}:${data.prev}`);

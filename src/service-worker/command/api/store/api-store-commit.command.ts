@@ -36,7 +36,6 @@ export class ApiStoreCommitCommand extends ApiCallBase implements ICommand<Promi
         },
         this.refreshParams()
       );
-      fnConsoleLog('ApiStoreCommitCommand->response', resp);
       return resp.ok;
     } catch (e) {
       fnConsoleLog('ApiStoreBeginCommand->Error', e);

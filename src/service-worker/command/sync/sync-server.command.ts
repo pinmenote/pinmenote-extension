@@ -18,7 +18,7 @@ import { fnDateToMonthFirstDay, fnMonthLastDay } from '../../../common/fn/fn-dat
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { SyncGetProgressCommand } from './progress/sync-get-progress.command';
 import { SyncMonthCommand } from './sync-month.command';
-import { SyncProgress } from './sync.model';
+import { SyncProgress } from '../../../common/model/sync.model';
 import { SyncTxHelper } from './sync-tx.helper';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnDateKeyFormat } from '../../../common/fn/fn-date-format';
@@ -34,16 +34,13 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (SyncServerCommand.isInSync) return;
     if (!(await SyncTxHelper.shouldSync())) return;
     try {
-      // await new SyncResetProgressCommand().execute();
-
-      /*const token = await new TokenStorageGetCommand().execute();
-      if (token) console.log(jwtDecode<TokenDataDto>(token.access_token));*/
+      await new SyncResetProgressCommand(false).execute();
 
       SyncServerCommand.isInSync = true;
 
       const a = Date.now();
       const progress = await new SyncGetProgressCommand().execute();
-      await this.syncOutgoing(progress);
+      // await this.syncOutgoing(progress);
       await this.syncIncoming(progress);
 
       fnConsoleLog('SyncServerCommand->execute', progress, 'in', Date.now() - a);
@@ -53,9 +50,9 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
   }
 
   private async syncIncoming(progress: SyncProgress): Promise<void> {
-    fnConsoleLog('SyncServerCommand->syncIncoming');
     const changesResp = await new ApiObjGetChangesCommand(progress.serverId).execute();
-    if (!changesResp) return;
+    fnConsoleLog('SyncServerCommand->syncIncoming', changesResp);
+    if ('code' in changesResp) return;
     for (let i = 0; i < changesResp.data.length; i++) {
       const change = changesResp.data[i];
       if (progress.serverId > change.serverId) continue;
@@ -69,9 +66,11 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
         return;
       }
     }
+    fnConsoleLog('SyncServerCommand->syncIncoming->COMPLETE !!!');
   }
 
   private async syncOutgoing(progress: SyncProgress): Promise<void> {
+    fnConsoleLog('SyncServerCommand->syncOutgoing');
     // Empty list - fresh install
     if (progress.id == -1) return;
     const dt = fnDateToMonthFirstDay(new Date(progress.timestamp));
@@ -88,5 +87,6 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
 
       dt.setMonth(dt.getMonth() + 1);
     }
+    fnConsoleLog('SyncServerCommand->syncOutgoing->COMPLETE !!!');
   }
 }

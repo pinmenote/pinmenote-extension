@@ -37,6 +37,7 @@ import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
 import { SyncServerCommand } from './command/sync/sync-server.command';
 import { TaskExecutor } from './task/task.executor';
 import { fnConsoleLog } from '../common/fn/fn-console';
+import { SyncManualOutgoingCommand } from './command/sync/manual/sync-manual-outgoing.command';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -93,6 +94,10 @@ const handleMessage = async (
     case BusMessageType.POPUP_SERVER_QUOTA:
       await new PopupServerQuotaCommand().execute();
       break;
+    case BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT: {
+      await new SyncManualOutgoingCommand(msg.data).execute();
+      break;
+    }
     case BusMessageType.IFRAME_INDEX:
     case BusMessageType.IFRAME_INDEX_REGISTER:
     case BusMessageType.IFRAME_START_LISTENERS:
@@ -109,9 +114,11 @@ const handleMessage = async (
   }
   // Sync command
   if (
-    ![PageComputeMessage.CONTENT_FETCH_CSS, PageComputeMessage.CONTENT_FETCH_IMAGE].includes(
-      msg.type as PageComputeMessage
-    )
+    ![
+      PageComputeMessage.CONTENT_FETCH_CSS,
+      PageComputeMessage.CONTENT_FETCH_IMAGE,
+      BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT
+    ].includes(msg.type as any)
   ) {
     await new SyncServerCommand().execute();
   }

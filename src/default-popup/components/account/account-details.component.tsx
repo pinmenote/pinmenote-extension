@@ -48,9 +48,11 @@ export const AccountDetailsComponent: FunctionComponent<Props> = (props) => {
 
     if (PopupTokenStore.token) {
       setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
-      quotaKey = dispatcher.addListener<ServerQuotaResponse>(
+      quotaKey = dispatcher.addListener<ServerQuotaResponse | ServerErrorDto>(
         BusMessageType.POPUP_SERVER_QUOTA,
         (event, key, value) => {
+          // TODO fix server error handling
+          if ('code' in value) return;
           LogManager.log(`${event} - ${JSON.stringify(value)}`);
           setServerQuota(value);
         },

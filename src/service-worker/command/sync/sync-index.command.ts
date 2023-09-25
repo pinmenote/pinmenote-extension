@@ -25,15 +25,14 @@ import { SyncNoteCommand } from './outgoing/sync-note.command';
 import { SyncPageNoteCommand } from './outgoing/sync-page-note.command';
 import { SyncPdfCommand } from './outgoing/sync-pdf.command';
 import { SyncPinCommand } from './outgoing/sync-pin.command';
-import { SyncObjectStatus, SyncProgress } from './sync.model';
+import { SyncObjectStatus } from '../../../common/model/sync.model';
 import { SyncRemovedCommand } from './outgoing/sync-removed.command';
 import { SyncSnapshotCommand } from './outgoing/sync-snapshot.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { BeginTxResponse } from '../api/store/api-store.model';
-import { fnSleep } from '../../../common/fn/fn-sleep';
 
 export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private progress: SyncProgress, private tx: BeginTxResponse, private id: number) {}
+  constructor(private tx: BeginTxResponse, private id: number) {}
 
   async execute(): Promise<SyncObjectStatus> {
     const obj = await new ObjGetCommand(this.id).execute();

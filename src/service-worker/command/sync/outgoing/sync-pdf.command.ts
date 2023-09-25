@@ -18,7 +18,7 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPdfDataDto, ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncObjectStatus } from '../sync.model';
+import { SyncObjectStatus } from '../../../../common/model/sync.model';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { BrowserStorage } from '@pinmenote/browser-api';
@@ -40,21 +40,20 @@ export class SyncPdfCommand implements ICommand<Promise<SyncObjectStatus>> {
   private async syncData(data: ObjPdfDataDto, parent: string): Promise<void> {
     const content = JSON.stringify(data);
     await new ApiSegmentAddCommand(this.tx, content, {
-      hash: data.hash,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPdfDataDto,
-      key: await SyncCryptoFactory.newKey()
+      hash: data.hash,
+      parent
     }).execute();
   }
 
-  private async syncPdf(parent: string): Promise<void> {
-    const pdfData = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${parent}`);
+  private async syncPdf(hash: string): Promise<void> {
+    const pdfData = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${hash}`);
     if (!pdfData) return;
     await new ApiSegmentAddCommand(this.tx, pdfData, {
-      hash: parent,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPdf,
-      key: await SyncCryptoFactory.newKey()
+      hash
     }).execute();
   }
 }

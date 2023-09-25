@@ -19,10 +19,6 @@ import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { SegmentImg, SegmentPage, SegmentType } from '@pinmenote/page-compute';
 import { BrowserApi } from '@pinmenote/browser-api';
 import CircularProgress from '@mui/material/CircularProgress';
-import ClearIcon from '@mui/icons-material/Clear';
-import { DATE_YEAR_SECOND } from '../../../common/date-format.constraints';
-import DownloadIcon from '@mui/icons-material/Download';
-import IconButton from '@mui/material/IconButton';
 import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
 import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
@@ -33,10 +29,10 @@ import { PageSnapshotDto } from '../../../common/model/obj/page-snapshot.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
 import { SettingsStore } from '../../store/settings.store';
 import { XpathFactory } from '../../../common/factory/xpath.factory';
-import dayjs from 'dayjs';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSleep } from '../../../common/fn/fn-sleep';
 import { fnUid } from '../../../common/fn/fn-uid';
+import { HtmlPreviewHeaderComponent } from './html-preview-header.component';
 
 interface Props {
   visible: boolean;
@@ -45,13 +41,11 @@ interface Props {
 export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const htmlRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const urlRef = useRef<HTMLDivElement>(null);
 
   const [visible, setVisible] = useState<boolean>(props.visible);
 
   const [pageSegment, setPageSegment] = useState<SegmentPage | undefined>();
-  const [pageSnapshot, setPageSnapshot] = useState<PageSnapshotDto | undefined>();
+  const [objData, setObjData] = useState<ObjDto<ObjPageDto> | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPreLoading, setIsPreLoading] = useState<boolean>(true);
 
@@ -62,37 +56,33 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       if (!idhash[0].startsWith('#obj')) return;
       try {
         fnConsoleLog('HtmlPreviewComponent->useEffect->render', props.visible, visible);
-        render(parseInt(idhash[1]));
+        render(parseInt(idhash[1])).catch((e) => fnConsoleLog('HtmlPreviewComponent->useEffect->render->ERROR', e));
       } catch (e) {
         fnConsoleLog('Error render or parseInt', e);
       }
     }
-  });
+  }, [props]);
 
-  const render = (id: number) => {
-    if (titleRef.current) titleRef.current.innerHTML = '';
-    if (urlRef.current) urlRef.current.innerHTML = '';
-    setTimeout(async () => {
-      setIsPreLoading(true);
-      setIsLoading(true);
-      const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
-      setPageSnapshot(obj.data.snapshot);
-      const pageSegment = await new PageSegmentGetCommand<SegmentPage>(obj.data.snapshot.segment).execute();
-      if (pageSegment) {
-        setPageSegment(pageSegment.content);
-      } else {
-        fnConsoleLog('NOT FOUND ', obj.data.snapshot, 'hash', obj.data.snapshot.segment);
-      }
-      if (obj.data.snapshot.data.canvas) {
-        renderCanvas(obj);
-      } else {
-        await renderSnapshot(obj, pageSegment?.content);
-      }
-      if (obj.type === ObjTypeDto.PageSnapshot) {
-        const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.info.url.href);
-        await renderPins(pinIds);
-      }
-    });
+  const render = async (id: number) => {
+    setIsPreLoading(true);
+    setIsLoading(true);
+    const obj = await new ObjGetCommand<ObjPageDto>(id).execute();
+    setObjData(obj);
+    const pageSegment = await new PageSegmentGetCommand<SegmentPage>(obj.data.snapshot.segment).execute();
+    if (pageSegment) {
+      setPageSegment(pageSegment.content);
+    } else {
+      fnConsoleLog('NOT FOUND ', obj.data.snapshot, 'hash', obj.data.snapshot.segment);
+    }
+    if (obj.data.snapshot.data.canvas) {
+      renderCanvas(obj);
+    } else {
+      await renderSnapshot(obj, pageSegment?.content);
+    }
+    if (obj.type === ObjTypeDto.PageSnapshot) {
+      const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.info.url.href);
+      await renderPins(pinIds);
+    }
   };
 
   const renderPins = async (ids: number[]) => {
@@ -160,8 +150,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const renderCanvas = (obj: ObjDto<ObjPageDto>, content?: SegmentPage) => {
     const snapshot: PageSnapshotDto = obj.data.snapshot;
-    renderHeader(obj);
-
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
     const iframe = document.createElement('iframe');
@@ -187,7 +175,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
   const renderSnapshot = async (obj: ObjDto<ObjPageDto>, segment?: SegmentPage): Promise<void> => {
     const snapshot: PageSnapshotDto = obj.data.snapshot;
-    renderHeader(obj);
     if (!htmlRef.current) return;
     if (!containerRef.current) return;
     if (!segment) return;
@@ -208,19 +195,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
     fnConsoleLog('DONE', obj, 'segment', segment);
     setIsLoading(false);
-  };
-
-  const renderHeader = (obj: ObjDto<ObjPageDto>): void => {
-    const snapshot: PageSnapshotDto = obj.data.snapshot;
-    if (titleRef.current) {
-      titleRef.current.innerHTML = snapshot.info.title;
-    }
-    if (urlRef.current) {
-      urlRef.current.innerHTML = `
-    <a href="${snapshot.info.url.href}" target="_blank" style="word-break: break-all">
-        ${snapshot.info.url.href}
-    </a><span style="margin-left: 10px;">Created At : ${dayjs(obj.createdAt).format(DATE_YEAR_SECOND)}</span>`;
-    }
   };
 
   const writeDoc = async (doc: Document, html: string, assets: string[], cleanLoader = false): Promise<void> => {
@@ -310,7 +284,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   };
 
   const handleDownload = async () => {
-    if (!pageSegment || !pageSnapshot) return;
+    if (!pageSegment || !objData) return;
     if (!htmlRef.current) return;
     const iframe = htmlRef.current.lastChild as HTMLIFrameElement;
     // TODO gather all iframe hashes and pass here with content
@@ -347,23 +321,12 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         left: '0px'
       }}
     >
-      <div style={{ backgroundColor: '#ffffff', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ marginLeft: '10px', marginBottom: '5px' }}>
-          <h2 style={{ marginTop: '5px', marginBottom: '5px' }} ref={titleRef}></h2>
-          <div ref={urlRef}></div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ display: isLoading ? 'flex' : 'none' }}>
-            <CircularProgress />
-          </div>
-          <IconButton onClick={handleDownload}>
-            <DownloadIcon />
-          </IconButton>
-          <IconButton onClick={handleClose}>
-            <ClearIcon />
-          </IconButton>
-        </div>
-      </div>
+      <HtmlPreviewHeaderComponent
+        obj={objData}
+        handleDownload={handleDownload}
+        handleClose={handleClose}
+        isLoading={isLoading}
+      />
       <div style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }} ref={htmlRef}>
         <div
           style={{

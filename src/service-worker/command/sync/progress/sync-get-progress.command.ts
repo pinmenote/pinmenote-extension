@@ -19,7 +19,7 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjGetCommand } from '../../../../common/command/obj/obj-get.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { SyncProgress } from '../sync.model';
+import { SyncProgress } from '../../../../common/model/sync.model';
 
 export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
   async execute(): Promise<SyncProgress> {

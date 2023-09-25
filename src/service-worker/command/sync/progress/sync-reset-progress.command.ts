@@ -18,13 +18,14 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncGetProgressCommand } from './sync-get-progress.command';
-import { SyncProgress } from '../sync.model';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnDateKeyFormat } from '../../../../common/fn/fn-date-format';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { SyncProgress } from '../../../../common/model/sync.model';
 
 export class SyncResetProgressCommand implements ICommand<Promise<void>> {
+  constructor(private refreshUpdateList = false) {}
   async execute(): Promise<void> {
     const obj = await SyncGetProgressCommand.getFirstObject();
     const timestamp = obj?.createdAt || -1;
@@ -58,17 +59,20 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
         const yearMonth = fnDateKeyFormat(new Date(obj.updatedAt));
         toSortSet.add(yearMonth);
 
-        const updateList = await this.getList(yearMonth);
-        if (updateList.findIndex((o) => o.id === obj.id) > 0) continue;
-
-        updateList.push({ id: obj.id, dt: obj.updatedAt });
-
-        await this.setList(yearMonth, updateList);
+        if (this.refreshUpdateList) await this.updateList(yearMonth, obj);
       }
       listId -= 1;
+      fnConsoleLog('SyncResetProgressCommand', listId);
     }
 
     // sort objects inside
+    if (this.refreshUpdateList) await this.sortUpdateList(toSortSet);
+    // clear tx
+    await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
+    fnConsoleLog('SyncResetProgressCommand->complete in ', Date.now() - a);
+  }
+
+  private sortUpdateList = async (toSortSet: Set<string>) => {
     for (const yearMonth of toSortSet) {
       const list = await this.getList(yearMonth);
       const s = new Set<number>();
@@ -88,11 +92,16 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
       });
       await this.setList(yearMonth, newList);
     }
+  };
 
-    // clear tx
-    await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
-    fnConsoleLog('SyncResetProgressCommand->complete in ', Date.now() - a);
-  }
+  private updateList = async (yearMonth: string, obj: ObjDto) => {
+    const updateList = await this.getList(yearMonth);
+    if (updateList.findIndex((o) => o.id === obj.id) > 0) return;
+
+    updateList.push({ id: obj.id, dt: obj.updatedAt });
+
+    await this.setList(yearMonth, updateList);
+  };
 
   private async setList(yearMonth: string, list: ObjDateIndex[]): Promise<void> {
     const updateListKey = `${ObjectStoreKeys.UPDATED_DT}:${yearMonth}`;

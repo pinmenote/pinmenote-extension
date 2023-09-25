@@ -16,23 +16,34 @@
  */
 import { ApiCallBase } from '../../api-call.base';
 import { FetchService } from '@pinmenote/fetch-service';
-import { ICommand } from '../../../../../common/model/shared/common.dto';
+import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
 import { ServerQuotaResponse } from '../../../../../common/model/sync-server.model';
+import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
+import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
-export class ApiSegmentQuotaGetCommand extends ApiCallBase implements ICommand<Promise<ServerQuotaResponse>> {
+export class ApiSegmentQuotaGetCommand
+  extends ApiCallBase
+  implements ICommand<Promise<ServerQuotaResponse | ServerErrorDto>>
+{
   constructor() {
     super();
   }
-  async execute(): Promise<ServerQuotaResponse> {
+  async execute(): Promise<ServerQuotaResponse | ServerErrorDto> {
     await this.initTokenData();
-    const resp = await FetchService.fetch<ServerQuotaResponse>(
-      `${this.storeUrl!}/api/v1/segment/quota`,
-      {
-        type: 'JSON',
-        headers: this.getAuthHeaders(true)
-      },
-      this.refreshParams()
-    );
-    return resp.data;
+    if (!this.storeUrl) return { code: ApiErrorCode.INTERNAL, message: 'ApiSegmentQuotaGetCommand' };
+    try {
+      const resp = await FetchService.fetch<ServerQuotaResponse>(
+        `${this.storeUrl}/api/v1/segment/quota`,
+        {
+          type: 'JSON',
+          headers: this.getAuthHeaders(true)
+        },
+        this.refreshParams()
+      );
+      return resp.data;
+    } catch (e) {
+      fnConsoleLog('ApiSegmentQuotaGetCommand', e);
+    }
+    return { code: ApiErrorCode.INTERNAL, message: 'ApiSegmentQuotaGetCommand' };
   }
 }

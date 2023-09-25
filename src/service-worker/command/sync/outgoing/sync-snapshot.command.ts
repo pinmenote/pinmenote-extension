@@ -20,7 +20,7 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { PageSegmentGetCommand } from '../../../../common/command/snapshot/segment/page-segment-get.command';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncObjectStatus } from '../sync.model';
+import { SyncObjectStatus } from '../../../../common/model/sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse, SyncHashType } from '../../api/store/api-store.model';
 import { PageSnapshotDto } from '../../../../common/model/obj/page-snapshot.dto';
@@ -55,10 +55,10 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     const content = this.getSegmentContent(segment);
     if (!content) return;
     await new ApiSegmentAddCommand(this.tx, content, {
-      hash: segment.hash,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.PageSnapshotFirstHash,
-      key: await SyncCryptoFactory.newKey()
+      hash: segment.hash,
+      parent
     }).execute();
     await this.syncSegmentSnapshot(segment.content as SegmentPage, parent);
   };
@@ -66,17 +66,17 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
   private async syncSnapshot(snapshot: PageSnapshotDto, parent: string): Promise<void> {
     // snapshot->info
     await new ApiSegmentAddCommand(this.tx, JSON.stringify(snapshot.info), {
-      hash: snapshot.info.hash,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.PageSnapshotInfoDto,
-      key: await SyncCryptoFactory.newKey()
+      hash: snapshot.info.hash,
+      parent
     }).execute();
     // snapshot->data
     await new ApiSegmentAddCommand(this.tx, JSON.stringify(snapshot.data), {
-      hash: snapshot.data.hash,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.PageSnapshotDataDto,
-      key: await SyncCryptoFactory.newKey()
+      hash: snapshot.data.hash,
+      parent
     }).execute();
   }
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -91,10 +91,10 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     if (!content) return;
 
     await new ApiSegmentAddCommand(this.tx, content, {
-      hash,
-      parent,
+      key: await SyncCryptoFactory.newKey(),
       type: this.convertSegmentTypeSyncHashType(segment.type),
-      key: await SyncCryptoFactory.newKey()
+      hash,
+      parent
     }).execute();
 
     switch (segment.type) {

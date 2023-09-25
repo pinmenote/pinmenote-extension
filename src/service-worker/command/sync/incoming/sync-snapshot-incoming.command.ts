@@ -50,7 +50,7 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
     if (!hashList) return false;
     const pageSnapshot = await this.getSnapshot(hashList);
     if (!pageSnapshot) {
-      fnConsoleLog('SyncSnapshotIncomingCommand->execute PROBLEM !!!!!!!!!!!!!!!!!!!', this.change);
+      fnConsoleLog('SyncSnapshotIncomingCommand->execute PROBLEM !!!!!!!!!!!!!!!!!!!', this.change, hashList);
       return false;
     }
     // sleep 1s for now
@@ -108,7 +108,7 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
     let info: PageSnapshotInfoDto | undefined;
     let segment: string | undefined = undefined;
     for (const child of hashList.children) {
-      const segmentData = await new ApiSegmentGetCommand(child.hash).execute();
+      const segmentData = await new ApiSegmentGetCommand(child.hash, child.mimeType).execute();
       if (!segmentData) continue;
       switch (child.type.toString()) {
         case SyncHashType.Img: {
@@ -117,10 +117,13 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
           let src = 'data:';
           try {
             src = await UrlFactory.toDataUri(segmentData);
+            // @vane WORKAROUND FIX convert image/svg -> image/svg+xml to render correctly inside <img> tag
+            const check = 'data:image/svg';
+            if (src.startsWith(check)) src = 'data:image/svg+xml' + src.substring(check.length);
           } catch (e) {
             const buffer = await segmentData.arrayBuffer();
             const textData = new TextDecoder().decode(buffer);
-            console.log('ERROR !!!!!!!!! AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa !!!!!!!!!!!!!!!!!!!!!!!!!!!', textData);
+            fnConsoleLog('SyncSnapshotIncomingCommand->getSnapshot->Img->Error !!!', textData);
           }
           const content: SegmentImg = { src };
           await new PageSegmentAddCommand({ type: SegmentType.IMG, hash: child.hash, content }).execute();
@@ -162,7 +165,6 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
           segment = child.hash;
           const content = await this.getString(segmentData);
           const html: SegmentHtml = JSON.parse(content);
-          fnConsoleLog('SyncSnapshotIncomingCommand->getSnapshot->PageSnapshotFirstHash', html, child.hash);
           await new PageSegmentAddCommand({
             type: SegmentType.SNAPSHOT,
             content: html,

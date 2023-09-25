@@ -36,7 +36,7 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
     } else if ('code' in resp && resp.code === ApiErrorCode.SYNC_DUPLICATED_HASH) {
       return await this.setByHash();
     }
-    fnConsoleLog('SyncObjectCommand', 'tx', this.tx, 'resp', resp);
+    fnConsoleLog('SyncObjectCommand', 'tx', this.tx, 'resp', resp, 'obj', this.obj);
     throw new Error('PROBLEM !!!!!!!!!!!!!!!');
   }
 

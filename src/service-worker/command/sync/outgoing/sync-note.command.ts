@@ -18,9 +18,9 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { SyncObjectCommand } from './sync-object.command';
-import { SyncObjectStatus } from '../sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
+import { SyncObjectStatus } from '../../../../common/model/sync.model';
 
 export class SyncNoteCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private obj: ObjDto<ObjNoteDto>, private tx: BeginTxResponse) {}

@@ -16,7 +16,7 @@
  */
 import { ObjDto, ObjRemovedDto } from '../../../../common/model/obj/obj.dto';
 import { ICommand } from '../../../../common/model/shared/common.dto';
-import { SyncObjectStatus } from '../sync.model';
+import { SyncObjectStatus } from '../../../../common/model/sync.model';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { BeginTxResponse } from '../../api/store/api-store.model';
 

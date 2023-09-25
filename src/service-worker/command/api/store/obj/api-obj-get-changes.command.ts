@@ -16,27 +16,36 @@
  */
 import { ApiCallBase } from '../../api-call.base';
 import { FetchService } from '@pinmenote/fetch-service';
-import { ICommand } from '../../../../../common/model/shared/common.dto';
+import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 import { ObjChangesResponse } from '../api-store.model';
+import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 
-export class ApiObjGetChangesCommand extends ApiCallBase implements ICommand<Promise<ObjChangesResponse | undefined>> {
-  constructor(private serverId?: number) {
+const errorResponse: ServerErrorDto = { code: ApiErrorCode.INTERNAL, message: 'Send request problem' };
+
+export class ApiObjGetChangesCommand
+  extends ApiCallBase
+  implements ICommand<Promise<ObjChangesResponse | ServerErrorDto>>
+{
+  constructor(private serverId: number) {
     super();
   }
-  async execute(): Promise<ObjChangesResponse | undefined> {
+  async execute(): Promise<ObjChangesResponse | ServerErrorDto> {
     await this.initTokenData();
-    if (!this.storeUrl) return;
+    if (!this.storeUrl) return errorResponse;
     try {
-      const resp = await FetchService.fetch<ObjChangesResponse>(
-        `${this.storeUrl}/api/v1/obj/changes?serverId=${this.serverId || 0}`,
+      const resp = await FetchService.fetch<ObjChangesResponse | ServerErrorDto>(
+        `${this.storeUrl}/api/v1/obj/changes?serverId=${this.serverId}`,
         { headers: this.getAuthHeaders() },
         this.refreshParams()
       );
-      fnConsoleLog('ApiStoreChangesCommand->response', resp);
-      return resp.data;
+      if (resp.status === 200) return resp.data;
+      fnConsoleLog(resp);
+      errorResponse.message = (resp.data as ServerErrorDto).message;
+      return errorResponse;
     } catch (e) {
-      fnConsoleLog('ApiStoreChangesCommand->Error', e);
+      fnConsoleLog('ApiObjGetChangesCommand->Error', e);
     }
+    return errorResponse;
   }
 }
