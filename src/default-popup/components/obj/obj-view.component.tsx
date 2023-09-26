@@ -56,6 +56,11 @@ const fetchObjects = async (idList: number[], index: number, href?: string): Pro
   const objs: ObjDto<ObjPageDataDto>[] = [];
   for (index; index < idList.length; index++) {
     const obj = await new ObjGetCommand<ObjPageDataDto>(idList[index]).execute();
+    // TODO check it - something is not deleting
+    if (!obj) {
+      LogManager.log(`PROBLEM ${index} ${idList[index]}`);
+      continue;
+    }
     if (hrefFilter(obj, href)) continue;
     objs.push(obj);
   }
