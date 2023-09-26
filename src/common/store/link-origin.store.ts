@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
-import { fnConsoleLog } from '../fn/fn-console';
 
 export class LinkOriginStore {
   static readonly NOTE_ORIGIN = 'note:origin';

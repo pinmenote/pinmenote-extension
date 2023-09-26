@@ -118,8 +118,8 @@ export class SyncSnapshotIncomingCommand implements ICommand<Promise<boolean>> {
           try {
             src = await UrlFactory.toDataUri(segmentData);
             // @vane WORKAROUND FIX convert image/svg -> image/svg+xml to render correctly inside <img> tag
-            const check = 'data:image/svg';
-            if (src.startsWith(check)) src = 'data:image/svg+xml' + src.substring(check.length);
+            if (child.mimeType == 'data:image/svg+xml' && !src.startsWith(child.mimeType))
+              src = 'data:image/svg+xml' + src.substring('data:image/svg'.length);
           } catch (e) {
             const buffer = await segmentData.arrayBuffer();
             const textData = new TextDecoder().decode(buffer);

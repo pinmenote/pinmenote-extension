@@ -38,6 +38,7 @@ interface Props {
 }
 
 export const ObjListComponent: FunctionComponent<Props> = (props) => {
+  LogManager.log(`RENDER !!! ${props.objList.length}`);
   const [reRender, setReRender] = useState(false);
 
   const handlePinRemove = async (data: ObjDto<ObjPinDto>) => {

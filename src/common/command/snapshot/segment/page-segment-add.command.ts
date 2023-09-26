@@ -18,7 +18,6 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { SegmentData } from '@pinmenote/page-compute';
-import { fnConsoleLog } from '../../../fn/fn-console';
 
 export class PageSegmentAddCommand<T> implements ICommand<Promise<void>> {
   constructor(private content: SegmentData<T>, private ref = true) {}

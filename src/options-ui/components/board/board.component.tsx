@@ -23,7 +23,6 @@ import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
 import { PageNoteElement } from './page-note/page-note.element';
 import { PageSnapshotElement } from './page-snapshot/page-snapshot.element';
 import { PdfElement } from './pdf/pdf.element';
-import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export const BoardComponent: FunctionComponent = () => {
   const [objData, setObjData] = useState<ObjDto[]>(BoardStore.objList);
@@ -50,7 +49,6 @@ export const BoardComponent: FunctionComponent = () => {
   };
 
   const handleScroll = () => {
-    fnConsoleLog('handleScroll');
     if (!ref.current) return;
     if (BoardStore.isLast) return; // last element so return
     const bottom = ref.current.scrollHeight - ref.current.clientHeight;
