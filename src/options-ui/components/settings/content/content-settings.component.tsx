@@ -15,11 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { CSSProperties, ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
-import { BrowserStorage } from '@pinmenote/browser-api';
 import { DEFAULT_BORDER_RADIUS } from '../../../../common/components/colors';
 import Input from '@mui/material/Input';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { SettingsConfig } from '../../../../common/environment';
 import { SettingsStore } from '../../../store/settings.store';
 import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
@@ -46,21 +43,21 @@ export const ContentSettingsComponent: FunctionComponent = () => {
     if (!SettingsStore.settings) return;
     setBorderRadius(e.target.value);
     SettingsStore.settings.borderRadius = e.target.value;
-    await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    await SettingsStore.saveSettings();
   };
 
   const handleBorderStyleChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;
     setBorderStyle(e.target.value);
     SettingsStore.settings.borderStyle = e.target.value;
-    await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    await SettingsStore.saveSettings();
   };
 
   const handleExpertModeChange = async () => {
     if (!SettingsStore.settings) return;
     setExpertMode(!expertMode);
     SettingsStore.settings.expertMode = !expertMode;
-    await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+    await SettingsStore.saveSettings();
   };
 
   return (

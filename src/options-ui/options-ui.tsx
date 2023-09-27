@@ -29,6 +29,7 @@ import { PdfPreviewComponent } from './components/preview/pdf-preview.component'
 import { SettingsComponent } from './components/settings/settings.component';
 import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { createRoot } from 'react-dom/client';
+import { SettingsStore } from './store/settings.store';
 
 const theme = MuiThemeFactory.createTheme();
 
@@ -51,7 +52,7 @@ const OptionsUI: FunctionComponent = () => {
   const [currentView, setCurrentView] = useState<CurrentView>(getView());
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showPdfPreview, setShowPdfPreview] = useState<boolean>(false);
-  const [showDrawer, setShowDrawer] = useState<boolean>(false);
+  const [showDrawer, setShowDrawer] = useState<boolean>(SettingsStore.settings?.interface?.optionsDrawerOpen || false);
 
   useEffect(() => {
     if (currentView === CurrentView.OBJ_DETAILS) setShowPreview(true);
@@ -95,8 +96,9 @@ const OptionsUI: FunctionComponent = () => {
     }
   };
 
-  const handleDrawer = () => {
+  const handleDrawer = async () => {
     setShowDrawer(!showDrawer);
+    await SettingsStore.saveDrawerOpen(!showDrawer);
     fnConsoleLog('App->handleDrawer', !showDrawer);
   };
 

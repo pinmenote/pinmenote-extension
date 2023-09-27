@@ -24,4 +24,16 @@ export class SettingsStore {
   static fetchData = async (): Promise<void> => {
     this.settings = await BrowserStorage.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
   };
+
+  static saveSettings = async () => {
+    if (!this.settings) return;
+    await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, this.settings);
+  };
+
+  static saveDrawerOpen = async (value: boolean) => {
+    if (!this.settings) return;
+    if (!this.settings.interface) this.settings.interface = {};
+    this.settings.interface.optionsDrawerOpen = value;
+    await this.saveSettings();
+  };
 }

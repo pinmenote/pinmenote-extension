@@ -35,11 +35,11 @@ export interface SettingsConfig {
   skipCssImageSizeMB: number;
   expertMode: boolean;
   history: SettingsHistoryConfig;
-  interface: SettingsInterfaceConfig;
+  interface?: SettingsInterfaceConfig;
 }
 
 interface SettingsInterfaceConfig {
-  optionsLeftSidebarOpen: boolean;
+  optionsDrawerOpen?: boolean;
 }
 
 interface EnvironmentConfig {
@@ -69,9 +69,6 @@ export const environmentConfig: EnvironmentConfig = {
       pinDraw: true,
       pageComment: true,
       pageNote: true
-    },
-    interface: {
-      optionsLeftSidebarOpen: false
     }
   },
   objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
