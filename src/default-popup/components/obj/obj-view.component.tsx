@@ -47,7 +47,7 @@ const hrefFilter = (obj: ObjDto<ObjPageDataDto>, href?: string) => {
 };
 
 class Store {
-  static readonly limit = 10;
+  static readonly limit = 15;
   static fetching = false;
   static hrefObjs: ObjDto<ObjPageDataDto>[] = [];
   static hrefIndex = 0;
