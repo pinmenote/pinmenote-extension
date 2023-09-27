@@ -29,7 +29,7 @@ interface Props {
 
 export const TagEditor: FunctionComponent<Props> = (props) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [currentValue, setCurrentValue] = useState<string[]>([...props.tags]);
+  const [currentValue, setCurrentValue] = useState<string[]>([...props.tags.concat()]);
   const [tagsChanged, setTagsChanged] = useState<boolean>(false);
   const [tagOptions, setTagOptions] = useState<string[] | undefined>(undefined);
   const loading = open && tagOptions === undefined;
@@ -44,7 +44,7 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
   };
 
   const handleCancel = () => {
-    setCurrentValue([...props.tags]);
+    setCurrentValue([...props.tags.concat()]);
     setTagsChanged(false);
   };
 
@@ -57,6 +57,7 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
             freeSolo
             limitTags={3}
             value={currentValue}
+            sx={{ fontSize: '0.8em' }}
             size="small"
             open={open}
             onOpen={() => setOpen(true)}
@@ -75,16 +76,25 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
                 // Add new option if not exists
                 if (!tagOptions?.includes(option)) tagOptions?.push(option);
                 // eslint-disable-next-line react/jsx-key
-                components.push(<Chip variant="outlined" label={option} {...getTagProps({ index })} />);
+                components.push(
+                  <Chip
+                    variant="outlined"
+                    style={{ fontSize: '0.9em', margin: 0, height: 'auto' }}
+                    label={option}
+                    {...getTagProps({ index })}
+                  />
+                );
               }
               return components;
             }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Add tags"
+                label="Add Tags"
+                InputLabelProps={{ sx: { fontSize: '1em' }, ...params.InputLabelProps }}
                 InputProps={{
                   ...params.InputProps,
+                  sx: { fontSize: '1em' },
                   endAdornment: (
                     <React.Fragment>
                       {loading ? <CircularProgress color="inherit" size={20} /> : null}
@@ -105,11 +115,11 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
             justifyContent: 'space-between'
           }}
         >
-          <Button size="medium" variant="outlined" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button size="medium" variant="outlined" onClick={handleSave}>
+          <Button size="small" variant="outlined" onClick={handleSave}>
             Save
+          </Button>
+          <Button size="small" variant="outlined" onClick={handleCancel}>
+            Cancel
           </Button>
         </div>
       </div>
