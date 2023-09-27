@@ -42,7 +42,6 @@ export class ObjectStoreKeys {
   // TAG
   static readonly TAG_INDEX = 't:i';
   static readonly TAG_WORD = 't:w';
-  static readonly TAG_START = 't:s';
 
   static readonly ACCESS_TOKEN = 'accessToken';
 

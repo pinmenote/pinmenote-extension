@@ -21,6 +21,11 @@ import { BoardStore } from '../../store/board.store';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnSha256Object } from '../../../common/fn/fn-hash';
 
+interface HashtagChange {
+  removed: ObjHashtag[];
+  added: ObjHashtag[];
+}
+
 export class BoardItemMediator {
   static removeObject = async (obj: ObjDto, refreshCallback: () => void) => {
     if (await BoardStore.removeObj(obj)) {
@@ -33,10 +38,97 @@ export class BoardItemMediator {
     newTags: ObjHashtag[],
     setNewTags: (newTags: ObjHashtag[]) => void
   ) => {
-    if (!dto.data.hashtags) dto.data.hashtags = { data: [], hash: '' };
+    if (dto.data.hashtags) {
+      const changed = this.resolveHashtagsChange(dto.data.hashtags.data, newTags);
+      await this.saveHashtagIndex(dto, changed);
+    } else {
+      dto.data.hashtags = { data: [], hash: '' };
+    }
+
     dto.data.hashtags.hash = fnSha256Object(newTags);
     dto.data.hashtags.data = newTags;
     await BrowserStorage.set<ObjDto<any>>(`${ObjectStoreKeys.OBJECT_ID}:${dto.id}`, dto);
+    await this.saveHashtagIndex(dto, { added: newTags, removed: [] });
     setNewTags(newTags);
+  };
+
+  private static saveHashtagIndex = async (dto: ObjDto<any>, change: HashtagChange) => {
+    for (const tag of change.added) {
+      await TagHelper.saveTag(tag.value, dto.id);
+    }
+    for (const tag of change.removed) {
+      await TagHelper.removeTag(tag.value, dto.id);
+    }
+  };
+
+  private static resolveHashtagsChange = (oldTags: ObjHashtag[], newTags: ObjHashtag[]): HashtagChange => {
+    const removed: ObjHashtag[] = [];
+    const added = newTags.concat();
+    for (let i = 0; i < oldTags.length; i++) {
+      const tag = oldTags[i];
+      const index = newTags.findIndex((v) => v.value === tag.value);
+      if (index < 0) {
+        removed.push(tag);
+      } else {
+        added.splice(index, 1);
+      }
+    }
+    return { removed, added };
+  };
+}
+
+class TagHelper {
+  static saveTag = async (word: string, id: number) => {
+    const key = `${ObjectStoreKeys.TAG_INDEX}:${word}`;
+    let arr = await BrowserStorage.get<number[] | undefined>(key);
+    if (arr?.indexOf(id) !== -1) return;
+    if (arr) {
+      arr.push(id);
+    } else {
+      arr = [id];
+    }
+    await BrowserStorage.set<number[]>(key, arr);
+    await this.saveWord(word);
+  };
+
+  static removeTag = async (word: string, id: number) => {
+    const key = `${ObjectStoreKeys.TAG_INDEX}:${word}`;
+    const arr = await BrowserStorage.get<number[] | undefined>(key);
+    if (!arr) return;
+
+    const index = arr.indexOf(id);
+    if (index === -1) return;
+
+    arr.splice(index, 1);
+    if (arr.length === 0) {
+      await BrowserStorage.remove(key);
+      await this.removeWord(word);
+      return;
+    }
+    await BrowserStorage.set<number[]>(key, arr);
+  };
+
+  private static saveWord = async (word: string) => {
+    const key = `${ObjectStoreKeys.TAG_WORD}:${word}`;
+    let arr = await BrowserStorage.get<string[] | undefined>(key);
+    if (arr?.indexOf(word) !== -1) return;
+    if (arr) {
+      arr.push(word);
+    } else {
+      arr = [word];
+    }
+    await BrowserStorage.set<string[]>(key, arr);
+  };
+
+  private static removeWord = async (word: string) => {
+    const key = `${ObjectStoreKeys.TAG_WORD}:${word}`;
+    const arr = await BrowserStorage.get<string[] | undefined>(key);
+    if (!arr) return;
+
+    const index = arr.indexOf(word);
+    if (index === -1) return;
+
+    arr.splice(index, 1);
+    await BrowserStorage.set<string[]>(key, arr);
   };
 }
