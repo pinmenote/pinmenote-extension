@@ -19,9 +19,9 @@ import { ICommand } from '../../common/model/shared/common.dto';
 import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { ObjectStoreKeys } from '../../common/keys/object.store.keys';
 import { ObjPageDto } from '../../common/model/obj/obj-page.dto';
-import { ImageResizeFactory } from '../../common/factory/image-resize.factory';
-import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
 import { fnConsoleLog } from '../../common/fn/fn-console';
+import { ObjPageNoteDto } from '../../common/model/obj/obj-note.dto';
+import { ObjPdfDto } from '../../common/model/obj/obj-pdf.dto';
 
 export class OptionsConvertObjectsCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
@@ -29,6 +29,7 @@ export class OptionsConvertObjectsCommand implements ICommand<Promise<void>> {
   }
 
   private async convertSnapshots(): Promise<void> {
+    fnConsoleLog('OptionsConvertObjectsCommand->START');
     let listId = await BrowserStorage.get<number>(ObjectStoreKeys.OBJECT_LIST_ID);
     while (listId > 0) {
       fnConsoleLog('listId', listId);
@@ -40,24 +41,32 @@ export class OptionsConvertObjectsCommand implements ICommand<Promise<void>> {
           case ObjTypeDto.PageElementSnapshot:
             await this.convertSnapshot(obj as ObjDto<ObjPageDto>);
             break;
+          case ObjTypeDto.PageNote:
+            await this.convertPageNote(obj as ObjDto<ObjPageNoteDto>);
+            break;
+          case ObjTypeDto.Pdf:
+            await this.convertPdf(obj as ObjDto<ObjPdfDto>);
+            break;
         }
       }
       listId -= 1;
     }
+    fnConsoleLog('OptionsConvertObjectsCommand->END');
+  }
+
+  private async convertPdf(obj: ObjDto<ObjPdfDto>) {
+    delete obj.data.data['hashtags'];
+    await BrowserStorage.set<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${obj.id}`, obj);
+  }
+
+  private async convertPageNote(obj: ObjDto<ObjPageNoteDto>) {
+    delete obj.data.data['hashtags'];
+    await BrowserStorage.set<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${obj.id}`, obj);
   }
 
   private async convertSnapshot(obj: ObjDto<ObjPageDto>) {
-    const screenshot = await ImageResizeFactory.resize2(
-      document,
-      ScreenshotFactory.THUMB_SETTINGS,
-      ScreenshotFactory.THUMB_SIZE,
-      obj.data.snapshot.data.screenshot
-    );
-    console.log('id', obj.id, 'before', obj.data.snapshot.data.screenshot.length, 'after', screenshot.length);
-    if (screenshot.length < obj.data.snapshot.data.screenshot.length) {
-      obj.data.snapshot.data.screenshot = screenshot;
-      await BrowserStorage.set<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${obj.id}`, obj);
-    }
+    delete obj.data.snapshot.info['hashtags'];
+    await BrowserStorage.set<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${obj.id}`, obj);
     //
   }
 }

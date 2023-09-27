@@ -29,5 +29,5 @@ export interface ObjNoteDataDto {
   title: string;
   description: string;
   words: string[];
-  hashtags: string[];
+  hashtags?: string[];
 }

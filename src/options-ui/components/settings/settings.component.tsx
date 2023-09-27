@@ -22,6 +22,7 @@ import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.co
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { OptionsConvertObjectsCommand } from '../../command/options-convert-objects.command';
+import { environmentConfig } from '../../../common/environment';
 
 const containerStyle: CSSProperties = {
   margin: 10,
@@ -52,9 +53,15 @@ export const SettingsComponent: FunctionComponent = () => {
         <div style={containerStyle}>
           <CryptoSettingsComponent></CryptoSettingsComponent>
         </div>
-        <Button style={{ display: 'none' }} variant="outlined" onClick={handleConvert}>
-          Convert
-        </Button>
+        <div style={containerStyle}>
+          <Button
+            style={{ display: environmentConfig.isProduction ? 'none' : 'flex' }}
+            variant="outlined"
+            onClick={handleConvert}
+          >
+            Convert Objects
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ interface Props {
 
 export const PageNoteElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.data.hashtags);
+  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.data.hashtags || []);
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -66,7 +66,7 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
       <BoardItemFooter
         title="page note"
         saveTags={handleTagSave}
-        tags={props.dto.data.data.hashtags}
+        tags={props.dto.data.data.hashtags || []}
         createdAt={props.dto.createdAt}
         words={props.dto.data.data.words}
         url={props.dto.data.url?.href}

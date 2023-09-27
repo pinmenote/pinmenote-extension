@@ -79,8 +79,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
     const data: ObjNoteDataDto = {
       title,
       description,
-      words: Array.from(words),
-      hashtags: []
+      words: Array.from(words)
     };
     const hash = fnSha256Object({ ...data, url, dt });
     await new PageNoteAddCommand(

@@ -14,17 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjUrlDto } from './obj.dto';
-
-export interface ObjPdfDto {
+export interface ObjHashtagList {
+  hashtags: ObjHashtag[];
   hash: string;
-  data: ObjPdfDataDto;
 }
 
-export interface ObjPdfDataDto {
-  screenshot: string;
-  rawUrl: string;
-  url: ObjUrlDto;
-  hashtags?: string[];
-  hash: string;
+export interface ObjHashtag {
+  value: string;
 }

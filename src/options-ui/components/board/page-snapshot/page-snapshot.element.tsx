@@ -30,7 +30,7 @@ interface Props {
 
 export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.snapshot.info.hashtags);
+  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.snapshot.info.hashtags || []);
 
   const handleEdit = () => {
     setEdit(true);

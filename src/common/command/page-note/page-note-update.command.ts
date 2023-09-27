@@ -43,8 +43,7 @@ export class PageNoteUpdateCommand implements ICommand<void> {
     const newData: ObjNoteDataDto = {
       title: this.title,
       description: this.description,
-      words: Array.from(words),
-      hashtags: this.obj.data.data.hashtags
+      words: Array.from(words)
     };
     this.obj.data.hash = fnSha256Object({ ...newData, url: this.obj.data.url, dt });
 

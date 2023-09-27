@@ -26,7 +26,7 @@ interface Props {
 
 export const MainFooterButton: FunctionComponent<Props> = (props) => {
   return (
-    <div style={{ position: 'absolute', bottom: 32, width: 300, paddingTop: 5, backgroundColor: '#ffffff' }}>
+    <div style={{ position: 'absolute', bottom: 0, width: 300, paddingTop: 5, backgroundColor: '#ffffff' }}>
       <div
         style={{
           display: props.openBugReport ? 'flex' : 'none',

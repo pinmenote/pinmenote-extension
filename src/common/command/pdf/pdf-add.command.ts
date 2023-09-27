@@ -49,8 +49,7 @@ export class PdfAddCommand implements ICommand<Promise<void>> {
     const pdfData: Omit<ObjPdfDataDto, 'hash'> = {
       screenshot,
       rawUrl: this.value.url,
-      url,
-      hashtags: []
+      url
     };
     const pdfDataHash = fnSha256Object(pdfData);
     const data: ObjPdfDto = {

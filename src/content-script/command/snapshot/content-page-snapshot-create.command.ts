@@ -84,8 +84,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     const info: Partial<PageSnapshotInfoDto> = {
       title,
       url: this.url,
-      words,
-      hashtags: []
+      words
     };
     info.hash = fnSha256Object(info);
 
