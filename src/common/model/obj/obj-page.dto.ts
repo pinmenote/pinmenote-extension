@@ -16,8 +16,9 @@
  */
 import { ObjCommentListDto } from './obj-comment.dto';
 import { PageSnapshotDto } from './page-snapshot.dto';
+import { ObjHashtagable } from './obj-hashtag.dto';
 
-export interface ObjPageDto {
+export interface ObjPageDto extends ObjHashtagable {
   snapshot: PageSnapshotDto;
   comments: ObjCommentListDto;
 }

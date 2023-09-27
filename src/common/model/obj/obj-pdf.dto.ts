@@ -15,8 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjUrlDto } from './obj.dto';
+import { ObjHashtagable } from './obj-hashtag.dto';
 
-export interface ObjPdfDto {
+export interface ObjPdfDto extends ObjHashtagable {
   hash: string;
   data: ObjPdfDataDto;
 }
@@ -25,6 +26,5 @@ export interface ObjPdfDataDto {
   screenshot: string;
   rawUrl: string;
   url: ObjUrlDto;
-  hashtags?: string[];
   hash: string;
 }

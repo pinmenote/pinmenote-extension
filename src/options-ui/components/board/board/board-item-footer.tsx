@@ -26,14 +26,15 @@ import TagIcon from '@mui/icons-material/Tag';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 import { SettingsStore } from '../../../store/settings.store';
+import { ObjHashtag, ObjHashtagList } from '../../../../common/model/obj/obj-hashtag.dto';
 
 interface Props {
   title: string;
   createdAt: number;
   words: string[];
-  tags: string[];
+  tags: ObjHashtag[];
   url?: string;
-  saveTags: (newTags: string[]) => void;
+  saveTags: (newTags: ObjHashtag[]) => void;
 }
 
 export const BoardItemFooter: FunctionComponent<Props> = (props) => {

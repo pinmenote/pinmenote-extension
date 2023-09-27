@@ -18,10 +18,10 @@ import React, { FunctionComponent, useState } from 'react';
 import { BoardItem } from '../board/board-item';
 import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
-import { BoardStore } from '../../../store/board.store';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
+import { BoardItemMediator } from '../board-item.mediator';
 
 interface Props {
   dto: ObjDto<ObjPdfDto>;
@@ -30,7 +30,7 @@ interface Props {
 
 export const PdfElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.data.hashtags || []);
+  const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
 
   const a = props.dto.data.data.url.pathname.split('/');
   const title = a[a.length - 1];
@@ -43,28 +43,21 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
     window.location.hash = `pdf/${props.dto.id}`;
   };
 
-  const handleRemove = async () => {
-    if (await BoardStore.removeObj(props.dto)) {
-      props.refreshBoardCallback();
-    }
-  };
-
-  const handleTagSave = (newTags: string[]) => {
-    props.dto.data.data.hashtags = newTags;
-    setHashtags(newTags);
-    fnConsoleLog('PageSnapshotElement->handleTagSave->newTags', newTags);
-  };
-
   return (
     <BoardItem>
-      <BoardItemTitle title={title} htmlCallback={handleHtml} editCallback={handleEdit} removeCallback={handleRemove} />
+      <BoardItemTitle
+        title={title}
+        htmlCallback={handleHtml}
+        editCallback={handleEdit}
+        removeCallback={() => BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback)}
+      />
       <img
         style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
         src={props.dto.data.data.screenshot}
       />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
-        saveTags={handleTagSave}
+        saveTags={(newTags) => BoardItemMediator.saveTags(props.dto, newTags, setHashtags)}
         title="page snapshot"
         createdAt={props.dto.createdAt}
         tags={hashtags}

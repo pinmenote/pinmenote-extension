@@ -18,10 +18,10 @@ import React, { FunctionComponent, useState } from 'react';
 import { BoardItem } from '../board/board-item';
 import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
-import { BoardStore } from '../../../store/board.store';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
+import { BoardItemMediator } from '../board-item.mediator';
 
 interface Props {
   dto: ObjDto<ObjPageDto>;
@@ -30,7 +30,7 @@ interface Props {
 
 export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.snapshot.info.hashtags || []);
+  const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
 
   const handleEdit = () => {
     setEdit(true);
@@ -40,25 +40,13 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
     window.location.hash = `obj/${props.dto.id}`;
   };
 
-  const handleRemove = async () => {
-    if (await BoardStore.removeObj(props.dto)) {
-      props.refreshBoardCallback();
-    }
-  };
-
-  const handleTagSave = (newTags: string[]) => {
-    props.dto.data.snapshot.info.hashtags = newTags;
-    setHashtags(newTags);
-    fnConsoleLog('PageSnapshotElement->handleTagSave->newTags', newTags);
-  };
-
   return (
     <BoardItem>
       <BoardItemTitle
         title={props.dto.data.snapshot.info.title}
         editCallback={handleEdit}
         htmlCallback={handleHtml}
-        removeCallback={handleRemove}
+        removeCallback={() => BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback)}
       />
       <img
         style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
@@ -66,7 +54,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
       />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
-        saveTags={handleTagSave}
+        saveTags={(newTags) => BoardItemMediator.saveTags(props.dto, newTags, setHashtags)}
         title="page snapshot"
         createdAt={props.dto.createdAt}
         tags={hashtags}

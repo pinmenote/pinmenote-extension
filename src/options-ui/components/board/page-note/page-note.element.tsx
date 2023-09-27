@@ -23,6 +23,8 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { marked } from 'marked';
+import { fnSha256Object } from '../../../../common/fn/fn-hash';
+import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 
 interface Props {
   dto: ObjDto<ObjPageNoteDto>;
@@ -31,7 +33,7 @@ interface Props {
 
 export const PageNoteElement: FunctionComponent<Props> = (props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [hashtags, setHashtags] = useState<string[]>(props.dto.data.data.hashtags || []);
+  const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -50,8 +52,10 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
     }
   };
 
-  const handleTagSave = (newTags: string[]) => {
-    props.dto.data.data.hashtags = newTags;
+  const handleTagSave = (newTags: ObjHashtag[]) => {
+    if (!props.dto.data.hashtags) props.dto.data.hashtags = { data: [], hash: '' };
+    props.dto.data.hashtags.hash = fnSha256Object(newTags);
+    props.dto.data.hashtags.data = newTags;
     setHashtags(newTags);
     fnConsoleLog('PageSnapshotElement->handleTagSave->newTags', newTags);
   };
@@ -66,7 +70,7 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
       <BoardItemFooter
         title="page note"
         saveTags={handleTagSave}
-        tags={props.dto.data.data.hashtags || []}
+        tags={hashtags}
         createdAt={props.dto.createdAt}
         words={props.dto.data.data.words}
         url={props.dto.data.url?.href}

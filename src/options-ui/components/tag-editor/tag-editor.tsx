@@ -19,17 +19,17 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
+import { ObjHashtag } from '../../../common/model/obj/obj-hashtag.dto';
 import TextField from '@mui/material/TextField';
-import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 interface Props {
-  tags: string[];
-  saveCallback: (newTags: string[]) => void;
+  tags: ObjHashtag[];
+  saveCallback: (newTags: ObjHashtag[]) => void;
 }
 
 export const TagEditor: FunctionComponent<Props> = (props) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [currentValue, setCurrentValue] = useState<string[]>([...props.tags.concat()]);
+  const [currentValue, setCurrentValue] = useState<string[]>([...props.tags.map((t) => t.value)]);
   const [tagsChanged, setTagsChanged] = useState<boolean>(false);
   const [tagOptions, setTagOptions] = useState<string[] | undefined>(undefined);
   const loading = open && tagOptions === undefined;
@@ -39,12 +39,16 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
   }, []);
 
   const handleSave = () => {
-    props.saveCallback(currentValue);
+    props.saveCallback(
+      currentValue.map((t) => {
+        return { value: t };
+      })
+    );
     setTagsChanged(false);
   };
 
   const handleCancel = () => {
-    setCurrentValue([...props.tags.concat()]);
+    setCurrentValue([...props.tags.map((t) => t.value)]);
     setTagsChanged(false);
   };
 
@@ -62,10 +66,8 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
             open={open}
             onOpen={() => setOpen(true)}
             onChange={(event: any, newValue: string[]) => {
-              const missing = newValue.filter((item) => props.tags.indexOf(item) < 0);
-              fnConsoleLog('TagEditor->diff', props.tags, newValue, missing);
-              missing.length > 0 ? setTagsChanged(true) : setTagsChanged(false);
-
+              const propTags = props.tags.map((t) => t.value).sort();
+              propTags.toString() === newValue.sort().toString() ? setTagsChanged(false) : setTagsChanged(true);
               setCurrentValue(newValue);
             }}
             onClose={() => setOpen(false)}

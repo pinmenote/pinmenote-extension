@@ -15,11 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjUrlDto } from './obj.dto';
+import { ObjHashtagable } from './obj-hashtag.dto';
 export interface ObjPageNoteDto extends ObjNoteDto {
   url: ObjUrlDto;
 }
 
-export interface ObjNoteDto {
+export interface ObjNoteDto extends ObjHashtagable {
   hash: string;
   prev?: string;
   data: ObjNoteDataDto;
@@ -29,5 +30,4 @@ export interface ObjNoteDataDto {
   title: string;
   description: string;
   words: string[];
-  hashtags?: string[];
 }

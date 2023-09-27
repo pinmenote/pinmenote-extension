@@ -27,7 +27,6 @@ export interface PageSnapshotInfoDto {
   url: ObjUrlDto;
   title: string;
   words: string[];
-  hashtags?: string[];
 }
 
 export interface PageSnapshotDataDto {

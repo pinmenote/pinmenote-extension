@@ -55,17 +55,14 @@ export class OptionsConvertObjectsCommand implements ICommand<Promise<void>> {
   }
 
   private async convertPdf(obj: ObjDto<ObjPdfDto>) {
-    delete obj.data.data['hashtags'];
     await BrowserStorage.set<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${obj.id}`, obj);
   }
 
   private async convertPageNote(obj: ObjDto<ObjPageNoteDto>) {
-    delete obj.data.data['hashtags'];
     await BrowserStorage.set<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${obj.id}`, obj);
   }
 
   private async convertSnapshot(obj: ObjDto<ObjPageDto>) {
-    delete obj.data.snapshot.info['hashtags'];
     await BrowserStorage.set<ObjDto>(`${ObjectStoreKeys.OBJECT_ID}:${obj.id}`, obj);
     //
   }
