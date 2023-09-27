@@ -16,7 +16,6 @@
  */
 import { SettingsConfig, environmentConfig } from '../../../common/environment';
 import { BrowserStorage } from '@pinmenote/browser-api';
-import { CryptoGenerateKeyPairCommand } from '../../../common/command/crypto/crypto-generate-key-pair.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
@@ -27,7 +26,6 @@ export class SwInitSettingsCommand implements ICommand<Promise<void>> {
     if (!settings) {
       fnConsoleLog('Settings Initialize');
       await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, environmentConfig.settings);
-      await new CryptoGenerateKeyPairCommand().execute();
     } else if (settings.version !== environmentConfig.settings.version) {
       fnConsoleLog('Settings Migrate placeholder');
     } else {

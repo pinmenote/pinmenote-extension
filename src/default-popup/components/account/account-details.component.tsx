@@ -124,7 +124,7 @@ export const AccountDetailsComponent: FunctionComponent<Props> = (props) => {
         </div>
       </div>
 
-      <div style={{ position: 'absolute', bottom: 0, width: 300 }}>
+      <div style={{ position: 'absolute', bottom: 32, width: 300 }}>
         <div style={{ margin: 10 }}>
           <Typography style={{ fontSize: '8pt', color: COLOR_DEFAULT_RED }}>
             {responseError?.code} {responseError?.message}

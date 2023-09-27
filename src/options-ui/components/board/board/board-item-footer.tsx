@@ -25,6 +25,7 @@ import { TagEditor } from '../../tag-editor/tag-editor';
 import TagIcon from '@mui/icons-material/Tag';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
+import { SettingsStore } from '../../../store/settings.store';
 
 interface Props {
   title: string;
@@ -60,7 +61,11 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <p>{dayjs(props.createdAt).format(DATE_YEAR_SECOND)}</p>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={handleWordsIconClick} title="Show / Hide indexed words">
+          <IconButton
+            onClick={handleWordsIconClick}
+            title="Show / Hide indexed words"
+            style={{ display: SettingsStore.settings?.expertMode ? 'flex' : 'none' }}
+          >
             <DataArrayIcon style={{ color: wordsVisible ? COLOR_DEFAULT_RED : COLOR_DEFAULT_GREY }} />
           </IconButton>
           <IconButton title="Show / Hide tags" onClick={handleTagIconClick}>

@@ -33,6 +33,7 @@ export interface SettingsConfig {
   borderRadius: string;
   themeColor: string;
   skipCssImageSizeMB: number;
+  expertMode: boolean;
   history: SettingsHistoryConfig;
 }
 
@@ -57,6 +58,7 @@ export const environmentConfig: EnvironmentConfig = {
     borderRadius: '5px',
     themeColor: '#ff0000',
     skipCssImageSizeMB: 2,
+    expertMode: false,
     history: {
       pinComment: true,
       pinDraw: true,

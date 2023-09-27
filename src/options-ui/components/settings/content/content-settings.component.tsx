@@ -22,6 +22,7 @@ import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SettingsConfig } from '../../../../common/environment';
 import { SettingsStore } from '../../../store/settings.store';
 import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
 
 const borderContainer: CSSProperties = {
   display: 'flex',
@@ -32,13 +33,13 @@ const borderContainer: CSSProperties = {
 export const ContentSettingsComponent: FunctionComponent = () => {
   const [borderRadius, setBorderRadius] = useState<string>('');
   const [borderStyle, setBorderStyle] = useState<string>('');
+  const [expertMode, setExpertMode] = useState<boolean>(false);
 
   useEffect(() => {
-    setTimeout(async () => {
-      await SettingsStore.fetchData();
-      setBorderRadius(SettingsStore.settings?.borderRadius || `${DEFAULT_BORDER_RADIUS}px`);
-      setBorderStyle(SettingsStore.settings?.borderStyle || '2px solid #ff0000');
-    }, 0);
+    if (!SettingsStore.settings) return;
+    setBorderRadius(SettingsStore.settings.borderRadius || `${DEFAULT_BORDER_RADIUS}px`);
+    setBorderStyle(SettingsStore.settings.borderStyle || '2px solid #ff0000');
+    setExpertMode(SettingsStore.settings.expertMode || false);
   }, []);
 
   const handleBorderRadiusChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -52,6 +53,13 @@ export const ContentSettingsComponent: FunctionComponent = () => {
     if (!SettingsStore.settings) return;
     setBorderStyle(e.target.value);
     SettingsStore.settings.borderStyle = e.target.value;
+    await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
+  };
+
+  const handleExpertModeChange = async () => {
+    if (!SettingsStore.settings) return;
+    setExpertMode(!expertMode);
+    SettingsStore.settings.expertMode = !expertMode;
     await BrowserStorage.set<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY, SettingsStore.settings);
   };
 
@@ -74,6 +82,12 @@ export const ContentSettingsComponent: FunctionComponent = () => {
           border style
         </Typography>
         <Input type="text" value={borderStyle} onChange={handleBorderStyleChange} style={{ width: 300 }} />
+      </div>
+      <div style={borderContainer}>
+        <Typography fontSize="2em" textAlign="right" width={150} style={{ marginRight: 20 }}>
+          expert mode
+        </Typography>
+        <Checkbox checked={expertMode} onChange={handleExpertModeChange} />
       </div>
     </div>
   );

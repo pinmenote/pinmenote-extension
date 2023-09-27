@@ -90,8 +90,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
 
     const el = htmlRef.current?.lastElementChild as HTMLIFrameElement;
     if (!el.contentDocument || !el.contentWindow) return;
-
-    await SettingsStore.fetchData();
     fnConsoleLog('HtmlPreviewComponent->renderPins', ids);
 
     for (const id of ids) {

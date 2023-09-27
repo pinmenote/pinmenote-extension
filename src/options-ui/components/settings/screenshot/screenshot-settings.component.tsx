@@ -36,11 +36,9 @@ export const ScreenshotSettingsComponent: FunctionComponent = () => {
   const [screenshotQuality, setScreenshotQuality] = useState<number>(0);
 
   useEffect(() => {
-    setTimeout(async () => {
-      await SettingsStore.fetchData();
-      setScreenshotQuality(SettingsStore.settings?.screenshotQuality || 0);
-      setScreenshotFormat(SettingsStore.settings?.screenshotFormat || 'jpeg');
-    }, 0);
+    if (!SettingsStore.settings) return;
+    setScreenshotQuality(SettingsStore.settings.screenshotQuality || 0);
+    setScreenshotFormat(SettingsStore.settings.screenshotFormat || 'jpeg');
   }, []);
 
   const handleScreenshotQuality = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {

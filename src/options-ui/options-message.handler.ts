@@ -19,6 +19,7 @@ import { BusMessageType } from '../common/model/bus.model';
 import { ExtensionPopupInitData } from '../common/model/obj-request.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../common/fn/fn-console';
+import { SettingsStore } from './store/settings.store';
 
 export class OptionsMessageHandler {
   static init(): void {
@@ -27,6 +28,9 @@ export class OptionsMessageHandler {
     BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES }).catch((e) =>
       fnConsoleLog('OPTIONS_SYNC_INCOMING_CHANGES->ERROR', e)
     );
+    SettingsStore.fetchData().catch(() => {
+      /* IGNORE */
+    });
   }
 
   private static handleRemoteMessage = (

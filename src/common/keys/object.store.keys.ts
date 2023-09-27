@@ -49,7 +49,6 @@ export class ObjectStoreKeys {
   // SYNC
   static readonly SYNC_INTERVAL = 'sync:interval';
   static readonly SYNC_PROGRESS = 'sync:progress';
-  static readonly SYNC_IN = 'sync:obj:in';
   static readonly SYNC_TX = 'sync:tx';
 
   // SETTINGS
