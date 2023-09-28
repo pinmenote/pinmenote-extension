@@ -100,6 +100,13 @@ export const BoardComponent: FunctionComponent = () => {
       }
     }
   }
+  if (BoardStore.isLast) {
+    boardElements.push(
+      <div style={{ width: '100%', height: '100px', textAlign: 'center' }}>
+        <h1 style={{ padding: 20 }}>THE END / FIN / KONIEC</h1>
+      </div>
+    );
+  }
 
   return (
     <div>

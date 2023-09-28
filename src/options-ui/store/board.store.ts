@@ -129,11 +129,13 @@ export class BoardStore {
       }
     }
     fnConsoleLog('setTags in', Date.now() - a);
+    this.isLastValue = true;
     if (this.refreshBoardCallback) this.refreshBoardCallback();
   }
 
   static async clearTags() {
     this.modeTags = false;
+    this.isLastValue = false;
     this.objData = [];
     this.keySet.clear();
     this.rangeRequest.from = -1;
