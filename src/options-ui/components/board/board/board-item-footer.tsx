@@ -26,7 +26,7 @@ import TagIcon from '@mui/icons-material/Tag';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 import { SettingsStore } from '../../../store/settings.store';
-import { ObjHashtag, ObjHashtagList } from '../../../../common/model/obj/obj-hashtag.dto';
+import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 
 interface Props {
   title: string;

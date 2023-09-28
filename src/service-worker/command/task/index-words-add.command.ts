@@ -52,7 +52,7 @@ export class IndexWordsAddCommand implements ICommand<Promise<void>> {
 
     let arr = await BrowserStorage.get<number[] | undefined>(key);
 
-    if (arr?.indexOf(id) !== -1) return;
+    if (arr && arr.indexOf(id) !== -1) return;
 
     if (arr) {
       arr.push(id);
@@ -71,7 +71,7 @@ export class IndexWordsAddCommand implements ICommand<Promise<void>> {
     const key = `${ObjectStoreKeys.SEARCH_WORD}:${start}`;
     let arr = await BrowserStorage.get<string[] | undefined>(key);
 
-    if (arr?.indexOf(word) !== -1) return;
+    if (arr && arr.indexOf(word) !== -1) return;
 
     if (arr) {
       arr.push(word);

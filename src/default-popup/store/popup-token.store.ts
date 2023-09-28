@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { AccessTokenDto } from '../../common/model/shared/token.dto';
-import { LogManager } from '../../common/popup/log.manager';
 import { TokenStorageGetCommand } from '../../common/command/server/token/token-storage-get.command';
 
 export class PopupTokenStore {

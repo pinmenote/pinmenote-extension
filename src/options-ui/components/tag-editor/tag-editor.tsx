@@ -21,6 +21,8 @@ import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ObjHashtag } from '../../../common/model/obj/obj-hashtag.dto';
 import TextField from '@mui/material/TextField';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
+import { BusMessageType } from '../../../common/model/bus.model';
 
 interface Props {
   tags: ObjHashtag[];
@@ -45,6 +47,7 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
       })
     );
     setTagsChanged(false);
+    TinyDispatcher.getInstance().dispatch(BusMessageType.POP_REFRESH_TAGS);
   };
 
   const handleCancel = () => {

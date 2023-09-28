@@ -14,17 +14,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { Drawer } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { BusMessageType } from '../../../../common/model/bus.model';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
 interface Props {
   showDrawer: boolean;
 }
 
+const fetchTags = async (): Promise<string[]> => {
+  const tags = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
+  return tags || [];
+};
+
 export const BoardDrawer: FunctionComponent<Props> = (props) => {
+  const [tags, setTags] = useState<string[]>([]);
+  useEffect(() => {
+    const dispatcher = TinyDispatcher.getInstance();
+    const tagRefreshKey = dispatcher.addListener(BusMessageType.POP_REFRESH_TAGS, async () => {
+      const t = await fetchTags();
+      setTags(t);
+    });
+    setTimeout(async () => {
+      const t = await fetchTags();
+      setTags(t);
+    });
+    return () => {
+      dispatcher.removeListener(BusMessageType.POP_REFRESH_TAGS, tagRefreshKey);
+    };
+  }, [tags]);
+
+  const objs: React.ReactNode[] = [];
+  for (const tag of tags) {
+    objs.push(<div key={`t-${tag}`}>{tag}</div>);
+  }
+
   return (
     <Drawer open={props.showDrawer} anchor="left" variant="persistent">
       <Toolbar />
@@ -34,6 +64,7 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
             Tags
           </Typography>
         </div>
+        <div>{objs}</div>
       </Box>
     </Drawer>
   );

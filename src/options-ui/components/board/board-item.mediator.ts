@@ -20,6 +20,7 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { BoardStore } from '../../store/board.store';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnSha256Object } from '../../../common/fn/fn-hash';
+import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 interface HashtagChange {
   removed: ObjHashtag[];
@@ -81,7 +82,8 @@ class TagHelper {
   static saveTag = async (word: string, id: number) => {
     const key = `${ObjectStoreKeys.TAG_INDEX}:${word}`;
     let arr = await BrowserStorage.get<number[] | undefined>(key);
-    if (arr?.indexOf(id) !== -1) return;
+    if (arr && arr.indexOf(id) !== -1) return;
+
     if (arr) {
       arr.push(id);
     } else {
@@ -94,41 +96,41 @@ class TagHelper {
   static removeTag = async (word: string, id: number) => {
     const key = `${ObjectStoreKeys.TAG_INDEX}:${word}`;
     const arr = await BrowserStorage.get<number[] | undefined>(key);
-    if (!arr) return;
 
+    if (!arr) return;
     const index = arr.indexOf(id);
     if (index === -1) return;
 
     arr.splice(index, 1);
+    await this.removeWord(word);
     if (arr.length === 0) {
       await BrowserStorage.remove(key);
-      await this.removeWord(word);
       return;
     }
     await BrowserStorage.set<number[]>(key, arr);
   };
 
   private static saveWord = async (word: string) => {
-    const key = `${ObjectStoreKeys.TAG_WORD}:${word}`;
-    let arr = await BrowserStorage.get<string[] | undefined>(key);
-    if (arr?.indexOf(word) !== -1) return;
+    let arr = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
+    if (arr && arr.indexOf(word) !== -1) return;
     if (arr) {
       arr.push(word);
     } else {
       arr = [word];
     }
-    await BrowserStorage.set<string[]>(key, arr);
+    fnConsoleLog('Save word', arr);
+    await BrowserStorage.set<string[]>(ObjectStoreKeys.TAG_WORD, arr.sort());
   };
 
   private static removeWord = async (word: string) => {
-    const key = `${ObjectStoreKeys.TAG_WORD}:${word}`;
-    const arr = await BrowserStorage.get<string[] | undefined>(key);
+    const arr = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
     if (!arr) return;
 
     const index = arr.indexOf(word);
     if (index === -1) return;
 
     arr.splice(index, 1);
-    await BrowserStorage.set<string[]>(key, arr);
+    fnConsoleLog('Remove word', arr);
+    await BrowserStorage.set<string[]>(ObjectStoreKeys.TAG_WORD, arr);
   };
 }

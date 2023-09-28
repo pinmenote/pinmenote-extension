@@ -24,6 +24,7 @@ export enum BusMessageType {
   CNT_SETTINGS = 'cnt.settings',
   // Internal popup
   POP_CONSOLE_LOG = 'pop.console.log',
+  POP_REFRESH_TAGS = 'pop.refresh.tags',
   POP_IS_ADDING = 'pop.is.adding',
   POP_UPDATE_URL = 'pop.update.url',
   // Ack
