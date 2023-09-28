@@ -20,6 +20,7 @@ import { LinkHrefStore } from '../../store/link-href.store';
 import { ObjPdfDto } from '../../model/obj/obj-pdf.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
+import { HashtagStore } from '../../store/hashtag.store';
 
 export class PdfRemoveCommand implements ICommand<Promise<void>> {
   constructor(private id: number, private dto: ObjPdfDto) {}
@@ -30,5 +31,11 @@ export class PdfRemoveCommand implements ICommand<Promise<void>> {
     await LinkHrefStore.del(this.dto.data.url, this.id);
 
     await new ObjRemoveIdCommand(this.id, ObjectStoreKeys.OBJECT_LIST).execute();
+
+    if (this.dto.hashtags)
+      await HashtagStore.removeTags(
+        this.dto.hashtags.data.map((t) => t.value),
+        this.id
+      );
   }
 }

@@ -63,7 +63,7 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
     if (selectedTags.length === 0) {
       await BoardStore.clearTags();
     } else {
-      await BoardStore.setTags(selectedTags);
+      await BoardStore.setTags(selectedTags.reverse());
     }
     setSelectedTags(selectedTags);
   };

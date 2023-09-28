@@ -36,7 +36,8 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
       this.contentCallback,
       IFrameStore.getInstance(),
       [],
-      TinyDispatcher.getInstance()
+      TinyDispatcher.getInstance(),
+      false
     );
 
     const dto: SegmentPage = {

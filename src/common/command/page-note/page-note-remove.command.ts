@@ -24,6 +24,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { SwTaskStore } from '../../store/sw-task.store';
 import { SwTaskType } from '../../model/sw-task.model';
 import { fnConsoleLog } from '../../fn/fn-console';
+import { HashtagStore } from '../../store/hashtag.store';
 
 export class PageNoteRemoveCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPageNoteDto>) {}
@@ -50,6 +51,12 @@ export class PageNoteRemoveCommand implements ICommand<void> {
       words: data.data.words,
       objectId: this.obj.id
     });
+
+    if (data.hashtags)
+      await HashtagStore.removeTags(
+        data.hashtags.data.map((t) => t.value),
+        this.obj.id
+      );
 
     await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
   }

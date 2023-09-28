@@ -20,9 +20,9 @@ import { BrowserStorage } from '@pinmenote/browser-api';
 import { BoardStore } from '../../store/board.store';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnSha256Object } from '../../../common/fn/fn-hash';
-import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { BusMessageType } from '../../../common/model/bus.model';
+import { HashtagStore } from '../../../common/store/hashtag.store';
 
 interface HashtagChange {
   removed: ObjHashtag[];
@@ -63,10 +63,10 @@ export class BoardItemMediator {
 
   private static saveHashtagIndex = async (dto: ObjDto<any>, change: HashtagChange) => {
     for (const tag of change.added) {
-      await TagHelper.saveTag(tag.value, dto.id);
+      await HashtagStore.saveTag(tag.value, dto.id);
     }
     for (const tag of change.removed) {
-      await TagHelper.removeTag(tag.value, dto.id);
+      await HashtagStore.removeTag(tag.value, dto.id);
     }
   };
 
@@ -86,59 +86,4 @@ export class BoardItemMediator {
   };
 }
 
-class TagHelper {
-  static saveTag = async (word: string, id: number) => {
-    const key = `${ObjectStoreKeys.TAG_INDEX}:${word}`;
-    let arr = await BrowserStorage.get<number[] | undefined>(key);
-    if (arr && arr.indexOf(id) !== -1) return;
-
-    if (arr) {
-      arr.push(id);
-    } else {
-      arr = [id];
-    }
-    await BrowserStorage.set<number[]>(key, arr);
-    await this.saveWord(word);
-  };
-
-  static removeTag = async (word: string, id: number) => {
-    const key = `${ObjectStoreKeys.TAG_INDEX}:${word}`;
-    const arr = await BrowserStorage.get<number[] | undefined>(key);
-
-    if (!arr) return;
-    const index = arr.indexOf(id);
-    if (index === -1) return;
-
-    arr.splice(index, 1);
-    await this.removeWord(word);
-    if (arr.length === 0) {
-      await BrowserStorage.remove(key);
-      return;
-    }
-    await BrowserStorage.set<number[]>(key, arr);
-  };
-
-  private static saveWord = async (word: string) => {
-    let arr = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
-    if (arr && arr.indexOf(word) !== -1) return;
-    if (arr) {
-      arr.push(word);
-    } else {
-      arr = [word];
-    }
-    fnConsoleLog('Save word', arr);
-    await BrowserStorage.set<string[]>(ObjectStoreKeys.TAG_WORD, arr.sort());
-  };
-
-  private static removeWord = async (word: string) => {
-    const arr = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
-    if (!arr) return;
-
-    const index = arr.indexOf(word);
-    if (index === -1) return;
-
-    arr.splice(index, 1);
-    fnConsoleLog('Remove word', arr);
-    await BrowserStorage.set<string[]>(ObjectStoreKeys.TAG_WORD, arr);
-  };
-}
+export class TagHelper {}

@@ -16,7 +16,6 @@
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../model/shared/common.dto';
-import { ObjAddHashtagsCommand } from '../../obj/hashtag/obj-add-hashtags.command';
 import { ObjCommentDto } from '../../../model/obj/obj-comment.dto';
 import { ObjDto } from '../../../model/obj/obj.dto';
 import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
@@ -28,7 +27,6 @@ export class PinAddCommentCommand implements ICommand<Promise<string>> {
   constructor(private pin: ObjDto<ObjPinDto>, private value: string) {}
 
   async execute(): Promise<string> {
-    await new ObjAddHashtagsCommand(this.pin.id, this.value).execute();
     const dt = Date.now();
 
     const comment: Partial<ObjCommentDto> = {
