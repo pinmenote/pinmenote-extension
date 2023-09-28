@@ -70,7 +70,14 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
 
   const objs: React.ReactNode[] = [];
   for (const tag of tags) {
-    objs.push(<DrawerTag key={`t-${tag}`} value={tag} selectionChange={handleTagSelect} />);
+    objs.push(
+      <DrawerTag
+        key={`t-${tag}`}
+        value={tag}
+        selected={selectedTags.indexOf(tag) > -1}
+        selectionChange={handleTagSelect}
+      />
+    );
   }
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {

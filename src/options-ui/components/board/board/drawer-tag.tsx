@@ -18,6 +18,7 @@ import React, { FunctionComponent, useState } from 'react';
 
 interface Props {
   value: string;
+  selected: boolean;
   selectionChange: (value: string) => void;
 }
 
@@ -31,7 +32,7 @@ const tagStyle = {
 };
 
 export const DrawerTag: FunctionComponent<Props> = (props) => {
-  const [selected, setSelected] = useState<boolean>(false);
+  const [selected, setSelected] = useState<boolean>(props.selected);
   const handleClick = () => {
     setSelected(!selected);
     props.selectionChange(props.value);
