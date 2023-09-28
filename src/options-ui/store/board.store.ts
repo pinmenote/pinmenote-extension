@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ObjPageDto } from '../../common/model/obj/obj-page.dto';
 import { ObjPageNoteDto } from '../../common/model/obj/obj-note.dto';
@@ -26,12 +26,14 @@ import { PageNoteRemoveCommand } from '../../common/command/page-note/page-note-
 import { PageSnapshotRemoveCommand } from '../../common/command/snapshot/page-snapshot-remove.command';
 import { PdfRemoveCommand } from '../../common/command/pdf/pdf-remove.command';
 import { fnConsoleLog } from '../../common/fn/fn-console';
+import { ObjGetCommand } from '../../common/command/obj/obj-get.command';
 
 export class BoardStore {
   static objData: ObjDto[] = [];
   static keySet = new Set<number>();
 
   private static loading = false;
+  private static modeTags = false;
   private static isLastValue = false;
   private static readonly rangeRequest: ObjRangeRequest = {
     from: -1,
@@ -50,6 +52,7 @@ export class BoardStore {
   }
 
   static set search(value: string) {
+    if (this.modeTags) return;
     if (this.rangeRequest.search.length > 0) {
       this.rangeRequest.from = -1;
       this.rangeRequest.listId = -1;
@@ -109,7 +112,37 @@ export class BoardStore {
     this.refreshBoardCallback = refreshBoardCallback;
   };
 
+  static async setTags(tags: string[]): Promise<void> {
+    this.modeTags = true;
+    // clear
+    this.objData = [];
+    this.keySet.clear();
+
+    const a = Date.now();
+    for (const tag of tags) {
+      const tagObjIds = await BrowserStorage.get<number[]>(`${ObjectStoreKeys.TAG_INDEX}:${tag}`);
+      for (const id of tagObjIds) {
+        const obj = await new ObjGetCommand<ObjDataDto>(id).execute();
+        if (this.keySet.has(obj.id)) continue;
+        this.objData.push(obj);
+        this.keySet.add(obj.id);
+      }
+    }
+    fnConsoleLog('setTags in', Date.now() - a);
+    if (this.refreshBoardCallback) this.refreshBoardCallback();
+  }
+
+  static async clearTags() {
+    this.modeTags = false;
+    this.objData = [];
+    this.keySet.clear();
+    this.rangeRequest.from = -1;
+    this.rangeRequest.listId = -1;
+    await this.getObjRange();
+  }
+
   static async getObjRange(): Promise<void> {
+    if (this.modeTags) return;
     if (this.loading) return;
     this.loading = true;
     const a = Date.now();

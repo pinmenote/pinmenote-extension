@@ -17,7 +17,6 @@
 import { HtmlComponent } from '../../model/pin-view.model';
 import { PinEditManager } from '../../pin-edit.manager';
 import { PinEditModel } from '../../model/pin-edit.model';
-import { applyStylesToElement } from '../../../../style.utils';
 
 export class DrawEditButton implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;

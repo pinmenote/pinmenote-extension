@@ -23,6 +23,8 @@ import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
+import { DrawerTag } from './drawer-tag';
+import { BoardStore } from '../../../store/board.store';
 
 interface Props {
   showDrawer: boolean;
@@ -35,6 +37,7 @@ const fetchTags = async (): Promise<string[]> => {
 
 export const BoardDrawer: FunctionComponent<Props> = (props) => {
   const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   useEffect(() => {
     const dispatcher = TinyDispatcher.getInstance();
     const tagRefreshKey = dispatcher.addListener(BusMessageType.POP_REFRESH_TAGS, async () => {
@@ -50,9 +53,24 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
     };
   }, [tags]);
 
+  const handleTagSelect = async (value: string) => {
+    const index = selectedTags.indexOf(value);
+    if (index > -1) {
+      selectedTags.splice(index, 1);
+    } else {
+      selectedTags.push(value);
+    }
+    if (selectedTags.length === 0) {
+      await BoardStore.clearTags();
+    } else {
+      await BoardStore.setTags(selectedTags);
+    }
+    setSelectedTags(selectedTags);
+  };
+
   const objs: React.ReactNode[] = [];
   for (const tag of tags) {
-    objs.push(<div key={`t-${tag}`}>{tag}</div>);
+    objs.push(<DrawerTag key={`t-${tag}`} value={tag} selectionChange={handleTagSelect} />);
   }
 
   return (

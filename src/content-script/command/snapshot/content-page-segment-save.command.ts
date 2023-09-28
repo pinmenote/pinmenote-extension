@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PageCompute, PageSkipAttribute, SegmentData } from '@pinmenote/page-compute';
-import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { HtmlConstraints } from '../../factory/html/html.constraints';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { IFrameStore } from '../../store/iframe.store';
@@ -41,8 +40,6 @@ export class ContentPageSegmentSaveCommand implements ICommand<Promise<string>> 
       this.isPartial
     );
     await this.contentCallback(snapshot);
-    const words = AutoTagMediator.computeTags(this.element);
-    fnConsoleLog('TAGS DONE');
     return snapshot.hash;
   }
 

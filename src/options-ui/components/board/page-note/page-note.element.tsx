@@ -32,7 +32,6 @@ interface Props {
 }
 
 export const PageNoteElement: FunctionComponent<Props> = (props) => {
-  const [edit, setEdit] = useState<boolean>(false);
   const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +42,7 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
   }, []);
 
   const handleEdit = () => {
-    setEdit(true);
+    fnConsoleLog('EDIT !!!');
   };
 
   const handleRemove = async () => {

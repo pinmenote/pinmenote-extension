@@ -22,6 +22,7 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 import { BoardItemMediator } from '../board-item.mediator';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface Props {
   dto: ObjDto<ObjPageDto>;
@@ -29,11 +30,10 @@ interface Props {
 }
 
 export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
-  const [edit, setEdit] = useState<boolean>(false);
   const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
 
   const handleEdit = () => {
-    setEdit(true);
+    fnConsoleLog('EDIT !!!');
   };
 
   const handleHtml = () => {

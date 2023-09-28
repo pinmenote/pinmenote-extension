@@ -69,7 +69,7 @@ export const AccountDetailsComponent: FunctionComponent<Props> = (props) => {
 
     const loginSuccessKey = dispatcher.addListener(
       BusMessageType.POPUP_LOGIN_SUCCESS,
-      async (event, key) => {
+      async () => {
         await PopupTokenStore.init();
         if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
       },

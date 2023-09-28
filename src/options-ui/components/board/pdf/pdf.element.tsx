@@ -22,6 +22,7 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 import { BoardItemMediator } from '../board-item.mediator';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 interface Props {
   dto: ObjDto<ObjPdfDto>;
@@ -29,14 +30,13 @@ interface Props {
 }
 
 export const PdfElement: FunctionComponent<Props> = (props) => {
-  const [edit, setEdit] = useState<boolean>(false);
   const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
 
   const a = props.dto.data.data.url.pathname.split('/');
   const title = a[a.length - 1];
 
   const handleEdit = () => {
-    setEdit(true);
+    fnConsoleLog('EDIT !!!');
   };
 
   const handleHtml = () => {

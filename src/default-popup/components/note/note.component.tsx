@@ -34,10 +34,9 @@ interface Props {
 
 export const NoteComponent: FunctionComponent<Props> = (props) => {
   const [state, setState] = useState<CurrentView>(props.currentView as CurrentView);
-  const [editNote, setEditNote] = useState<ObjDto<ObjPageNoteDto> | undefined>(props.editNote);
 
   useEffect(() => {
-    if (editNote) setState(CurrentView.NOTE_EDIT);
+    if (props.editNote) setState(CurrentView.NOTE_EDIT);
   }, []);
 
   const getComponent = (state: CurrentView) => {
@@ -45,9 +44,10 @@ export const NoteComponent: FunctionComponent<Props> = (props) => {
       case CurrentView.NOTE_ADD:
         return <NoteAddComponent addCallback={props.addCallback} cancelCallback={props.cancelCallback} />;
       case CurrentView.NOTE_EDIT:
+        if (!props.editNote) return;
         return (
           <NoteEditComponent
-            editNote={editNote!}
+            editNote={props.editNote}
             addCallback={props.addCallback}
             cancelCallback={props.cancelCallback}
           />
