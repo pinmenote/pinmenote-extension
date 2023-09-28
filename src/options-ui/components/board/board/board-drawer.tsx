@@ -70,14 +70,13 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
 
   const objs: React.ReactNode[] = [];
   for (const tag of tags) {
-    objs.push(
-      <DrawerTag
-        key={`t-${tag}`}
-        value={tag}
-        selected={selectedTags.indexOf(tag) > -1}
-        selectionChange={handleTagSelect}
-      />
-    );
+    if (selectedTags.indexOf(tag) > -1) continue;
+    objs.push(<DrawerTag key={`t-${tag}`} value={tag} selected={false} selectionChange={handleTagSelect} />);
+  }
+
+  const selectedObjs: React.ReactNode[] = [];
+  for (const tag of selectedTags) {
+    selectedObjs.push(<DrawerTag key={`ts-${tag}`} value={tag} selected={true} selectionChange={handleTagSelect} />);
   }
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +105,7 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
             </Typography>
           </div>
           <Input
-            placeholder="Filter tags"
+            placeholder="Filter"
             value={searchValue}
             onInput={handleSearch}
             sx={{ marginLeft: 1 }}
@@ -117,7 +116,8 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
             }
           />
         </div>
-        <div style={{ marginBottom: 10, marginTop: 70 }}>{objs}</div>
+        <div style={{ marginTop: 70 }}>{selectedObjs}</div>
+        <div style={{ marginBottom: 10 }}>{objs}</div>
       </Box>
     </Drawer>
   );

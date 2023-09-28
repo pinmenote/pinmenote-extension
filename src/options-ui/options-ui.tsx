@@ -52,11 +52,15 @@ const OptionsUI: FunctionComponent = () => {
   const [currentView, setCurrentView] = useState<CurrentView>(getView());
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showPdfPreview, setShowPdfPreview] = useState<boolean>(false);
-  const [showDrawer, setShowDrawer] = useState<boolean>(SettingsStore.settings?.interface?.optionsDrawerOpen || false);
+  const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
   useEffect(() => {
     if (currentView === CurrentView.OBJ_DETAILS) setShowPreview(true);
     if (currentView === CurrentView.PDF_DETAILS) setShowPdfPreview(true);
+    setTimeout(() => {
+      if (!SettingsStore.settings?.interface) return;
+      setShowDrawer(!!SettingsStore.settings.interface.optionsDrawerOpen);
+    }, 1);
     window.addEventListener('hashchange', handleHashChange);
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
