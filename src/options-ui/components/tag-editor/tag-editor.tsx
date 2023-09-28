@@ -21,13 +21,14 @@ import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ObjHashtag } from '../../../common/model/obj/obj-hashtag.dto';
 import TextField from '@mui/material/TextField';
-import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
-import { BusMessageType } from '../../../common/model/bus.model';
+import { BoardItemMediator } from '../board/board-item.mediator';
 
 interface Props {
   tags: ObjHashtag[];
   saveCallback: (newTags: ObjHashtag[]) => void;
 }
+
+const TAG_LIMIT = 5;
 
 export const TagEditor: FunctionComponent<Props> = (props) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -37,7 +38,10 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
   const loading = open && tagOptions === undefined;
 
   useEffect(() => {
-    setTagOptions([]);
+    setTimeout(async () => {
+      const tags = await BoardItemMediator.fetchTags();
+      setTagOptions(tags);
+    }, 100);
   }, []);
 
   const handleSave = () => {
@@ -47,7 +51,6 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
       })
     );
     setTagsChanged(false);
-    TinyDispatcher.getInstance().dispatch(BusMessageType.POP_REFRESH_TAGS);
   };
 
   const handleCancel = () => {
@@ -62,7 +65,7 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
           <Autocomplete
             multiple
             freeSolo
-            limitTags={3}
+            limitTags={TAG_LIMIT}
             value={currentValue}
             sx={{ fontSize: '0.8em' }}
             size="small"

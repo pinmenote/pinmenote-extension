@@ -14,44 +14,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import { Drawer } from '@mui/material';
+import { Drawer, Input } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { BrowserStorage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../../common/model/bus.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { DrawerTag } from './drawer-tag';
 import { BoardStore } from '../../../store/board.store';
+import { BoardItemMediator } from '../board-item.mediator';
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface Props {
   showDrawer: boolean;
 }
 
-const fetchTags = async (): Promise<string[]> => {
-  const tags = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
-  return tags || [];
-};
-
 export const BoardDrawer: FunctionComponent<Props> = (props) => {
+  const [allTags, setAllTags] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
   useEffect(() => {
     const dispatcher = TinyDispatcher.getInstance();
     const tagRefreshKey = dispatcher.addListener(BusMessageType.POP_REFRESH_TAGS, async () => {
-      const t = await fetchTags();
+      const t = await BoardItemMediator.fetchTags();
+      setAllTags(t.concat());
+      setSearchValue('');
       setTags(t);
     });
     setTimeout(async () => {
-      const t = await fetchTags();
+      const t = await BoardItemMediator.fetchTags();
+      setAllTags(t.concat());
       setTags(t);
     });
     return () => {
       dispatcher.removeListener(BusMessageType.POP_REFRESH_TAGS, tagRefreshKey);
     };
-  }, [tags]);
+  }, []);
 
   const handleTagSelect = async (value: string) => {
     const index = selectedTags.indexOf(value);
@@ -73,16 +73,44 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
     objs.push(<DrawerTag key={`t-${tag}`} value={tag} selectionChange={handleTagSelect} />);
   }
 
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    handleFilterTags(e.target.value);
+  };
+
+  const handleFilterTags = (value: string) => {
+    const foundTags = allTags.concat().filter((t) => t.indexOf(value) > -1);
+    setSearchValue(value);
+    setTags(foundTags);
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue('');
+    setTags(allTags.concat());
+  };
+
   return (
     <Drawer open={props.showDrawer} anchor="left" variant="persistent">
       <Toolbar />
       <Box sx={{ overflow: 'auto', width: 200, maxWidth: 200 }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Typography variant="h6" fontWeight="bold" style={{ wordBreak: 'break-all', wordWrap: 'break-word' }}>
-            Tags
-          </Typography>
+        <div style={{ position: 'absolute', width: '100%', backgroundColor: '#ffffff' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <Typography variant="h6" fontWeight="bold" style={{ wordBreak: 'break-all', wordWrap: 'break-word' }}>
+              Tags
+            </Typography>
+          </div>
+          <Input
+            placeholder="Filter tags"
+            value={searchValue}
+            onInput={handleSearch}
+            sx={{ marginLeft: 1 }}
+            endAdornment={
+              searchValue ? (
+                <ClearIcon style={{ userSelect: 'none', cursor: 'pointer' }} onClick={handleClearSearch} />
+              ) : undefined
+            }
+          />
         </div>
-        <div>{objs}</div>
+        <div style={{ marginBottom: 10, marginTop: 70 }}>{objs}</div>
       </Box>
     </Drawer>
   );

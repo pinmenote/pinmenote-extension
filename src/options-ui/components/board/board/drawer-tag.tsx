@@ -26,7 +26,8 @@ const tagStyle = {
   width: '100%',
   textAlign: 'center',
   userSelect: 'none',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  marginTop: 5
 };
 
 export const DrawerTag: FunctionComponent<Props> = (props) => {

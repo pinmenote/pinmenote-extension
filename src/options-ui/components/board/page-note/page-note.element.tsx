@@ -23,8 +23,8 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { marked } from 'marked';
-import { fnSha256Object } from '../../../../common/fn/fn-hash';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
+import { BoardItemMediator } from '../board-item.mediator';
 
 interface Props {
   dto: ObjDto<ObjPageNoteDto>;
@@ -51,14 +51,6 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
     }
   };
 
-  const handleTagSave = (newTags: ObjHashtag[]) => {
-    if (!props.dto.data.hashtags) props.dto.data.hashtags = { data: [], hash: '' };
-    props.dto.data.hashtags.hash = fnSha256Object(newTags);
-    props.dto.data.hashtags.data = newTags;
-    setHashtags(newTags);
-    fnConsoleLog('PageSnapshotElement->handleTagSave->newTags', newTags);
-  };
-
   return (
     <BoardItem>
       <BoardItemTitle title={props.dto.data.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
@@ -67,8 +59,8 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
       </div>
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
+        saveTags={(newTags) => BoardItemMediator.saveTags(props.dto, newTags, setHashtags)}
         title="page note"
-        saveTags={handleTagSave}
         tags={hashtags}
         createdAt={props.dto.createdAt}
         words={props.dto.data.data.words}

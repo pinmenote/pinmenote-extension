@@ -21,6 +21,8 @@ import { BoardStore } from '../../store/board.store';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnSha256Object } from '../../../common/fn/fn-hash';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
+import { BusMessageType } from '../../../common/model/bus.model';
 
 interface HashtagChange {
   removed: ObjHashtag[];
@@ -28,6 +30,11 @@ interface HashtagChange {
 }
 
 export class BoardItemMediator {
+  static fetchTags = async (): Promise<string[]> => {
+    const tags = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
+    return tags || [];
+  };
+
   static removeObject = async (obj: ObjDto, refreshCallback: () => void) => {
     if (await BoardStore.removeObj(obj)) {
       refreshCallback();
@@ -51,6 +58,7 @@ export class BoardItemMediator {
     await BrowserStorage.set<ObjDto<any>>(`${ObjectStoreKeys.OBJECT_ID}:${dto.id}`, dto);
     await this.saveHashtagIndex(dto, { added: newTags, removed: [] });
     setNewTags(newTags);
+    TinyDispatcher.getInstance().dispatch(BusMessageType.POP_REFRESH_TAGS);
   };
 
   private static saveHashtagIndex = async (dto: ObjDto<any>, change: HashtagChange) => {

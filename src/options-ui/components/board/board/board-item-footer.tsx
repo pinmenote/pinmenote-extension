@@ -39,7 +39,7 @@ interface Props {
 
 export const BoardItemFooter: FunctionComponent<Props> = (props) => {
   const [wordsVisible, setWordsVisible] = useState<boolean>(false);
-  const [tagsVisible, setTagsVisible] = useState<boolean>(false);
+  const [tagsVisible, setTagsVisible] = useState<boolean>(true);
   const handleWordsIconClick = () => {
     setWordsVisible(!wordsVisible);
   };
