@@ -75,7 +75,11 @@ export const ObjListComponent: FunctionComponent<Props> = (props) => {
 
   // Render pins
   const objs: React.ReactNode[] = [];
+  // Workaround for duplicated objects
+  const s = new Set<number>();
   for (const obj of props.objList) {
+    if (s.has(obj.id)) continue;
+    s.add(obj.id);
     switch (obj.type) {
       case ObjTypeDto.PageElementPin:
         objs.push(<PinListElement key={obj.id} obj={obj as ObjDto<ObjPinDto>} removeCallback={handlePinRemove} />);
