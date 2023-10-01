@@ -20,8 +20,9 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentInvalidateCommand implements ICommand<Promise<void>> {
+  constructor(private tabId?: number) {}
   async execute(): Promise<void> {
-    await BrowserApi.sendTabMessage<undefined>({ type: BusMessageType.CONTENT_INVALIDATE });
+    await BrowserApi.sendTabMessage<undefined>({ type: BusMessageType.CONTENT_INVALIDATE }, this.tabId);
     fnConsoleLog('ContentInvalidateCommand->execute');
   }
 }

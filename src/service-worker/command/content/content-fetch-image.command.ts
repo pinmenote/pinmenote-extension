@@ -26,9 +26,12 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   constructor(private req: FetchImageRequest, private tabId?: number) {}
   async execute(): Promise<void> {
     try {
-      fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
+      let headers = {};
+      if (this.req.url.indexOf('openstreetmap.org') > -1) headers = { 'User-Agent': 'pinmenote' };
+      fnConsoleLog('ContentFetchImageCommand->execute lol', this.req.url, headers);
       const req = await FetchService.fetch<Blob>(this.req.url, {
-        type: 'BLOB'
+        type: 'BLOB',
+        headers
       });
       const data = await UrlFactory.toDataUri(req.data);
       let ok = req.ok;
@@ -40,22 +43,28 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
         fnConsoleLog('ContentFetchImageCommand->problem', this.req.url);
         ok = false;
       }
-      await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: PageComputeMessage.CONTENT_FETCH_IMAGE,
-        data: { data, ok, url: req.url, status: req.status, type: req.type }
-      });
+      await BrowserApi.sendTabMessage<FetchResponse<string>>(
+        {
+          type: PageComputeMessage.CONTENT_FETCH_IMAGE,
+          data: { data, ok, url: req.url, status: req.status, type: req.type }
+        },
+        this.tabId
+      );
     } catch (e) {
       fnConsoleLog('ContentFetchImageCommand->ERROR', e, this.req.url);
-      await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: PageComputeMessage.CONTENT_FETCH_IMAGE,
-        data: {
-          url: this.req.url,
-          ok: false,
-          status: 500,
-          type: 'BLOB',
-          data: ''
-        }
-      });
+      await BrowserApi.sendTabMessage<FetchResponse<string>>(
+        {
+          type: PageComputeMessage.CONTENT_FETCH_IMAGE,
+          data: {
+            url: this.req.url,
+            ok: false,
+            status: 500,
+            type: 'BLOB',
+            data: ''
+          }
+        },
+        this.tabId
+      );
     }
   }
 }

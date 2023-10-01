@@ -22,35 +22,41 @@ import { PageComputeMessage } from '@pinmenote/page-compute';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentFetchCssCommand implements ICommand<Promise<void>> {
-  constructor(private req: FetchCssRequest) {}
+  constructor(private req: FetchCssRequest, private tabId?: number) {}
   async execute(): Promise<void> {
     try {
       // fnConsoleLog('ContentFetchCssCommand->execute', this.req.url);
       const req = await FetchService.fetch<string>(this.req.url, {
         type: 'TEXT'
       });
-      await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: PageComputeMessage.CONTENT_FETCH_CSS,
-        data: {
-          url: req.url,
-          ok: req.ok,
-          status: req.status,
-          type: req.type,
-          data: req.data
-        }
-      });
+      await BrowserApi.sendTabMessage<FetchResponse<string>>(
+        {
+          type: PageComputeMessage.CONTENT_FETCH_CSS,
+          data: {
+            url: req.url,
+            ok: req.ok,
+            status: req.status,
+            type: req.type,
+            data: req.data
+          }
+        },
+        this.tabId
+      );
     } catch (e) {
       fnConsoleLog('ContentFetchCssCommand->ERROR', e, this.req.url);
-      await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: PageComputeMessage.CONTENT_FETCH_CSS,
-        data: {
-          url: this.req.url,
-          ok: false,
-          status: 500,
-          type: 'TEXT',
-          data: ''
-        }
-      });
+      await BrowserApi.sendTabMessage<FetchResponse<string>>(
+        {
+          type: PageComputeMessage.CONTENT_FETCH_CSS,
+          data: {
+            url: this.req.url,
+            ok: false,
+            status: 500,
+            type: 'TEXT',
+            data: ''
+          }
+        },
+        this.tabId
+      );
     }
   }
 }

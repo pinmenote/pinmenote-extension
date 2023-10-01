@@ -20,8 +20,9 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentPinStopCommand implements ICommand<Promise<void>> {
+  constructor(private tabId?: number) {}
   async execute(): Promise<void> {
-    await BrowserApi.sendTabMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS });
+    await BrowserApi.sendTabMessage<undefined>({ type: BusMessageType.CONTENT_STOP_LISTENERS }, this.tabId);
     fnConsoleLog('ContentPinStopCommand->execute');
   }
 }

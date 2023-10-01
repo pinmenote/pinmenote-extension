@@ -58,25 +58,25 @@ const handleMessage = async (
       await new ContentDownloadDataCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_TAKE_SCREENSHOT:
-      await new ContentTakeScreenshotCommand(msg.data).execute();
+      await new ContentTakeScreenshotCommand(msg.data, runtime.tab?.id).execute();
       break;
     case BusMessageType.CONTENT_THEME:
       await new ContentThemeCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_INVALIDATE:
-      await new ContentInvalidateCommand().execute();
+      await new ContentInvalidateCommand(runtime.tab?.id).execute();
       break;
     case BusMessageType.CONTENT_STOP_LISTENERS:
-      await new ContentPinStopCommand().execute();
+      await new ContentPinStopCommand(runtime.tab?.id).execute();
       break;
     case PageComputeMessage.CONTENT_FETCH_CSS:
-      await new ContentFetchCssCommand(msg.data).execute();
+      await new ContentFetchCssCommand(msg.data, runtime.tab?.id).execute();
       break;
     case PageComputeMessage.CONTENT_FETCH_IMAGE:
       await new ContentFetchImageCommand(msg.data, runtime.tab?.id).execute();
       break;
     case BusMessageType.CONTENT_FETCH_PDF:
-      await new ContentFetchPDFCommand(msg.data).execute();
+      await new ContentFetchPDFCommand(msg.data, runtime.tab?.id).execute();
       break;
     case BusMessageType.POPUP_BUG_REPORT:
       await new PopupBugReportCommand(msg.data).execute();
@@ -115,7 +115,7 @@ const handleMessage = async (
     case BusMessageType.IFRAME_PIN_SHOW:
     case PageComputeMessage.IFRAME_FETCH:
     case PageComputeMessage.IFRAME_FETCH_RESULT: {
-      await new IframePassMessageCommand(msg).execute();
+      await new IframePassMessageCommand(msg, runtime.tab?.id).execute();
       break;
     }
   }

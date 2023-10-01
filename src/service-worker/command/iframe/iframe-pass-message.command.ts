@@ -18,9 +18,9 @@ import { BrowserApi, BusMessage } from '@pinmenote/browser-api';
 import { ICommand } from '../../../common/model/shared/common.dto';
 
 export class IframePassMessageCommand implements ICommand<Promise<void>> {
-  constructor(private msg: BusMessage<any>) {}
+  constructor(private msg: BusMessage<any>, private tabId?: number) {}
 
   async execute(): Promise<void> {
-    await BrowserApi.sendTabMessage(this.msg);
+    await BrowserApi.sendTabMessage(this.msg, this.tabId);
   }
 }

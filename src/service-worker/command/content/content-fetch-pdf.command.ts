@@ -23,7 +23,7 @@ import { UrlFactory } from '../../../common/factory/url.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentFetchPDFCommand implements ICommand<Promise<void>> {
-  constructor(private req: FetchPDFRequest) {}
+  constructor(private req: FetchPDFRequest, private tabId?: number) {}
   async execute(): Promise<void> {
     try {
       // fnConsoleLog('ContentFetchImageCommand->execute', this.req.url);
@@ -33,22 +33,28 @@ export class ContentFetchPDFCommand implements ICommand<Promise<void>> {
       const data = await UrlFactory.toDataUri(req.data);
       const ok = req.ok;
       fnConsoleLog('ContentFetchImageCommand->result', this.req.url, data);
-      await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: BusMessageType.CONTENT_FETCH_PDF,
-        data: { data, ok, url: req.url, status: req.status, type: req.type }
-      });
+      await BrowserApi.sendTabMessage<FetchResponse<string>>(
+        {
+          type: BusMessageType.CONTENT_FETCH_PDF,
+          data: { data, ok, url: req.url, status: req.status, type: req.type }
+        },
+        this.tabId
+      );
     } catch (e) {
       fnConsoleLog('ContentFetchImageCommand->ERROR', e, this.req.url);
-      await BrowserApi.sendTabMessage<FetchResponse<string>>({
-        type: BusMessageType.CONTENT_FETCH_PDF,
-        data: {
-          url: this.req.url,
-          ok: false,
-          status: 500,
-          type: 'BLOB',
-          data: ''
-        }
-      });
+      await BrowserApi.sendTabMessage<FetchResponse<string>>(
+        {
+          type: BusMessageType.CONTENT_FETCH_PDF,
+          data: {
+            url: this.req.url,
+            ok: false,
+            status: 500,
+            type: 'BLOB',
+            data: ''
+          }
+        },
+        this.tabId
+      );
     }
   }
 }

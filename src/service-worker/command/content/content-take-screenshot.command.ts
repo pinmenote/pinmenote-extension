@@ -23,7 +23,7 @@ import { SettingsConfig } from '../../../common/environment';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class ContentTakeScreenshotCommand implements ICommand<void> {
-  constructor(private url: string) {}
+  constructor(private url: string, private tabId?: number) {}
   async execute(): Promise<void> {
     try {
       const settings = await BrowserStorage.get<SettingsConfig>(ObjectStoreKeys.CONTENT_SETTINGS_KEY);
@@ -37,7 +37,7 @@ export class ContentTakeScreenshotCommand implements ICommand<void> {
         format: settings.screenshotFormat,
         quality: settings.screenshotQuality
       });
-      await BrowserApi.sendTabMessage<string>({ type: BusMessageType.CONTENT_TAKE_SCREENSHOT, data });
+      await BrowserApi.sendTabMessage<string>({ type: BusMessageType.CONTENT_TAKE_SCREENSHOT, data }, this.tabId);
     } catch (e) {
       fnConsoleLog('Error', e);
     }
