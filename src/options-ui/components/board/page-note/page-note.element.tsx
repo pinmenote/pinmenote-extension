@@ -24,7 +24,7 @@ import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { marked } from 'marked';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
-import { TagHelper } from '../../../../common/command/tags/tag.helper';
+import { TagHelper } from '../../../../common/components/tag-editor/tag.helper';
 
 interface Props {
   dto: ObjDto<ObjPageNoteDto>;

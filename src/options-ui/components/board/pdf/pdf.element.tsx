@@ -23,7 +23,7 @@ import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 import { BoardItemMediator } from '../board-item.mediator';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { TagHelper } from '../../../../common/command/tags/tag.helper';
+import { TagHelper } from '../../../../common/components/tag-editor/tag.helper';
 
 interface Props {
   dto: ObjDto<ObjPdfDto>;

@@ -18,7 +18,7 @@ import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
 import { TagEditor } from '../../../common/components/tag-editor/tag-editor';
-import { TagHelper } from '../../../common/command/tags/tag.helper';
+import { TagHelper } from '../../../common/components/tag-editor/tag.helper';
 
 interface Props {
   obj: ObjDto<ObjPageDto>;
