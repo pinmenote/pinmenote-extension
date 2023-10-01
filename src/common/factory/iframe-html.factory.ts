@@ -17,13 +17,11 @@
 import { SegmentCss, SegmentPage } from '@pinmenote/page-compute';
 import { PageSegmentGetCommand } from '../command/snapshot/segment/page-segment-get.command';
 
+const POWERED_BY = `<div style="position: fixed;z-index: calc(9e999);line-height: 100%;bottom:4px;right:4px;background-color: #fff;color: #000;font-size: 0.6em;padding: 5px;border: 1px dashed #000;border-radius: 3px;">saved with <a style="color:#000;text-decoration: underline;font-weight: bold;" target="_blank" href="https://pinmenote.com">pinmenote.com</a></div>`;
+
 export class IframeHtmlFactory {
-  static computeHtml = async (snapshot: SegmentPage, title?: string): Promise<string> => {
+  static computeHtml = async (snapshot: SegmentPage, iframe = false, title = ''): Promise<string> => {
     let style = '';
-    let titleTag = '';
-    if (title) {
-      titleTag = `<title>${title}</title>`;
-    }
     for (const hash of snapshot.css) {
       const dto = await new PageSegmentGetCommand<SegmentCss>(hash).execute();
       if (dto) {
@@ -49,7 +47,7 @@ export class IframeHtmlFactory {
     return `<!doctype html>
 <html ${snapshot.html.htmlAttr}>
   <head>
-    ${titleTag}
+    <title>${title}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     ${style}
@@ -60,21 +58,26 @@ export class IframeHtmlFactory {
 
   static computeDownload = (pageSegment: SegmentPage, iframe: HTMLIFrameElement): string => {
     if (!iframe.contentWindow) return '';
+    const innerFrames = iframe.contentWindow.document.getElementsByTagName('iframe');
+    for (const frame of innerFrames) {
+      if (!frame.contentWindow) continue;
+      frame.srcdoc = `<html>
+<head>${frame.contentWindow.document.head.innerHTML}</head>
+<body>${frame.contentWindow.document.body.innerHTML}</body>
+</html>`;
+    }
     return `<!doctype html>
 <html ${pageSegment.html.htmlAttr}>
   <head>
       ${iframe.contentWindow.document.head.innerHTML}
+      ${POWERED_BY}
   </head>
   <body>
   
   <script>
-    if (document.readyState !== 'complete') {
-        document.addEventListener('readystatechange', async () => {
+  document.readyState !== 'complete' ? document.addEventListener('readystatechange', async () => {
           if (document.readyState === 'complete') renderTemplates();
-        });
-    } else {
-        renderTemplates();
-    }
+        }) : renderTemplates();
     const renderTemplates = () => {
         const elList = Array.from(document.querySelectorAll('[data-pmn-shadow]'));
         for (const el of elList) {
@@ -95,7 +98,7 @@ export class IframeHtmlFactory {
       }
     };  
   </script>
-    ${iframe.contentWindow.document.body.innerHTML}  
+    ${iframe.contentWindow.document.body.innerHTML}    
   </body>
 </html>`;
   };
