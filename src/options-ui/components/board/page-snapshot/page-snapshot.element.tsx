@@ -44,7 +44,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
   return (
     <BoardItem>
       <BoardItemTitle
-        title={props.dto.data.snapshot.info.title}
+        obj={props.dto}
         editCallback={handleEdit}
         htmlCallback={handleHtml}
         removeCallback={() => BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback)}

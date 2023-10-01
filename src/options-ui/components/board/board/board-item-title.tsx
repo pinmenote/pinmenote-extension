@@ -19,16 +19,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjTitleFactory } from '../../../../common/factory/obj-title.factory';
 
 interface Props {
-  title: string;
+  obj: ObjDto;
   editCallback: () => void;
   removeCallback: () => void;
   htmlCallback?: () => void;
 }
 
 export const BoardItemTitle: FunctionComponent<Props> = (props) => {
-  const title = props.title.length > 50 ? `${props.title.substring(0, 50)}...` : props.title;
+  const titleData = ObjTitleFactory.computeTitleSize(props.obj, 50);
 
   const htmlClick = () => {
     if (props.htmlCallback) props.htmlCallback();
@@ -45,9 +47,9 @@ export const BoardItemTitle: FunctionComponent<Props> = (props) => {
       <h2
         style={{ overflowWrap: 'anywhere', width: '80%', userSelect: 'none', cursor: 'pointer' }}
         onClick={htmlClick}
-        title={props.title}
+        title={titleData.title}
       >
-        {title}
+        {titleData.small}
       </h2>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         {htmlIcon}

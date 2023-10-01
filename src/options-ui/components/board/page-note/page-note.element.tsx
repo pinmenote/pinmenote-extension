@@ -53,7 +53,7 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
 
   return (
     <BoardItem>
-      <BoardItemTitle title={props.dto.data.data.title} editCallback={handleEdit} removeCallback={handleRemove} />
+      <BoardItemTitle obj={props.dto} editCallback={handleEdit} removeCallback={handleRemove} />
       <div>
         <div ref={ref}></div>
       </div>

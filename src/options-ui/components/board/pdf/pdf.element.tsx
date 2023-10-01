@@ -33,9 +33,6 @@ interface Props {
 export const PdfElement: FunctionComponent<Props> = (props) => {
   const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
 
-  const a = props.dto.data.data.url.pathname.split('/');
-  const title = a[a.length - 1];
-
   const handleEdit = () => {
     fnConsoleLog('EDIT !!!');
   };
@@ -47,7 +44,7 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
   return (
     <BoardItem>
       <BoardItemTitle
-        title={title}
+        obj={props.dto}
         htmlCallback={handleHtml}
         editCallback={handleEdit}
         removeCallback={() => BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback)}

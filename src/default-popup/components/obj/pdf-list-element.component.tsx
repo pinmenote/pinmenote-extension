@@ -27,6 +27,7 @@ import { PdfListExpandComponent } from './pdf-list-expand.component';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
+import { ObjTitleFactory } from '../../../common/factory/obj-title.factory';
 
 interface Props {
   obj: ObjDto<ObjPdfDto>;
@@ -58,9 +59,7 @@ export const PdfListElementComponent: FunctionComponent<Props> = (props) => {
   );
   const expandComponent = isExpanded ? <PdfListExpandComponent obj={props.obj}></PdfListExpandComponent> : '';
 
-  const a = props.obj.data.data.url.pathname.split('/');
-  let title = a[a.length - 1];
-  title = title.length > 30 ? `${title.substring(0, 30)}...` : title;
+  const titleData = ObjTitleFactory.computeTitleSize(props.obj);
 
   return (
     <div style={{ width: '100%', marginBottom: 15 }}>
@@ -77,7 +76,9 @@ export const PdfListElementComponent: FunctionComponent<Props> = (props) => {
             <PictureAsPdfIcon sx={{ fontSize: '16px' }} />
           </div>
           <IconButton size="small">{expandIcon}</IconButton>
-          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }}>{title}</Typography>
+          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }} title={titleData.title}>
+            {titleData.small}
+          </Typography>
         </div>
         <div
           style={{

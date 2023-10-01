@@ -25,6 +25,7 @@ import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import Typography from '@mui/material/Typography';
+import { ObjTitleFactory } from '../../../common/factory/obj-title.factory';
 
 interface Props {
   obj: ObjDto<ObjPageNoteDto>;
@@ -50,8 +51,7 @@ export const NoteListElementComponent: FunctionComponent<Props> = (props) => {
   );
   const expandComponent = isExpanded ? <NoteListExpandComponent note={props.obj} /> : '';
 
-  const value = props.obj.data.data.title;
-  const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
+  const titleData = ObjTitleFactory.computeTitleSize(props.obj);
 
   return (
     <div style={{ width: '100%', marginBottom: 15 }}>
@@ -68,7 +68,9 @@ export const NoteListElementComponent: FunctionComponent<Props> = (props) => {
             <NoteOutlinedIcon sx={{ fontSize: '16px' }} />
           </div>
           <IconButton size="small">{expandIcon}</IconButton>
-          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }}>{title}</Typography>
+          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }} title={titleData.title}>
+            {titleData.small}
+          </Typography>
         </div>
         <div
           style={{

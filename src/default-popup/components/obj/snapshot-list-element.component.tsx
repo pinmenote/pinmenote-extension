@@ -29,6 +29,7 @@ import { SaveElementIcon } from '../../../common/components/react/save-element.i
 import { SnapshotListExpandComponent } from './snapshot-list-expand.component';
 import Typography from '@mui/material/Typography';
 import { WebOutlined } from '@mui/icons-material';
+import { ObjTitleFactory } from '../../../common/factory/obj-title.factory';
 
 interface SnapshotListElementProps {
   obj: ObjDto<ObjPageDto>;
@@ -70,8 +71,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
   );
   const expandComponent = isExpanded ? <SnapshotListExpandComponent obj={props.obj} /> : '';
 
-  const value = props.obj.data.snapshot.info.title;
-  const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
+  const titleData = ObjTitleFactory.computeTitleSize(props.obj);
 
   return (
     <div key={props.obj.id} style={{ width: '100%', marginBottom: 15 }}>
@@ -92,7 +92,9 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
             )}
           </div>
           <IconButton size="small">{expandIcon}</IconButton>
-          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }}>{title}</Typography>
+          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }} title={titleData.title}>
+            {titleData.small}
+          </Typography>
         </div>
         <div
           style={{

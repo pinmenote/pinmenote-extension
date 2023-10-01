@@ -31,6 +31,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { ObjTitleFactory } from '../../../common/factory/obj-title.factory';
 
 interface Props {
   obj: ObjDto<ObjPinDto>;
@@ -75,8 +76,7 @@ export const PinListElement: FunctionComponent<Props> = (props) => {
       {isVisible ? <VisibilityIcon sx={{ fontSize: '12px' }} /> : <VisibilityOffIcon sx={{ fontSize: '12px' }} />}
     </IconButton>
   );
-  const value = props.obj.data.description.title;
-  const title = value.length > 30 ? `${value.substring(0, 30)}...` : value;
+  const titleData = ObjTitleFactory.computeTitleSize(props.obj);
 
   return (
     <div style={{ width: '100%', marginBottom: 15 }}>
@@ -93,7 +93,9 @@ export const PinListElement: FunctionComponent<Props> = (props) => {
             <PushPinIcon sx={{ fontSize: '16px' }} />
           </div>
           <IconButton size="small">{expandIcon}</IconButton>
-          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }}>{title}</Typography>
+          <Typography style={{ cursor: 'pointer', userSelect: 'none', fontSize: '12px' }} title={titleData.title}>
+            {titleData.small}
+          </Typography>
         </div>
         <div
           style={{
