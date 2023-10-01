@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto } from '../../../common/model/obj/obj.dto';
-import { BoardStore } from '../../store/board.store';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ICommand } from '../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../keys/object.store.keys';
 
-export class BoardItemMediator {
-  static removeObject = async (obj: ObjDto, refreshCallback: () => void) => {
-    if (await BoardStore.removeObj(obj)) {
-      refreshCallback();
-    }
-  };
+export class GetTagsCommand implements ICommand<Promise<string[]>> {
+  async execute(): Promise<string[]> {
+    const tags = await BrowserStorage.get<string[] | undefined>(ObjectStoreKeys.TAG_WORD);
+    return tags || [];
+  }
 }

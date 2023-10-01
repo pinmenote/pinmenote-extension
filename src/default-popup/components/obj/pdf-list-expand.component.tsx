@@ -17,6 +17,8 @@
 import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPdfDto } from '../../../common/model/obj/obj-pdf.dto';
+import { TagHelper } from '../../../common/command/tags/tag.helper';
+import { TagEditor } from '../../../common/components/tag-editor/tag-editor';
 
 interface Props {
   obj: ObjDto<ObjPdfDto>;
@@ -32,7 +34,12 @@ export const PdfListExpandComponent: FunctionComponent<Props> = ({ obj }) => {
         position: 'relative'
       }}
     >
-      <img src={obj.data.screenshot} width="280" />
+      <TagEditor
+        tags={obj.data.hashtags?.data || []}
+        width={250}
+        saveCallback={(newTags) => TagHelper.saveTags(obj, newTags)}
+      />
+      <img src={obj.data.data.screenshot} width="280" />
     </div>
   );
 };

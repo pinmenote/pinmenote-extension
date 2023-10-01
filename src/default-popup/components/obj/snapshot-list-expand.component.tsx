@@ -17,6 +17,8 @@
 import React, { FunctionComponent } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
+import { TagEditor } from '../../../common/components/tag-editor/tag-editor';
+import { TagHelper } from '../../../common/command/tags/tag.helper';
 
 interface Props {
   obj: ObjDto<ObjPageDto>;
@@ -32,6 +34,11 @@ export const SnapshotListExpandComponent: FunctionComponent<Props> = ({ obj }) =
         position: 'relative'
       }}
     >
+      <TagEditor
+        tags={obj.data.hashtags?.data || []}
+        width={280}
+        saveCallback={(newTags) => TagHelper.saveTags(obj, newTags)}
+      />
       <img src={obj.data.snapshot.data.screenshot} width="280" />
     </div>
   );

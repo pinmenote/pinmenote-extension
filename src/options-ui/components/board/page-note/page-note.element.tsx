@@ -24,7 +24,7 @@ import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { marked } from 'marked';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
-import { BoardItemMediator } from '../board-item.mediator';
+import { TagHelper } from '../../../../common/command/tags/tag.helper';
 
 interface Props {
   dto: ObjDto<ObjPageNoteDto>;
@@ -59,7 +59,7 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
       </div>
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
-        saveTags={(newTags) => BoardItemMediator.saveTags(props.dto, newTags, setHashtags)}
+        saveTags={(newTags) => TagHelper.saveTags(props.dto, newTags, setHashtags)}
         title="page note"
         tags={hashtags}
         createdAt={props.dto.createdAt}

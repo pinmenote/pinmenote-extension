@@ -187,7 +187,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (!iframe.contentWindow) return;
 
     document.title = `pin - ${snapshot.info.title}`;
-    const html = await IframeHtmlFactory.computeHtml(segment, false, snapshot.info.title);
+    const html = await IframeHtmlFactory.computeHtml(segment, snapshot.info.title);
 
     await writeDoc(iframe.contentWindow.document, html, segment.assets || [], true);
 
@@ -239,7 +239,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         const iframe: SegmentPage = dto.content as SegmentPage;
         const doc = (el as HTMLIFrameElement).contentWindow?.document;
         if (!doc) return;
-        const iframeHtml = await IframeHtmlFactory.computeHtml(iframe, true);
+        const iframeHtml = await IframeHtmlFactory.computeHtml(iframe);
         await writeDoc(doc, iframeHtml, iframe.assets);
         break;
       }

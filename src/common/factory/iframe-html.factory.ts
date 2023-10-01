@@ -20,7 +20,7 @@ import { PageSegmentGetCommand } from '../command/snapshot/segment/page-segment-
 const POWERED_BY = `<div style="position: fixed;z-index: calc(9e999);line-height: 100%;bottom:4px;right:4px;background-color: #fff;color: #000;font-size: 0.6em;padding: 5px;border: 1px dashed #000;border-radius: 3px;">saved with <a style="color:#000;text-decoration: underline;font-weight: bold;" target="_blank" href="https://pinmenote.com">pinmenote.com</a></div>`;
 
 export class IframeHtmlFactory {
-  static computeHtml = async (snapshot: SegmentPage, iframe = false, title = ''): Promise<string> => {
+  static computeHtml = async (snapshot: SegmentPage, title = ''): Promise<string> => {
     let style = '';
     for (const hash of snapshot.css) {
       const dto = await new PageSegmentGetCommand<SegmentCss>(hash).execute();

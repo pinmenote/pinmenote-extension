@@ -23,8 +23,8 @@ import { BusMessageType } from '../../../../common/model/bus.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { DrawerTag } from './drawer-tag';
 import { BoardStore } from '../../../store/board.store';
-import { BoardItemMediator } from '../board-item.mediator';
 import ClearIcon from '@mui/icons-material/Clear';
+import { GetTagsCommand } from '../../../../common/command/tags/get-tags.command';
 
 interface Props {
   showDrawer: boolean;
@@ -38,13 +38,13 @@ export const BoardDrawer: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     const dispatcher = TinyDispatcher.getInstance();
     const tagRefreshKey = dispatcher.addListener(BusMessageType.POP_REFRESH_TAGS, async () => {
-      const t = await BoardItemMediator.fetchTags();
+      const t = await new GetTagsCommand().execute();
       setAllTags(t.concat());
       setSearchValue('');
       setTags(t);
     });
     setTimeout(async () => {
-      const t = await BoardItemMediator.fetchTags();
+      const t = await new GetTagsCommand().execute();
       setAllTags(t.concat());
       setTags(t);
     });

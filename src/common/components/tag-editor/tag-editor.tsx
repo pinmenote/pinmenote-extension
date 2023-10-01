@@ -18,14 +18,15 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
-import { ObjHashtag } from '../../../common/model/obj/obj-hashtag.dto';
 import TextField from '@mui/material/TextField';
-import { BoardItemMediator } from '../board/board-item.mediator';
+import CircularProgress from '@mui/material/CircularProgress';
+import { ObjHashtag } from '../../model/obj/obj-hashtag.dto';
+import { GetTagsCommand } from '../../command/tags/get-tags.command';
 
 interface Props {
   tags: ObjHashtag[];
   saveCallback: (newTags: ObjHashtag[]) => void;
+  width: number;
 }
 
 const TAG_LIMIT = 5;
@@ -39,7 +40,7 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
 
   useEffect(() => {
     setTimeout(async () => {
-      const tags = await BoardItemMediator.fetchTags();
+      const tags = await new GetTagsCommand().execute();
       setTagOptions(tags);
     }, 100);
   }, []);
@@ -61,7 +62,7 @@ export const TagEditor: FunctionComponent<Props> = (props) => {
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div style={{ width: 378 }}>
+        <div style={{ width: props.width }}>
           <Autocomplete
             multiple
             freeSolo

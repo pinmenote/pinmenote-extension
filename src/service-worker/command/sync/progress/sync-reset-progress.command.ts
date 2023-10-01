@@ -35,7 +35,7 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
       id,
       serverId: -1
     });
-    await this.resetObjects();
+    // await this.resetObjects();
   }
 
   async resetObjects(): Promise<void> {

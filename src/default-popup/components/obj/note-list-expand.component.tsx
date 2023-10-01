@@ -18,6 +18,8 @@ import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { marked } from 'marked';
+import { TagHelper } from '../../../common/command/tags/tag.helper';
+import { TagEditor } from '../../../common/components/tag-editor/tag-editor';
 
 interface PinExpandProps {
   note: ObjDto<ObjNoteDto>;
@@ -40,6 +42,11 @@ export const NoteListExpandComponent: FunctionComponent<PinExpandProps> = ({ not
         position: 'relative'
       }}
     >
+      <TagEditor
+        tags={note.data.hashtags?.data || []}
+        width={250}
+        saveCallback={(newTags) => TagHelper.saveTags(note, newTags)}
+      />
       <div ref={ref}></div>
     </div>
   );

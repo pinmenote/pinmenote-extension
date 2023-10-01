@@ -23,6 +23,7 @@ import { ObjPdfDto } from '../../../../common/model/obj/obj-pdf.dto';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 import { BoardItemMediator } from '../board-item.mediator';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
+import { TagHelper } from '../../../../common/command/tags/tag.helper';
 
 interface Props {
   dto: ObjDto<ObjPdfDto>;
@@ -57,7 +58,7 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
       />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
-        saveTags={(newTags) => BoardItemMediator.saveTags(props.dto, newTags, setHashtags)}
+        saveTags={(newTags) => TagHelper.saveTags(props.dto, newTags, setHashtags)}
         title="page snapshot"
         createdAt={props.dto.createdAt}
         tags={hashtags}

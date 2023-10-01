@@ -102,6 +102,7 @@ export const ObjViewComponent: FunctionComponent<Props> = (props) => {
       }, 100);
     });
     return () => {
+      Store.resetStore();
       TinyDispatcher.getInstance().removeListener(BusMessageType.POP_UPDATE_URL, urlKey);
     };
   }, []);

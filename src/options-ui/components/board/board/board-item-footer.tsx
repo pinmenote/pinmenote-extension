@@ -21,12 +21,12 @@ import { DATE_YEAR_SECOND } from '../../../../common/date-format.constraints';
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
-import { TagEditor } from '../../tag-editor/tag-editor';
 import TagIcon from '@mui/icons-material/Tag';
 import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
 import { SettingsStore } from '../../../store/settings.store';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
+import { TagEditor } from '../../../../common/components/tag-editor/tag-editor';
+import dayjs from 'dayjs';
 
 interface Props {
   title: string;
@@ -81,7 +81,7 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
         {props.words.join(', ')}
       </div>
       <div style={{ display: tagsVisible ? 'inline-block' : 'none' }}>
-        <TagEditor tags={props.tags} saveCallback={props.saveTags} />
+        <TagEditor width={378} tags={props.tags} saveCallback={props.saveTags} />
       </div>
     </div>
   );
