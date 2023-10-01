@@ -18,13 +18,13 @@ import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { BoardItem } from '../board/board-item';
 import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
-import { BoardStore } from '../../../store/board.store';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../../common/model/obj/obj-note.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { marked } from 'marked';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 import { TagHelper } from '../../../../common/components/tag-editor/tag.helper';
+import { BoardItemMediator } from '../board-item.mediator';
 
 interface Props {
   dto: ObjDto<ObjPageNoteDto>;
@@ -33,6 +33,7 @@ interface Props {
 
 export const PageNoteElement: FunctionComponent<Props> = (props) => {
   const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
+  const [objRemove, setObjRemove] = useState<ObjDto | undefined>();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -45,14 +46,17 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
     fnConsoleLog('EDIT !!!');
   };
 
-  const handleRemove = async () => {
-    if (await BoardStore.removeObj(props.dto)) {
-      props.refreshBoardCallback();
-    }
+  const handleRemove = () => {
+    setObjRemove(props.dto);
+  };
+
+  const handleRemoveCallback = async (obj?: ObjDto) => {
+    if (obj) await BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback);
+    setObjRemove(undefined);
   };
 
   return (
-    <BoardItem>
+    <BoardItem obj={objRemove} handleRemove={handleRemoveCallback}>
       <BoardItemTitle obj={props.dto} editCallback={handleEdit} removeCallback={handleRemove} />
       <div>
         <div ref={ref}></div>

@@ -32,6 +32,7 @@ interface Props {
 
 export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
   const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
+  const [objRemove, setObjRemove] = useState<ObjDto | undefined>();
 
   const handleEdit = () => {
     fnConsoleLog('EDIT !!!');
@@ -41,19 +42,27 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
     window.location.hash = `obj/${props.dto.id}`;
   };
 
+  const handleRemove = () => {
+    setObjRemove(props.dto);
+  };
+
+  const handleRemoveCallback = async (obj?: ObjDto) => {
+    if (obj) await BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback);
+    setObjRemove(undefined);
+  };
+
   return (
-    <BoardItem>
+    <BoardItem obj={objRemove} handleRemove={handleRemoveCallback}>
       <BoardItemTitle
         obj={props.dto}
         editCallback={handleEdit}
         htmlCallback={handleHtml}
-        removeCallback={() => BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback)}
+        removeCallback={handleRemove}
       />
       <img
         style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
         src={props.dto.data.snapshot.data.screenshot}
       />
-      <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
         saveTags={(newTags) => TagHelper.saveTags(props.dto, newTags, setHashtags)}
         title="page snapshot"

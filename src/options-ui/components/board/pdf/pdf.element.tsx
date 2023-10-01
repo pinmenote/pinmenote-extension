@@ -32,6 +32,7 @@ interface Props {
 
 export const PdfElement: FunctionComponent<Props> = (props) => {
   const [hashtags, setHashtags] = useState<ObjHashtag[]>(props.dto.data.hashtags?.data || []);
+  const [objRemove, setObjRemove] = useState<ObjDto | undefined>();
 
   const handleEdit = () => {
     fnConsoleLog('EDIT !!!');
@@ -41,13 +42,21 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
     window.location.hash = `pdf/${props.dto.id}`;
   };
 
+  const handleRemove = () => {
+    setObjRemove(props.dto);
+  };
+  const handleRemoveCallback = async (obj?: ObjDto) => {
+    if (obj) await BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback);
+    setObjRemove(undefined);
+  };
+
   return (
-    <BoardItem>
+    <BoardItem obj={objRemove} handleRemove={handleRemoveCallback}>
       <BoardItemTitle
         obj={props.dto}
         htmlCallback={handleHtml}
         editCallback={handleEdit}
-        removeCallback={() => BoardItemMediator.removeObject(props.dto, props.refreshBoardCallback)}
+        removeCallback={handleRemove}
       />
       <img
         style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
