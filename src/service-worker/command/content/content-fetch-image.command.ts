@@ -27,7 +27,7 @@ export class ContentFetchImageCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     try {
       let headers = {};
-      if (this.req.url.indexOf('openstreetmap.org') > -1) headers = { 'User-Agent': 'pinmenote' };
+      if (this.req.url.indexOf('tile.openstreetmap.org') > -1) headers = { 'User-Agent': 'pinmenote' };
       fnConsoleLog('ContentFetchImageCommand->execute lol', this.req.url, headers);
       const req = await FetchService.fetch<Blob>(this.req.url, {
         type: 'BLOB',
