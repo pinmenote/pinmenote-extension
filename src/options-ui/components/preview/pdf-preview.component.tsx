@@ -28,6 +28,7 @@ import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnUid } from '../../../common/fn/fn-uid';
 import pdfWorkerUrl from 'url:../../../../node_modules/pdfjs-dist/build/pdf.worker.js';
+import '../../../../node_modules/pdfjs-dist/web/pdf_viewer.css';
 
 interface Props {
   visible: boolean;
@@ -70,7 +71,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
     try {
       GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
       // remove data:application/pdf;base64,
-      const loadingTask = getDocument({ data: atob(data?.substring(28)) });
+      const loadingTask = getDocument({ data: atob(data?.substring(28) || '') });
       const pdf = await loadingTask.promise;
 
       let currentPage = 1;
@@ -79,7 +80,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
       const viewport = page.getViewport({ scale: 1 });
 
       // https://stackoverflow.com/questions/35987398/pdf-js-how-to-make-pdf-js-viewer-canvas-responsive
-      const scale = pdfRef.current.clientWidth / ((viewport.width * 96) / 72);
+      const scale = Math.min(pdfRef.current.clientWidth / ((viewport.width * 96) / 72), 1);
 
       const eventBus = new EventBus();
       await renderPage(page, viewport, 1, eventBus, scale);
@@ -126,7 +127,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
       const idhash = window.location.hash.split('/');
       const obj = await new ObjGetCommand<ObjPdfDto>(parseInt(idhash[1])).execute();
       const data = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${obj.data.hash}`);
-      const pdf = atob(data?.substring(28));
+      const pdf = atob(data?.substring(28) || '');
       const buffer = new ArrayBuffer(pdf.length);
       const view = new Uint8Array(buffer);
       for (let i = 0; i < pdf.length; i++) {

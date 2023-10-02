@@ -19,8 +19,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import HtmlIcon from '@mui/icons-material/Html';
 import IconButton from '@mui/material/IconButton';
-import { ObjDto } from '../../../../common/model/obj/obj.dto';
+import { ObjDto, ObjTypeDto } from '../../../../common/model/obj/obj.dto';
 import { ObjTitleFactory } from '../../../../common/factory/obj-title.factory';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 interface Props {
   obj: ObjDto;
@@ -36,9 +37,11 @@ export const BoardItemTitle: FunctionComponent<Props> = (props) => {
     if (props.htmlCallback) props.htmlCallback();
   };
 
+  const icon = props.obj.type === ObjTypeDto.Pdf ? <PictureAsPdfIcon /> : <HtmlIcon />;
+
   const htmlIcon = props.htmlCallback ? (
     <IconButton title="HTML view" onClick={htmlClick}>
-      <HtmlIcon />
+      {icon}
     </IconButton>
   ) : undefined;
 
