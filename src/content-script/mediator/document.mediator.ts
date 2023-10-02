@@ -336,7 +336,7 @@ export class DocumentMediator {
     this.preloader.setAttribute(key, 'true');
     this.preloader.style.zIndex = 'calc(9e999)';
     this.preloader.style.position = 'fixed';
-    this.preloader.style.top = `${window.scrollY}px`;
+    this.preloader.style.top = `0px`;
     this.preloader.style.right = '0px';
     this.preloader.style.minWidth = '50px';
     this.preloader.style.maxWidth = '50px';
