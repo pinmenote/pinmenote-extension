@@ -18,7 +18,6 @@ import { ObjTypeDto, ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ContentPageSnapshotCreateCommand } from './content-page-snapshot-create.command';
-import { ContentPdfSaveCommand } from './content-pdf-save.command';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { PageSnapshotAddCommand } from '../../../common/command/snapshot/page-snapshot-add.command';
 import { PinStore } from '../../store/pin.store';
@@ -28,21 +27,16 @@ export class ContentPageSnapshotAddCommand implements ICommand<Promise<void>> {
   constructor(private settings: SettingsConfig, private url: ObjUrlDto) {}
 
   async execute(): Promise<void> {
-    if (this.url.href.endsWith('.pdf')) {
-      await new ContentPdfSaveCommand(this.url).execute();
-      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
-    } else {
-      const pageSnapshot = await new ContentPageSnapshotCreateCommand(
-        this.settings,
-        this.url,
-        document.body,
-        [],
-        undefined
-      ).execute();
-      await new PageSnapshotAddCommand(pageSnapshot, ObjTypeDto.PageSnapshot).execute();
+    const pageSnapshot = await new ContentPageSnapshotCreateCommand(
+      this.settings,
+      this.url,
+      document.body,
+      [],
+      undefined
+    ).execute();
+    await new PageSnapshotAddCommand(pageSnapshot, ObjTypeDto.PageSnapshot).execute();
 
-      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
-      PinStore.each((v) => v.show());
-    }
+    await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
+    PinStore.each((v) => v.show());
   }
 }

@@ -42,10 +42,12 @@ export enum BusMessageType {
   POPUP_LOGOUT = 'popup.logout',
   POPUP_OPEN = 'popup.open',
   POPUP_PAGE_SNAPSHOT_ADD = 'popup.page.snapshot.add',
+  POPUP_SAVE_PDF = 'popup.save.pdf',
   POPUP_PAGE_ELEMENT_SNAPSHOT_ADD = 'popup.page.element.snapshot.add',
   POPUP_PIN_START = 'popup.pin.start',
   POPUP_PAGE_ALTER_START = 'popup.page.alter.start',
   POPUP_SERVER_QUOTA = 'popup.server.quota',
+  POPUP_IS_PDF = 'popup.is.pdf',
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
   CONTENT_INVALIDATE = 'content.invalidate',

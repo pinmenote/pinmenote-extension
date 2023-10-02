@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PopupPageCustomizeRequest, PopupPinStartRequest } from '../../../common/model/obj-request.model';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
@@ -30,10 +30,12 @@ import ListItemText from '@mui/material/ListItemText';
 import { MainViewEnum } from '../component-model';
 import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
 import WebOutlined from '@mui/icons-material/WebOutlined';
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
 const zeroPad = {
   margin: 0,
@@ -45,8 +47,27 @@ interface Props {
 }
 
 export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
+  const [isPdf, setIsPdf] = useState<boolean>(false);
+  useEffect(() => {
+    TinyDispatcher.getInstance().addListener<boolean>(
+      BusMessageType.POPUP_IS_PDF,
+      (event, key, value) => {
+        setIsPdf(value);
+      },
+      true
+    );
+    // We open it in current tab so not necessary but maybe add tabId for consistence
+    BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_IS_PDF }).catch(() => {
+      /* IGNORE */
+    });
+  }, []);
   const handleSavePageClick = async () => {
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
+    props.closeListCallback(MainViewEnum.SAVE_PROGRESS);
+  };
+
+  const handleSavePdfClick = async () => {
+    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_SAVE_PDF, data: PopupActiveTabStore.url });
     props.closeListCallback(MainViewEnum.SAVE_PROGRESS);
   };
 
@@ -79,7 +100,7 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
   return (
     <div style={{ marginTop: 10 }}>
       <List sx={zeroPad}>
-        <ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: isPdf ? 'none' : 'inline-block' }}>
           <ListItemButton onClick={handleSaveElementClick}>
             <ListItemIcon>
               <SaveElementIcon />
@@ -87,12 +108,20 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
             <ListItemText primary="Save Fragment" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad}>
+        <ListItem sx={zeroPad} style={{ display: isPdf ? 'none' : 'inline-block' }}>
           <ListItemButton onClick={handleSavePageClick}>
             <ListItemIcon>
               <WebOutlined />
             </ListItemIcon>
             <ListItemText primary="Save Page" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad} style={{ display: isPdf ? 'inline-block' : 'none' }}>
+          <ListItemButton onClick={handleSavePdfClick}>
+            <ListItemIcon>
+              <PictureAsPdfIcon />
+            </ListItemIcon>
+            <ListItemText primary="Save PDF" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>

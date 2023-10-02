@@ -130,6 +130,7 @@ class PinMeScript {
   }
 }
 try {
+  console.log(document.body);
   new PinMeScript(fnUid(), 250);
 } catch (e: unknown) {
   fnConsoleError('PinMeScript->PROBLEM !!!', e);

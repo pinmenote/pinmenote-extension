@@ -29,6 +29,8 @@ import { PinStore } from './store/pin.store';
 import { PinVisibleCommand } from './command/pin/pin-visible.command';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../common/fn/fn-console';
+import { ContentPdfSaveCommand } from './command/snapshot/content-pdf-save.command';
+import { fnIsPdf } from '../common/fn/fn-is-pdf';
 
 export class ContentMessageHandler {
   private static href?: string;
@@ -77,6 +79,10 @@ export class ContentMessageHandler {
       case BusMessageType.POPUP_PAGE_SNAPSHOT_ADD:
         await new ContentPageSnapshotAddCommand(ContentSettingsStore.settings, msg.data).execute();
         break;
+      case BusMessageType.POPUP_SAVE_PDF:
+        await new ContentPdfSaveCommand(msg.data).execute();
+        await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
+        break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PAGE_ALTER_START:
       case BusMessageType.POPUP_PIN_START:
@@ -87,6 +93,10 @@ export class ContentMessageHandler {
         fnConsoleLog('DocumentMediator->startListeners', this.href, msg.data.url);
         DocumentMediator.startListeners(msg.data.type, msg.data.url, false);
         break;
+      case BusMessageType.POPUP_IS_PDF: {
+        await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_IS_PDF, data: fnIsPdf() });
+        break;
+      }
       case BusMessageType.CONTENT_STOP_LISTENERS:
         DocumentMediator.stopListeners();
         break;
