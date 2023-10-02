@@ -19,13 +19,12 @@ export enum MainViewEnum {
   PAGE_OBJECTS,
   TASK,
   NOTE,
-  NOTE_EDIT,
   ENCRYPT,
   DECRYPT,
   CALENDAR,
   FUNCTION,
   BUG_REPORT,
-  HTML
+  SAVE_PROGRESS
 }
 
 export interface EncryptMessage {

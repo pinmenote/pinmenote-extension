@@ -15,12 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { PopupPageCustomizeRequest, PopupPinStartRequest } from '../../../common/model/obj-request.model';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import CircularProgress from '@mui/material/CircularProgress';
 import FunctionsIcon from '@mui/icons-material/Functions';
 import HtmlIcon from '@mui/icons-material/Html';
 import List from '@mui/material/List';
@@ -34,7 +33,6 @@ import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { SaveElementIcon } from '../../../common/components/react/save-element.icon';
-import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import WebOutlined from '@mui/icons-material/WebOutlined';
 
 const zeroPad = {
@@ -46,22 +44,10 @@ interface Props {
   closeListCallback: (viewType: MainViewEnum) => void;
 }
 
-enum IsLoadingType {
-  None,
-  PageSave
-}
-
 export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
-  const [isLoading, setIsLoading] = useState<IsLoadingType>(IsLoadingType.None);
-
   const handleSavePageClick = async () => {
-    TinyDispatcher.getInstance().addListener<string>(BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, (event, key) => {
-      TinyDispatcher.getInstance().removeListener(event, key);
-      setIsLoading(IsLoadingType.None);
-      setTimeout(() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS), 100);
-    });
-    setIsLoading(IsLoadingType.PageSave);
     await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
+    props.closeListCallback(MainViewEnum.SAVE_PROGRESS);
   };
 
   const handleSaveElementClick = async (): Promise<void> => {
@@ -103,7 +89,9 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
         </ListItem>
         <ListItem sx={zeroPad}>
           <ListItemButton onClick={handleSavePageClick}>
-            <ListItemIcon>{isLoading === IsLoadingType.PageSave ? <CircularProgress /> : <WebOutlined />}</ListItemIcon>
+            <ListItemIcon>
+              <WebOutlined />
+            </ListItemIcon>
             <ListItemText primary="Save Page" />
           </ListItemButton>
         </ListItem>

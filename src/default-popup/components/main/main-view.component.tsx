@@ -28,6 +28,7 @@ import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjViewComponent } from '../obj/obj-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
+import { SavePageProgressComponent } from '../save-page-progress/save-page-progress.component';
 
 export const MainViewComponent: FunctionComponent = () => {
   const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
@@ -69,6 +70,8 @@ export const MainViewComponent: FunctionComponent = () => {
         );
       case MainViewEnum.FUNCTION:
         return <PopupFunctionsComponent />;
+      case MainViewEnum.SAVE_PROGRESS:
+        return <SavePageProgressComponent closeListCallback={changeMainTab} />;
     }
   };
 
