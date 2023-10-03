@@ -48,8 +48,9 @@ export enum ObjTypeDto {
 
 export interface ObjRemovedDto {
   id: number;
+  server?: ObjServerDto;
   type: ObjTypeDto;
-  hash: string[];
+  hash: string;
   removedAt: number;
 }
 

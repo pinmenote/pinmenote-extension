@@ -23,18 +23,17 @@ import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { PinGetCommentCommand } from './pin-get-comment.command';
 import { fnConsoleLog } from '../../../fn/fn-console';
 
-export class PinRemoveCommentCommand implements ICommand<Promise<string[]>> {
+export class PinRemoveCommentCommand implements ICommand<Promise<void>> {
   constructor(private pin: ObjDto<ObjPinDto>, private hash: string, private updatePin = true) {}
 
-  async execute(): Promise<string[]> {
+  async execute(): Promise<void> {
     fnConsoleLog('PinRemoveCommentCommand', this.hash);
-    const removedHashes: string[] = [];
     const commentList = this.pin.data.comments;
     const hashIndex = commentList.data.indexOf(this.hash);
-    if (hashIndex === -1) return [];
+    if (hashIndex === -1) return;
 
     const comment = await new PinGetCommentCommand(this.hash).execute();
-    if (!comment) return [];
+    if (!comment) return;
     let prev = comment.prev;
 
     while (prev !== undefined) {
@@ -45,7 +44,6 @@ export class PinRemoveCommentCommand implements ICommand<Promise<string[]>> {
         prev = prevComment.prev;
         await BrowserStorage.remove(prevKey);
       }
-      if (prev) removedHashes.push(prev);
     }
 
     await BrowserStorage.remove(`${ObjectStoreKeys.PIN_COMMENT}:${comment.hash}`);
@@ -56,6 +54,5 @@ export class PinRemoveCommentCommand implements ICommand<Promise<string[]>> {
       const pinKey = `${ObjectStoreKeys.OBJECT_ID}:${this.pin.id}`;
       await BrowserStorage.set(pinKey, this.pin);
     }
-    return removedHashes;
   }
 }

@@ -25,6 +25,7 @@ import { SwTaskStore } from '../../store/sw-task.store';
 import { SwTaskType } from '../../model/sw-task.model';
 import { fnConsoleLog } from '../../fn/fn-console';
 import { HashtagStore } from '../../store/hashtag.store';
+import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
 
 export class PageNoteRemoveCommand implements ICommand<void> {
   constructor(private obj: ObjDto<ObjPageNoteDto>) {}
@@ -32,45 +33,43 @@ export class PageNoteRemoveCommand implements ICommand<void> {
     fnConsoleLog('NoteRemoveCommand->execute', this.obj);
     const data = this.obj.data;
 
-    const hash = await this.cleanPrevHash(data);
-
-    const removed: ObjDto<ObjRemovedDto> = {
-      ...this.obj,
-      type: ObjTypeDto.Removed,
-      data: {
-        type: this.obj.type,
-        hash
-      }
-    };
-    await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, removed);
+    await this.cleanPrevHash(data);
 
     await LinkHrefStore.del(data.url, this.obj.id);
     await LinkHrefStore.noteDel(data.url, this.obj.id);
+
+    await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
+
+    const obj: ObjRemovedDto = {
+      id: this.obj.id,
+      server: this.obj.server,
+      type: ObjTypeDto.Removed,
+      hash: this.obj.data.hash,
+      removedAt: Date.now()
+    };
+    await new ObjUpdateIndexAddCommand({ id: obj.id, dt: obj.removedAt }).execute();
+    await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, obj);
+
+    if (data.hashtags) {
+      await HashtagStore.removeTags(
+        data.hashtags.data.map((t) => t.value),
+        this.obj.id
+      );
+    }
 
     await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
       words: data.data.words,
       objectId: this.obj.id
     });
-
-    if (data.hashtags)
-      await HashtagStore.removeTags(
-        data.hashtags.data.map((t) => t.value),
-        this.obj.id
-      );
-
-    await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
   }
 
-  private async cleanPrevHash(data: ObjPageNoteDto): Promise<string[]> {
-    const out = [data.hash];
+  private async cleanPrevHash(data: ObjPageNoteDto): Promise<void> {
     let prevHash = data.prev;
     while (prevHash) {
       const prevKey = `${ObjectStoreKeys.NOTE_HASH}:${prevHash}`;
       const prevData = await BrowserStorage.get<ObjPageNoteDto | undefined>(prevKey);
-      out.push(prevHash);
       prevHash = prevData?.prev;
       await BrowserStorage.remove(prevKey);
     }
-    return out;
   }
 }

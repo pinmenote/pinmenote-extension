@@ -17,7 +17,7 @@
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
 import { LinkHrefStore } from '../../store/link-href.store';
-import { ObjDto } from '../../model/obj/obj.dto';
+import { ObjDto, ObjRemovedDto, ObjTypeDto } from '../../model/obj/obj.dto';
 import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
@@ -28,13 +28,13 @@ import { SwTaskStore } from '../../store/sw-task.store';
 import { SwTaskType } from '../../model/sw-task.model';
 import { fnConsoleLog } from '../../fn/fn-console';
 import { HashtagStore } from '../../store/hashtag.store';
+import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
 
 export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto<ObjPageDto>) {}
 
   async execute(): Promise<void> {
     const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
-    await BrowserStorage.remove(key);
 
     await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
 
@@ -44,11 +44,22 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
 
     if (snapshot.segment) await this.removeSnapshot(snapshot.segment);
 
-    if (hashtags)
+    if (hashtags) {
       await HashtagStore.removeTags(
         hashtags.data.map((t) => t.value),
         this.obj.id
       );
+    }
+
+    const obj: ObjRemovedDto = {
+      id: this.obj.id,
+      server: this.obj.server,
+      type: ObjTypeDto.Removed,
+      hash: this.obj.data.snapshot.hash,
+      removedAt: Date.now()
+    };
+    await new ObjUpdateIndexAddCommand({ id: obj.id, dt: obj.removedAt }).execute();
+    await BrowserStorage.set<ObjRemovedDto>(key, obj);
 
     await SwTaskStore.addTask(SwTaskType.WORDS_REMOVE_INDEX, {
       words: this.obj.data.snapshot.info.words,

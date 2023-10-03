@@ -74,7 +74,7 @@ export class BoardStore {
             break;
           }
           case ObjTypeDto.Pdf: {
-            await new PdfRemoveCommand(value.id, value.data as ObjPdfDto).execute();
+            await new PdfRemoveCommand(value as ObjDto<ObjPdfDto>).execute();
             break;
           }
           case ObjTypeDto.PageNote:

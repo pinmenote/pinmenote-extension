@@ -20,16 +20,13 @@ import { ObjPinDto } from '../../../model/obj/obj-pin.dto';
 import { PinRemoveCommentCommand } from './pin-remove-comment.command';
 import { fnConsoleLog } from '../../../fn/fn-console';
 
-export class PinRemoveCommentListCommand implements ICommand<Promise<string[]>> {
+export class PinRemoveCommentListCommand implements ICommand<Promise<void>> {
   constructor(private pin: ObjDto<ObjPinDto>) {}
 
-  async execute(): Promise<string[]> {
+  async execute(): Promise<void> {
     fnConsoleLog('PinRemoveCommentListCommand', this.pin.data.comments.data);
-    const out = [];
     for (const hash of this.pin.data.comments.data) {
-      const removedHashes = await new PinRemoveCommentCommand(this.pin, hash, false).execute();
-      out.push(...removedHashes, hash);
+      await new PinRemoveCommentCommand(this.pin, hash, false).execute();
     }
-    return out;
   }
 }

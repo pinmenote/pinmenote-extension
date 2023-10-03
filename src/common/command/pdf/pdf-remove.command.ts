@@ -21,21 +21,33 @@ import { ObjPdfDto } from '../../model/obj/obj-pdf.dto';
 import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { HashtagStore } from '../../store/hashtag.store';
+import { ObjDto, ObjRemovedDto, ObjTypeDto } from '../../model/obj/obj.dto';
+import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
 
 export class PdfRemoveCommand implements ICommand<Promise<void>> {
-  constructor(private id: number, private dto: ObjPdfDto) {}
+  constructor(private obj: ObjDto<ObjPdfDto>) {}
   async execute(): Promise<void> {
-    await BrowserStorage.remove(`${ObjectStoreKeys.PDF_DATA}:${this.dto.hash}`);
-    await BrowserStorage.remove(`${ObjectStoreKeys.OBJECT_ID}:${this.id}`);
+    const key = `${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`;
+    await BrowserStorage.remove(`${ObjectStoreKeys.PDF_DATA}:${this.obj.data.hash}`);
 
-    await LinkHrefStore.del(this.dto.data.url, this.id);
+    await LinkHrefStore.del(this.obj.data.data.url, this.obj.id);
 
-    await new ObjRemoveIdCommand(this.id, ObjectStoreKeys.OBJECT_LIST).execute();
+    await new ObjRemoveIdCommand(this.obj.id, ObjectStoreKeys.OBJECT_LIST).execute();
 
-    if (this.dto.hashtags)
+    if (this.obj.data.hashtags) {
       await HashtagStore.removeTags(
-        this.dto.hashtags.data.map((t) => t.value),
-        this.id
+        this.obj.data.hashtags.data.map((t) => t.value),
+        this.obj.id
       );
+    }
+    const obj: ObjRemovedDto = {
+      id: this.obj.id,
+      server: this.obj.server,
+      type: ObjTypeDto.Removed,
+      hash: this.obj.data.hash,
+      removedAt: Date.now()
+    };
+    await new ObjUpdateIndexAddCommand({ id: obj.id, dt: obj.removedAt }).execute();
+    await BrowserStorage.set<ObjRemovedDto>(key, obj);
   }
 }

@@ -60,7 +60,7 @@ export const ObjListComponent: FunctionComponent<Props> = (props) => {
     if (obj) {
       switch (obj.type) {
         case ObjTypeDto.Pdf:
-          await new PdfRemoveCommand(obj.id, obj.data as any).execute();
+          await new PdfRemoveCommand(obj as ObjDto<ObjPdfDto>).execute();
           break;
         case ObjTypeDto.PageSnapshot:
         case ObjTypeDto.PageElementSnapshot:

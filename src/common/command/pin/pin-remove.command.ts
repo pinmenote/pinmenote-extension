@@ -38,24 +38,19 @@ export class PinRemoveCommand implements ICommand<void> {
 
     if (this.iframe) await LinkHrefStore.pinDel(this.iframe.url, this.id);
 
-    // ObjRemovedDto gather all hashes
-    const hash = await new PinRemoveCommentListCommand(pin).execute();
-
-    hash.push(pin.data.data.hash);
-    hash.push(pin.data.description.hash);
-    hash.push(...pin.data.draw.data.map((d) => d.hash));
-    if (pin.data.video) hash.push(pin.data.video.hash);
+    await new PinRemoveCommentListCommand(pin).execute();
 
     const obj: ObjRemovedDto = {
-      id: this.id,
+      id: pin.id,
+      server: pin.server,
       type: ObjTypeDto.Removed,
-      hash,
+      hash: pin.data.data.hash,
       removedAt: Date.now()
     };
 
     await BrowserStorage.set<ObjRemovedDto>(key, obj);
 
-    await new ObjUpdateIndexAddCommand({ id: this.id, dt: obj.removedAt }).execute();
+    await new ObjUpdateIndexAddCommand({ id: obj.id, dt: obj.removedAt }).execute();
 
     await new ObjRemoveIdCommand(this.id, ObjectStoreKeys.PIN_LIST).execute();
   }
