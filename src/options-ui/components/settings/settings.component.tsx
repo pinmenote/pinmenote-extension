@@ -16,7 +16,6 @@
  */
 import React, { CSSProperties, FunctionComponent } from 'react';
 import { ContentSettingsComponent } from './content/content-settings.component';
-import { CryptoSettingsComponent } from './crypto/crypto-settings.component';
 import { DEFAULT_BORDER_RADIUS } from '../../../common/components/colors';
 import { ScreenshotSettingsComponent } from './screenshot/screenshot-settings.component';
 import Typography from '@mui/material/Typography';
@@ -49,9 +48,6 @@ export const SettingsComponent: FunctionComponent = () => {
         </div>
         <div style={containerStyle}>
           <ContentSettingsComponent></ContentSettingsComponent>
-        </div>
-        <div style={containerStyle}>
-          <CryptoSettingsComponent></CryptoSettingsComponent>
         </div>
         <div style={containerStyle}>
           <Button

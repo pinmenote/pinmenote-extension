@@ -47,8 +47,10 @@ export enum ObjTypeDto {
 }
 
 export interface ObjRemovedDto {
+  id: number;
   type: ObjTypeDto;
   hash: string[];
+  removedAt: number;
 }
 
 export type ObjDataDto = ObjPageDto | ObjPinDto | ObjPdfDto | ObjNoteDto | ObjPageNoteDto | ObjRemovedDto;

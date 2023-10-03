@@ -21,4 +21,10 @@ export class SyncCryptoFactory {
     await fnSleep(1);
     return 'foo';
   }
+
+  static async encrypt(data: string, key: string): Promise<string> {
+    await fnSleep(1);
+    if (key) return data;
+    return data;
+  }
 }

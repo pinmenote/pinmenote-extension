@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDto, ObjUrlDto } from '../../model/obj/obj.dto';
+import { ObjDto, ObjRemovedDto, ObjTypeDto, ObjUrlDto } from '../../model/obj/obj.dto';
 import { ObjPinDto, PinIframeDto } from '../../model/obj/obj-pin.dto';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../model/shared/common.dto';
@@ -23,6 +23,7 @@ import { ObjRemoveIdCommand } from '../obj/id/obj-remove-id.command';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PinRemoveCommentListCommand } from './comment/pin-remove-comment-list.command';
 import { fnConsoleLog } from '../../fn/fn-console';
+import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
 
 export class PinRemoveCommand implements ICommand<void> {
   constructor(private id: number, private url: ObjUrlDto, private iframe?: PinIframeDto) {}
@@ -33,13 +34,28 @@ export class PinRemoveCommand implements ICommand<void> {
     const pin = await BrowserStorage.get<ObjDto<ObjPinDto> | undefined>(key);
     if (!pin) return;
 
-    await BrowserStorage.remove(key);
-
     await LinkHrefStore.pinDel(this.url, this.id);
 
-    await new PinRemoveCommentListCommand(pin).execute();
-
     if (this.iframe) await LinkHrefStore.pinDel(this.iframe.url, this.id);
+
+    // ObjRemovedDto gather all hashes
+    const hash = await new PinRemoveCommentListCommand(pin).execute();
+
+    hash.push(pin.data.data.hash);
+    hash.push(pin.data.description.hash);
+    hash.push(...pin.data.draw.data.map((d) => d.hash));
+    if (pin.data.video) hash.push(pin.data.video.hash);
+
+    const obj: ObjRemovedDto = {
+      id: this.id,
+      type: ObjTypeDto.Removed,
+      hash,
+      removedAt: Date.now()
+    };
+
+    await BrowserStorage.set<ObjRemovedDto>(key, obj);
+
+    await new ObjUpdateIndexAddCommand({ id: this.id, dt: obj.removedAt }).execute();
 
     await new ObjRemoveIdCommand(this.id, ObjectStoreKeys.PIN_LIST).execute();
   }

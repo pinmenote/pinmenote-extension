@@ -17,8 +17,6 @@
 import React, { FunctionComponent, ReactElement, useState } from 'react';
 import { BugReportComponent } from '../bug-report/bug-report.component';
 import { CalendarComponent } from '../calendar/calendar.component';
-import { DecryptComponent } from '../decrypt/decrypt.component';
-import { EncryptComponent } from '../encrypt/encrypt.component';
 import { MainFooterButton } from './main-footer.button';
 import { MainHeaderComponent } from './main-header.component';
 import { MainMenuListComponent } from './main-menu-list.component';
@@ -51,10 +49,6 @@ export const MainViewComponent: FunctionComponent = () => {
         return <MainMenuListComponent closeListCallback={changeMainTab} />;
       case MainViewEnum.PAGE_OBJECTS:
         return <ObjViewComponent editNoteCallback={editNoteCallback} />;
-      case MainViewEnum.ENCRYPT:
-        return <EncryptComponent />;
-      case MainViewEnum.DECRYPT:
-        return <DecryptComponent />;
       case MainViewEnum.CALENDAR:
         return <CalendarComponent />;
       case MainViewEnum.BUG_REPORT:
