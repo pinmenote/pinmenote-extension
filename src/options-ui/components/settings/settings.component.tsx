@@ -36,8 +36,21 @@ export const SettingsComponent: FunctionComponent = () => {
   const handleConvert = async () => {
     await new OptionsConvertObjectsCommand().execute();
   };
+
+  let convertComponent = null;
+  if (!environmentConfig.isProduction) {
+    convertComponent = (
+      <div style={containerStyle}>
+        <Button variant="outlined" onClick={handleConvert}>
+          Convert Objects
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', zIndex: 1 }}>
+      {convertComponent}
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography fontSize="3em" style={{ margin: 20 }}>
           Settings
@@ -49,15 +62,6 @@ export const SettingsComponent: FunctionComponent = () => {
         </div>
         <div style={containerStyle}>
           <ContentSettingsComponent />
-        </div>
-        <div style={containerStyle}>
-          <Button
-            style={{ display: environmentConfig.isProduction ? 'none' : 'flex' }}
-            variant="outlined"
-            onClick={handleConvert}
-          >
-            Convert Objects
-          </Button>
         </div>
         <div style={containerStyle}>
           <OpenSourceListComponent />
