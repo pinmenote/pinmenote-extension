@@ -22,6 +22,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { OptionsConvertObjectsCommand } from '../../command/options-convert-objects.command';
 import { environmentConfig } from '../../../common/environment';
+import { OpenSourceListComponent } from './open-source/open-source-list.component';
 
 const containerStyle: CSSProperties = {
   margin: 10,
@@ -36,7 +37,7 @@ export const SettingsComponent: FunctionComponent = () => {
     await new OptionsConvertObjectsCommand().execute();
   };
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', zIndex: 1 }}>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography fontSize="3em" style={{ margin: 20 }}>
           Settings
@@ -44,10 +45,10 @@ export const SettingsComponent: FunctionComponent = () => {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto', height: 'calc(100vh - 160px)' }}>
         <div style={containerStyle}>
-          <ScreenshotSettingsComponent></ScreenshotSettingsComponent>
+          <ScreenshotSettingsComponent />
         </div>
         <div style={containerStyle}>
-          <ContentSettingsComponent></ContentSettingsComponent>
+          <ContentSettingsComponent />
         </div>
         <div style={containerStyle}>
           <Button
@@ -57,6 +58,9 @@ export const SettingsComponent: FunctionComponent = () => {
           >
             Convert Objects
           </Button>
+        </div>
+        <div style={containerStyle}>
+          <OpenSourceListComponent />
         </div>
       </div>
     </div>

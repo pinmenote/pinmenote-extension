@@ -59,6 +59,7 @@ const OptionsUI: FunctionComponent = () => {
     if (currentView === CurrentView.PDF_DETAILS) setShowPdfPreview(true);
     setTimeout(() => {
       if (!SettingsStore.settings?.interface) return;
+      if (currentView === CurrentView.SETTINGS) return;
       setShowDrawer(!!SettingsStore.settings.interface.optionsDrawerOpen);
     }, 1);
     window.addEventListener('hashchange', handleHashChange);
@@ -75,9 +76,13 @@ const OptionsUI: FunctionComponent = () => {
     } else if (view === CurrentView.PDF_DETAILS) {
       setShowPreview(false);
       setShowPdfPreview(true);
+    } else if (view === CurrentView.SETTINGS) {
+      setShowDrawer(false);
     } else {
       setShowPreview(false);
       setShowPdfPreview(false);
+      if (!SettingsStore.settings?.interface) return;
+      setShowDrawer(!!SettingsStore.settings.interface.optionsDrawerOpen);
     }
   };
 
@@ -130,7 +135,8 @@ const OptionsUI: FunctionComponent = () => {
             left: 0,
             width: showDrawer ? 'calc(100% - 50px)' : '100%',
             height: '100vh',
-            backgroundColor: '#ffffff'
+            backgroundColor: '#ffffff',
+            zIndex: 1000
           }}
         >
           <SettingsComponent />

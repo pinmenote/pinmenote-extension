@@ -32,7 +32,7 @@ export const SavePageProgressComponent: FunctionComponent<Props> = (props) => {
     dispatcher.addListener<string>(
       BusMessageType.POPUP_PAGE_SNAPSHOT_ADD,
       () => {
-        setTimeout(() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS), 250);
+        setTimeout(() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS), 1);
       },
       true
     );
@@ -50,6 +50,11 @@ export const SavePageProgressComponent: FunctionComponent<Props> = (props) => {
           img.style.maxWidth = '280px';
           ref.current.insertBefore(img, ref.current.firstChild);
         }
+        if (value.url) {
+          const a = document.createElement('a');
+          a.href = value.url;
+          a.style.color = '#000';
+        }
         ref.current.insertBefore(p, ref.current.firstChild);
       }
     );
@@ -60,7 +65,7 @@ export const SavePageProgressComponent: FunctionComponent<Props> = (props) => {
   return (
     <div>
       <Typography>Saving page progress</Typography>
-      <div ref={ref}></div>
+      <div ref={ref} style={{ overflow: 'auto', height: 400 }}></div>
     </div>
   );
 };
