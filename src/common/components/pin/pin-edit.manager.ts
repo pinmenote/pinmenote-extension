@@ -65,6 +65,11 @@ export class PinEditManager {
     this.parent.topBar.drawVisibleIcon.show();
   };
 
+  saveDraw = async () => {
+    await this.parent.model.draw.data.saveDraw(this.parent.model);
+    this.stopDraw();
+  };
+
   stopDraw = () => {
     this.parent.drawComponent.drawArea.canDraw = false;
     this.cancelDraw();

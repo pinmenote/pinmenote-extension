@@ -40,8 +40,8 @@ export class DrawSaveButton {
     this.el.removeEventListener('click', this.handleClick);
   }
 
-  private handleClick = () => {
-    this.edit.stopDraw();
+  private handleClick = async () => {
+    await this.edit.saveDraw();
     this.model.topBar.drawVisibleIcon.turnOn();
   };
 }

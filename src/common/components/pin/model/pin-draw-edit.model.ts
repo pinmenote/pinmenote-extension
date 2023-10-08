@@ -59,28 +59,12 @@ export class DrawDataModel {
   }
 
   async saveDraw(model: PinEditModel) {
-    if (this.currentDraw.hash === this.draw.data[this.drawIndex].hash) {
+    const d = this.draw.data[this.drawIndex];
+    if (d && this.currentDraw.hash === d.hash) {
       await new PinUpdateDrawCommand(model.object, this.currentDraw).execute();
     } else {
       await new PinAddDrawCommand(model.object, this.currentDraw).execute();
     }
-  }
-
-  // Index
-  hasNextIndex(): boolean {
-    return this.drawIndex <= this.draw.data.length - 1;
-  }
-
-  hasPrevIndex(): boolean {
-    return this.drawIndex > 0;
-  }
-
-  nextDraw() {
-    if (this.hasNextIndex()) this.drawIndex++;
-  }
-
-  prevDraw() {
-    if (this.hasPrevIndex()) this.drawIndex--;
   }
 
   removeDraw() {
