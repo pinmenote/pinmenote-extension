@@ -33,11 +33,18 @@ export const ContentSettingsComponent: FunctionComponent = () => {
   const [expertMode, setExpertMode] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!SettingsStore.settings) return;
+    setSettings();
+  }, []);
+
+  const setSettings = () => {
+    if (!SettingsStore.settings) {
+      setTimeout(setSettings, 100);
+      return;
+    }
     setBorderRadius(SettingsStore.settings.borderRadius || `${DEFAULT_BORDER_RADIUS}px`);
     setBorderStyle(SettingsStore.settings.borderStyle || '2px solid #ff0000');
     setExpertMode(SettingsStore.settings.expertMode || false);
-  }, []);
+  };
 
   const handleBorderRadiusChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!SettingsStore.settings) return;

@@ -212,9 +212,6 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     this.drawBar.focusin();
     this.downloadBar.focusin();
     this.editBar.focusin();
-    if (this.doc.settings.borderStyle === 'none') {
-      this.model.ref.style.border = this.doc.settings.newElementStyle;
-    }
     if (!this.model.canvas && this.edit.canTimeout)
       this.timeoutId = this.doc.window.setTimeout(this.handleMouseOut, 3000);
   };
