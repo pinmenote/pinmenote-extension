@@ -23,16 +23,14 @@ import { IframeHtmlFactory } from '../../../common/factory/iframe-html.factory';
 import { LinkHrefStore } from '../../../common/store/link-href.store';
 import { ObjGetCommand } from '../../../common/command/obj/obj-get.command';
 import { ObjPageDto } from '../../../common/model/obj/obj-page.dto';
-import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PageSegmentGetCommand } from '../../../common/command/snapshot/segment/page-segment-get.command';
 import { PageSnapshotDto } from '../../../common/model/obj/page-snapshot.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
-import { SettingsStore } from '../../store/settings.store';
-import { XpathFactory } from '../../../common/factory/xpath.factory';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSleep } from '../../../common/fn/fn-sleep';
 import { fnUid } from '../../../common/fn/fn-uid';
 import { HtmlPreviewHeaderComponent } from './html-preview-header.component';
+import { PreviewPinRenderer } from './preview-pin-renderer';
 
 interface Props {
   visible: boolean;
@@ -46,6 +44,17 @@ class PinState {
   private static container?: HTMLDivElement;
   private static size = { width: 0, height: 0 };
 
+  static cleanup() {
+    for (const pin of this.components) {
+      pin.cleanup();
+    }
+  }
+
+  static async render(htmlRef: HTMLDivElement, href: string) {
+    const pinIds = await LinkHrefStore.pinIds(href);
+    await PreviewPinRenderer.renderPins(htmlRef, pinIds, this.addComponent);
+  }
+
   static start(container: HTMLDivElement) {
     this.container = container;
     this.updateSize(container.getBoundingClientRect());
@@ -53,9 +62,9 @@ class PinState {
     this.timeoutId = window.setTimeout(this.invalidatePins, this.ms);
   }
 
-  static addComponent(pin: PinComponent) {
+  static addComponent = (pin: PinComponent) => {
     this.components.push(pin);
-  }
+  };
 
   static stop() {
     clearTimeout(this.timeoutId);
@@ -127,73 +136,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       await renderSnapshot(obj, pageSegment?.content);
     }
     if (obj.type === ObjTypeDto.PageSnapshot) {
-      const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.info.url.href);
-      await renderPins(pinIds);
       if (!htmlRef.current) return;
-      if (pinIds.length > 0) PinState.start(htmlRef.current);
+      await PinState.render(htmlRef.current, obj.data.snapshot.info.url.href);
     }
-  };
-
-  const renderPins = async (ids: number[]) => {
-    if (!htmlRef.current?.lastElementChild) return;
-
-    const el = htmlRef.current?.lastElementChild as HTMLIFrameElement;
-    if (!el.contentDocument || !el.contentWindow) return;
-    fnConsoleLog('HtmlPreviewComponent->renderPins', ids);
-
-    for (const id of ids) {
-      const pin = await new ObjGetCommand<ObjPinDto>(id).execute();
-      fnConsoleLog('HtmlPreviewComponent->renderPins->pin', pin);
-      if (pin.data.data.iframe) {
-        renderIframePin(el, pin);
-      } else {
-        renderHtmlPin(el, pin);
-      }
-    }
-  };
-
-  const renderIframePin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>) => {
-    if (!el.contentDocument || !el.contentWindow) return false;
-    if (!pin.data.data.iframe) return;
-    const index = pin.data.data.iframe.index;
-    const iframe = el.contentDocument.querySelector(`[data-pin-iframe-index="${index}"]`);
-    if (!iframe) {
-      const iframeList = Array.from(el.contentDocument.getElementsByTagName('iframe'));
-      for (const frame of iframeList) {
-        renderIframePin(frame, pin);
-      }
-    } else {
-      // fnConsoleLog('renderIframePin->pin', pin, 'index', index);
-      renderHtmlPin(iframe as HTMLIFrameElement, pin);
-    }
-  };
-
-  const renderHtmlPin = (el: HTMLIFrameElement, pin: ObjDto<ObjPinDto>) => {
-    if (!el.contentDocument || !el.contentWindow) return false;
-    if (!SettingsStore.settings) return false;
-
-    let xpath = pin.data.data.xpath;
-    // canvas pins are saved as img
-    if (pin.data.data.canvas) {
-      xpath = xpath.replaceAll('CANVAS', 'IMG').replaceAll('VIDEO', 'IMG');
-    }
-    const value = XpathFactory.newXPathResult(el.contentDocument, xpath);
-    const node = value.singleNodeValue as HTMLElement;
-
-    if (!node) {
-      fnConsoleLog('renderHtmlPin->not-found', pin, 'xpath', pin.data.data.xpath, 'el', el);
-      return false;
-    }
-
-    const pinComponent = new PinComponent(node, pin, {
-      settings: SettingsStore.settings,
-      document: el.contentDocument,
-      window: el.contentWindow
-    });
-    pinComponent.render();
-    PinState.addComponent(pinComponent);
-    fnConsoleLog('PIN !!!', pin.id, pin.data, value);
-    return true;
   };
 
   const renderCanvas = (obj: ObjDto<ObjPageDto>, content?: SegmentPage) => {
@@ -336,6 +281,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (!htmlRef.current) return;
     const iframe = htmlRef.current.lastChild as HTMLIFrameElement;
     // TODO gather all iframe hashes and pass here with content
+    PinState.cleanup();
     const html = IframeHtmlFactory.computeDownload(pageSegment, iframe);
     // https://stackoverflow.com/a/54302120 handle utf-8 string download
     const url = window.URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'text/html' }));
@@ -345,6 +291,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       filename,
       conflictAction: 'uniquify'
     });
+    if (!htmlRef.current) return;
+    await PinState.render(htmlRef.current, objData.data.snapshot.info.url.href);
   };
 
   const handleClose = () => {
