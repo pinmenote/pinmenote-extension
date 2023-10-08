@@ -37,12 +37,15 @@ import { fnIsElementHidden } from '../../fn/fn-is-element-hidden';
 import { pinStyles } from './styles/pin.styles';
 
 export class PinComponent implements HtmlComponent<void>, PageComponent {
-  readonly top: HTMLDivElement;
-  readonly bottom: HTMLDivElement;
+  private readonly top: HTMLDivElement;
+  readonly topShadow: ShadowRoot;
+
+  private readonly bottom: HTMLDivElement;
+  readonly bottomShadow: ShadowRoot;
+
   readonly border: HTMLDivElement;
 
   private readonly mouseManager: PinMouseManager;
-  private timeoutEnabled = false;
 
   readonly topBar: TopBarComponent;
   readonly bottomBar: BottomBarComponent;
@@ -62,7 +65,10 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
 
   constructor(ref: HTMLElement, object: ObjDto<ObjPinDto>, private doc: PinDocument) {
     this.top = this.doc.document.createElement('div');
+    this.topShadow = this.top.attachShadow({ mode: 'closed' });
+
     this.bottom = this.doc.document.createElement('div');
+    this.bottomShadow = this.bottom.attachShadow({ mode: 'closed' });
     this.border = this.doc.document.createElement('div');
     this.mouseManager = new PinMouseManager(this.top, this.bottom, this.handleMouseOver, this.handleMouseOut);
     this.model = new PinEditModel(object, ref, this, this.mouseManager, doc);
@@ -109,15 +115,15 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     );
     applyStylesToElement(this.bottom, bottomStyles);
     applyStylesToElement(this.top, topStyles);
-    this.bottom.appendChild(this.bottomBar.render());
-    this.bottom.appendChild(this.text.render());
+    this.bottomShadow.appendChild(this.bottomBar.render());
+    this.bottomShadow.appendChild(this.text.render());
 
-    this.top.appendChild(this.topBar.render());
+    this.topShadow.appendChild(this.topBar.render());
 
     // Draw
-    this.top.appendChild(this.drawComponent.render());
-    this.top.appendChild(this.drawMain.render());
-    this.top.appendChild(this.drawBar.render());
+    this.topShadow.appendChild(this.drawComponent.render());
+    this.topShadow.appendChild(this.drawMain.render());
+    this.topShadow.appendChild(this.drawBar.render());
 
     this.drawBar.setSize(4);
     this.drawBar.setTool(DrawToolDto.Pencil);
@@ -128,10 +134,10 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     }
 
     // Download
-    this.top.appendChild(this.downloadBar.render());
+    this.topShadow.appendChild(this.downloadBar.render());
 
     // Pin Edit
-    this.top.appendChild(this.editBar.render());
+    this.topShadow.appendChild(this.editBar.render());
 
     this.doc.document.body.appendChild(this.bottom);
     this.doc.document.body.appendChild(this.top);
@@ -209,14 +215,15 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
     if (this.doc.settings.borderStyle === 'none') {
       this.model.ref.style.border = this.doc.settings.newElementStyle;
     }
-    if (!this.model.canvas && this.timeoutEnabled)
+    if (!this.model.canvas && this.edit.canTimeout)
       this.timeoutId = this.doc.window.setTimeout(this.handleMouseOut, 3000);
   };
 
   private handleMouseOut = () => {
     this.doc.window.clearTimeout(this.timeoutId);
-    if (this.model.canvas || !this.timeoutEnabled) return;
+    if (this.model.canvas || !this.edit.canTimeout) return;
     this.timeoutId = this.doc.window.setTimeout(() => {
+      if (!this.edit.canTimeout) return;
       this.topBar.focusout();
       this.bottomBar.focusout();
       this.drawBar.focusout();

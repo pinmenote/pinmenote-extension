@@ -23,7 +23,6 @@ import { ObjPointDto } from '../../../model/obj/obj-utils.dto';
 import { PencilDraw } from './tool/pencil.draw';
 import { PinEditModel } from '../model/pin-edit.model';
 import { applyStylesToElement } from '../../../style.utils';
-import { fnConsoleLog } from '../../../fn/fn-console';
 
 const canvasStyles = {
   position: 'absolute',
@@ -147,7 +146,6 @@ no javascript enabled - drawing not working</h1>`;
 
   resize(): void {
     // TODO scale image based on size ?
-    fnConsoleLog('scale image based on size');
   }
 
   cleanup(): void {

@@ -27,6 +27,7 @@ enum VisibleState {
 
 export class PinEditManager {
   private takingScreenshot = false;
+  private timeoutEnabled = true;
 
   private prevState = VisibleState.None;
 
@@ -36,9 +37,17 @@ export class PinEditManager {
     return this.takingScreenshot;
   }
 
+  get canTimeout(): boolean {
+    return this.timeoutEnabled;
+  }
+
   startDraw = () => {
     this.parent.topBar.drawVisibleIcon.hide();
-    this.changeVisibleBar(VisibleState.DrawMain);
+    if (this.parent.model.draw.data.hasData()) {
+      this.changeVisibleBar(VisibleState.DrawMain);
+    } else {
+      this.newDraw();
+    }
   };
 
   newDraw = () => {
@@ -149,6 +158,7 @@ export class PinEditManager {
         this.parent.downloadBar.show();
         break;
     }
+    nextState === VisibleState.None ? (this.timeoutEnabled = true) : (this.timeoutEnabled = false);
     this.prevState = nextState;
   }
 }

@@ -47,16 +47,16 @@ export class PinEditModel {
     this.draw = new PinDrawEditModel(this.obj.data.draw);
   }
 
-  get top(): HTMLDivElement {
-    return this.component.top;
+  get top(): ShadowRoot {
+    return this.component.topShadow;
   }
 
   get topBar(): TopBarComponent {
     return this.component.topBar;
   }
 
-  get bottom(): HTMLDivElement {
-    return this.component.bottom;
+  get bottom(): ShadowRoot {
+    return this.component.bottomShadow;
   }
 
   get rect(): ObjRectangleDto {
