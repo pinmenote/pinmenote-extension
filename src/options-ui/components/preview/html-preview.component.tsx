@@ -38,6 +38,50 @@ interface Props {
   visible: boolean;
 }
 
+class PinState {
+  private static readonly ms: number = 500;
+  private static timeoutId = -1;
+  private static components: PinComponent[] = [];
+
+  private static container?: HTMLDivElement;
+  private static size = { width: 0, height: 0 };
+
+  static start(container: HTMLDivElement) {
+    this.container = container;
+    this.updateSize(container.getBoundingClientRect());
+    if (this.timeoutId !== -1) return;
+    this.timeoutId = window.setTimeout(this.invalidatePins, this.ms);
+  }
+
+  static addComponent(pin: PinComponent) {
+    this.components.push(pin);
+  }
+
+  static stop() {
+    clearTimeout(this.timeoutId);
+    this.timeoutId = -1;
+    this.components = [];
+  }
+
+  private static updateSize(rect: DOMRect) {
+    this.size.width = rect.width;
+    this.size.height = rect.height;
+  }
+
+  private static invalidatePins = () => {
+    this.timeoutId = window.setTimeout(this.invalidatePins, this.ms);
+    if (!this.container) return;
+    const rect = this.container.getBoundingClientRect();
+    if (rect.width === this.size.width && rect.height === this.size.height) return;
+
+    this.updateSize(rect);
+
+    for (const pin of this.components) {
+      pin.resize();
+    }
+  };
+}
+
 export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const htmlRef = useRef<HTMLDivElement>(null);
@@ -61,6 +105,9 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
         fnConsoleLog('Error render or parseInt', e);
       }
     }
+    return () => {
+      PinState.stop();
+    };
   }, [props]);
 
   const render = async (id: number) => {
@@ -82,6 +129,8 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
     if (obj.type === ObjTypeDto.PageSnapshot) {
       const pinIds = await LinkHrefStore.pinIds(obj.data.snapshot.info.url.href);
       await renderPins(pinIds);
+      if (!htmlRef.current) return;
+      if (pinIds.length > 0) PinState.start(htmlRef.current);
     }
   };
 
@@ -142,6 +191,7 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       window: el.contentWindow
     });
     pinComponent.render();
+    PinState.addComponent(pinComponent);
     fnConsoleLog('PIN !!!', pin.id, pin.data, value);
     return true;
   };
