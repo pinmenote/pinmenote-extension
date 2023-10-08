@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, ReactElement, useState } from 'react';
+import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { BugReportComponent } from '../bug-report/bug-report.component';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { MainFooterButton } from './main-footer.button';
@@ -27,11 +27,23 @@ import { ObjPageNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { ObjViewComponent } from '../obj/obj-view.component';
 import { PopupFunctionsComponent } from '../popup-functions/popup-functions.component';
 import { SavePageProgressComponent } from '../save-page-progress/save-page-progress.component';
+import { PageNoteDraftGetCommand } from '../../../common/command/page-note/draft/page-note-draft-get.command';
 
 export const MainViewComponent: FunctionComponent = () => {
   const [previousView, setPreviousView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
   const [currentView, setCurrentView] = useState<MainViewEnum>(MainViewEnum.PAGE_OBJECTS);
   const [editNote, setEditNote] = useState<ObjDto<ObjPageNoteDto> | undefined>();
+
+  useEffect(() => {
+    new PageNoteDraftGetCommand()
+      .execute()
+      .then((note) => {
+        if (note) setCurrentView(MainViewEnum.NOTE);
+      })
+      .catch(() => {
+        /* IGNORE */
+      });
+  });
 
   const changeMainTab = (viewType: MainViewEnum) => {
     setPreviousView(currentView);

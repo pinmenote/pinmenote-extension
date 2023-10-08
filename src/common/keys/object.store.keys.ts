@@ -16,6 +16,8 @@
  */
 export class ObjectStoreKeys {
   static readonly NOTE_HASH = 'o:nh';
+  static readonly NOTE_DRAFT = 'n:draft';
+
   static readonly CONTENT_HASH = 'o:ch';
   static readonly CONTENT_HASH_COUNT = 'o:chc';
 

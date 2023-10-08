@@ -26,13 +26,16 @@ import { WordFactory } from '../../../../common/text/word.factory';
 import { createTextEditorState } from '../../../../common/components/text-editor/text.editor.state';
 import { defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { fnSha256Object } from '../../../../common/fn/fn-hash';
+import { PageNoteDraftSaveCommand } from '../../../../common/command/page-note/draft/page-note-draft-save.command';
+import { PageNoteDraftRemoveCommand } from '../../../../common/command/page-note/draft/page-note-draft-remove.command';
+import { PageNoteDraftGetCommand } from '../../../../common/command/page-note/draft/page-note-draft-get.command';
 
 interface Props {
   addCallback: () => void;
   cancelCallback: () => void;
 }
 
-class LocalModel {
+class Store {
   static editorView?: EditorView;
 
   static get description(): string {
@@ -48,24 +51,40 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (ref.current) {
-      create(ref.current);
-    }
+    new PageNoteDraftGetCommand()
+      .execute()
+      .then((note) => {
+        if (!ref.current) return;
+        create(ref.current, note);
+      })
+      .catch(() => {
+        if (!ref.current) return;
+        create(ref.current);
+      });
     return () => {
-      LocalModel.editorView?.destroy();
+      Store.editorView?.destroy();
     };
   }, []);
 
-  const create = (el: HTMLDivElement): void => {
-    let state = createTextEditorState('');
-    LocalModel.editorView = new EditorView(el, {
+  const create = (el: HTMLDivElement, note?: ObjNoteDataDto): void => {
+    let state = createTextEditorState(note?.description || '');
+    Store.editorView = new EditorView(el, {
       state,
       handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
         event.stopImmediatePropagation();
       },
       dispatchTransaction: (tx) => {
         state = state.apply(tx);
-        LocalModel.editorView?.updateState(state);
+        Store.editorView?.updateState(state);
+        new PageNoteDraftSaveCommand({
+          title,
+          description: Store.description,
+          words: []
+        })
+          .execute()
+          .catch(() => {
+            /* IGNORE */
+          });
       }
     });
   };
@@ -73,7 +92,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
   const handleAdd = async () => {
     const url = PopupActiveTabStore.url;
     if (!url) return;
-    const description = LocalModel.description;
+    const description = Store.description;
     const words = new Set<string>([...WordFactory.toWordList(title), ...WordFactory.toWordList(description)]);
     const dt = Date.now();
     const data: ObjNoteDataDto = {
@@ -90,7 +109,13 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
       },
       dt
     ).execute();
+    await new PageNoteDraftRemoveCommand().execute();
     props.addCallback();
+  };
+
+  const handleCancel = async () => {
+    await new PageNoteDraftRemoveCommand().execute();
+    props.cancelCallback();
   };
 
   return (
@@ -119,7 +144,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
         <StyledInput value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
-        <Button variant="outlined" onClick={props.cancelCallback}>
+        <Button variant="outlined" onClick={handleCancel}>
           Cancel
         </Button>
         <Button variant="outlined" onClick={handleAdd}>

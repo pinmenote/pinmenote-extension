@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export enum MainViewEnum {
-  CREATE_LIST = 1,
-  PAGE_OBJECTS,
-  TASK,
-  NOTE,
-  CALENDAR,
-  FUNCTION,
-  BUG_REPORT,
-  SAVE_PROGRESS
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+
+export class PageNoteDraftRemoveCommand implements ICommand<Promise<void>> {
+  async execute(): Promise<void> {
+    await BrowserStorage.remove(ObjectStoreKeys.NOTE_DRAFT);
+  }
 }

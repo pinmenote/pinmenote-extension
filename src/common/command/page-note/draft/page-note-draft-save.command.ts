@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export enum MainViewEnum {
-  CREATE_LIST = 1,
-  PAGE_OBJECTS,
-  TASK,
-  NOTE,
-  CALENDAR,
-  FUNCTION,
-  BUG_REPORT,
-  SAVE_PROGRESS
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjNoteDataDto } from '../../../model/obj/obj-note.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+
+export class PageNoteDraftSaveCommand implements ICommand<Promise<void>> {
+  constructor(private data: ObjNoteDataDto) {}
+  async execute(): Promise<void> {
+    await BrowserStorage.set<ObjNoteDataDto>(ObjectStoreKeys.NOTE_DRAFT, this.data);
+  }
 }
