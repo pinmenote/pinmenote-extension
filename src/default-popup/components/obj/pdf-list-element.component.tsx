@@ -28,6 +28,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
 import { ObjTitleFactory } from '../../../common/factory/obj-title.factory';
+import PushPinIcon from '@mui/icons-material/PushPin';
 
 interface Props {
   obj: ObjDto<ObjPdfDto>;
@@ -50,6 +51,10 @@ export const PdfListElementComponent: FunctionComponent<Props> = (props) => {
 
   const handlePopover = (): void => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleOpenPage = (data: ObjDto<ObjPdfDto>): void => {
+    BrowserApi.openOptionsPage(`#pdf/${data.id}`);
   };
 
   const expandIcon = isExpanded ? (
@@ -89,6 +94,9 @@ export const PdfListElementComponent: FunctionComponent<Props> = (props) => {
             justifyContent: 'flex-end'
           }}
         >
+          <IconButton title="Show on pin board" size="small" onClick={() => handleOpenPage(props.obj)}>
+            <PushPinIcon sx={{ fontSize: '12px' }} />
+          </IconButton>
           <IconButton title="Go to page" size="small" onClick={() => handleNavigate(props.obj)}>
             <ArrowForwardIcon sx={{ fontSize: '12px' }} />
           </IconButton>

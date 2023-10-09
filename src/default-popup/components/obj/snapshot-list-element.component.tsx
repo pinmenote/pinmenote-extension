@@ -55,13 +55,7 @@ export const SnapshotListElement: FunctionComponent<SnapshotListElementProps> = 
   };
 
   const handleOpenPage = (data: ObjDto<ObjPageDto>): void => {
-    if (BrowserApi.isChrome) {
-      BrowserApi.openOptionsPage(`#obj/${data.id}`);
-    } else {
-      // TODO change to BrowserApi 0.0.5
-      window.open(`${browser.runtime.getManifest().options_ui?.page || ''}#obj/${data.id}`);
-      window.close();
-    }
+    BrowserApi.openOptionsPage(`#obj/${data.id}`);
   };
 
   const expandIcon = isExpanded ? (

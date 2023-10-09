@@ -28,7 +28,7 @@ import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnUid } from '../../../common/fn/fn-uid';
 import pdfWorkerUrl from 'url:../../../../node_modules/pdfjs-dist/build/pdf.worker.js';
-import '../../../../node_modules/pdfjs-dist/web/pdf_viewer.css';
+import './pdf_viewer.css';
 
 interface Props {
   visible: boolean;
@@ -39,6 +39,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
   const pdfRef = useRef<HTMLDivElement>(null);
   const urlRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const eventBus = new EventBus();
 
   useEffect(() => {
     setVisible(props.visible);
@@ -82,7 +83,6 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
       // https://stackoverflow.com/questions/35987398/pdf-js-how-to-make-pdf-js-viewer-canvas-responsive
       const scale = Math.min(pdfRef.current.clientWidth / ((viewport.width * 96) / 72), 1);
 
-      const eventBus = new EventBus();
       await renderPage(page, viewport, 1, eventBus, scale);
 
       // Deferred render
@@ -188,16 +188,26 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
       </div>
       <div
         style={{
+          display: 'flex',
+          padding: 10,
+          flexDirection: 'column',
+          alignItems: 'center',
           width: '100%',
           height: '100%',
-          backgroundColor: '#ffffff',
-          overflow: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
+          flexGrow: 1,
+          backgroundColor: '#ffffff'
         }}
-        ref={pdfRef}
-      ></div>
+      >
+        <div
+          style={{
+            border: '1px solid #000000',
+            width: 'max-content',
+            alignItems: 'center',
+            overflow: 'scroll'
+          }}
+          ref={pdfRef}
+        ></div>
+      </div>
     </div>
   );
 };
