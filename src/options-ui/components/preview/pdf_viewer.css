@@ -1248,6 +1248,12 @@
   z-index: 1;
 }
 
+.page {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #000;
+}
+
 .pdfViewer .page {
   direction: ltr;
   width: 816px;

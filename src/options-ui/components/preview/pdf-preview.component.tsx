@@ -200,7 +200,6 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
       >
         <div
           style={{
-            border: '1px solid #000000',
             width: 'max-content',
             alignItems: 'center',
             overflow: 'scroll'
