@@ -30,6 +30,8 @@ import { BusMessageType } from '../../../common/model/bus.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { SyncObjectStatus } from '../../../common/model/sync.model';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import AddIcon from '@mui/icons-material/Add';
+import Button from '@mui/material/Button';
 
 export interface Props {
   obj?: ObjDto<ObjPageDto>;
@@ -75,6 +77,10 @@ export const HtmlPreviewHeaderComponent: FunctionComponent<Props> = (props) => {
     await BrowserApi.sendRuntimeMessage({ type: BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT, data: props.obj?.id });
   };
 
+  const handleNewPin = () => {
+    alert('NEW PIN');
+  };
+
   return (
     <div style={{ backgroundColor: '#ffffff', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ marginLeft: '10px', marginBottom: '5px' }}>
@@ -82,6 +88,9 @@ export const HtmlPreviewHeaderComponent: FunctionComponent<Props> = (props) => {
         <div ref={urlRef}></div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Button sx={{ width: '100%', display: 'none' }} variant="outlined" onClick={handleNewPin}>
+          <AddIcon /> Pin
+        </Button>
         <div style={{ display: props.isLoading ? 'flex' : 'none' }}>
           <CircularProgress />
         </div>

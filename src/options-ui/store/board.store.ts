@@ -121,7 +121,8 @@ export class BoardStore {
     const a = Date.now();
     for (const tag of tags) {
       const tagObjIds = await BrowserStorage.get<number[]>(`${ObjectStoreKeys.TAG_INDEX}:${tag}`);
-      for (const id of tagObjIds) {
+      const ids = tagObjIds.reverse();
+      for (const id of ids) {
         const obj = await new ObjGetCommand<ObjDataDto>(id).execute();
         if (this.keySet.has(obj.id)) continue;
         this.objData.push(obj);
