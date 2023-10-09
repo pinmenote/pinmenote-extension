@@ -201,7 +201,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
         <div
           style={{
             width: 'max-content',
-            alignItems: 'center',
+            marginBottom: 90,
             overflow: 'scroll'
           }}
           ref={pdfRef}
