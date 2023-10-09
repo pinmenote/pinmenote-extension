@@ -37,6 +37,7 @@ export class ContentPdfSaveCommand implements ICommand<Promise<void>> {
           if (value.ok) {
             await new PdfAddCommand(value).execute();
           }
+          await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
         }
       }
     );

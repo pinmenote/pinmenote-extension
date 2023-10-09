@@ -81,7 +81,6 @@ export class ContentMessageHandler {
         break;
       case BusMessageType.POPUP_SAVE_PDF:
         await new ContentPdfSaveCommand(msg.data).execute();
-        await BrowserApi.sendRuntimeMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD });
         break;
       case BusMessageType.POPUP_CAPTURE_ELEMENT_START:
       case BusMessageType.POPUP_PAGE_ALTER_START:
