@@ -18,6 +18,7 @@ import React, { FunctionComponent } from 'react';
 import Link from '@mui/material/Link';
 import {
   LICENSE_APACHE_20,
+  LICENSE_BSD,
   LICENSE_DAYJS,
   LICENSE_FASTEST_LEVENSTEIN,
   LICENSE_FONTSOURCE,
@@ -39,6 +40,7 @@ import {
   LICENSE_PROSEMIRROR,
   LICENSE_REACT,
   LICENSE_REMOVE_MARKDOWN,
+  LICENSE_SIMPLIFY,
   LICENSE_STOPWORDS_ISO
 } from './opensource-license-text';
 
@@ -264,6 +266,12 @@ const ELEMENTS: OpensourceElement[] = [
     licenseHeader: LICENSE_REMOVE_MARKDOWN,
     license: LICENSE_MIT,
     url: 'https://github.com/stiang/remove-markdown'
+  },
+  {
+    title: 'simplify-js',
+    licenseHeader: LICENSE_SIMPLIFY,
+    license: LICENSE_BSD,
+    url: 'https://github.com/mourner/simplify-js'
   },
   {
     title: 'stopwords-iso',

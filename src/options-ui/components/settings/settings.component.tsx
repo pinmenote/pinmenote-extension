@@ -63,7 +63,7 @@ export const SettingsComponent: FunctionComponent = () => {
         <div style={containerStyle}>
           <ContentSettingsComponent />
         </div>
-        <div style={containerStyle}>
+        <div style={{ ...containerStyle, marginBottom: 120 }}>
           <OpenSourceListComponent />
         </div>
       </div>
