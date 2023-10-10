@@ -25,6 +25,7 @@ import {
   LICENSE_JS_SHA256,
   LICENSE_JWT_DECODE,
   LICENSE_MARKED,
+  LICENSE_MATHML_TO_LATEX,
   LICENSE_MIT,
   LICENSE_MUI,
   LICENSE_MUI_X_DATEPICKERS,
@@ -37,7 +38,8 @@ import {
   LICENSE_PINMENOTE_MIT,
   LICENSE_PROSEMIRROR,
   LICENSE_REACT,
-  LICENSE_REMOVE_MARKDOWN
+  LICENSE_REMOVE_MARKDOWN,
+  LICENSE_STOPWORDS_ISO
 } from './opensource-license-text';
 
 interface OpensourceElement {
@@ -151,6 +153,12 @@ const ELEMENTS: OpensourceElement[] = [
     url: 'https://marked.js.org/'
   },
   {
+    title: 'mathml-to-latex',
+    licenseHeader: LICENSE_MATHML_TO_LATEX,
+    license: LICENSE_MIT,
+    url: 'https://github.com/asnunes/mathml-to-latex'
+  },
+  {
     title: 'Nano ID',
     licenseHeader: LICENSE_NANOID,
     license: LICENSE_MIT,
@@ -256,6 +264,12 @@ const ELEMENTS: OpensourceElement[] = [
     licenseHeader: LICENSE_REMOVE_MARKDOWN,
     license: LICENSE_MIT,
     url: 'https://github.com/stiang/remove-markdown'
+  },
+  {
+    title: 'stopwords-iso',
+    licenseHeader: LICENSE_STOPWORDS_ISO,
+    license: LICENSE_MIT,
+    url: 'https://github.com/stopwords-iso/stopwords-iso'
   }
 ];
 

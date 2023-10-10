@@ -92,6 +92,7 @@ export const ContentSettingsComponent: FunctionComponent = () => {
           expert mode
         </Typography>
         <Checkbox checked={expertMode} onChange={handleExpertModeChange} />
+        <Typography fontSize="0.8em">display ui parts with experimental logic</Typography>
       </div>
     </div>
   );

@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjPointDto } from '../../../../model/obj/obj-utils.dto';
+import simplify from 'simplify-js';
 
 export class PencilDraw {
   private static points: ObjPointDto[] = [];
@@ -32,7 +33,7 @@ export class PencilDraw {
   }
 
   static stopDraw(): ObjPointDto[] {
-    return this.points;
+    return simplify(this.points, 0.99, true);
   }
 
   static draw(to: ObjPointDto, ctx: CanvasRenderingContext2D): void {
