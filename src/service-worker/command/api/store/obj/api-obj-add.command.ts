@@ -29,10 +29,11 @@ export interface ObjAddRequest {
 
 export interface ObjAddResponse {
   serverId: number;
+  sub: string;
 }
 
 export class ApiObjAddCommand extends ApiCallBase implements ICommand<Promise<ObjAddResponse | ServerErrorDto>> {
-  constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {
+  constructor(private authUrl: string, private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {
     super();
   }
   async execute(): Promise<ObjAddResponse | ServerErrorDto> {
@@ -49,7 +50,7 @@ export class ApiObjAddCommand extends ApiCallBase implements ICommand<Promise<Ob
           hash: this.hash
         })
       },
-      this.refreshParams()
+      this.refreshParams(this.authUrl)
     );
     // fnConsoleLog('ApiStoreSyncInfoCommand->response', resp);
     return resp.data;

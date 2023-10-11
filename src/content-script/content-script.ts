@@ -34,6 +34,8 @@ import { RuntimePinGetHrefCommand } from './command/runtime/runtime-pin-get-href
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { UrlFactory } from '../common/factory/url.factory';
 import { fnUid } from '../common/fn/fn-uid';
+import { environmentConfig } from '../common/environment';
+import { LoginExtensionCommand } from './command/login/login-extension.command';
 
 class PinMeScript {
   private href: string;
@@ -55,6 +57,8 @@ class PinMeScript {
 
   private handlePinSettings = async (event: string, key: string): Promise<void> => {
     TinyDispatcher.getInstance().removeListener(event, key);
+
+    if (location.origin === environmentConfig.defaultServer) await new LoginExtensionCommand().execute();
 
     await ContentSettingsStore.initSettings();
 

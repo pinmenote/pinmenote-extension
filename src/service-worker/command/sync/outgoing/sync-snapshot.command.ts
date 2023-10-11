@@ -28,7 +28,7 @@ import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.co
 import { SyncCryptoFactory } from '../crypto/sync-crypto.factory';
 
 export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private obj: ObjDto<ObjPageDto>, private tx: BeginTxResponse) {}
+  constructor(private authUrl: string, private obj: ObjDto<ObjPageDto>, private tx: BeginTxResponse) {}
   async execute(): Promise<SyncObjectStatus> {
     const page = this.obj.data;
     const snapshot = page.snapshot;
@@ -54,7 +54,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     if (!segment) return;
     const content = this.getSegmentContent(segment);
     if (!content) return;
-    await new ApiSegmentAddCommand(this.tx, content, {
+    await new ApiSegmentAddCommand(this.authUrl, this.tx, content, {
       key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.PageSnapshotFirstHash,
       hash: segment.hash,
@@ -65,14 +65,14 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
 
   private async syncSnapshot(snapshot: PageSnapshotDto, parent: string): Promise<void> {
     // snapshot->info
-    await new ApiSegmentAddCommand(this.tx, JSON.stringify(snapshot.info), {
+    await new ApiSegmentAddCommand(this.authUrl, this.tx, JSON.stringify(snapshot.info), {
       key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.PageSnapshotInfoDto,
       hash: snapshot.info.hash,
       parent
     }).execute();
     // snapshot->data
-    await new ApiSegmentAddCommand(this.tx, JSON.stringify(snapshot.data), {
+    await new ApiSegmentAddCommand(this.authUrl, this.tx, JSON.stringify(snapshot.data), {
       key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.PageSnapshotDataDto,
       hash: snapshot.data.hash,
@@ -90,7 +90,7 @@ export class SyncSnapshotCommand implements ICommand<Promise<SyncObjectStatus>> 
     const content = this.getSegmentContent(segment);
     if (!content) return;
 
-    await new ApiSegmentAddCommand(this.tx, content, {
+    await new ApiSegmentAddCommand(this.authUrl, this.tx, content, {
       key: await SyncCryptoFactory.newKey(),
       type: this.convertSegmentTypeSyncHashType(segment.type),
       hash,

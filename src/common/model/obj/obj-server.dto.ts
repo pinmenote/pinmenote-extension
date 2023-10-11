@@ -16,4 +16,5 @@
  */
 export interface ObjServerDto {
   id: number;
+  sub: string;
 }

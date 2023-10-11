@@ -32,7 +32,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { BeginTxResponse } from '../api/store/api-store.model';
 
 export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private tx: BeginTxResponse, private id: number) {}
+  constructor(private authUrl: string, private tx: BeginTxResponse, private id: number) {}
 
   async execute(): Promise<SyncObjectStatus> {
     const obj = await new ObjGetCommand(this.id).execute();
@@ -46,22 +46,22 @@ export class SyncIndexCommand implements ICommand<Promise<SyncObjectStatus>> {
     switch (obj.type) {
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
-        return await new SyncSnapshotCommand(obj as ObjDto<ObjPageDto>, this.tx).execute();
+        return await new SyncSnapshotCommand(this.authUrl, obj as ObjDto<ObjPageDto>, this.tx).execute();
       }
       case ObjTypeDto.PageElementPin: {
-        return await new SyncPinCommand(obj as ObjDto<ObjPinDto>, this.tx).execute();
+        return await new SyncPinCommand(this.authUrl, obj as ObjDto<ObjPinDto>, this.tx).execute();
       }
       case ObjTypeDto.Pdf: {
-        return await new SyncPdfCommand(obj as ObjDto<ObjPdfDto>, this.tx).execute();
+        return await new SyncPdfCommand(this.authUrl, obj as ObjDto<ObjPdfDto>, this.tx).execute();
       }
       case ObjTypeDto.Note: {
-        return await new SyncNoteCommand(obj as ObjDto<ObjNoteDto>, this.tx).execute();
+        return await new SyncNoteCommand(this.authUrl, obj as ObjDto<ObjNoteDto>, this.tx).execute();
       }
       case ObjTypeDto.PageNote: {
-        return await new SyncPageNoteCommand(obj as ObjDto<ObjPageNoteDto>, this.tx).execute();
+        return await new SyncPageNoteCommand(this.authUrl, obj as ObjDto<ObjPageNoteDto>, this.tx).execute();
       }
       case ObjTypeDto.Removed: {
-        return await new SyncRemovedCommand(obj as ObjDto<ObjRemovedDto>, this.tx).execute();
+        return await new SyncRemovedCommand(this.authUrl, obj as any as ObjRemovedDto, this.tx).execute();
       }
       default: {
         fnConsoleLog('SyncObjectCommand->PROBLEM', obj, 'index', this.id);

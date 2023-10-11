@@ -27,7 +27,7 @@ export class ApiObjGetChangesCommand
   extends ApiCallBase
   implements ICommand<Promise<ObjChangesResponse | ServerErrorDto>>
 {
-  constructor(private serverId: number) {
+  constructor(private authUrl: string, private serverId: number) {
     super();
   }
   async execute(): Promise<ObjChangesResponse | ServerErrorDto> {
@@ -37,7 +37,7 @@ export class ApiObjGetChangesCommand
       const resp = await FetchService.fetch<ObjChangesResponse | ServerErrorDto>(
         `${this.storeUrl}/api/v1/obj/changes?serverId=${this.serverId}`,
         { headers: this.getAuthHeaders() },
-        this.refreshParams()
+        this.refreshParams(this.authUrl)
       );
       if (resp.status === 200) return resp.data;
       fnConsoleLog(resp);

@@ -14,25 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BrowserStorage } from '@pinmenote/browser-api';
-import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
-import { ObjDto } from '../../../../common/model/obj/obj.dto';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
 import { ApiObjAddCommand, ObjAddResponse } from '../../api/store/obj/api-obj-add.command';
-import { BeginTxResponse, ObjSingleChange } from '../../api/store/api-store.model';
+import { ApiObjGetByHashCommand, ObjSingleChangeSub } from '../../api/store/obj/api-obj-get-by-hash.command';
+import { ICommand, ServerErrorDto } from '../../../../common/model/shared/common.dto';
 import { ApiErrorCode } from '../../../../common/model/shared/api.error-code';
-import { ApiObjGetByHashCommand } from '../../api/store/obj/api-obj-get-by-hash.command';
+import { BeginTxResponse } from '../../api/store/api-store.model';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { fnSleep } from '../../../../common/fn/fn-sleep';
+import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class SyncObjectCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
+  constructor(private authUrl: string, private obj: ObjDto, private hash: string, private tx: BeginTxResponse) {}
 
   async execute(): Promise<void> {
     if (this.obj.server?.id) return;
-    const resp: ObjAddResponse | ServerErrorDto = await new ApiObjAddCommand(this.obj, this.hash, this.tx).execute();
+    const resp: ObjAddResponse | ServerErrorDto = await new ApiObjAddCommand(
+      this.authUrl,
+      this.obj,
+      this.hash,
+      this.tx
+    ).execute();
     if ('serverId' in resp) {
-      return await this.saveServerId(resp.serverId);
+      return await this.saveServerId(resp.serverId, resp.sub);
     } else if ('code' in resp && resp.code === ApiErrorCode.SYNC_DUPLICATED_HASH) {
       return await this.setByHash();
     }
@@ -41,19 +45,12 @@ export class SyncObjectCommand implements ICommand<Promise<void>> {
   }
 
   private async setByHash(): Promise<void> {
-    const resp: ObjSingleChange | ServerErrorDto = await new ApiObjGetByHashCommand(this.hash, this.tx).execute();
-    if ('serverId' in resp) {
-      await this.saveServerId(resp.serverId);
-      return;
-    }
-    fnConsoleLog('SyncObjectCommand->setByHash');
-    throw new Error('PROBLEM !!!!!!!!!!!!!!!');
+    const resp: ObjSingleChangeSub = await new ApiObjGetByHashCommand(this.authUrl, this.hash).execute();
+    await this.saveServerId(resp.serverId, resp.sub);
   }
-  private async saveServerId(serverId: number): Promise<void> {
-    this.obj.server = { id: serverId };
+  private async saveServerId(serverId: number, sub: string): Promise<void> {
+    this.obj.server = { id: serverId, sub };
     await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.obj.id}`, this.obj);
     await BrowserStorage.set(`${ObjectStoreKeys.SERVER_ID}:${serverId}`, this.obj.id);
-    await fnSleep(500);
-    fnConsoleLog('SyncObjectCommand->saveServerId', serverId, 'obj->id', this.obj.id);
   }
 }

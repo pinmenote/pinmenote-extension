@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRemovedDto } from '../../../../common/model/obj/obj.dto';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { SyncObjectStatus } from '../../../../common/model/sync.model';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { BeginTxResponse } from '../../api/store/api-store.model';
+import { BrowserApi } from '@pinmenote/browser-api';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 
-export class SyncRemovedCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private authUrl: string, private obj: ObjRemovedDto, private tx: BeginTxResponse) {}
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async execute(): Promise<SyncObjectStatus> {
-    fnConsoleLog('SyncRemovedCommand', this.obj, this.tx);
-    return SyncObjectStatus.SERVER_ERROR;
+export class LoginExtensionCommand implements ICommand<Promise<void>> {
+  async execute(): Promise<void> {
+    const token = localStorage.getItem('accessToken');
+    const extensionToken = await new TokenStorageGetCommand().execute();
+    // we are logged in on website but not on extension
+    if (!extensionToken && token)
+      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_EXTENSION_LOGIN, data: JSON.parse(token) });
   }
 }

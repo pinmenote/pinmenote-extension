@@ -21,6 +21,9 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiStoreBeginCommand extends ApiCallBase implements ICommand<Promise<BeginTxResponse | undefined>> {
+  constructor(private authUrl: string) {
+    super();
+  }
   async execute(): Promise<BeginTxResponse | undefined> {
     await this.initTokenData();
     if (!this.storeUrl) return;
@@ -28,7 +31,7 @@ export class ApiStoreBeginCommand extends ApiCallBase implements ICommand<Promis
       const resp = await FetchService.fetch<BeginTxResponse>(
         `${this.storeUrl}/api/v1/tx/begin`,
         { headers: this.getAuthHeaders() },
-        this.refreshParams()
+        this.refreshParams(this.authUrl)
       );
       return resp.data;
     } catch (e) {

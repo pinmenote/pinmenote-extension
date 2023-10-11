@@ -19,6 +19,7 @@ import { FetchResponse, FetchService } from '@pinmenote/fetch-service';
 import { ApiCallBase } from './api-call.base';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { ApiErrorCode } from '../../../common/model/shared/api.error-code';
+import { ApiAuthUrlCommand } from './api-auth-url.command';
 
 export class ApiLogoutCommand
   extends ApiCallBase
@@ -26,7 +27,8 @@ export class ApiLogoutCommand
 {
   async execute(): Promise<FetchResponse<BoolDto | ServerErrorDto>> {
     await this.initTokenData();
-    const url = `${this.apiUrl}/api/v1/auth/logout`;
+    const baseUrl = await new ApiAuthUrlCommand().execute();
+    const url = `${baseUrl}/api/v1/logout`;
     fnConsoleLog('ApiLogoutCommand->execute', url);
     try {
       return await FetchService.fetch<BoolDto>(
@@ -35,7 +37,7 @@ export class ApiLogoutCommand
           method: 'POST',
           headers: this.getAuthHeaders()
         },
-        this.refreshParams()
+        this.refreshParams(baseUrl)
       );
     } catch (e) {
       fnConsoleLog('ERROR', e);

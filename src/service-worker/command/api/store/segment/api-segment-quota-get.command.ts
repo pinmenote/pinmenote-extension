@@ -25,7 +25,7 @@ export class ApiSegmentQuotaGetCommand
   extends ApiCallBase
   implements ICommand<Promise<ServerQuotaResponse | ServerErrorDto>>
 {
-  constructor() {
+  constructor(private authUrl: string) {
     super();
   }
   async execute(): Promise<ServerQuotaResponse | ServerErrorDto> {
@@ -38,7 +38,7 @@ export class ApiSegmentQuotaGetCommand
           type: 'JSON',
           headers: this.getAuthHeaders(true)
         },
-        this.refreshParams()
+        this.refreshParams(this.authUrl)
       );
       return resp.data;
     } catch (e) {

@@ -14,17 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjRemovedDto } from '../../../../common/model/obj/obj.dto';
-import { ICommand } from '../../../../common/model/shared/common.dto';
-import { SyncObjectStatus } from '../../../../common/model/sync.model';
-import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { BeginTxResponse } from '../../api/store/api-store.model';
+import { FetchService } from '@pinmenote/fetch-service';
+import { ICommand } from '../../../common/model/shared/common.dto';
+import { environmentConfig } from '../../../common/environment';
 
-export class SyncRemovedCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private authUrl: string, private obj: ObjRemovedDto, private tx: BeginTxResponse) {}
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async execute(): Promise<SyncObjectStatus> {
-    fnConsoleLog('SyncRemovedCommand', this.obj, this.tx);
-    return SyncObjectStatus.SERVER_ERROR;
+export class ApiAuthUrlCommand implements ICommand<Promise<string>> {
+  async execute(): Promise<string> {
+    const req = await FetchService.fetch<{ auth: string }>(`${environmentConfig.defaultServer}/api/server.json`, {});
+    if (!req.ok) throw new Error('Invalid api url');
+    return req.data.auth;
   }
 }

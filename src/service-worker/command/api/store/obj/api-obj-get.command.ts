@@ -21,7 +21,7 @@ import { ICommand } from '../../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
 export class ApiObjGetChangesCommand extends ApiCallBase implements ICommand<Promise<ObjSingleChange | undefined>> {
-  constructor(private id: number) {
+  constructor(private authUrl: string, private id: number) {
     super();
   }
   async execute(): Promise<ObjSingleChange | undefined> {
@@ -31,7 +31,7 @@ export class ApiObjGetChangesCommand extends ApiCallBase implements ICommand<Pro
       const resp = await FetchService.fetch<ObjSingleChange>(
         `${this.storeUrl}/api/v1/obj/${this.id}`,
         { headers: this.getAuthHeaders() },
-        this.refreshParams()
+        this.refreshParams(this.authUrl)
       );
       fnConsoleLog('ApiStoreChangesCommand->response', resp);
       return resp.data;

@@ -27,11 +27,11 @@ import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.co
 import { SyncCryptoFactory } from '../crypto/sync-crypto.factory';
 
 export class SyncPageNoteCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private obj: ObjDto<ObjPageNoteDto>, private tx: BeginTxResponse) {}
+  constructor(private authUrl: string, private obj: ObjDto<ObjPageNoteDto>, private tx: BeginTxResponse) {}
   async execute(): Promise<SyncObjectStatus> {
     const data = this.obj.data;
 
-    await new SyncObjectCommand(this.obj, data.hash, this.tx).execute();
+    await new SyncObjectCommand(this.authUrl, this.obj, data.hash, this.tx).execute();
 
     await this.syncNote(data);
 
@@ -40,7 +40,7 @@ export class SyncPageNoteCommand implements ICommand<Promise<SyncObjectStatus>> 
 
   private async syncNote(data: ObjPageNoteDto): Promise<void> {
     const content = JSON.stringify(data);
-    await new ApiSegmentAddCommand(this.tx, content, {
+    await new ApiSegmentAddCommand(this.authUrl, this.tx, content, {
       key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPdfDataDto,
       hash: data.hash

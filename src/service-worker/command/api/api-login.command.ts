@@ -20,6 +20,7 @@ import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dt
 import { ApiCallBase } from './api-call.base';
 import { apiResponseError } from './api.model';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { ApiAuthUrlCommand } from './api-auth-url.command';
 
 export class ApiLoginCommand
   extends ApiCallBase
@@ -31,7 +32,8 @@ export class ApiLoginCommand
 
   async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
     fnConsoleLog('ApiLoginCommand->execute');
-    const url = `${this.apiUrl}/api/v1/auth/login`;
+    const baseUrl = await new ApiAuthUrlCommand().execute();
+    const url = `${baseUrl}/api/v1/login`;
     try {
       return await FetchService.fetch<AccessTokenDto | ServerErrorDto>(url, {
         method: 'POST',

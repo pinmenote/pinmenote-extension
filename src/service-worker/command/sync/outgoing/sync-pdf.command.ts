@@ -26,7 +26,7 @@ import { ApiSegmentAddCommand } from '../../api/store/segment/api-segment-add.co
 import { SyncCryptoFactory } from '../crypto/sync-crypto.factory';
 
 export class SyncPdfCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private obj: ObjDto<ObjPdfDto>, private tx: BeginTxResponse) {}
+  constructor(private authUrl: string, private obj: ObjDto<ObjPdfDto>, private tx: BeginTxResponse) {}
   async execute(): Promise<SyncObjectStatus> {
     const data = this.obj.data;
     await new SyncObjectCommand(this.obj, data.hash, this.tx).execute();
@@ -39,7 +39,7 @@ export class SyncPdfCommand implements ICommand<Promise<SyncObjectStatus>> {
 
   private async syncData(data: ObjPdfDataDto, parent: string): Promise<void> {
     const content = JSON.stringify(data);
-    await new ApiSegmentAddCommand(this.tx, content, {
+    await new ApiSegmentAddCommand(this.authUrl, this.tx, content, {
       key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPdfDataDto,
       hash: data.hash,
@@ -50,7 +50,7 @@ export class SyncPdfCommand implements ICommand<Promise<SyncObjectStatus>> {
   private async syncPdf(hash: string): Promise<void> {
     const pdfData = await BrowserStorage.get<string | undefined>(`${ObjectStoreKeys.PDF_DATA}:${hash}`);
     if (!pdfData) return;
-    await new ApiSegmentAddCommand(this.tx, pdfData, {
+    await new ApiSegmentAddCommand(this.authUrl, this.tx, pdfData, {
       key: await SyncCryptoFactory.newKey(),
       type: SyncHashType.ObjPdf,
       hash

@@ -17,26 +17,34 @@
 
 import { ApiCallBase } from '../../api-call.base';
 import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/common.dto';
-import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 import { FetchService } from '@pinmenote/fetch-service';
-import { BeginTxResponse, ObjSingleChange } from '../api-store.model';
+import { ObjSingleChange } from '../api-store.model';
+import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
-export class ApiObjGetByHashCommand extends ApiCallBase implements ICommand<Promise<ObjSingleChange | ServerErrorDto>> {
-  constructor(private hash: string, private tx: BeginTxResponse) {
+export interface ObjSingleChangeSub extends ObjSingleChange {
+  sub: string;
+}
+
+export class ApiObjGetByHashCommand extends ApiCallBase implements ICommand<Promise<ObjSingleChangeSub>> {
+  constructor(private authUrl: string, private hash: string) {
     super();
   }
-  async execute(): Promise<ObjSingleChange | ServerErrorDto> {
+  async execute(): Promise<ObjSingleChangeSub> {
     await this.initTokenData();
-    if (!this.storeUrl) return { code: ApiErrorCode.INTERNAL, message: 'ApiStoreObjGetByHashCommand' };
+    if (!this.storeUrl) {
+      fnConsoleLog('ApiStoreObjGetByHashCommand', this.storeUrl);
+      throw new Error('PROBLEM !!!!!!!!!!!!!!!');
+    }
     const resp = await FetchService.fetch<ObjSingleChange | ServerErrorDto>(
       `${this.storeUrl}/api/v1/obj/hash/${this.hash}`,
       {
         headers: this.getAuthHeaders(),
         method: 'GET'
       },
-      this.refreshParams()
+      this.refreshParams(this.authUrl)
     );
     // fnConsoleLog('ApiStoreObjGetByHashCommand->response', resp);
-    return resp.data;
+    if (!resp.ok) throw new Error('PROBLEM !!!!!!!!!!!!!!!');
+    return { ...resp.data, sub: this.tokenData?.sub } as ObjSingleChangeSub;
   }
 }

@@ -21,6 +21,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
 import { SyncServerIncomingCommand } from './sync-server-incoming.command';
 import { SwSyncStore } from '../../sw-sync.store';
+import { SyncServerOutgoingCommand } from './sync-server-outgoing.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {

@@ -28,10 +28,10 @@ import { TokenDataDto } from '../../../common/model/shared/token.dto';
 const SYNC_DELAY = 10_000;
 
 export class SyncTxHelper {
-  static async begin(): Promise<BeginTxResponse | undefined> {
+  static async begin(authUrl: string): Promise<BeginTxResponse | undefined> {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
     if (tx) return tx;
-    const txResponse = await new ApiStoreBeginCommand().execute();
+    const txResponse = await new ApiStoreBeginCommand(authUrl).execute();
     if (txResponse?.locked) {
       const token = await new TokenStorageGetCommand().execute();
       if (!token) return undefined;
@@ -53,11 +53,11 @@ export class SyncTxHelper {
     return txResponse;
   }
 
-  static async commit(): Promise<void> {
+  static async commit(authUrl: string): Promise<void> {
     const tx = await BrowserStorage.get<BeginTxResponse | undefined>(ObjectStoreKeys.SYNC_TX);
     if (!tx) return;
     fnConsoleLog('SyncServerCommand->commit', tx);
-    await new ApiStoreCommitCommand(tx).execute();
+    await new ApiStoreCommitCommand(authUrl, tx).execute();
     await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
   }
 

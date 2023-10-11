@@ -21,7 +21,7 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
 
 export class ApiStoreCommitCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
-  constructor(private tx: BeginTxResponse) {
+  constructor(private authUrl: string, private tx: BeginTxResponse) {
     super();
   }
   async execute(): Promise<boolean> {
@@ -34,7 +34,7 @@ export class ApiStoreCommitCommand extends ApiCallBase implements ICommand<Promi
           type: 'TEXT',
           headers: this.getAuthHeaders()
         },
-        this.refreshParams()
+        this.refreshParams(this.authUrl)
       );
       return resp.ok;
     } catch (e) {

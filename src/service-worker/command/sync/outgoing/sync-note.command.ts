@@ -23,7 +23,7 @@ import { BeginTxResponse } from '../../api/store/api-store.model';
 import { SyncObjectStatus } from '../../../../common/model/sync.model';
 
 export class SyncNoteCommand implements ICommand<Promise<SyncObjectStatus>> {
-  constructor(private obj: ObjDto<ObjNoteDto>, private tx: BeginTxResponse) {}
+  constructor(private authUrl: string, private obj: ObjDto<ObjNoteDto>, private tx: BeginTxResponse) {}
   // eslint-disable-next-line @typescript-eslint/require-await
   async execute(): Promise<SyncObjectStatus> {
     fnConsoleLog('SyncNoteCommand');

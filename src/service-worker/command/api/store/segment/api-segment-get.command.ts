@@ -20,7 +20,7 @@ import { ICommand } from '../../../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../../../common/fn/fn-console';
 
 export class ApiSegmentGetCommand extends ApiCallBase implements ICommand<Promise<Blob | undefined>> {
-  constructor(private hash: string, private mimeType?: string) {
+  constructor(private authUrl: string, private hash: string, private mimeType?: string) {
     super();
   }
   async execute(): Promise<Blob | undefined> {
@@ -31,7 +31,7 @@ export class ApiSegmentGetCommand extends ApiCallBase implements ICommand<Promis
       const resp = await FetchService.fetch<Blob>(
         `${this.storeUrl}/api/v1/segment/${this.hash}${mimeType}`,
         { headers: this.getAuthHeaders(), type: 'BLOB' },
-        this.refreshParams()
+        this.refreshParams(this.authUrl)
       );
       return resp.data;
     } catch (e) {

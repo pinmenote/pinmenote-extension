@@ -30,13 +30,13 @@ export interface FileDataDto {
 }
 
 export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promise<boolean>> {
-  constructor(private tx: BeginTxResponse, private file: string, private data: FileDataDto) {
+  constructor(private authUrl: string, private tx: BeginTxResponse, private file: string, private data: FileDataDto) {
     super();
   }
   async execute(): Promise<boolean> {
     await this.initTokenData();
     if (!this.storeUrl) return false;
-    // if (await this.hasSegment(this.storeUrl)) return true;
+    if (await this.hasSegment(this.storeUrl)) return true;
     return await this.addSegment(this.storeUrl);
   }
 
@@ -52,7 +52,7 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
           ...authHeaders
         }
       },
-      this.refreshParams()
+      this.refreshParams(this.authUrl)
     );
     return resp.status === 200;
   }
@@ -99,7 +99,7 @@ export class ApiSegmentAddCommand extends ApiCallBase implements ICommand<Promis
         method: 'POST',
         body: formData
       },
-      this.refreshParams()
+      this.refreshParams(this.authUrl)
     );
     // fnConsoleLog('ApiSegmentAddCommand->resp', resp);
     return resp.status === 200;

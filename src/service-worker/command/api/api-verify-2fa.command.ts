@@ -20,6 +20,7 @@ import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dt
 import { ApiCallBase } from './api-call.base';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { ApiErrorCode } from '../../../common/model/shared/api.error-code';
+import { ApiAuthUrlCommand } from './api-auth-url.command';
 
 export class ApiVerify2faCommand
   extends ApiCallBase
@@ -31,7 +32,8 @@ export class ApiVerify2faCommand
 
   async execute(): Promise<FetchResponse<AccessTokenDto | ServerErrorDto>> {
     fnConsoleLog('ApiVerify2faCommand->execute');
-    const url = `${this.apiUrl}/api/v1/auth/2fa/verify`;
+    const baseUrl = await new ApiAuthUrlCommand().execute();
+    const url = `${baseUrl}/api/v1/2fa/verify`;
     try {
       return await FetchService.fetch<AccessTokenDto>(url, {
         method: 'POST',

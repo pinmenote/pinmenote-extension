@@ -23,6 +23,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { BrowserStorage } from '@pinmenote/browser-api';
+import { ApiAuthUrlCommand } from '../api/api-auth-url.command';
 
 export class SyncMonthCommand implements ICommand<Promise<SyncObjectStatus>> {
   constructor(private progress: SyncProgress, private yearMonth: string) {}
@@ -51,16 +52,17 @@ export class SyncMonthCommand implements ICommand<Promise<SyncObjectStatus>> {
   }
 
   async syncIndex(indexList: ObjDateIndex[], start: number): Promise<SyncObjectStatus> {
-    const begin = await SyncTxHelper.begin();
+    const authUrl = await new ApiAuthUrlCommand().execute();
+    const begin = await SyncTxHelper.begin(authUrl);
     if (!begin) return SyncObjectStatus.TX_LOCKED;
     let i = start;
     let status = SyncObjectStatus.OK;
     for (i; i < indexList.length; i++) {
-      status = await new SyncIndexCommand(begin, indexList[i].id).execute();
+      status = await new SyncIndexCommand(authUrl, begin, indexList[i].id).execute();
       switch (status) {
         case SyncObjectStatus.SERVER_ERROR: {
           fnConsoleLog('SERVER_ERROR !!!!!!!!!!!!!!!!!!!');
-          await SyncTxHelper.commit();
+          await SyncTxHelper.commit(authUrl);
           await this.updateProgress(indexList[i].id, indexList[i].dt);
           return status;
         }
@@ -94,7 +96,7 @@ export class SyncMonthCommand implements ICommand<Promise<SyncObjectStatus>> {
     // all conditions (not current year/month, not last id, object exists) are met
     if (resetMonth) await this.updateProgress(-1, lastIndex.dt);
 
-    await SyncTxHelper.commit();
+    await SyncTxHelper.commit(authUrl);
     return SyncObjectStatus.OK;
   }
 

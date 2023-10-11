@@ -24,7 +24,7 @@ export class ApiSegmentGetChildrenCommand
   extends ApiCallBase
   implements ICommand<Promise<SegmentHashListResponse | undefined>>
 {
-  constructor(private hash: string) {
+  constructor(private authUrl: string, private hash: string) {
     super();
   }
   async execute(): Promise<SegmentHashListResponse | undefined> {
@@ -34,7 +34,7 @@ export class ApiSegmentGetChildrenCommand
       const resp = await FetchService.fetch<SegmentHashListResponse>(
         `${this.storeUrl}/api/v1/segment/children/${this.hash}`,
         { headers: this.getAuthHeaders() },
-        this.refreshParams()
+        this.refreshParams(this.authUrl)
       );
       return resp.data;
     } catch (e) {

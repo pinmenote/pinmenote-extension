@@ -21,6 +21,7 @@ import { SyncObjIncomingCommand } from './incoming/sync-obj-incoming.command';
 import { SyncSetProgressCommand } from './progress/sync-set-progress.command';
 import { SyncProgress } from '../../../common/model/sync.model';
 import { SwSyncStore } from '../../sw-sync.store';
+import { ApiAuthUrlCommand } from '../api/api-auth-url.command';
 
 export class SyncServerIncomingCommand implements ICommand<Promise<void>> {
   constructor(private progress: SyncProgress) {}
@@ -28,7 +29,8 @@ export class SyncServerIncomingCommand implements ICommand<Promise<void>> {
     if (SwSyncStore.isInSync) return;
     SwSyncStore.isInSync = true;
     try {
-      const changesResp = await new ApiObjGetChangesCommand(this.progress.serverId).execute();
+      const authUrl = await new ApiAuthUrlCommand().execute();
+      const changesResp = await new ApiObjGetChangesCommand(authUrl, this.progress.serverId).execute();
       fnConsoleLog('SyncServerIncomingCommand->START', changesResp);
       if ('code' in changesResp) return;
       for (let i = 0; i < changesResp.data.length; i++) {

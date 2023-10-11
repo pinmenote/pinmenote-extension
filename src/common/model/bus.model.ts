@@ -50,6 +50,7 @@ export enum BusMessageType {
   POPUP_IS_PDF = 'popup.is.pdf',
   // Content script
   CONTENT_DOWNLOAD_DATA = 'content.download',
+  CONTENT_EXTENSION_LOGIN = 'content.extension.login',
   CONTENT_INVALIDATE = 'content.invalidate',
   CONTENT_PING_URL = 'content.ping.url',
   CONTENT_PIN_VISIBLE = 'content.pin.visible',

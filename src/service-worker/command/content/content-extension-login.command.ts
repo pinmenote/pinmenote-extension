@@ -14,25 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { AccessTokenDto, TokenDataDto } from '../../../common/model/shared/token.dto';
-import { FetchHeaders, RefreshTokenParams } from '@pinmenote/fetch-service';
-import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
+import { FetchService, RefreshTokenParams, FetchHeaders } from '@pinmenote/fetch-service';
+import { ICommand, ServerErrorDto } from '../../../common/model/shared/common.dto';
+import { AccessTokenDto } from '../../../common/model/shared/token.dto';
 import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import jwtDecode from 'jwt-decode';
+import { ApiAuthUrlCommand } from '../api/api-auth-url.command';
 
-export class ApiCallBase {
-  protected token: AccessTokenDto | undefined;
-  protected tokenData: TokenDataDto | undefined;
-
-  get storeUrl(): string | undefined {
-    return this.tokenData?.data.store;
-  }
-
-  protected async initTokenData() {
-    this.token = await new TokenStorageGetCommand().execute();
-    if (!this.token) return;
-    this.tokenData = jwtDecode<TokenDataDto>(this.token.access_token);
+export class ContentExtensionLoginCommand implements ICommand<Promise<void>> {
+  constructor(private token: AccessTokenDto) {}
+  async execute(): Promise<void> {
+    fnConsoleLog('ContentExtensionLoginCommand->execute');
+    await new ApiAuthUrlCommand().execute();
+    const baseUrl = await new ApiAuthUrlCommand().execute();
+    const req = await FetchService.fetch<AccessTokenDto | ServerErrorDto>(
+      `${baseUrl}/api/v1/login/new-device`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${this.token.access_token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ source: 'EXTENSION' })
+      },
+      this.refreshParams(baseUrl)
+    );
+    if (req.ok && 'access_token' in req.data) {
+      await new TokenStorageSetCommand(req.data).execute();
+    }
   }
 
   protected refreshParams(baseUrl: string): RefreshTokenParams {
@@ -44,36 +53,16 @@ export class ApiCallBase {
         url: `${baseUrl}/api/v1/refresh-token`
       },
       successCallback: (res, headers) => {
-        fnConsoleLog('refreshParams->successCallback', res);
         const value: AccessTokenDto = JSON.parse(res.data);
-        new TokenStorageSetCommand(value)
-          .execute()
-          .then(() => {
-            /* IGNORE */
-          })
-          .catch(() => {
-            /* IGNORE */
-          });
+        fnConsoleLog('ContentExtensionLoginCommand->successCallback', res, 'value', value, 'headers', headers);
         return {
           ...headers,
           Authorization: `Bearer ${value.access_token}`
         } as FetchHeaders;
       },
       errorCallback: (error) => {
-        fnConsoleLog('refreshParams->errorCallback', error);
+        fnConsoleLog('ContentExtensionLoginCommand->errorCallback', error);
       }
     };
-  }
-
-  protected getAuthHeaders(json = true): FetchHeaders {
-    if (!this.token) return {};
-    return json
-      ? {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.token.access_token}`
-        }
-      : {
-          Authorization: `Bearer ${this.token.access_token}`
-        };
   }
 }

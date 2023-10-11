@@ -40,6 +40,7 @@ import { fnConsoleLog } from '../common/fn/fn-console';
 import { SyncManualOutgoingCommand } from './command/sync/manual/sync-manual-outgoing.command';
 import { SyncServerIncomingCommand } from './command/sync/sync-server-incoming.command';
 import { SyncGetProgressCommand } from './command/sync/progress/sync-get-progress.command';
+import { ContentExtensionLoginCommand } from './command/content/content-extension-login.command';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -54,6 +55,9 @@ const handleMessage = async (
   if (runtime.id !== BrowserApi.runtime.id) return;
 
   switch (msg.type) {
+    case BusMessageType.CONTENT_EXTENSION_LOGIN:
+      await new ContentExtensionLoginCommand(msg.data).execute();
+      break;
     case BusMessageType.CONTENT_DOWNLOAD_DATA:
       await new ContentDownloadDataCommand(msg.data).execute();
       break;

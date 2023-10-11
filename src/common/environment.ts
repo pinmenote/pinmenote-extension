@@ -65,10 +65,10 @@ export const environmentConfig: EnvironmentConfig = {
     skipCssImageSizeMB: 2,
     expertMode: false,
     history: {
-      pinComment: true,
-      pinDraw: true,
-      pageComment: true,
-      pageNote: true
+      pinComment: false,
+      pinDraw: false,
+      pageComment: false,
+      pageNote: false
     }
   },
   objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
