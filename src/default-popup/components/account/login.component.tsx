@@ -104,8 +104,8 @@ export const LoginComponent: FunctionComponent<Props> = ({ loginSuccess }) => {
         </Button>
       </div>
       <Typography align="center" style={{ marginTop: 20 }}>
-        <Link target="_blank" href={getWebsiteUrl('/register')}>
-          Subscribe to <b>Premium</b> Account for 10$ / year
+        <Link target="_blank" href={getWebsiteUrl('/pricing')}>
+          Subscribe to <b>Premium</b> Account
         </Link>
       </Typography>
       <div style={{ margin: 10 }}>
