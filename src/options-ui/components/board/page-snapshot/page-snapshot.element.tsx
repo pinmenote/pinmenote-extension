@@ -60,8 +60,9 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
         removeCallback={handleRemove}
       />
       <img
-        style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
+        style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220, cursor: 'pointer' }}
         src={props.dto.data.snapshot.data.screenshot}
+        onClick={handleHtml}
       />
       <BoardItemFooter
         saveTags={(newTags) => TagHelper.saveTags(props.dto, newTags, setHashtags)}

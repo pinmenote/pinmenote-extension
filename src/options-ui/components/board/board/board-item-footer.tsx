@@ -16,13 +16,11 @@
  */
 import { COLOR_DEFAULT_GREY, COLOR_DEFAULT_RED } from '../../../../common/components/colors';
 import React, { FunctionComponent, useState } from 'react';
-import CommentIcon from '@mui/icons-material/Comment';
 import { DATE_YEAR_SECOND } from '../../../../common/date-format.constraints';
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import TagIcon from '@mui/icons-material/Tag';
-import Typography from '@mui/material/Typography';
 import { SettingsStore } from '../../../store/settings.store';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 import { TagEditor } from '../../../../common/components/tag-editor/tag-editor';
@@ -54,10 +52,18 @@ export const BoardItemFooter: FunctionComponent<Props> = (props) => {
   }
   return (
     <div>
-      <Link target="_blank" style={{ marginTop: 5, display: props.url ? 'inline-block' : 'none' }} href={props.url}>
-        <Typography fontSize="0.9em" style={{ wordBreak: 'break-all' }}>
-          {url}
-        </Typography>
+      <Link
+        target="_blank"
+        style={{
+          marginTop: 5,
+          display: props.url ? 'inline-block' : 'none',
+          wordBreak: 'break-all',
+          fontSize: '0.9em',
+          cursor: 'pointer'
+        }}
+        href={props.url}
+      >
+        {url}
       </Link>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <p>{dayjs(props.createdAt).format(DATE_YEAR_SECOND)}</p>

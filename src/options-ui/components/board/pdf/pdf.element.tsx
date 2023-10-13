@@ -59,8 +59,9 @@ export const PdfElement: FunctionComponent<Props> = (props) => {
         removeCallback={handleRemove}
       />
       <img
-        style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220 }}
+        style={{ height: '100%', width: '100%', objectFit: 'contain', maxHeight: 220, cursor: 'pointer' }}
         src={props.dto.data.data.screenshot}
+        onClick={handleHtml}
       />
       <div style={{ display: 'flex', flexGrow: 1 }}></div>
       <BoardItemFooter
