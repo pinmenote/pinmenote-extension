@@ -62,7 +62,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
     }
 
     let screenshot = await ScreenshotFactory.takeScreenshot(document, window, this.settings, rect, this.url);
-    if (rect.width > 640 || rect.height > 360) {
+    if (!this.canvas && this.element === document.body && (rect.width > 640 || rect.height > 360)) {
       screenshot = await ImageResizeFactory.resize2(
         document,
         ScreenshotFactory.THUMB_SETTINGS,
