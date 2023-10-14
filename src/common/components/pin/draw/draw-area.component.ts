@@ -48,20 +48,27 @@ export class DrawAreaComponent {
     this.rasterCtx = this.rasterCanvas.getContext('2d');
     this.drawModel = model.draw.data;
 
-    let width = Math.min(model.rect.width, window.innerWidth);
-    let height = Math.min(model.rect.height, window.innerHeight);
-    if (!this.drawModel.hasData()) {
-      this.drawModel.createDraw(width, height);
-    } else {
-      width = this.drawModel.size.width;
-      height = this.drawModel.size.height;
-    }
-    this.initDrawCanvas(width, height);
-    this.initRasterCanvas(width, height);
-    const data = this.drawModel.currentData;
-    for (let i = 0; i < data.length; i++) {
-      this.drawOne(data[i]);
-    }
+    this.drawModel
+      .loadDraw()
+      .then(() => {
+        let width = Math.min(model.rect.width, window.innerWidth);
+        let height = Math.min(model.rect.height, window.innerHeight);
+        if (!this.drawModel.hasData()) {
+          this.drawModel.createDraw(width, height);
+        } else {
+          width = this.drawModel.size.width;
+          height = this.drawModel.size.height;
+        }
+        this.initDrawCanvas(width, height);
+        this.initRasterCanvas(width, height);
+        const data = this.drawModel.currentData;
+        for (let i = 0; i < data.length; i++) {
+          this.drawOne(data[i]);
+        }
+      })
+      .catch(() => {
+        /* IGNORE */
+      });
   }
 
   private initRasterCanvas(width: number, height: number): void {

@@ -26,7 +26,7 @@ import { fnSha256Object } from '../../../fn/fn-hash';
 export class PinAddDrawCommand implements ICommand<Promise<void>> {
   constructor(private pin: ObjDto<ObjPinDto>, private draw: ObjDrawDto) {}
   async execute(): Promise<void> {
-    fnConsoleLog('PinAddDrawCommand');
+    fnConsoleLog('PinAddDrawCommand', this.draw);
     const draw: Omit<ObjDrawDto, 'hash'> = {
       size: this.draw.size,
       data: this.draw.data,
@@ -34,7 +34,12 @@ export class PinAddDrawCommand implements ICommand<Promise<void>> {
       createdAt: this.draw.createdAt
     };
     const hash = fnSha256Object(draw);
-    this.pin.data.draw.data.push({ ...draw, hash });
+    const pinDraw: ObjDrawDto = { ...draw, hash };
+
+    this.pin.data.draw.data.push(hash);
+    this.pin.local.drawVisible = true;
+
+    await BrowserStorage.set(`${ObjectStoreKeys.PIN_DRAW}:${hash}`, pinDraw);
     await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.pin.id}`, this.pin);
   }
 }

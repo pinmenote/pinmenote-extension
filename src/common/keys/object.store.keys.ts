@@ -26,6 +26,7 @@ export class ObjectStoreKeys {
   static readonly PIN_LIST_ID = 'o:p:list:id';
   static readonly PIN_LIST = 'o:p:list';
   static readonly PIN_COMMENT = 'o:p:c';
+  static readonly PIN_DRAW = 'o:p:d';
 
   static readonly OBJECT_ID = 'o:id';
   static readonly OBJECT_LIST_ID = 'o:list:id';

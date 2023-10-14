@@ -14,30 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjPointDto, ObjSizeDto } from './obj-utils.dto';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ICommand } from '../../../model/shared/common.dto';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
+import { ObjDrawListDto } from '../../../model/obj/obj-draw.dto';
 
-export enum DrawToolDto {
-  Pencil = 'PENCIL',
-  Erase = 'ERASE',
-  Line = 'LINE',
-  Fill = 'FILL'
-}
-
-export interface ObjDrawDto {
-  hash: string;
-  data: ObjDrawDataDto[];
-  size: ObjSizeDto;
-  createdAt: number;
-  updatedAt: number;
-}
-
-export interface ObjDrawDataDto {
-  points: ObjPointDto[];
-  size: number;
-  color: string;
-  tool: DrawToolDto;
-}
-
-export interface ObjDrawListDto {
-  data: string[];
+export class PinRemoveDrawCommand implements ICommand<Promise<void>> {
+  constructor(private draw: ObjDrawListDto) {}
+  async execute(): Promise<void> {
+    for (const hash of this.draw.data) {
+      await BrowserStorage.remove(`${ObjectStoreKeys.PIN_DRAW}:${hash}`);
+    }
+  }
 }

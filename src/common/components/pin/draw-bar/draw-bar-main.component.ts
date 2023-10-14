@@ -35,17 +35,24 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
 
   private visible = false;
 
-  private readonly newDraw?: DrawNewButton;
-  private readonly editDraw?: DrawEditButton;
+  private newDraw?: DrawNewButton;
+  private editDraw?: DrawEditButton;
   private readonly cancelDraw: DrawNewCancelButton;
 
   constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
-    if (model.draw.data.currentData.length > 0) {
-      this.editDraw = new DrawEditButton(edit, model);
-    } else {
-      this.newDraw = new DrawNewButton(edit, model);
-    }
+    this.model.draw.data
+      .loadDraw()
+      .then(() => {
+        if (this.model.draw.data.currentData && this.model.draw.data.currentData.length > 0) {
+          this.editDraw = new DrawEditButton(edit, model);
+        } else {
+          this.newDraw = new DrawNewButton(edit, model);
+        }
+      })
+      .catch(() => {
+        /* IGNORE */
+      });
     this.cancelDraw = new DrawNewCancelButton(edit, model);
   }
   render(): HTMLElement {

@@ -23,47 +23,52 @@ import { PinAddDrawCommand } from '../../../command/pin/draw/pin-add-draw.comman
 import { PinEditModel } from './pin-edit.model';
 import { PinUpdateDrawCommand } from '../../../command/pin/draw/pin-update-draw.command';
 import { fnDeepCopy } from '../../../fn/fn-copy';
+import { BrowserStorage } from '@pinmenote/browser-api';
+import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 
 export class DrawDataModel {
   private draw: ObjDrawListDto;
   private drawIndex: number;
-  private currentDraw: ObjDrawDto;
+  private currentDrawHash?: string;
+  private drawData?: ObjDrawDto;
 
   constructor(draw: ObjDrawListDto) {
     this.draw = draw;
     this.drawIndex = draw.data.length - 1;
-
-    if (draw.data[this.drawIndex]) {
-      this.currentDraw = draw.data[this.drawIndex];
-      this.currentDraw.data = this.currentDraw.data.concat();
-      this.currentDraw.size = fnDeepCopy(this.currentDraw.size);
-    } else {
-      this.currentDraw = DrawDataModel.emptyDraw(0, 0);
-    }
+    this.currentDrawHash = draw.data[this.drawIndex];
   }
+
+  loadDraw = async () => {
+    if (this.currentDrawHash) {
+      this.drawData = await BrowserStorage.get<ObjDrawDto>(`${ObjectStoreKeys.PIN_DRAW}:${this.currentDrawHash}`);
+      this.drawData.data = this.drawData.data.concat();
+      this.drawData.size = fnDeepCopy(this.drawData.size);
+    }
+  };
 
   hasData(): boolean {
     return this.draw.data.length > 0;
   }
 
   get currentData(): ObjDrawDataDto[] {
-    return this.currentDraw.data;
+    return this.drawData!.data;
   }
 
   get size(): ObjSizeDto {
-    return this.currentDraw.size;
+    return this.drawData!.size;
   }
 
   createDraw(width: number, height: number) {
-    this.currentDraw = DrawDataModel.emptyDraw(width, height);
+    this.drawData = DrawDataModel.emptyDraw(width, height);
+    this.currentDrawHash = undefined;
   }
 
   async saveDraw(model: PinEditModel) {
-    const d = this.draw.data[this.drawIndex];
-    if (d && this.currentDraw.hash === d.hash) {
-      await new PinUpdateDrawCommand(model.object, this.currentDraw).execute();
+    if (!this.drawData) return;
+    if (this.currentDrawHash) {
+      await new PinUpdateDrawCommand(model.object, this.drawData, this.currentDrawHash).execute();
     } else {
-      await new PinAddDrawCommand(model.object, this.currentDraw).execute();
+      await new PinAddDrawCommand(model.object, this.drawData).execute();
     }
   }
 
