@@ -20,6 +20,7 @@ import Button from '@mui/material/Button';
 import { MainFooterButton } from './main-footer.button';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 
 export const ConnectionErrorComponent: FunctionComponent = () => {
   const isExtension = PopupActiveTabStore.isExtension;
@@ -41,6 +42,8 @@ const ExtensionMessage: FunctionComponent = () => {
   );
 };
 
+const messageStyle = { fontSize: '12pt', paddingTop: 10, margin: 0 };
+
 const NoUrlMessage: FunctionComponent = () => {
   const handleRefreshPage = async (): Promise<void> => {
     await BrowserApi.tabs.reload();
@@ -49,17 +52,14 @@ const NoUrlMessage: FunctionComponent = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <Typography
-        variant="h5"
-        component="h5"
-        sx={{ backgroundColor: '#d32f2f', color: '#ffffff', padding: 5, textAlign: 'center', width: '100%' }}
-      >
-        <span>Mission failed</span>
-        <br />
-        <span style={{ fontSize: '14pt' }}>refresh page</span>
-        <br />
-        <span style={{ fontSize: '14pt' }}>to add and view pins</span>
-      </Typography>
+      <div style={{ backgroundColor: '#d32f2f', color: '#ffffff', padding: 5, textAlign: 'center', width: '100%' }}>
+        <p style={{ fontSize: '24pt', marginTop: 20, marginBottom: 20 }}>Load failed</p>
+        <p style={messageStyle}>refresh page to add and view pins</p>
+        <p style={{ ...messageStyle, marginBottom: 20 }}>
+          To allow access to search page results navigate to{' '}
+          {BrowserApi.isChrome ? 'chrome://extensions' : 'about:addons'}
+        </p>
+      </div>
       <Button sx={{ width: '100%', marginTop: 1 }} variant="outlined" onClick={handleRefreshPage}>
         Refresh page
       </Button>

@@ -39,7 +39,6 @@ interface Props {
 }
 
 export const ObjListComponent: FunctionComponent<Props> = (props) => {
-  LogManager.log(`RENDER !!! ${props.objList.length}`);
   const [objRemove, setObjRemove] = useState<ObjDto | undefined>();
 
   const handleRemove = (id: number) => {

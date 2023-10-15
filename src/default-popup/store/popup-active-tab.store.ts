@@ -46,6 +46,7 @@ export class PopupActiveTabStore {
   }
 
   static initUrlValue = async () => {
+    await this.checkRuntimeScript();
     const tab = await BrowserApi.activeTab();
     if (tab.url) {
       const url = new URL(tab.url);
@@ -72,5 +73,22 @@ export class PopupActiveTabStore {
       this.isAddingValue = true;
       TinyDispatcher.getInstance().dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAddingValue);
     }
+  };
+
+  private static runtimeScriptTimeoutId = -1;
+  private static checkRuntimeScript = async () => {
+    TinyDispatcher.getInstance().addListener(
+      BusMessageType.CONTENT_PONG,
+      () => {
+        LogManager.log('checkRuntimeScript->PONG');
+        clearTimeout(this.runtimeScriptTimeoutId);
+      },
+      true
+    );
+    await BrowserApi.sendTabMessage({ type: BusMessageType.CONTENT_PING });
+    this.runtimeScriptTimeoutId = window.setTimeout(() => {
+      this.isError = true;
+      TinyDispatcher.getInstance().dispatch<void>(BusMessageType.POP_UPDATE_URL);
+    }, 500);
   };
 }

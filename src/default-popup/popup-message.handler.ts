@@ -22,6 +22,7 @@ import { PopupTokenStore } from './store/popup-token.store';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
 export class PopupMessageHandler {
+  private static timeoutId = -1;
   static async init(): Promise<void> {
     BrowserApi.runtime.onMessage.addListener(this.handleMessage);
 

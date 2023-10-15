@@ -29,7 +29,7 @@ export const MainFooterButton: FunctionComponent<Props> = (props) => {
     <div style={{ position: 'absolute', bottom: 0, width: 300, paddingTop: 5, backgroundColor: '#ffffff' }}>
       <div
         style={{
-          display: props.openBugReport ? 'flex' : 'none',
+          display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center'

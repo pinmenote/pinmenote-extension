@@ -94,7 +94,7 @@ export const ObjViewComponent: FunctionComponent<Props> = (props) => {
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setTimeout(async () => await initUrl(), 100);
+    setTimeout(async () => await initUrl(), 0);
     const urlKey = TinyDispatcher.getInstance().addListener(BusMessageType.POP_UPDATE_URL, () => {
       setTimeout(async () => {
         Store.resetStore();

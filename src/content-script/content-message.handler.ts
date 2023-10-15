@@ -109,6 +109,9 @@ export class ContentMessageHandler {
       case BusMessageType.CONTENT_PIN_VISIBLE:
         new PinVisibleCommand(msg.data).execute();
         break;
+      case BusMessageType.CONTENT_PING:
+        await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_PONG });
+        break;
       default:
         TinyDispatcher.getInstance().dispatch(msg.type, msg.data);
         break;
