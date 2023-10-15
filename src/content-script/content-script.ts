@@ -51,7 +51,6 @@ class PinMeScript {
     ContentMessageHandler.start(this.href);
 
     this.mutations = new MutationObserver(this.handleMutations);
-    this.mutations.observe(document.documentElement || document.body, { childList: true, subtree: true });
 
     fnConsoleLog('PinMeScript->constructor', this.href, 'referrer', document.referrer);
 
@@ -67,6 +66,7 @@ class PinMeScript {
     if (location.origin === environmentConfig.defaultServer) await new LoginExtensionCommand().execute();
 
     await ContentSettingsStore.initSettings();
+    this.mutations.observe(document.documentElement || document.body, { childList: true, subtree: true });
 
     await new RuntimePinGetHrefCommand().execute();
     this.initTimeout();
@@ -83,6 +83,7 @@ class PinMeScript {
   };
 
   private handleMutations = (mutationList: MutationRecord[]) => {
+    if (!ContentSettingsStore.settings.expertMode) return;
     for (const mutation of mutationList) {
       if (mutation.type === 'childList') {
         for (const removed of mutation.removedNodes) {
