@@ -18,7 +18,7 @@ import { ICommand } from '../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from './pin-component-add.command';
-import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnIsElementHidden } from '../../../common/fn/fn-is-element-hidden';
 

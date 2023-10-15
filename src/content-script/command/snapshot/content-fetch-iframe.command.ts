@@ -23,6 +23,7 @@ import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnIframeIndex } from '../../../common/fn/fn-iframe-index';
+import { DocumentStore } from '../../store/document.store';
 
 export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
   private savedHash = new Set<string>();
@@ -33,6 +34,7 @@ export class ContentFetchIframeCommand implements ICommand<Promise<void>> {
     fnConsoleLog('ContentFetchIframeCommand->execute', this.href, this.uid, 'children', document.body.children.length);
     const snapshot = await PageCompute.compute(
       document.body,
+      DocumentStore.getInstance().cache,
       this.contentCallback,
       IFrameStore.getInstance(),
       [],

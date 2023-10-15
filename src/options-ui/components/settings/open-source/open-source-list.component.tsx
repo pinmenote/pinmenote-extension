@@ -35,7 +35,6 @@ import {
   LICENSE_NOBLE_HASHES_CURVES,
   LICENSE_NODE_LANGUAGE_DETECT,
   LICENSE_PAKO,
-  LICENSE_PARSE5,
   LICENSE_PINMENOTE_MIT,
   LICENSE_PROSEMIRROR,
   LICENSE_REACT,
@@ -171,12 +170,6 @@ const ELEMENTS: OpensourceElement[] = [
     licenseHeader: LICENSE_PAKO,
     license: LICENSE_MIT,
     url: 'https://github.com/nodeca/pako'
-  },
-  {
-    title: 'parse5',
-    licenseHeader: LICENSE_PARSE5,
-    license: LICENSE_MIT,
-    url: 'https://github.com/inikulin/parse5'
   },
   {
     title: 'pdfjs-dist',

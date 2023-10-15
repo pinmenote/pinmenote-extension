@@ -19,7 +19,7 @@ import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
 import { SettingsStore } from '../../store/settings.store';
-import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 
 export class PreviewPinRenderer {

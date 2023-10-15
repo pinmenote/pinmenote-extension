@@ -23,7 +23,7 @@ import { ObjTitleFactory } from '../../../common/factory/obj-title.factory';
 
 interface Props {
   obj?: ObjDto;
-  removeCallback: (obj?: ObjDto) => void;
+  removeCallback: (obj?: ObjDto) => Promise<void>;
 }
 
 export const ObjRemoveComponent: FunctionComponent<Props> = (props) => {
@@ -32,9 +32,10 @@ export const ObjRemoveComponent: FunctionComponent<Props> = (props) => {
   let title = '';
   if (props.obj) title = ObjTitleFactory.computeTitle(props.obj);
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
     setIsRemoving(true);
-    props.removeCallback(props.obj);
+    await props.removeCallback(props.obj);
+    setIsRemoving(false);
   };
   return (
     <div style={{ display: 'flex' }}>

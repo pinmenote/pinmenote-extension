@@ -16,7 +16,7 @@
  */
 import { ObjVideoDataDto } from '../../../../model/obj/page-snapshot.dto';
 import { PinEditModel } from '../../model/pin-edit.model';
-import { XpathFactory } from '../../../../factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 import { applyStylesToElement } from '../../../../style.utils';
 import { fnVideoSecondsTime } from '../../../../fn/fn-date-format';
 

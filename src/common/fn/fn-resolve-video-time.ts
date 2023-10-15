@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjVideoDataDto } from '../model/obj/page-snapshot.dto';
-import { XpathFactory } from '../factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 
 export const fnResolveVideoTime = (video?: ObjVideoDataDto): void => {
   if (!video) return;

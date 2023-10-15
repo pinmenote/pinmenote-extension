@@ -36,16 +36,22 @@ import { UrlFactory } from '../common/factory/url.factory';
 import { fnUid } from '../common/fn/fn-uid';
 import { environmentConfig } from '../common/environment';
 import { LoginExtensionCommand } from './command/login/login-extension.command';
+import { DocumentStore } from './store/document.store';
 
 class PinMeScript {
   private href: string;
   private timeoutId = 0;
+  private mutations: MutationObserver;
+  private doc: DocumentStore = DocumentStore.getInstance();
 
   constructor(private readonly uid: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
 
     // @see iframe/iframe-script.ts for iframe
     ContentMessageHandler.start(this.href);
+
+    this.mutations = new MutationObserver(this.handleMutations);
+    this.mutations.observe(document.documentElement || document.body, { childList: true, subtree: true });
 
     fnConsoleLog('PinMeScript->constructor', this.href, 'referrer', document.referrer);
 
@@ -74,6 +80,16 @@ class PinMeScript {
         theme
       }
     });
+  };
+
+  private handleMutations = (mutationList: MutationRecord[]) => {
+    for (const mutation of mutationList) {
+      if (mutation.type === 'childList') {
+        for (const removed of mutation.removedNodes) {
+          this.doc.remove(removed, mutation.target);
+        }
+      }
+    }
   };
 
   private handleVisibilityChange = async (): Promise<void> => {

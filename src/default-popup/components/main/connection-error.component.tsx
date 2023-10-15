@@ -20,7 +20,6 @@ import Button from '@mui/material/Button';
 import { MainFooterButton } from './main-footer.button';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 
 export const ConnectionErrorComponent: FunctionComponent = () => {
   const isExtension = PopupActiveTabStore.isExtension;

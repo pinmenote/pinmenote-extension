@@ -23,17 +23,18 @@ import {
 import { AutoTagMediator } from '../../mediator/auto-tag.mediator';
 import { ContentPageSegmentSaveCommand } from './content-page-segment-save.command';
 import { ContentPageSegmentSaveImageCommand } from './content-page-segment-save-image.command';
+import { ElementSizeFactory } from '../../../common/factory/element-size.factory';
 import { ICommand } from '../../../common/model/shared/common.dto';
+import { ImageResizeFactory } from '../../../common/factory/image-resize.factory';
 import { ObjRectangleDto } from '../../../common/model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../../../common/model/obj/obj.dto';
 import { PageSkipAttribute } from '@pinmenote/page-compute';
 import { PinStore } from '../../store/pin.store';
 import { ScreenshotFactory } from '../../../common/factory/screenshot.factory';
 import { SettingsConfig } from '../../../common/environment';
-import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { fnSha256Object } from '../../../common/fn/fn-hash';
-import { ImageResizeFactory } from '../../../common/factory/image-resize.factory';
 
 export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSnapshotDto>> {
   constructor(
@@ -56,7 +57,7 @@ export class ContentPageSnapshotCreateCommand implements ICommand<Promise<PageSn
       rect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
     } else {
       title = this.element.innerText.substring(0, 100) || document.title || this.url.origin;
-      rect = this.canvas ? this.canvas.rect : XpathFactory.computeRect(this.element);
+      rect = this.canvas ? this.canvas.rect : ElementSizeFactory.computeRect(this.element);
       xpath = XpathFactory.newXPathString(this.element);
       isPartial = true;
     }

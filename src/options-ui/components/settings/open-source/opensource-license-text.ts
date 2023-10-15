@@ -100,9 +100,6 @@ export const LICENSE_PAKO = `(The MIT License)
 Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
 `;
 
-export const LICENSE_PARSE5 = `Copyright (c) 2013-2019 Ivan Nikulin (ifaaan@gmail.com, https://github.com/inikulin)
-`;
-
 export const LICENSE_REACT = `MIT License
 
 Copyright (c) Meta Platforms, Inc. and affiliates.

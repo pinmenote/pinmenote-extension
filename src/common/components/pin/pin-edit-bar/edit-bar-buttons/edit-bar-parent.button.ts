@@ -17,7 +17,7 @@
 import { HtmlComponent } from '../../model/pin-view.model';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { PinUpdateCommand } from '../../../../command/pin/pin-update.command';
-import { XpathFactory } from '../../../../factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 import { applyStylesToElement } from '../../../../style.utils';
 import { fnConsoleLog } from '../../../../fn/fn-console';
 import { iconButtonStyles } from '../../styles/icon-button.styles';

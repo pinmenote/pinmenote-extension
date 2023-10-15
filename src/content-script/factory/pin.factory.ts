@@ -16,11 +16,12 @@
  */
 import { ObjPinDto, PinBorderDataDto, PinIframeDto } from '../../common/model/obj/obj-pin.dto';
 import { ContentSettingsStore } from '../store/content-settings.store';
+import { ElementSizeFactory } from '../../common/factory/element-size.factory';
 import { ObjRectangleDto } from '../../common/model/obj/obj-utils.dto';
 import { ObjUrlDto } from '../../common/model/obj/obj.dto';
 import { PageCanvasDto } from '../../common/model/obj/page-snapshot.dto';
 import { ScreenshotFactory } from '../../common/factory/screenshot.factory';
-import { XpathFactory } from '../../common/factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 import { fnIframeIndex } from '../../common/fn/fn-iframe-index';
 import { fnSha256 } from '../../common/fn/fn-hash';
 
@@ -33,7 +34,7 @@ export class PinFactory {
     baseUrl?: ObjUrlDto,
     canvas?: PageCanvasDto
   ): Promise<ObjPinDto> => {
-    const rect = canvas ? canvas.rect : XpathFactory.computeRect(ref);
+    const rect = canvas ? canvas.rect : ElementSizeFactory.computeRect(ref);
     const screenshot = await ScreenshotFactory.takeScreenshot(
       document,
       window,

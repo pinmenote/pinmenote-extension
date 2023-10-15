@@ -19,7 +19,7 @@ import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjPinDto } from '../../../common/model/obj/obj-pin.dto';
 import { PinComponentAddCommand } from './pin-component-add.command';
 import { PinPendingStore } from '../../store/pin-pending.store';
-import { XpathFactory } from '../../../common/factory/xpath.factory';
+import { XpathFactory } from '@pinmenote/page-compute';
 import { fnIsElementHidden } from '../../../common/fn/fn-is-element-hidden';
 
 export class PinAddXpathCommand implements ICommand<boolean> {

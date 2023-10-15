@@ -14,8 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { DefaultTreeAdapterMap } from 'parse5/dist/tree-adapters/default';
-import { parse } from 'parse5';
-export const fnParse5 = (value: string): DefaultTreeAdapterMap => {
-  return parse(value) as unknown as DefaultTreeAdapterMap;
-};
+import { ObjRectangleDto } from '../model/obj/obj-utils.dto';
+
+export class ElementSizeFactory {
+  static computeRect = (ref: HTMLElement): ObjRectangleDto => {
+    const rect = ref.getBoundingClientRect();
+    return {
+      x: Math.round(rect.x),
+      y: Math.round(rect.y),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height)
+    };
+  };
+}

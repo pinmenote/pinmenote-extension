@@ -21,6 +21,7 @@ import { IFrameStore } from '../../store/iframe.store';
 import { PageSegmentAddCommand } from '../../../common/command/snapshot/segment/page-segment-add.command';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { DocumentStore } from '../../store/document.store';
 
 export class ContentPageSegmentSaveCommand implements ICommand<Promise<string>> {
   private savedHash = new Set<string>();
@@ -33,6 +34,7 @@ export class ContentPageSegmentSaveCommand implements ICommand<Promise<string>> 
 
     const snapshot = await PageCompute.compute(
       this.element,
+      DocumentStore.getInstance().cache,
       this.contentCallback,
       IFrameStore.getInstance(),
       skipAttributes,
