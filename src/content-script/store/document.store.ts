@@ -23,7 +23,7 @@ const IGNORED = ['head', 'html', 'title', 'script', 'style', 'header', 'svg'];
 export class DocumentStore {
   private static instance: DocumentStore;
 
-  private elements: PageTreeCache = {};
+  private elements: PageTreeCache = { tree: {}, origin: '' };
 
   static getInstance(): DocumentStore {
     if (!this.instance) this.instance = new DocumentStore();
@@ -31,6 +31,15 @@ export class DocumentStore {
   }
 
   get cache(): PageTreeCache {
+    this.elements.origin = location.origin;
+    if (location.origin.endsWith('twitter.com') || location.origin.endsWith('x.com')) {
+      this.elements.target = Object.entries(this.twitterTagCounter).sort((a, b) => {
+        if (a[1] > b[1]) return 1;
+        if (a[1] < b[1]) return -1;
+        return 0;
+      })[0][0];
+      fnConsoleLog('DocumentStore->cache', this.elements);
+    }
     return this.elements;
   }
 
@@ -41,17 +50,63 @@ export class DocumentStore {
     const el = node as HTMLElement;
     if (!el.innerHTML) return;
     const xpath = XpathFactory.newXPathString(target);
-    fnConsoleLog('DocumentStore->remove', xpath, el);
-    /* Experimental - TODO fix
+    // Experimental
+    if (location.origin.endsWith('wykop.pl')) this.addToWykopCache(xpath, el, target as HTMLElement);
+    if (location.origin.endsWith('facebook.com')) this.addToFacebookCache(xpath, el, target as HTMLElement);
+    if (location.origin.endsWith('twitter.com') || location.origin.endsWith('x.com'))
+      this.addToTwitterCache(xpath, el, target as HTMLElement);
+  }
+
+  private twitterTagCounter: { [key: string]: number } = {};
+  private addToTwitterCache(xpath: string, el: HTMLElement, target: HTMLElement) {
+    /*
     twitter - <div data-testid="cellInnerDiv" style="transform: translateY(5660px); position: absolute; width: 100%;">
     - fix sort by translateY position
     */
-    if (!this.elements[xpath]) {
+    // fnConsoleLog('DocumentStore->addToTwitterCache', xpath, 'el', el, 'target', target);
+    if (el.tagName.toLowerCase() === 'div' && el.style.transform.startsWith('translateY')) {
+      let offset = el.style.transform.substring(11).replaceAll(')', '');
+      if (offset.endsWith('px')) offset = offset.substring(0, offset.length - 2);
+      try {
+        const txpath = XpathFactory.newXPathString(target);
+        if (!this.twitterTagCounter[txpath]) this.twitterTagCounter[txpath] = 0;
+        this.twitterTagCounter[txpath] += 1;
+        fnConsoleLog('DocumentStore->addToTwitterCache', el, 'offset', offset, 'xpath');
+        const attrs = this.computeAttrs(el.tagName.toLowerCase(), Array.from(el.attributes));
+        this.elements.tree[offset] = {
+          tagName: el.tagName.toLowerCase(),
+          xpath: parseInt(offset).toString(),
+          html: el.innerHTML,
+          attrs,
+          target: txpath
+        };
+      } catch (e) {
+        fnConsoleLog('DocumentStore->addToTwitterCache->error', e);
+      }
+    }
+  }
+
+  private addToFacebookCache(xpath: string, el: HTMLElement, target: HTMLElement) {
+    /*
+    facebook - <div class="x1lliihq"></div>
+    - probably need to find container that have most divs that are repeating
+     */
+    if (target.className === 'x1lliihq') {
+      fnConsoleLog('DocumentStore->addToFacebookCache', xpath, 'el', el, 'target', target);
+      /*const attrs = this.computeAttrs(el.tagName.toLowerCase(), Array.from(el.attributes));
+      this.elements[xpath] = { xpath, html: el.innerHTML, attrs };*/
+    }
+  }
+
+  private addToWykopCache(xpath: string, el: HTMLElement, target: HTMLElement) {
+    if (!this.elements.tree[xpath]) {
+      fnConsoleLog('DocumentStore->addToWykopCache', xpath, 'el', el, 'target', target);
       const attrs = this.computeAttrs(el.tagName.toLowerCase(), Array.from(el.attributes));
-      this.elements[xpath] = { xpath, html: el.innerHTML, attrs };
-    } else if (this.elements[xpath].html.length < el.innerHTML.length) {
+      this.elements.tree[xpath] = { tagName: el.tagName.toLowerCase(), xpath, html: el.innerHTML, attrs };
+    } else if (this.elements.tree[xpath].html.length < el.innerHTML.length) {
+      fnConsoleLog('DocumentStore->addToWykopCache', xpath, 'el', el, 'target', target);
       const attrs = this.computeAttrs(el.tagName.toLowerCase(), Array.from(el.attributes));
-      this.elements[xpath] = { xpath, html: el.innerHTML, attrs };
+      this.elements.tree[xpath] = { tagName: el.tagName.toLowerCase(), xpath, html: el.innerHTML, attrs };
     }
   }
 

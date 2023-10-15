@@ -51,11 +51,11 @@ export class DrawDataModel {
   }
 
   get currentData(): ObjDrawDataDto[] {
-    return this.drawData!.data;
+    return this.drawData?.data || [];
   }
 
   get size(): ObjSizeDto {
-    return this.drawData!.size;
+    return this.drawData?.size || { width: 0, height: 0 };
   }
 
   createDraw(width: number, height: number) {
