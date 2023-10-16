@@ -66,8 +66,7 @@ export class FillDraw {
         stack.push({ x: point.x, y: point.y - 1 });
       }
     }
-
-    const imData = new ImageData(pixelData, width, height);
+    const imData = new ImageData(new Uint8ClampedArray(pixelData), width, height);
     ctx.putImageData(imData, 0, 0);
 
     return [from];

@@ -75,19 +75,22 @@ export class PopupActiveTabStore {
     }
   };
 
-  private static runtimeScriptTimeoutId = -1;
   private static checkRuntimeScript = async () => {
+    const start = Date.now();
+    let isOk = false;
     TinyDispatcher.getInstance().addListener(
       BusMessageType.CONTENT_PONG,
       () => {
-        LogManager.log('checkRuntimeScript->PONG');
-        clearTimeout(this.runtimeScriptTimeoutId);
+        LogManager.log(`checkRuntimeScript->PONG in ${Date.now() - start}`);
+        isOk = true;
       },
       true
     );
     await BrowserApi.sendTabMessage({ type: BusMessageType.CONTENT_PING });
-    this.runtimeScriptTimeoutId = window.setTimeout(() => {
+    setTimeout(() => {
+      if (isOk) return;
       this.isError = true;
+      LogManager.log(`checkRuntimeScript->TIMEOUT in ${Date.now() - start}`);
       TinyDispatcher.getInstance().dispatch<void>(BusMessageType.POP_UPDATE_URL);
     }, 500);
   };

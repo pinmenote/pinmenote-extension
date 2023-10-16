@@ -32,10 +32,13 @@ const elStyles = {
 export class ShowCommentButton implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;
 
-  private visible = false;
+  private visible: boolean;
+  private readonly showText = 'show comments';
+  private readonly hideText = 'hide comments';
 
   constructor(private edit: PinEditManager, model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
+    this.visible = model.comments.data.length > 0;
   }
 
   cleanup(): void {
@@ -48,7 +51,7 @@ export class ShowCommentButton implements HtmlComponent<HTMLElement> {
 
   render(): HTMLElement {
     applyStylesToElement(this.el, elStyles);
-    this.el.innerText = 'show comments';
+    this.el.innerText = this.visible ? this.hideText : this.showText;
     this.el.addEventListener('click', this.handleClick);
     return this.el;
   }
@@ -57,10 +60,10 @@ export class ShowCommentButton implements HtmlComponent<HTMLElement> {
     this.visible = !this.visible;
     if (this.visible) {
       this.edit.showText();
-      this.el.innerText = 'hide comments';
+      this.el.innerText = this.hideText;
     } else {
       this.edit.hideText();
-      this.el.innerText = 'show comments';
+      this.el.innerText = this.showText;
     }
   };
 }

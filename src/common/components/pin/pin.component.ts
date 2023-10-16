@@ -158,6 +158,8 @@ export class PinComponent implements HtmlComponent<void>, PageComponent {
       this.model.ref.style.border = this.doc.settings.borderStyle;
       this.model.ref.style.borderRadius = this.doc.settings.borderRadius;
     }
+
+    if (this.model.comments.data.length > 0) this.edit.showText();
   }
 
   resize = (): void => {

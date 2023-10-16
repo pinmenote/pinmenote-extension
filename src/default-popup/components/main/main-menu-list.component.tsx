@@ -61,8 +61,7 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
       /* IGNORE */
     });
   }, []);
-  const handleSavePageClick = async () => {
-    await BrowserApi.sendTabMessage({ type: BusMessageType.POPUP_PAGE_SNAPSHOT_ADD, data: PopupActiveTabStore.url });
+  const handleSavePageClick = () => {
     props.closeListCallback(MainViewEnum.SAVE_PROGRESS);
   };
 

@@ -46,8 +46,8 @@ interface Props {
 }
 
 export const LoginComponent: FunctionComponent<Props> = ({ loginSuccess }) => {
-  const [email, setEmail] = useState<string>('foobar5@example.local');
-  const [password, setPassword] = useState<string>('asdQWE123!@#');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [responseError, setResponseError] = useState<ServerErrorDto | undefined>(undefined);
 
   useEffect(() => {
