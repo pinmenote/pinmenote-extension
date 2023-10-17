@@ -50,9 +50,9 @@ export class HashtagStore {
     if (index === -1) return;
 
     arr.splice(index, 1);
-    await this.removeWord(word);
     if (arr.length === 0) {
       await BrowserStorage.remove(key);
+      await this.removeWord(word);
       return;
     }
     await BrowserStorage.set<number[]>(key, arr);
