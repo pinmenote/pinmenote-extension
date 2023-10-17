@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { DrawToolDto, ObjDrawDataDto } from '../../../model/obj/obj-draw.dto';
+import { BrowserApi } from '@pinmenote/browser-api';
 import { DrawDataModel } from '../model/pin-draw-edit.model';
 import { EraserDraw } from './tool/eraser.draw';
 import { FillDraw } from './tool/fill.draw';
@@ -23,6 +24,7 @@ import { ObjPointDto } from '../../../model/obj/obj-utils.dto';
 import { PencilDraw } from './tool/pencil.draw';
 import { PinEditModel } from '../model/pin-edit.model';
 import { applyStylesToElement } from '../../../style.utils';
+import { fnConsoleLog } from '../../../fn/fn-console';
 
 const canvasStyles = {
   position: 'absolute',
@@ -188,8 +190,22 @@ no javascript enabled - drawing not working</h1>`;
         EraserDraw.raster(points, this.model.draw.size, this.rasterCtx);
         break;
       case DrawToolDto.Fill:
-        points = FillDraw.fill({ x: e.offsetX, y: e.offsetY }, this.model.draw.color, this.drawCtx);
-        FillDraw.raster(points, this.model.draw.color, this.rasterCtx);
+        try {
+          points = FillDraw.fill({ x: e.offsetX, y: e.offsetY }, this.model.draw.color, this.drawCtx);
+          FillDraw.raster(points, this.model.draw.color, this.rasterCtx);
+        } catch (e) {
+          fnConsoleLog('drawOne->error', e);
+          if (
+            !BrowserApi.isChrome &&
+            e instanceof DOMException &&
+            e.message.startsWith('CanvasRenderingContext2D.putImageData')
+          ) {
+            alert(
+              'Firefox problem - see details under this bug url https://bugzilla.mozilla.org/show_bug.cgi?id=1853273'
+            );
+            return;
+          }
+        }
         break;
     }
     // clear draw canvas
