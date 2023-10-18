@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusDownloadMessage, BusMessageType } from '../../../../model/bus.model';
+import { BusDownloadMessageChrome, BusDownloadMessageFirefox, BusMessageType } from '../../../../model/bus.model';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { applyStylesToElement } from '../../../../style.utils';
@@ -154,17 +154,27 @@ export class DownloadCsvButton {
   }
 
   private downloadCsv = async (tableData: string[][]): Promise<void> => {
-    const blob = new Blob([this.makeCsv(tableData)], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const filename = `${fnUid()}.csv`;
+    if (BrowserApi.isChrome) {
+      const blob = new Blob([this.makeCsv(tableData)], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const filename = `${fnUid()}.csv`;
 
-    await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({
-      type: BusMessageType.CONTENT_DOWNLOAD_DATA,
-      data: {
-        url,
-        filename
-      }
-    });
+      await BrowserApi.sendRuntimeMessage<BusDownloadMessageChrome>({
+        type: BusMessageType.CONTENT_DOWNLOAD_DATA_CHROME,
+        data: {
+          url,
+          filename
+        }
+      });
+    } else {
+      await BrowserApi.sendRuntimeMessage<BusDownloadMessageFirefox>({
+        type: BusMessageType.CONTENT_DOWNLOAD_DATA_FIREFOX,
+        data: {
+          data: this.makeCsv(tableData),
+          type: 'csv'
+        }
+      });
+    }
   };
 
   private makeCsv(csvData: string[][]): string {

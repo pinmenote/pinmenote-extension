@@ -54,11 +54,11 @@ export class ImageResizeFactory {
         }
       };
       img.onerror = (event, source, lineno, colno, error) => {
+        fnConsoleLog('ImageResizeFactory->resize2', error);
         window.URL.revokeObjectURL(b64image);
         img.onerror = null;
         img.onload = null;
         reject(error);
-        fnConsoleLog('ImageResizeFactory->resize', error);
       };
       img.src = b64image;
     });
@@ -110,11 +110,11 @@ export class ImageResizeFactory {
         }
       };
       img.onerror = (event, source, lineno, colno, error) => {
+        fnConsoleLog('ImageResizeFactory->resize', error);
         window.URL.revokeObjectURL(b64image);
         img.onerror = null;
         img.onload = null;
         reject(error);
-        fnConsoleLog('ImageResizeFactory->resize', error);
       };
       img.src = b64image;
     });

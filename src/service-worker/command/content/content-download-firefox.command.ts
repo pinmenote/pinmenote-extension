@@ -15,17 +15,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserApi } from '@pinmenote/browser-api';
-import { BusDownloadMessage } from '../../../common/model/bus.model';
+import { BusDownloadMessageFirefox } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
+import { fnB64toBlob } from '../../../common/fn/fn-b64-to-blob';
+import { fnUid } from '../../../common/fn/fn-uid';
 
-export class ContentDownloadDataCommand implements ICommand<Promise<void>> {
-  constructor(private data: BusDownloadMessage) {}
+export class ContentDownloadFirefoxCommand implements ICommand<Promise<void>> {
+  constructor(private data: BusDownloadMessageFirefox) {}
   async execute(): Promise<void> {
-    fnConsoleLog('ContentDownloadDataCommand->execute');
+    fnConsoleLog('ContentDownloadFirefoxCommand->execute');
+    let url = '';
+    let filename = '';
+    switch (this.data.type) {
+      case 'jpeg': {
+        url = URL.createObjectURL(fnB64toBlob(this.data.data));
+        filename = `${fnUid()}.jpg`;
+        break;
+      }
+      case 'png': {
+        url = URL.createObjectURL(fnB64toBlob(this.data.data));
+        filename = `${fnUid()}.png`;
+        break;
+      }
+      case 'csv': {
+        const blob = new Blob([this.data.data], { type: 'text/csv' });
+        url = URL.createObjectURL(blob);
+        filename = `${fnUid()}.csv`;
+        break;
+      }
+    }
+    if (!url || !filename) return;
     await BrowserApi.downloads.download({
-      url: this.data.url,
-      filename: this.data.filename,
+      url,
+      filename,
       conflictAction: 'uniquify'
     });
   }

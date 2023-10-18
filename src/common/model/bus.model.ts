@@ -14,9 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export interface BusDownloadMessage {
+export interface BusDownloadMessageChrome {
   url: string;
   filename: string;
+}
+
+export interface BusDownloadMessageFirefox {
+  data: string;
+  type: 'jpeg' | 'png' | 'csv';
 }
 
 export enum BusMessageType {
@@ -49,7 +54,8 @@ export enum BusMessageType {
   POPUP_SERVER_QUOTA = 'popup.server.quota',
   POPUP_IS_PDF = 'popup.is.pdf',
   // Content script
-  CONTENT_DOWNLOAD_DATA = 'content.download',
+  CONTENT_DOWNLOAD_DATA_FIREFOX = 'content.download.data.firefox',
+  CONTENT_DOWNLOAD_DATA_CHROME = 'content.download.data.chrome',
   CONTENT_EXTENSION_LOGIN = 'content.extension.login',
   CONTENT_INVALIDATE = 'content.invalidate',
   CONTENT_PING = 'content.ping',

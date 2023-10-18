@@ -16,7 +16,9 @@
  */
 import { BrowserApi, BrowserGlobalSender, BusMessage } from '@pinmenote/browser-api';
 import { BusMessageType } from '../common/model/bus.model';
-import { ContentDownloadDataCommand } from './command/content/content-download-data.command';
+import { ContentDownloadChromeCommand } from './command/content/content-download-chrome.command';
+import { ContentDownloadFirefoxCommand } from './command/content/content-download-firefox.command';
+import { ContentExtensionLoginCommand } from './command/content/content-extension-login.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
 import { ContentFetchPDFCommand } from './command/content/content-fetch-pdf.command';
@@ -40,7 +42,6 @@ import { fnConsoleLog } from '../common/fn/fn-console';
 import { SyncManualOutgoingCommand } from './command/sync/manual/sync-manual-outgoing.command';
 import { SyncServerIncomingCommand } from './command/sync/sync-server-incoming.command';
 import { SyncGetProgressCommand } from './command/sync/progress/sync-get-progress.command';
-import { ContentExtensionLoginCommand } from './command/content/content-extension-login.command';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -58,8 +59,11 @@ const handleMessage = async (
     case BusMessageType.CONTENT_EXTENSION_LOGIN:
       await new ContentExtensionLoginCommand(msg.data).execute();
       break;
-    case BusMessageType.CONTENT_DOWNLOAD_DATA:
-      await new ContentDownloadDataCommand(msg.data).execute();
+    case BusMessageType.CONTENT_DOWNLOAD_DATA_CHROME:
+      await new ContentDownloadChromeCommand(msg.data).execute();
+      break;
+    case BusMessageType.CONTENT_DOWNLOAD_DATA_FIREFOX:
+      await new ContentDownloadFirefoxCommand(msg.data).execute();
       break;
     case BusMessageType.CONTENT_TAKE_SCREENSHOT:
       await new ContentTakeScreenshotCommand(msg.data, runtime.tab?.id).execute();

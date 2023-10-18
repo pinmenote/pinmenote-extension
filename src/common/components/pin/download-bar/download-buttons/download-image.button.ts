@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { BusDownloadMessage, BusMessageType } from '../../../../model/bus.model';
+import { BusDownloadMessageChrome, BusDownloadMessageFirefox, BusMessageType } from '../../../../model/bus.model';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { ObjRectangleDto } from '../../../../model/obj/obj-utils.dto';
 import { PinEditManager } from '../../pin-edit.manager';
@@ -77,16 +77,27 @@ export class DownloadImageButton {
   };
 
   private downloadScreenshot = async (screenshot: string): Promise<void> => {
-    const url = window.URL.createObjectURL(fnB64toBlob(screenshot));
-    let filename = '';
-    switch (this.model.doc.settings.screenshotFormat) {
-      case 'jpeg':
-        filename = `${fnUid()}.jpg`;
-        break;
-      default:
-        filename = `${fnUid()}.png`;
+    if (BrowserApi.isChrome) {
+      const url = window.URL.createObjectURL(fnB64toBlob(screenshot));
+      let filename = '';
+      switch (this.model.doc.settings.screenshotFormat) {
+        case 'jpeg':
+          filename = `${fnUid()}.jpg`;
+          break;
+        default:
+          filename = `${fnUid()}.png`;
+      }
+      const data = { url, filename };
+      await BrowserApi.sendRuntimeMessage<BusDownloadMessageChrome>({
+        type: BusMessageType.CONTENT_DOWNLOAD_DATA_CHROME,
+        data
+      });
+    } else {
+      const data = { data: screenshot, type: this.model.doc.settings.screenshotFormat };
+      await BrowserApi.sendRuntimeMessage<BusDownloadMessageFirefox>({
+        type: BusMessageType.CONTENT_DOWNLOAD_DATA_FIREFOX,
+        data
+      });
     }
-    const data = { url, filename };
-    await BrowserApi.sendRuntimeMessage<BusDownloadMessage>({ type: BusMessageType.CONTENT_DOWNLOAD_DATA, data });
   };
 }
