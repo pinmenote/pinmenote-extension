@@ -22,7 +22,7 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnDateKeyFormat } from '../../../../common/fn/fn-date-format';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { SyncProgress } from '../../../../common/model/sync.model';
+import { SyncMode, SyncProgress } from '../../../../common/model/sync.model';
 
 export class SyncResetProgressCommand implements ICommand<Promise<void>> {
   constructor(private refreshUpdateList = false) {}
@@ -33,7 +33,8 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
     await BrowserStorage.set<SyncProgress>(ObjectStoreKeys.SYNC_PROGRESS, {
       timestamp,
       id,
-      serverId: -1
+      serverId: -1,
+      mode: SyncMode.OFF
     });
     // await this.resetObjects();
   }

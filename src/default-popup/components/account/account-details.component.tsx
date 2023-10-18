@@ -27,9 +27,9 @@ import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import { TokenDataDto } from '../../../common/model/shared/token.dto';
 import { TokenStorageRemoveCommand } from '../../../common/command/server/token/token-storage-remove.command';
 import Typography from '@mui/material/Typography';
-import jwtDecode from 'jwt-decode';
 import { ServerQuotaResponse } from '../../../common/model/sync-server.model';
 import { fnByteToGb } from '../../../common/fn/fn-byte-convert';
+import { TokenDecodeCommand } from '../../../common/command/server/token/token-decode.command';
 
 interface Props {
   logoutSuccess: () => void;
@@ -47,7 +47,7 @@ export const AccountDetailsComponent: FunctionComponent<Props> = (props) => {
     let quotaKey: string | undefined = undefined;
 
     if (PopupTokenStore.token) {
-      setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
+      setTokenData(new TokenDecodeCommand(PopupTokenStore.token.access_token).execute());
       quotaKey = dispatcher.addListener<ServerQuotaResponse | ServerErrorDto>(
         BusMessageType.POPUP_SERVER_QUOTA,
         (event, key, value) => {
@@ -71,7 +71,7 @@ export const AccountDetailsComponent: FunctionComponent<Props> = (props) => {
       BusMessageType.POPUP_LOGIN_SUCCESS,
       async () => {
         await PopupTokenStore.init();
-        if (PopupTokenStore.token) setTokenData(jwtDecode<TokenDataDto>(PopupTokenStore.token.access_token));
+        if (PopupTokenStore.token) setTokenData(new TokenDecodeCommand(PopupTokenStore.token.access_token).execute());
       },
       true
     );

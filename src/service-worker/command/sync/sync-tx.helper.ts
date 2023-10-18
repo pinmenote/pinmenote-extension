@@ -20,10 +20,9 @@ import { BeginTxResponse } from '../api/store/api-store.model';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ObjDateIndex } from '../../../common/command/obj/index/obj-update-index-add.command';
 import { ObjectStoreKeys } from '../../../common/keys/object.store.keys';
+import { TokenDecodeCommand } from '../../../common/command/server/token/token-decode.command';
 import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import jwtDecode from 'jwt-decode';
-import { TokenDataDto } from '../../../common/model/shared/token.dto';
 
 const SYNC_DELAY = 10_000;
 
@@ -35,7 +34,7 @@ export class SyncTxHelper {
     if (txResponse?.locked) {
       const token = await new TokenStorageGetCommand().execute();
       if (!token) return undefined;
-      const tokenData = jwtDecode<TokenDataDto>(token.access_token);
+      const tokenData = new TokenDecodeCommand(token.access_token).execute();
       fnConsoleLog(
         'locked',
         txResponse?.locked,

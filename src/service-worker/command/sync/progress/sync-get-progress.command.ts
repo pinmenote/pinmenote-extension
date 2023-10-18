@@ -19,15 +19,15 @@ import { ICommand } from '../../../../common/model/shared/common.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjGetCommand } from '../../../../common/command/obj/obj-get.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
-import { SyncProgress } from '../../../../common/model/sync.model';
+import { SyncMode, SyncProgress } from '../../../../common/model/sync.model';
 
 export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
   async execute(): Promise<SyncProgress> {
     const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
     if (sync) return sync;
     const obj = await SyncGetProgressCommand.getFirstObject();
-    if (!obj) return { timestamp: -1, id: -1, serverId: -1 };
-    return { timestamp: obj.createdAt, id: obj.id, serverId: -1 };
+    if (!obj) return { timestamp: -1, id: -1, serverId: -1, mode: SyncMode.OFF };
+    return { timestamp: obj.createdAt, id: obj.id, serverId: -1, mode: SyncMode.OFF };
   }
 
   static async getFirstObject(): Promise<ObjDto | undefined> {

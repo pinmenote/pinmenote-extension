@@ -21,6 +21,7 @@ import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { SyncResetProgressCommand } from './progress/sync-reset-progress.command';
 import { SyncServerIncomingCommand } from './sync-server-incoming.command';
 import { SwSyncStore } from '../../sw-sync.store';
+import { SyncMode } from '../../../common/model/sync.model';
 import { SyncServerOutgoingCommand } from './sync-server-outgoing.command';
 
 export class SyncServerCommand implements ICommand<Promise<void>> {
@@ -28,11 +29,20 @@ export class SyncServerCommand implements ICommand<Promise<void>> {
     if (SwSyncStore.isInSync) return;
     if (!(await SyncTxHelper.shouldSync())) return;
     try {
-      await new SyncResetProgressCommand(false).execute();
       const a = Date.now();
       const progress = await new SyncGetProgressCommand().execute();
-      // await new SyncServerOutgoingCommand(progress).execute()
-      await new SyncServerIncomingCommand(progress).execute();
+      switch (progress.mode) {
+        case SyncMode.OUTGOING_INCOMING:
+          await new SyncServerOutgoingCommand(progress).execute();
+          await new SyncServerIncomingCommand(progress).execute();
+          break;
+        case SyncMode.INCOMING:
+          await new SyncServerIncomingCommand(progress).execute();
+          break;
+        case SyncMode.RESET:
+          await new SyncResetProgressCommand(false).execute();
+          break;
+      }
 
       fnConsoleLog('SyncServerCommand->execute', progress, 'in', Date.now() - a);
     } finally {

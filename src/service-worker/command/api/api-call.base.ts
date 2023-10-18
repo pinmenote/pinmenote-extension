@@ -18,8 +18,8 @@ import { AccessTokenDto, TokenDataDto } from '../../../common/model/shared/token
 import { FetchHeaders, RefreshTokenParams } from '@pinmenote/fetch-service';
 import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
+import { TokenDecodeCommand } from '../../../common/command/server/token/token-decode.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import jwtDecode from 'jwt-decode';
 
 export class ApiCallBase {
   protected token: AccessTokenDto | undefined;
@@ -32,7 +32,7 @@ export class ApiCallBase {
   protected async initTokenData() {
     this.token = await new TokenStorageGetCommand().execute();
     if (!this.token) return;
-    this.tokenData = jwtDecode<TokenDataDto>(this.token.access_token);
+    this.tokenData = new TokenDecodeCommand(this.token.access_token).execute();
   }
 
   protected refreshParams(baseUrl: string): RefreshTokenParams {

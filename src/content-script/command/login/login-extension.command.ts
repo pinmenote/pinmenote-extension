@@ -17,14 +17,14 @@
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import { ICommand } from '../../../common/model/shared/common.dto';
-import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 
 export class LoginExtensionCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     const token = localStorage.getItem('accessToken');
-    const extensionToken = await new TokenStorageGetCommand().execute();
-    // we are logged in on website but not on extension
-    if (!extensionToken && token)
-      await BrowserApi.sendRuntimeMessage({ type: BusMessageType.CONTENT_EXTENSION_LOGIN, data: JSON.parse(token) });
+    if (token)
+      await BrowserApi.sendRuntimeMessage({
+        type: BusMessageType.CONTENT_EXTENSION_LOGIN,
+        data: JSON.parse(token)
+      });
   }
 }

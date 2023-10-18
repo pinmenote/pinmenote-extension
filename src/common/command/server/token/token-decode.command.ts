@@ -14,27 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-export interface SyncProgress {
-  timestamp: number;
-  id: number;
-  serverId: number;
-  mode: SyncMode;
-}
+import { ICommand } from '../../../model/shared/common.dto';
+import { TokenDataDto } from '../../../model/shared/token.dto';
+import jwtDecode from 'jwt-decode';
 
-export enum SyncMode {
-  OUTGOING_INCOMING = 1,
-  INCOMING,
-  MANUAL,
-  OFF,
-  RESET = 5
-}
-
-export enum SyncObjectStatus {
-  TX_LOCKED = -4,
-  SERVER_ERROR,
-  INDEX_NOT_EXISTS,
-  OBJECT_NOT_EXISTS,
-  OK,
-  EMPTY_LIST,
-  LAST_ELEMENT
+export class TokenDecodeCommand implements ICommand<TokenDataDto> {
+  constructor(private accessToken: string) {}
+  execute(): TokenDataDto {
+    return jwtDecode<TokenDataDto>(this.accessToken);
+  }
 }

@@ -20,10 +20,13 @@ import { AccessTokenDto } from '../../../common/model/shared/token.dto';
 import { TokenStorageSetCommand } from '../../../common/command/server/token/token-storage-set.command';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import { ApiAuthUrlCommand } from '../api/api-auth-url.command';
+import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
+import { TokenDecodeCommand } from '../../../common/command/server/token/token-decode.command';
 
 export class ContentExtensionLoginCommand implements ICommand<Promise<void>> {
   constructor(private token: AccessTokenDto) {}
   async execute(): Promise<void> {
+    if (await this.hasToken()) return;
     fnConsoleLog('ContentExtensionLoginCommand->execute');
     await new ApiAuthUrlCommand().execute();
     const baseUrl = await new ApiAuthUrlCommand().execute();
@@ -42,6 +45,15 @@ export class ContentExtensionLoginCommand implements ICommand<Promise<void>> {
     if (req.ok && 'access_token' in req.data) {
       await new TokenStorageSetCommand(req.data).execute();
     }
+  }
+
+  private async hasToken(): Promise<boolean> {
+    const extensionToken = await new TokenStorageGetCommand().execute();
+    if (!extensionToken) return false;
+    const extensionData = new TokenDecodeCommand(extensionToken?.access_token).execute();
+    const websiteData = new TokenDecodeCommand(this.token.access_token).execute();
+    if (extensionData.sub === websiteData.sub) return true;
+    return false;
   }
 
   protected refreshParams(baseUrl: string): RefreshTokenParams {
