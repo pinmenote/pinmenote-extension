@@ -31,20 +31,25 @@ interface DistanceIds {
   distance: number;
 }
 
-export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
+export interface WordResult {
+  word: string;
+  id: number;
+}
+
+export class OptionsSearchIdsCommand implements ICommand<Promise<WordResult[]>> {
   constructor(private search: string, private from: number, private limit: number) {}
-  async execute(): Promise<number[]> {
+  async execute(): Promise<WordResult[]> {
     const searchWords = this.search.toLowerCase().split(' ');
     fnConsoleLog('OptionsSearchIdsCommand', searchWords);
 
-    const idsStats = new Map<number, { distance: number; id: number }>();
+    const idsStats = new Map<number, { distance: number; id: number; word: string }>();
     let maxDistance = 0;
     // each word with corresponding ids
     const wordsIdsSet: Set<number>[] = [];
     for (const word of searchWords) {
       // we get words with distance
       const distanceIds = await this.getWordSet(word);
-      const idsSet = new Map<number, { distance: number; id: number }>();
+      const idsSet = new Map<number, { distance: number; id: number; word: string }>();
       // iterate over each distance and over each id if id exists add distance so
       // word distance = max(distance) of each set of words that is in getWordSet
       // simply we promote ids of words that have the smallest distance
@@ -55,7 +60,7 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
             d.distance = Math.min(obj.distance, d.distance);
             idsSet.set(id, d);
           } else {
-            idsSet.set(id, { distance: obj.distance, id });
+            idsSet.set(id, { distance: obj.distance, id, word: obj.word });
           }
           maxDistance = Math.max(maxDistance, obj.distance);
         }
@@ -93,15 +98,17 @@ export class OptionsSearchIdsCommand implements ICommand<Promise<number[]>> {
         }
         return 0;
       })
-      .map((c) => c.id);
+      .map((c) => {
+        return { id: c.id, word: c.word };
+      });
 
-    const out: number[] = [];
+    const out: WordResult[] = [];
     let skip = true;
     for (const objId of idsArray) {
       // dirty but works - assume that javascript set preserves order
-      if (this.from > -1 && skip && objId !== this.from) {
+      if (this.from > -1 && skip && objId.id !== this.from) {
         continue;
-      } else if (objId === this.from) {
+      } else if (objId.id === this.from) {
         skip = false;
       }
       out.push(objId);

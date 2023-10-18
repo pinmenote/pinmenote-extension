@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { ObjDataDto, ObjDto } from '../../common/model/obj/obj.dto';
+import { ObjDataDto, ObjDto, ObjTypeDto } from '../../common/model/obj/obj.dto';
 import { ObjRangeRequest, ObjRangeResponse } from '../../common/model/obj-request.model';
 import { BrowserStorage } from '@pinmenote/browser-api';
 import { ICommand } from '../../common/model/shared/common.dto';
@@ -54,7 +54,16 @@ export class OptionsObjGetRangeCommand implements ICommand<Promise<ObjRangeRespo
 
     const data: ObjDto[] = [];
     for (const objId of ids) {
-      const obj = await new ObjGetCommand<ObjDataDto>(objId).execute();
+      const obj = await new ObjGetCommand<ObjDataDto>(objId.id).execute();
+      if (obj.type === ObjTypeDto.Removed) {
+        const wordKey = `${ObjectStoreKeys.SEARCH_INDEX}:${objId.word}`;
+        const ids = await BrowserStorage.get<number[] | undefined>(wordKey);
+        if (!ids) continue;
+        const newIds = ids.filter((id) => id !== obj.id);
+        await BrowserStorage.set(wordKey, newIds);
+        fnConsoleLog('fixing missing id', obj.id, 'word', objId.word, 'obj', obj);
+        continue;
+      }
       if (!obj) {
         fnConsoleLog('Empty object !!!!!!!!!!!', objId);
         continue;
