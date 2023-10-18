@@ -22,7 +22,10 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { fnDateKeyFormat } from '../../../../common/fn/fn-date-format';
 import { ObjDateIndex } from '../../../../common/command/obj/index/obj-update-index-add.command';
 import { fnConsoleLog } from '../../../../common/fn/fn-console';
-import { SyncMode, SyncProgress } from '../../../../common/model/sync.model';
+import { SyncMode } from '../../../../common/model/sync.model';
+import { SyncSetProgressCommand } from './sync-set-progress.command';
+import { TokenStorageGetCommand } from '../../../../common/command/server/token/token-storage-get.command';
+import { TokenDecodeCommand } from '../../../../common/command/server/token/token-decode.command';
 
 export class SyncResetProgressCommand implements ICommand<Promise<void>> {
   constructor(private refreshUpdateList = false) {}
@@ -30,12 +33,17 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
     const obj = await SyncGetProgressCommand.getFirstObject();
     const timestamp = obj?.createdAt || -1;
     const id = obj?.id || -1;
-    await BrowserStorage.set<SyncProgress>(ObjectStoreKeys.SYNC_PROGRESS, {
+
+    const token = await new TokenStorageGetCommand().execute();
+    if (!token) return;
+    const accessToken = new TokenDecodeCommand(token?.access_token).execute();
+    await new SyncSetProgressCommand({
       timestamp,
       id,
       serverId: -1,
-      mode: SyncMode.OFF
-    });
+      mode: SyncMode.OFF,
+      sub: accessToken.sub
+    }).execute();
     // await this.resetObjects();
   }
 

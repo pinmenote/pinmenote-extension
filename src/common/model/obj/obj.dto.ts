@@ -40,7 +40,6 @@ export enum ObjTypeDto {
   PageSnapshot = 'PAGE_SNAPSHOT',
   PageNote = 'PAGE_NOTE',
   PageAlter = 'PAGE_ALTER',
-  PageTask = 'PAGE_TASK',
   Note = 'NOTE',
   Pdf = 'PDF',
   Removed = 'REMOVED'

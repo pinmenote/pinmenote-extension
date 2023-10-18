@@ -20,14 +20,21 @@ import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjGetCommand } from '../../../../common/command/obj/obj-get.command';
 import { ObjectStoreKeys } from '../../../../common/keys/object.store.keys';
 import { SyncMode, SyncProgress } from '../../../../common/model/sync.model';
+import { TokenStorageGetCommand } from '../../../../common/command/server/token/token-storage-get.command';
+import { TokenDecodeCommand } from '../../../../common/command/server/token/token-decode.command';
 
-export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress>> {
-  async execute(): Promise<SyncProgress> {
+export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress | undefined>> {
+  async execute(): Promise<SyncProgress | undefined> {
     const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
     if (sync) return sync;
+
+    const token = await new TokenStorageGetCommand().execute();
+    if (!token) return;
+    const accessToken = new TokenDecodeCommand(token?.access_token).execute();
+
     const obj = await SyncGetProgressCommand.getFirstObject();
-    if (!obj) return { timestamp: -1, id: -1, serverId: -1, mode: SyncMode.OFF };
-    return { timestamp: obj.createdAt, id: obj.id, serverId: -1, mode: SyncMode.OFF };
+    if (!obj) return { timestamp: -1, id: -1, serverId: -1, mode: SyncMode.OFF, sub: accessToken.sub };
+    return { timestamp: obj.createdAt, id: obj.id, serverId: -1, mode: SyncMode.OFF, sub: accessToken.sub };
   }
 
   static async getFirstObject(): Promise<ObjDto | undefined> {

@@ -18,6 +18,7 @@ export interface SyncProgress {
   timestamp: number;
   id: number;
   serverId: number;
+  sub: string;
   mode: SyncMode;
 }
 
