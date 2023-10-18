@@ -24,13 +24,19 @@ import { TokenStorageGetCommand } from '../../../../common/command/server/token/
 import { TokenDecodeCommand } from '../../../../common/command/server/token/token-decode.command';
 
 export class SyncGetProgressCommand implements ICommand<Promise<SyncProgress | undefined>> {
+  constructor(private sub: string) {}
   async execute(): Promise<SyncProgress | undefined> {
-    const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
-    if (sync) return sync;
-
     const token = await new TokenStorageGetCommand().execute();
     if (!token) return;
     const accessToken = new TokenDecodeCommand(token?.access_token).execute();
+
+    // check sub so we can ge
+    if (this.sub !== accessToken.sub) {
+      return { timestamp: -1, id: -1, serverId: -1, mode: SyncMode.RESET, sub: accessToken.sub };
+    }
+
+    const sync = await BrowserStorage.get<SyncProgress | undefined>(ObjectStoreKeys.SYNC_PROGRESS);
+    if (sync) return sync;
 
     const obj = await SyncGetProgressCommand.getFirstObject();
     if (!obj) return { timestamp: -1, id: -1, serverId: -1, mode: SyncMode.OFF, sub: accessToken.sub };

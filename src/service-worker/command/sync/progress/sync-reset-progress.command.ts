@@ -26,10 +26,13 @@ import { SyncMode } from '../../../../common/model/sync.model';
 import { SyncSetProgressCommand } from './sync-set-progress.command';
 import { TokenStorageGetCommand } from '../../../../common/command/server/token/token-storage-get.command';
 import { TokenDecodeCommand } from '../../../../common/command/server/token/token-decode.command';
+import { SwSyncStore } from '../../../sw-sync.store';
 
 export class SyncResetProgressCommand implements ICommand<Promise<void>> {
   constructor(private refreshUpdateList = false) {}
   async execute(): Promise<void> {
+    if (SwSyncStore.isInSync) return;
+    SwSyncStore.isInSync = true;
     const obj = await SyncGetProgressCommand.getFirstObject();
     const timestamp = obj?.createdAt || -1;
     const id = obj?.id || -1;
@@ -44,7 +47,8 @@ export class SyncResetProgressCommand implements ICommand<Promise<void>> {
       mode: SyncMode.OFF,
       sub: accessToken.sub
     }).execute();
-    // await this.resetObjects();
+    await this.resetObjects();
+    SwSyncStore.isInSync = false;
   }
 
   async resetObjects(): Promise<void> {

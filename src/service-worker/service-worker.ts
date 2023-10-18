@@ -42,6 +42,7 @@ import { fnConsoleLog } from '../common/fn/fn-console';
 import { SyncManualOutgoingCommand } from './command/sync/manual/sync-manual-outgoing.command';
 import { SyncServerIncomingCommand } from './command/sync/sync-server-incoming.command';
 import { SyncGetProgressCommand } from './command/sync/progress/sync-get-progress.command';
+import { SyncTxHelper } from './command/sync/sync-tx.helper';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -109,7 +110,9 @@ const handleMessage = async (
       break;
     }
     case BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES: {
-      const progress = await new SyncGetProgressCommand().execute();
+      const sub = await SyncTxHelper.syncSub();
+      if (!sub) break;
+      const progress = await new SyncGetProgressCommand(sub).execute();
       await new SyncServerIncomingCommand(progress).execute();
       break;
     }

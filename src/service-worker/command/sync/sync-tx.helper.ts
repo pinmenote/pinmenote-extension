@@ -60,26 +60,22 @@ export class SyncTxHelper {
     await BrowserStorage.remove(ObjectStoreKeys.SYNC_TX);
   }
 
-  static async shouldSync(): Promise<boolean> {
+  static async syncSub(): Promise<string | undefined> {
     const interval = (await BrowserStorage.get<number | undefined>(ObjectStoreKeys.SYNC_INTERVAL)) || 0;
     fnConsoleLog('SyncServerCommand->shouldSync', Date.now() - interval);
-    if (Date.now() - interval > SYNC_DELAY) {
-      await BrowserStorage.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
+    if (Date.now() - interval < SYNC_DELAY) return;
+    await BrowserStorage.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
 
-      const isPremiumUser = await this.isPremiumUser();
-      fnConsoleLog('SyncServerCommand->isPremiumUser', isPremiumUser);
-      return isPremiumUser;
-    }
-    return false;
+    const sub = await this.userSub();
+    fnConsoleLog('SyncServerCommand->isPremiumUser', !!sub);
+    return sub;
   }
 
-  private static async isPremiumUser(): Promise<boolean> {
+  private static async userSub(): Promise<string | undefined> {
     const token = await new TokenStorageGetCommand().execute();
-    if (token) {
-      const accessToken = new TokenDecodeCommand(token?.access_token).execute();
-      return accessToken.data.role.includes(3);
-    }
-    return false;
+    if (!token) return;
+    const accessToken = new TokenDecodeCommand(token?.access_token).execute();
+    if (accessToken.data.role.includes(3)) return accessToken.sub;
   }
 
   static async getList(key: string): Promise<ObjDateIndex[]> {

@@ -24,8 +24,9 @@ import { SwSyncStore } from '../../sw-sync.store';
 import { ApiAuthUrlCommand } from '../api/api-auth-url.command';
 
 export class SyncServerIncomingCommand implements ICommand<Promise<void>> {
-  constructor(private progress: SyncProgress) {}
+  constructor(private progress?: SyncProgress) {}
   async execute(): Promise<void> {
+    if (!this.progress) return;
     if (SwSyncStore.isInSync) return;
     SwSyncStore.isInSync = true;
     try {

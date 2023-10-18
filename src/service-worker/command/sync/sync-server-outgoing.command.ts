@@ -23,9 +23,10 @@ import { SyncProgress } from '../../../common/model/sync.model';
 import { SwSyncStore } from '../../sw-sync.store';
 
 export class SyncServerOutgoingCommand implements ICommand<Promise<void>> {
-  constructor(private progress: SyncProgress) {}
+  constructor(private progress?: SyncProgress) {}
 
   async execute(): Promise<void> {
+    if (!this.progress) return;
     if (SwSyncStore.isInSync) return;
     SwSyncStore.isInSync = true;
     try {

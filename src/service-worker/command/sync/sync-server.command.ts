@@ -27,10 +27,12 @@ import { SyncServerOutgoingCommand } from './sync-server-outgoing.command';
 export class SyncServerCommand implements ICommand<Promise<void>> {
   async execute(): Promise<void> {
     if (SwSyncStore.isInSync) return;
-    if (!(await SyncTxHelper.shouldSync())) return;
+    const sub = await SyncTxHelper.syncSub();
+    if (!sub) return;
     try {
       const a = Date.now();
-      const progress = await new SyncGetProgressCommand().execute();
+      const progress = await new SyncGetProgressCommand(sub).execute();
+      if (!progress) return;
       switch (progress.mode) {
         case SyncMode.OUTGOING_INCOMING:
           await new SyncServerOutgoingCommand(progress).execute();
