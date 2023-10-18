@@ -66,16 +66,20 @@ export class SyncTxHelper {
     if (Date.now() - interval > SYNC_DELAY) {
       await BrowserStorage.set<number>(ObjectStoreKeys.SYNC_INTERVAL, Date.now());
 
-      const loggedIn = await this.isLoggedIn();
-      fnConsoleLog('SyncServerCommand->loggedIn', loggedIn);
-      return loggedIn;
+      const isPremiumUser = await this.isPremiumUser();
+      fnConsoleLog('SyncServerCommand->isPremiumUser', isPremiumUser);
+      return isPremiumUser;
     }
     return false;
   }
 
-  private static async isLoggedIn(): Promise<boolean> {
+  private static async isPremiumUser(): Promise<boolean> {
     const token = await new TokenStorageGetCommand().execute();
-    return !!token;
+    if (token) {
+      const accessToken = new TokenDecodeCommand(token?.access_token).execute();
+      return accessToken.data.role.includes(3);
+    }
+    return false;
   }
 
   static async getList(key: string): Promise<ObjDateIndex[]> {
