@@ -51,7 +51,7 @@ export class DocumentStore {
     if (!el.innerHTML) return;
     const xpath = XpathFactory.newXPathString(target);
     // Experimental
-    if (location.origin.endsWith('wykop.pl')) this.addToWykopCache(xpath, el, target as HTMLElement);
+    if (location.origin.endsWith('wykop.pl')) this.addToWykopCache(xpath, el);
     if (location.origin.endsWith('facebook.com')) this.addToFacebookCache(xpath, el, target as HTMLElement);
     if (location.origin.endsWith('twitter.com') || location.origin.endsWith('x.com'))
       this.addToTwitterCache(xpath, el, target as HTMLElement);
@@ -98,13 +98,11 @@ export class DocumentStore {
     }
   }
 
-  private addToWykopCache(xpath: string, el: HTMLElement, target: HTMLElement) {
+  private addToWykopCache(xpath: string, el: HTMLElement) {
     if (!this.elements.tree[xpath]) {
-      fnConsoleLog('DocumentStore->addToWykopCache', xpath, 'el', el, 'target', target);
       const attrs = this.computeAttrs(el.tagName.toLowerCase(), Array.from(el.attributes));
       this.elements.tree[xpath] = { tagName: el.tagName.toLowerCase(), xpath, html: el.innerHTML, attrs };
     } else if (this.elements.tree[xpath].html.length < el.innerHTML.length) {
-      fnConsoleLog('DocumentStore->addToWykopCache', xpath, 'el', el, 'target', target);
       const attrs = this.computeAttrs(el.tagName.toLowerCase(), Array.from(el.attributes));
       this.elements.tree[xpath] = { tagName: el.tagName.toLowerCase(), xpath, html: el.innerHTML, attrs };
     }

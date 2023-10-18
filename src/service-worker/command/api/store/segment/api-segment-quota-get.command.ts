@@ -20,17 +20,17 @@ import { ICommand, ServerErrorDto } from '../../../../../common/model/shared/com
 import { ServerQuotaResponse } from '../../../../../common/model/sync-server.model';
 import { ApiErrorCode } from '../../../../../common/model/shared/api.error-code';
 import { fnConsoleLog } from '../../../../../common/fn/fn-console';
+import { ApiAuthUrlCommand } from '../../api-auth-url.command';
 
 export class ApiSegmentQuotaGetCommand
   extends ApiCallBase
   implements ICommand<Promise<ServerQuotaResponse | ServerErrorDto>>
 {
-  constructor(private authUrl: string) {
-    super();
-  }
   async execute(): Promise<ServerQuotaResponse | ServerErrorDto> {
     await this.initTokenData();
-    if (!this.storeUrl) return { code: ApiErrorCode.INTERNAL, message: 'ApiSegmentQuotaGetCommand' };
+    const authUrl = await new ApiAuthUrlCommand().execute();
+    fnConsoleLog('ApiSegmentQuotaGetCommand->auth', authUrl, 'store', this.storeUrl);
+    if (!authUrl || !this.storeUrl) return { code: ApiErrorCode.INTERNAL, message: 'ApiSegmentQuotaGetCommand' };
     try {
       const resp = await FetchService.fetch<ServerQuotaResponse>(
         `${this.storeUrl}/api/v1/segment/quota`,
@@ -38,8 +38,9 @@ export class ApiSegmentQuotaGetCommand
           type: 'JSON',
           headers: this.getAuthHeaders(true)
         },
-        this.refreshParams(this.authUrl)
+        this.refreshParams(authUrl)
       );
+      fnConsoleLog('ApiSegmentQuotaGetCommand', resp.data);
       return resp.data;
     } catch (e) {
       fnConsoleLog('ApiSegmentQuotaGetCommand', e);
