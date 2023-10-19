@@ -43,6 +43,7 @@ export interface TokenUserDto {
   email: string;
   store: string;
   use2fa: boolean;
+  subscribed: number;
   role: number[];
 }
 
