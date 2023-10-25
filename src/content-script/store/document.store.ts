@@ -33,12 +33,13 @@ export class DocumentStore {
   get cache(): PageTreeCache {
     this.elements.origin = location.origin;
     if (location.origin.endsWith('twitter.com') || location.origin.endsWith('x.com')) {
-      this.elements.target = Object.entries(this.twitterTagCounter).sort((a, b) => {
+      const tags = Object.entries(this.twitterTagCounter).sort((a, b) => {
         if (a[1] > b[1]) return 1;
         if (a[1] < b[1]) return -1;
         return 0;
-      })[0][0];
-      fnConsoleLog('DocumentStore->cache', this.elements);
+      });
+      if (tags[0] && tags[0][0]) this.elements.target = tags[0][0];
+      fnConsoleLog('DocumentStore->cache', this.elements, tags);
     }
     return this.elements;
   }
