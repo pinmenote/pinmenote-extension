@@ -32,6 +32,7 @@ import { SyncObjectStatus } from '../../../common/model/sync.model';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
+import { environmentConfig } from '../../../common/environment';
 
 export interface Props {
   obj?: ObjDto<ObjPageDto>;
@@ -80,6 +81,21 @@ export const HtmlPreviewHeaderComponent: FunctionComponent<Props> = (props) => {
   const handleNewPin = () => {
     alert('NEW PIN');
   };
+  const syncIcon = environmentConfig.featureFlag.SYNC_ENABLED ? (
+    <IconButton onClick={handleManualSync}>
+      <CloudSyncIcon />
+    </IconButton>
+  ) : (
+    ''
+  );
+
+  const newPinIcon = environmentConfig.featureFlag.NEW_PIN_PREVIEW ? (
+    <Button sx={{ width: '100%' }} variant="outlined" onClick={handleNewPin}>
+      <AddIcon /> Pin
+    </Button>
+  ) : (
+    ''
+  );
 
   return (
     <div style={{ backgroundColor: '#ffffff', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
@@ -88,15 +104,11 @@ export const HtmlPreviewHeaderComponent: FunctionComponent<Props> = (props) => {
         <div ref={urlRef}></div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Button sx={{ width: '100%', display: 'none' }} variant="outlined" onClick={handleNewPin}>
-          <AddIcon /> Pin
-        </Button>
+        {newPinIcon}
         <div style={{ display: props.isLoading ? 'flex' : 'none' }}>
           <CircularProgress />
         </div>
-        <IconButton onClick={handleManualSync}>
-          <CloudSyncIcon />
-        </IconButton>
+        {syncIcon}
         <IconButton onClick={props.handleDownload}>
           <DownloadIcon />
         </IconButton>

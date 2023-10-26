@@ -19,12 +19,24 @@ import { BrowserApi } from '@pinmenote/browser-api';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import { environmentConfig } from '../../../common/environment';
 
 interface Props {
   openBugReport?: () => void;
 }
 
 export const MainFooterButton: FunctionComponent<Props> = (props) => {
+  const reportBugIcon = environmentConfig.featureFlag.REPORT_BUG ? (
+    <IconButton
+      style={{ marginBottom: 10, marginRight: 5, border: '1px solid #333333' }}
+      title="Report bug"
+      onClick={() => (props.openBugReport ? props.openBugReport() : '')}
+    >
+      <BugReportIcon />
+    </IconButton>
+  ) : (
+    ''
+  );
   return (
     <div style={{ position: 'absolute', bottom: 0, width: 300, paddingTop: 5, backgroundColor: '#ffffff' }}>
       <div
@@ -35,13 +47,7 @@ export const MainFooterButton: FunctionComponent<Props> = (props) => {
           justifyContent: 'center'
         }}
       >
-        <IconButton
-          style={{ marginBottom: 10, marginRight: 5, border: '1px solid #333333' }}
-          title="Report bug"
-          onClick={() => (props.openBugReport ? props.openBugReport() : '')}
-        >
-          <BugReportIcon />
-        </IconButton>
+        {reportBugIcon}
         <Button
           sx={{ width: '100%' }}
           style={{ marginBottom: 10 }}

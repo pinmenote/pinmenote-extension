@@ -42,10 +42,18 @@ interface SettingsInterfaceConfig {
   optionsDrawerOpen?: boolean;
 }
 
+interface FeatureFlag {
+  SYNC_ENABLED: boolean;
+  LOGIN_ENABLED: boolean;
+  NEW_PIN_PREVIEW: boolean;
+  REPORT_BUG: boolean;
+}
+
 interface EnvironmentConfig {
   showAckMessage: boolean;
   defaultServer: string;
   isProduction: boolean;
+  featureFlag: FeatureFlag;
   settings: SettingsConfig;
   objListLimit: number;
 }
@@ -53,7 +61,13 @@ interface EnvironmentConfig {
 export const environmentConfig: EnvironmentConfig = {
   showAckMessage: false,
   defaultServer: process.env.WEB_URL || 'https://pinmenote.com',
-  isProduction: process.env.IS_PRODUCTION === 'true',
+  isProduction: process.env.IS_PRODUCTION === '1',
+  featureFlag: {
+    SYNC_ENABLED: process.env.FF_SYNC_ENABLED === '1',
+    LOGIN_ENABLED: process.env.FF_LOGIN_ENABLED === '1',
+    NEW_PIN_PREVIEW: process.env.FF_NEW_PIN_PREVIEW === '1',
+    REPORT_BUG: process.env.FF_REPORT_BUG === '1'
+  },
   settings: {
     version: parseInt(process.env.VERSION || '1'),
     screenshotFormat: 'png',
@@ -71,5 +85,5 @@ export const environmentConfig: EnvironmentConfig = {
       pageNote: false
     }
   },
-  objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100000')
+  objListLimit: parseInt(process.env.OBJ_LIST_LIMIT || '100')
 };

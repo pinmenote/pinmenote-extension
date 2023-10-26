@@ -43,6 +43,7 @@ import { SyncManualOutgoingCommand } from './command/sync/manual/sync-manual-out
 import { SyncServerIncomingCommand } from './command/sync/sync-server-incoming.command';
 import { SyncGetProgressCommand } from './command/sync/progress/sync-get-progress.command';
 import { SyncTxHelper } from './command/sync/sync-tx.helper';
+import { environmentConfig } from '../common/environment';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -131,14 +132,13 @@ const handleMessage = async (
     }
   }
   // Sync command
-  if (
-    ![
-      PageComputeMessage.CONTENT_FETCH_CSS,
-      PageComputeMessage.CONTENT_FETCH_IMAGE,
-      BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT,
-      BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES
-    ].includes(msg.type as any)
-  ) {
+  const skipMessage = [
+    PageComputeMessage.CONTENT_FETCH_CSS,
+    PageComputeMessage.CONTENT_FETCH_IMAGE,
+    BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT,
+    BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES
+  ].includes(msg.type as any);
+  if (!skipMessage && environmentConfig.featureFlag.SYNC_ENABLED) {
     await new SyncServerCommand().execute();
   }
   await TaskExecutor.dequeue();

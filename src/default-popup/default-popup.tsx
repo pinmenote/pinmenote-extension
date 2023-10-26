@@ -80,10 +80,8 @@ const ExtensionPopupApp: React.FC = () => {
   };
 
   // Show logs panel only on development environment
-  let logsTab: any = '';
-  if (!environmentConfig.isProduction) {
-    logsTab = <Tab icon={<LogoDevIcon />} tabIndex={3} />;
-  }
+  const logsTab = environmentConfig.isProduction ? '' : <Tab icon={<LogoDevIcon />} tabIndex={3} />;
+  const loginTab = environmentConfig.featureFlag.LOGIN_ENABLED ? <Tab icon={<PersonIcon />} /> : '';
 
   const panel = getCurrentPanel(selectedPanel);
 
@@ -103,7 +101,7 @@ const ExtensionPopupApp: React.FC = () => {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={selectedPanel} onChange={handleChange}>
             <Tab icon={<PushPinIcon />} />
-            <Tab icon={<PersonIcon />} />
+            {loginTab}
             {logsTab}
           </Tabs>
         </Box>
