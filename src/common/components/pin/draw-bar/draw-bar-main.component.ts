@@ -49,6 +49,10 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
         } else {
           this.newDraw = new DrawNewButton(edit, model);
         }
+        // Add components after load - render function executes first
+        if (this.newDraw) this.el.appendChild(this.newDraw.render());
+        if (this.editDraw) this.el.appendChild(this.editDraw.render());
+        this.el.appendChild(this.cancelDraw.render());
       })
       .catch(() => {
         /* IGNORE */
@@ -58,10 +62,6 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.model.rect.width}px` }, barStyles);
     applyStylesToElement(this.el, style);
-
-    if (this.newDraw) this.el.appendChild(this.newDraw.render());
-    if (this.editDraw) this.el.appendChild(this.editDraw.render());
-    this.el.appendChild(this.cancelDraw.render());
 
     this.adjustTop();
 
