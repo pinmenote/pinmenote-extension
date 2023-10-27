@@ -50,7 +50,6 @@ interface FeatureFlag {
 }
 
 interface EnvironmentConfig {
-  showAckMessage: boolean;
   defaultServer: string;
   isProduction: boolean;
   featureFlag: FeatureFlag;
@@ -59,7 +58,6 @@ interface EnvironmentConfig {
 }
 
 export const environmentConfig: EnvironmentConfig = {
-  showAckMessage: false,
   defaultServer: process.env.WEB_URL || 'https://pinmenote.com',
   isProduction: process.env.IS_PRODUCTION === '1',
   featureFlag: {

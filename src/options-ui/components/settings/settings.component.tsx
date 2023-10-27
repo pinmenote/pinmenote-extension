@@ -26,6 +26,7 @@ import { OpenSourceListComponent } from './open-source/open-source-list.componen
 import { AccountSettingsComponent } from './account/account-settings.component';
 import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 import { AccessTokenDto } from '../../../common/model/shared/token.dto';
+import { ConfigSettingsComponent } from './config/config-settings.component';
 
 const containerStyle: CSSProperties = {
   margin: 10,
@@ -82,6 +83,9 @@ export const SettingsComponent: FunctionComponent = () => {
         </div>
         <div style={{ marginBottom: 120, ...containerStyle }}>
           <OpenSourceListComponent />
+        </div>
+        <div style={containerStyle}>
+          <ConfigSettingsComponent />
         </div>
       </div>
     </div>
