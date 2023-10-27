@@ -1,0 +1,8 @@
+#!/bin/bash
+export NODE_ENV=production
+# swap manifests
+cp src/manifest.ch.test.json src/manifest.json
+# build
+npm run prod
+# swap manifests back
+cp src/manifest.dev.json src/manifest.json

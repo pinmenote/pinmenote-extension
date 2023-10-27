@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "pinmenote-dev",
-  "short_name": "pinmenote-dev",
+  "name": "pinmenote-test",
+  "short_name": "pinmenote-test",
   "description": "Pin note, modify, draw, comment and archive websites.",
   "version": "0.1.0",
   "icons": {
@@ -17,7 +17,7 @@
       "24": "assets/icon/24.png",
       "32": "assets/icon/32.png"
     },
-    "default_title": "pinmenote-dev",
+    "default_title": "pinmenote-test",
     "default_popup": "default-popup/default-popup.html"
   },
   "permissions": ["activeTab", "storage", "unlimitedStorage", "scripting", "downloads"],
