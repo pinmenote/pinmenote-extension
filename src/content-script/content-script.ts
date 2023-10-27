@@ -66,7 +66,7 @@ class PinMeScript {
     if (location.origin === environmentConfig.defaultServer) await new LoginExtensionCommand().execute();
 
     await ContentSettingsStore.initSettings();
-    this.mutations.observe(document.documentElement || document.body, { childList: true, subtree: true });
+    this.mutations.observe(document.documentElement || document, { childList: true, subtree: true });
 
     await new RuntimePinGetHrefCommand().execute();
     this.initTimeout();
