@@ -126,7 +126,7 @@ export const ObjListComponent: FunctionComponent<Props> = (props) => {
           zIndex: 1000,
           top: 105,
           left: 0,
-          width: 310,
+          width: 300,
           height: 440
         }}
       >

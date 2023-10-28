@@ -53,6 +53,7 @@ export const ObjRemoveComponent: FunctionComponent<Props> = (props) => {
       </div>
       <div
         style={{
+          width: 300,
           backgroundColor: '#fff',
           display: isRemoving ? 'none' : 'flex',
           flexDirection: 'column',
