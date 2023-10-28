@@ -67,10 +67,6 @@ Copyright (c) 2015 Auth0, Inc. <support@auth0.com> (http://auth0.com)
 export const LICENSE_NODE_LANGUAGE_DETECT = `Copyright (c) 2013, Francois-Guillaume Ribreau <node@fgribreau.com>, Ruslan Zavackiy <ruslan@zavackiy.com>
 `;
 
-export const LICENSE_MATHML_TO_LATEX = `MIT License
-
-Copyright (c) 2020 Alexandre Nunes`;
-
 export const LICENSE_MARKED = `Markdown
 
 Copyright © 2004, John Gruber
@@ -113,12 +109,18 @@ Copyright (c) 2015 Stian Grytøyr
 export const LICENSE_PROSEMIRROR = `Copyright (C) 2015-2017 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
 `;
 
+export const LICENSE_SIMPLIFY = `Copyright (c) 2017, Vladimir Agafonkin
+All rights reserved.`;
+
+// VENDOR
+
 export const LICENSE_STOPWORDS_ISO = `The MIT License (MIT)
 
 Copyright (c) 2020 Gene Diaz`;
 
-export const LICENSE_SIMPLIFY = `Copyright (c) 2017, Vladimir Agafonkin
-All rights reserved.`;
+export const LICENSE_MATHML_TO_LATEX = `MIT License
+
+Copyright (c) 2020 Alexandre Nunes`;
 
 export const LICENSE_BSD = `
 Redistribution and use in source and binary forms, with or without modification, are

@@ -27,7 +27,6 @@ import { PageSegmentGetCommand } from '../../../common/command/snapshot/segment/
 import { PageSnapshotDto } from '../../../common/model/obj/page-snapshot.dto';
 import { PinComponent } from '../../../common/components/pin/pin.component';
 import { fnConsoleLog } from '../../../common/fn/fn-console';
-import { fnSleep } from '../../../common/fn/fn-sleep';
 import { fnUid } from '../../../common/fn/fn-uid';
 import { HtmlPreviewHeaderComponent } from './html-preview-header.component';
 import { PreviewPinRenderer } from './preview-pin-renderer';
@@ -228,7 +227,6 @@ export const HtmlPreviewComponent: FunctionComponent<Props> = (props) => {
       fnConsoleLog('renderAsset->missing->hash', hash);
       return;
     }
-    await fnSleep(2);
     switch (dto.type) {
       case SegmentType.IFRAME: {
         const iframe: SegmentPage = dto.content as SegmentPage;

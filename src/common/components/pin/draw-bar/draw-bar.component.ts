@@ -36,7 +36,19 @@ const barStyles = {
   height: '24px',
   position: 'absolute',
   'background-color': '#ffffff',
-  display: 'none'
+  display: 'none',
+  'flex-direction': 'row',
+  'justify-content': 'space-between'
+};
+
+const leftStyles = {
+  display: 'flex',
+  'flex-direction': 'row'
+};
+
+const rightStyles = {
+  display: 'flex',
+  'flex-direction': 'row'
 };
 
 const iconStyles = {
@@ -47,6 +59,8 @@ const iconStyles = {
 
 export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlComponentFocusable {
   private readonly el: HTMLDivElement;
+  private readonly left: HTMLDivElement;
+  private readonly right: HTMLDivElement;
 
   private visible = false;
 
@@ -68,6 +82,8 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
 
   constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
+    this.left = model.doc.document.createElement('div');
+    this.right = model.doc.document.createElement('div');
     this.pencil = new DrawPencilButton(this, model);
     this.line = new DrawLineButton(this, model);
     this.fill = new DrawFillButton(this, model);
@@ -150,7 +166,7 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   }
 
   focusin(): void {
-    if (this.visible) this.el.style.display = 'inline-block';
+    if (this.visible) this.el.style.display = 'flex';
     this.colorPicker.focusin();
     this.sizeButton.focusin();
   }
@@ -189,22 +205,25 @@ export class DrawBarComponent implements HtmlComponent<HTMLElement>, HtmlCompone
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.model.rect.width}px` }, barStyles);
     applyStylesToElement(this.el, style);
+    this.el.appendChild(this.left);
+    applyStylesToElement(this.left, leftStyles);
 
-    this.placeComponent(this.pencil.render(), 5);
-    this.placeComponent(this.line.render(), 29);
-    this.placeComponent(this.fill.render(), 53);
-    this.placeComponent(this.erase.render(), 77);
+    this.el.appendChild(this.right);
+    applyStylesToElement(this.right, rightStyles);
 
-    this.placeComponent(this.colorPicker.render(), 121);
-    this.placeComponent(this.sizeButton.render(), 145);
+    this.left.appendChild(this.pencil.render());
+    this.left.appendChild(this.line.render());
+    this.left.appendChild(this.fill.render());
+    this.left.appendChild(this.erase.render());
 
-    this.placeComponent(this.undoButton.render(), 169);
-    this.placeComponent(this.redoButton.render(), 193);
+    this.left.appendChild(this.colorPicker.render());
+    this.left.appendChild(this.sizeButton.render());
 
-    // this.placeComponent(this.drawTest.render(), 220);
+    this.left.appendChild(this.undoButton.render());
+    this.left.appendChild(this.redoButton.render());
 
-    this.placeComponent(this.drawSave.render(), 222);
-    this.placeComponent(this.drawCancel.render(), 244);
+    this.right.appendChild(this.drawSave.render());
+    this.right.appendChild(this.drawCancel.render());
 
     this.adjustTop();
 
