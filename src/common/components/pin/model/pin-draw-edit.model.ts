@@ -72,9 +72,18 @@ export class DrawDataModel {
     }
   }
 
-  removeDraw() {
+  async removeDraw(model: PinEditModel) {
     this.draw.data.splice(this.drawIndex, 1);
-    this.drawIndex = Math.max(this.draw.data.length - 1, 0);
+    model.object.data.draw.data = this.draw.data.concat();
+    await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${model.object.id}`, model.object);
+    if (this.drawData) await BrowserStorage.remove(`${ObjectStoreKeys.PIN_DRAW}:${this.drawData.hash}`);
+    this.reset();
+  }
+
+  reset() {
+    this.drawData = undefined;
+    this.drawIndex = this.draw.data.length - 1;
+    this.currentDrawHash = this.draw.data[this.drawIndex];
   }
 
   private static emptyDraw(width: number, height: number): ObjDrawDto {

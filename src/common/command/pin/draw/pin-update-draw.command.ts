@@ -40,6 +40,7 @@ export class PinUpdateDrawCommand implements ICommand<Promise<void>> {
     hashList.push(hash);
 
     this.pin.data.draw.data = hashList;
+    await BrowserStorage.remove(`${ObjectStoreKeys.PIN_DRAW}:${this.prevHash}`);
 
     await BrowserStorage.set(`${ObjectStoreKeys.PIN_DRAW}:${hash}`, pinDraw);
     await BrowserStorage.set(`${ObjectStoreKeys.OBJECT_ID}:${this.pin.id}`, this.pin);

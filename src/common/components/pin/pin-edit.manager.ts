@@ -60,19 +60,30 @@ export class PinEditManager {
     this.changeVisibleBar(VisibleState.DrawBar);
   };
 
+  removeDraw = async () => {
+    await this.parent.model.draw.data.removeDraw(this.parent.model);
+    this.cancelDraw();
+    this.parent.topBar.drawTurnoff();
+  };
+
   cancelDraw = () => {
-    this.stopEdit();
+    this.parent.model.draw.data.reset();
     this.parent.topBar.drawVisibleIcon.show();
+    this.parent.model.draw.area?.reset();
+    this.parent.drawMain.reset();
+    this.stopEdit();
   };
 
   saveDraw = async () => {
     await this.parent.model.draw.data.saveDraw(this.parent.model);
     this.stopDraw();
+    this.changeVisibleBar(VisibleState.None);
+    this.parent.topBar.drawTurnoff();
+    this.parent.topBar.drawVisibleIcon.show();
   };
 
   stopDraw = () => {
     this.parent.drawComponent.drawArea.canDraw = false;
-    this.cancelDraw();
   };
 
   showDraw = () => {

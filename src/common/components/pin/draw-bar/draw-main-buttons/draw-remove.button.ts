@@ -14,33 +14,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { HtmlComponent } from '../../model/pin-view.model';
 import { PinEditManager } from '../../pin-edit.manager';
 import { PinEditModel } from '../../model/pin-edit.model';
 import { applyStylesToElement } from '../../../../style.utils';
-import { iconButtonStyles } from '../../styles/icon-button.styles';
 
-export class DrawSaveCancelButton {
+const elStyles = {
+  color: '#000000',
+  'margin-left': '5px',
+  'margin-top': '5px',
+  'font-size': '12px',
+  'font-family': 'Roboto, sans-serif',
+  'text-decoration': 'none',
+  'user-select': 'none',
+  cursor: 'pointer'
+};
+
+export class DrawRemoveButton implements HtmlComponent<HTMLElement> {
   private readonly el: HTMLDivElement;
-
-  constructor(private edit: PinEditManager, model: PinEditModel) {
+  constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
   }
 
   render(): HTMLElement {
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-</svg>`;
+    applyStylesToElement(this.el, elStyles);
+    this.el.innerText = 'remove';
+
     this.el.addEventListener('click', this.handleClick);
-    applyStylesToElement(this.el, iconButtonStyles);
 
     return this.el;
   }
 
+  handleClick = async () => {
+    await this.edit.removeDraw();
+  };
+
   cleanup(): void {
     this.el.removeEventListener('click', this.handleClick);
   }
-
-  private handleClick = () => {
-    this.edit.cancelDraw();
-  };
 }

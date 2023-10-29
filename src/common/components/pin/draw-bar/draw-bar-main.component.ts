@@ -21,6 +21,7 @@ import { HtmlComponent } from '../model/pin-view.model';
 import { PinEditManager } from '../pin-edit.manager';
 import { PinEditModel } from '../model/pin-edit.model';
 import { applyStylesToElement } from '../../../style.utils';
+import { DrawRemoveButton } from './draw-main-buttons/draw-remove.button';
 
 const barStyles = {
   top: '-24px',
@@ -37,28 +38,36 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
 
   private newDraw?: DrawNewButton;
   private editDraw?: DrawEditButton;
+  private removeDraw?: DrawRemoveButton;
   private readonly cancelDraw: DrawNewCancelButton;
 
   constructor(private edit: PinEditManager, private model: PinEditModel) {
     this.el = model.doc.document.createElement('div');
+    this.load();
+    this.cancelDraw = new DrawNewCancelButton(edit, model);
+  }
+
+  private load() {
     this.model.draw.data
       .loadDraw()
       .then(() => {
         if (this.model.draw.data.currentData && this.model.draw.data.currentData.length > 0) {
-          this.editDraw = new DrawEditButton(edit, model);
+          this.editDraw = new DrawEditButton(this.edit, this.model);
+          this.removeDraw = new DrawRemoveButton(this.edit, this.model);
         } else {
-          this.newDraw = new DrawNewButton(edit, model);
+          this.newDraw = new DrawNewButton(this.edit, this.model);
         }
         // Add components after load - render function executes first
         if (this.newDraw) this.el.appendChild(this.newDraw.render());
+        if (this.removeDraw) this.el.appendChild(this.removeDraw.render());
         if (this.editDraw) this.el.appendChild(this.editDraw.render());
         this.el.appendChild(this.cancelDraw.render());
       })
       .catch(() => {
         /* IGNORE */
       });
-    this.cancelDraw = new DrawNewCancelButton(edit, model);
   }
+
   render(): HTMLElement {
     const style = Object.assign({ width: `${this.model.rect.width}px` }, barStyles);
     applyStylesToElement(this.el, style);
@@ -66,6 +75,14 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
     this.adjustTop();
 
     return this.el;
+  }
+
+  reset() {
+    this.el.innerHTML = '';
+    this.editDraw = undefined;
+    this.newDraw = undefined;
+    this.removeDraw = undefined;
+    this.load();
   }
 
   cleanup(): void {

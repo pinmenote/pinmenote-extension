@@ -49,12 +49,15 @@ export class DrawAreaComponent {
     this.drawCtx = this.drawCanvas.getContext('2d');
     this.rasterCtx = this.rasterCanvas.getContext('2d');
     this.drawModel = model.draw.data;
+    this.load();
+  }
 
+  private load = () => {
     this.drawModel
       .loadDraw()
       .then(() => {
-        let width = Math.min(model.rect.width, window.innerWidth);
-        let height = Math.min(model.rect.height, window.innerHeight);
+        let width = Math.min(this.model.rect.width, window.innerWidth);
+        let height = Math.min(this.model.rect.height, window.innerHeight);
         if (!this.drawModel.hasData()) {
           this.drawModel.createDraw(width, height);
         } else {
@@ -71,7 +74,7 @@ export class DrawAreaComponent {
       .catch(() => {
         /* IGNORE */
       });
-  }
+  };
 
   private initRasterCanvas(width: number, height: number): void {
     this.rasterCanvas.width = width;
@@ -155,6 +158,14 @@ no javascript enabled - drawing not working</h1>`;
 
   resize(): void {
     // TODO scale image based on size ?
+  }
+
+  reset(): void {
+    if (!this.rasterCtx || !this.drawCtx) return;
+    this.rasterCtx.clearRect(0, 0, this.rasterCanvas.width, this.rasterCanvas.height);
+    this.drawCtx.clearRect(0, 0, this.rasterCanvas.width, this.rasterCanvas.height);
+    this.drawModel = this.model.draw.data;
+    this.load();
   }
 
   cleanup(): void {
