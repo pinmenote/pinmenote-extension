@@ -19,7 +19,7 @@ import { ICommand } from '../../../model/shared/common.dto';
 import { ObjectStoreKeys } from '../../../keys/object.store.keys';
 import { ObjDrawListDto } from '../../../model/obj/obj-draw.dto';
 
-export class PinRemoveDrawCommand implements ICommand<Promise<void>> {
+export class PinRemoveDrawAllCommand implements ICommand<Promise<void>> {
   constructor(private draw: ObjDrawListDto) {}
   async execute(): Promise<void> {
     for (const hash of this.draw.data) {

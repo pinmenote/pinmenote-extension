@@ -24,7 +24,7 @@ import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { PinRemoveCommentListCommand } from './comment/pin-remove-comment-list.command';
 import { fnConsoleLog } from '../../fn/fn-console';
 import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
-import { PinRemoveDrawCommand } from './draw/pin-remove-draw.command';
+import { PinRemoveDrawAllCommand } from './draw/pin-remove-draw-all.command';
 
 export class PinRemoveCommand implements ICommand<void> {
   constructor(private id: number, private url: ObjUrlDto, private iframe?: PinIframeDto) {}
@@ -40,7 +40,7 @@ export class PinRemoveCommand implements ICommand<void> {
     if (this.iframe) await LinkHrefStore.pinDel(this.iframe.url, this.id);
 
     await new PinRemoveCommentListCommand(pin).execute();
-    await new PinRemoveDrawCommand(pin.data.draw).execute();
+    await new PinRemoveDrawAllCommand(pin.data.draw).execute();
 
     const obj: ObjRemovedDto = {
       id: pin.id,
