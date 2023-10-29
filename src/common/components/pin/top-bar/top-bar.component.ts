@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../model/pin-view.model';
-import { ActionCopyButton } from './action-buttons/action-copy.button';
 import { ActionDownloadButton } from './action-buttons/action-download.button';
 import { ActionDrawButton } from './action-buttons/draw/action-draw.button';
 import { ActionDrawVisibleButton } from './action-buttons/draw/action-draw-visible.button';
@@ -43,14 +42,8 @@ const editIconStyles = {
   'background-color': '#ffffff00'
 };
 
-const copyIconStyles = {
-  right: '54px',
-  position: 'absolute',
-  'background-color': '#ffffff00'
-};
-
 const downloadIconStyles = {
-  right: '80px',
+  right: '54px',
   position: 'absolute',
   'background-color': '#ffffff00'
 };
@@ -72,7 +65,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
 
   private readonly editIcon: ActionPinEditButton;
   private readonly removeIcon: ActionRemoveButton;
-  private readonly copyIcon: ActionCopyButton;
   private readonly downloadIcon: ActionDownloadButton;
 
   private readonly drawIcon: ActionDrawButton;
@@ -84,7 +76,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
     this.el = model.doc.document.createElement('div');
     this.editIcon = new ActionPinEditButton(edit, model);
     this.removeIcon = new ActionRemoveButton(model);
-    this.copyIcon = new ActionCopyButton(model);
     this.downloadIcon = new ActionDownloadButton(edit, model);
 
     this.drawIcon = new ActionDrawButton(edit, model);
@@ -128,10 +119,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
       applyStylesToElement(editComponent, editIconStyles);
     }
 
-    const copyComponent = this.copyIcon.render();
-    this.el.appendChild(copyComponent);
-    applyStylesToElement(copyComponent, copyIconStyles);
-
     const downloadComponent = this.downloadIcon.render();
     this.el.appendChild(downloadComponent);
     applyStylesToElement(downloadComponent, downloadIconStyles);
@@ -171,7 +158,6 @@ export class TopBarComponent implements HtmlComponent<HTMLElement>, HtmlComponen
   cleanup(): void {
     this.editIcon.cleanup();
     this.removeIcon.cleanup();
-    this.copyIcon.cleanup();
     this.downloadIcon.cleanup();
 
     this.drawIcon.cleanup();
