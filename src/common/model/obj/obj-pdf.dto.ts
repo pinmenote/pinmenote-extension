@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { ObjOverrideDto } from './obj-override.dto';
 import { ObjUrlDto } from './obj.dto';
 import { ObjHashtagable } from './obj-hashtag.dto';
 
 export interface ObjPdfDto extends ObjHashtagable {
   hash: string;
   data: ObjPdfDataDto;
+  override?: ObjOverrideDto;
 }
 
 export interface ObjPdfDataDto {

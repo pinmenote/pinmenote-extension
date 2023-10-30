@@ -45,6 +45,12 @@ export const BoardItemTitle: FunctionComponent<Props> = (props) => {
     </IconButton>
   ) : undefined;
 
+  const editIcon = [ObjTypeDto.PageSnapshot, ObjTypeDto.PageElementSnapshot].includes(props.obj.type) ? (
+    <IconButton onClick={() => props.editCallback()}>
+      <EditIcon />
+    </IconButton>
+  ) : undefined;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
       <h2
@@ -56,9 +62,7 @@ export const BoardItemTitle: FunctionComponent<Props> = (props) => {
       </h2>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         {htmlIcon}
-        <IconButton onClick={() => props.editCallback()}>
-          <EditIcon />
-        </IconButton>
+        {editIcon}
         <IconButton title="Remove" onClick={() => props.removeCallback()}>
           <DeleteIcon />
         </IconButton>
