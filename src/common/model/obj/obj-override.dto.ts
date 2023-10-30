@@ -15,15 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-const wordRegex = /[\p{L}-]+/gu;
-
-export class WordFactory {
-  static toWordList(sentence: string, size = 3): string[] {
-    const words = sentence.match(wordRegex) || [];
-    const out = new Set<string>();
-    for (const word of words) {
-      if (word.length > size) out.add(word.toLowerCase());
-    }
-    return Array.from(out).sort();
-  }
+export interface ObjOverrideDto {
+  title?: string;
+  words?: string[];
+  hash: string;
 }

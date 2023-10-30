@@ -56,9 +56,9 @@ export const BoardItemTitle: FunctionComponent<Props> = (props) => {
       </h2>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         {htmlIcon}
-        {/*<IconButton onClick={() => props.editCallback()}>
+        <IconButton onClick={() => props.editCallback()}>
           <EditIcon />
-        </IconButton>*/}
+        </IconButton>
         <IconButton title="Remove" onClick={() => props.removeCallback()}>
           <DeleteIcon />
         </IconButton>

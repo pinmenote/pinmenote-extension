@@ -34,7 +34,8 @@ export class ObjTitleFactory {
       }
       case ObjTypeDto.PageSnapshot:
       case ObjTypeDto.PageElementSnapshot: {
-        return (obj as ObjDto<ObjPageDto>).data.snapshot.info.title;
+        const o = obj as ObjDto<ObjPageDto>;
+        return o.data.snapshot.override?.title || o.data.snapshot.info.title;
       }
       case ObjTypeDto.PageNote: {
         return (obj as ObjDto<ObjPageNoteDto>).data.data.title;

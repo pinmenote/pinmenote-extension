@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjRectangleDto, ObjSizeDto } from './obj-utils.dto';
+import { ObjOverrideDto } from './obj-override.dto';
 import { ObjUrlDto } from './obj.dto';
 
 export interface PageCanvasDto {
@@ -37,6 +38,7 @@ export interface PageSnapshotDataDto {
 }
 
 export interface PageSnapshotDto {
+  override?: ObjOverrideDto;
   data: PageSnapshotDataDto;
   info: PageSnapshotInfoDto;
   hash: string; // combined hash of data + info + segment

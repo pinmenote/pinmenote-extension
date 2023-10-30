@@ -68,7 +68,7 @@ export const BoardComponent: FunctionComponent = () => {
         boardElements.push(
           <PageSnapshotElement
             refreshBoardCallback={refreshBoardCallback}
-            dto={obj as ObjDto<ObjPageDto>}
+            obj={obj as ObjDto<ObjPageDto>}
             key={obj.id}
           />
         );
