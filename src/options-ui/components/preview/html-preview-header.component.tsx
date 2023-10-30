@@ -64,7 +64,7 @@ export const HtmlPreviewHeaderComponent: FunctionComponent<Props> = (props) => {
   const renderHeader = (obj: ObjDto<ObjPageDto>): void => {
     const snapshot: PageSnapshotDto = obj.data.snapshot;
     if (titleRef.current) {
-      titleRef.current.innerHTML = snapshot.info.title;
+      titleRef.current.innerHTML = obj.data.override?.title || snapshot.info.title;
     }
     if (urlRef.current) {
       urlRef.current.innerHTML = `
