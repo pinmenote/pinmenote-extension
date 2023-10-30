@@ -25,9 +25,9 @@ export class PageSnapshotClearTitleCommand implements ICommand<Promise<void>> {
   constructor(private obj: ObjDto<ObjPageDto>) {}
 
   async execute(): Promise<void> {
-    if (!this.obj.data.snapshot.override?.title) return;
+    if (!this.obj.data.override?.title) return;
     this.obj.updatedAt = Date.now();
-    this.obj.data.snapshot.override.title = undefined;
+    this.obj.data.override.title = undefined;
 
     await new ObjUpdateIndexAddCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
 

@@ -17,9 +17,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import { PageSnapshotClearTitleCommand } from '../../../../common/command/snapshot/page-snapshot-clear-title.command';
 import { PageSnapshotUpdateTitleCommand } from '../../../../common/command/snapshot/page-snapshot-update-title.command';
-import { fnDeepCopy } from '../../../../common/fn/fn-copy';
-import { fnSha256Object } from '../../../../common/fn/fn-hash';
-import { ObjOverrideDto } from '../../../../common/model/obj/obj-override.dto';
 import { BoardItem } from '../board/board-item';
 import { BoardItemFooter } from '../board/board-item-footer';
 import { BoardItemTitle } from '../board/board-item-title';
@@ -28,7 +25,7 @@ import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { ObjHashtag } from '../../../../common/model/obj/obj-hashtag.dto';
 import { BoardItemMediator } from '../board-item.mediator';
 import { TagHelper } from '../../../../common/components/tag-editor/tag.helper';
-import { BoardItemTitleEdit } from '../board/board-item-title-edit';
+import { BoardSnapshotTitleEdit } from './board-snapshot-title-edit';
 
 interface Props {
   obj: ObjDto<ObjPageDto>;
@@ -58,14 +55,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
   };
 
   const handleEditSave = async (title: string) => {
-    let override: Omit<ObjOverrideDto, 'hash'> = { title };
-    if (props.obj.data.snapshot.override) {
-      const copy = fnDeepCopy(props.obj.data.snapshot.override);
-      delete copy['hash'];
-      override = { ...copy, title };
-    }
-    const hash = fnSha256Object(override);
-    await new PageSnapshotUpdateTitleCommand(props.obj, { ...override, hash }).execute();
+    await new PageSnapshotUpdateTitleCommand(props.obj, title).execute();
     setIsEdit(false);
   };
 
@@ -79,7 +69,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
   };
 
   const title = isEdit ? (
-    <BoardItemTitleEdit
+    <BoardSnapshotTitleEdit
       obj={props.obj}
       restoreCallback={handleEditRestore}
       saveCallback={handleEditSave}
@@ -102,7 +92,7 @@ export const PageSnapshotElement: FunctionComponent<Props> = (props) => {
         title="page snapshot"
         createdAt={props.obj.createdAt}
         tags={hashtags}
-        words={props.obj.data.snapshot.override?.words || props.obj.data.snapshot.info.words}
+        words={props.obj.data.override?.words || props.obj.data.snapshot.info.words}
         url={props.obj.data.snapshot.info.url.href}
       />
     </BoardItem>

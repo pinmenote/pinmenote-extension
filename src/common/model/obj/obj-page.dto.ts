@@ -15,10 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { ObjCommentListDto } from './obj-comment.dto';
+import { ObjOverrideDto } from './obj-override.dto';
 import { PageSnapshotDto } from './page-snapshot.dto';
 import { ObjHashtagable } from './obj-hashtag.dto';
 
 export interface ObjPageDto extends ObjHashtagable {
+  override?: ObjOverrideDto;
   snapshot: PageSnapshotDto;
   comments: ObjCommentListDto;
 }

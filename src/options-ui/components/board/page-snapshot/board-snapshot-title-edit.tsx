@@ -20,23 +20,30 @@ import CloseIcon from '@mui/icons-material/Close';
 import RestoreIcon from '@mui/icons-material/Restore';
 import IconButton from '@mui/material/IconButton';
 import { StyledInput } from '../../../../common/components/react/styled.input';
+import { ObjPageDto } from '../../../../common/model/obj/obj-page.dto';
 import { ObjDto } from '../../../../common/model/obj/obj.dto';
 import { ObjTitleFactory } from '../../../../common/factory/obj-title.factory';
 
 interface Props {
-  obj: ObjDto;
+  obj: ObjDto<ObjPageDto>;
   saveCallback: (title: string) => void;
   cancelCallback: () => void;
   restoreCallback: () => void;
 }
 
-export const BoardItemTitleEdit: FunctionComponent<Props> = (props) => {
+export const BoardSnapshotTitleEdit: FunctionComponent<Props> = (props) => {
   const titleData = ObjTitleFactory.computeTitleSize(props.obj, 50);
   const [newTitle, setNewTitle] = useState<string>(titleData.title);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setNewTitle(e.target.value);
   };
+
+  const restoreIcon = props.obj.data.override?.title ? (
+    <IconButton title="Restore original" onClick={() => props.restoreCallback()}>
+      <RestoreIcon />
+    </IconButton>
+  ) : undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -57,9 +64,7 @@ export const BoardItemTitleEdit: FunctionComponent<Props> = (props) => {
         <IconButton onClick={() => props.saveCallback(newTitle)}>
           <SaveIcon />
         </IconButton>
-        <IconButton title="Restore original" onClick={() => props.restoreCallback()}>
-          <RestoreIcon />
-        </IconButton>
+        {restoreIcon}
         <IconButton title="Cancel" onClick={() => props.cancelCallback()}>
           <CloseIcon />
         </IconButton>

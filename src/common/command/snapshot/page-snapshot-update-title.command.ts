@@ -15,19 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import { BrowserStorage } from '@pinmenote/browser-api';
-import { ObjOverrideDto } from '../../model/obj/obj-override.dto';
 import { ICommand } from '../../model/shared/common.dto';
 import { ObjDto } from '../../model/obj/obj.dto';
 import { ObjPageDto } from '../../model/obj/obj-page.dto';
 import { ObjectStoreKeys } from '../../keys/object.store.keys';
 import { ObjUpdateIndexAddCommand } from '../obj/index/obj-update-index-add.command';
+import { UpdateOverrideCommand } from '../override/update-override.command';
 
 export class PageSnapshotUpdateTitleCommand implements ICommand<Promise<void>> {
-  constructor(private obj: ObjDto<ObjPageDto>, private override: ObjOverrideDto) {}
+  constructor(private obj: ObjDto<ObjPageDto>, private title: string) {}
 
   async execute(): Promise<void> {
     this.obj.updatedAt = Date.now();
-    this.obj.data.snapshot.override = this.override;
+    this.obj.data.override = new UpdateOverrideCommand({ title: this.title }, this.obj.data.override).execute();
 
     await new ObjUpdateIndexAddCommand({ id: this.obj.id, dt: this.obj.updatedAt }).execute();
 
