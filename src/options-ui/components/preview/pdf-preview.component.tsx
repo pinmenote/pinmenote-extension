@@ -87,14 +87,13 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
 
       // Deferred render
       if (pdf.numPages > 1) {
-        const pageRenderInterval = setInterval(async () => {
+        const fn = async () => {
           currentPage++;
           const p = await pdf.getPage(currentPage);
           await renderPage(p, viewport, currentPage, eventBus, scale);
-          if (currentPage >= pdf.numPages) {
-            clearInterval(pageRenderInterval);
-          }
-        }, 250);
+          if (currentPage < pdf.numPages) setTimeout(fn);
+        };
+        setTimeout(fn, 1);
       }
     } catch (e: any) {
       fnConsoleLog('render->ERROR', e);
@@ -201,11 +200,11 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
         <div
           style={{
             width: 'max-content',
-            marginBottom: 90,
             overflow: 'scroll'
           }}
           ref={pdfRef}
         ></div>
+        <div style={{ minHeight: 50 }}></div>
       </div>
     </div>
   );

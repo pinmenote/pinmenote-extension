@@ -136,6 +136,7 @@
     --link-outline: 1.5px solid LinkText;
     --hcm-highligh-filter: invert(100%);
   }
+
   .annotationLayer .textWidgetAnnotation :is(input, textarea):required,
   .annotationLayer .choiceWidgetAnnotation select:required,
   .annotationLayer
@@ -179,6 +180,7 @@
 }
 
 .annotationLayer {
+  display: none; /*@vane pinmenote ADDED */
   position: absolute;
   top: 0;
   left: 0;
