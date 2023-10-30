@@ -8,9 +8,10 @@
   "scripts": {
     "dev": "parcel watch src/manifest.json --host localhost --target pinmenote-dev",
     "dev:ff": "parcel build src/manifest.json --target pinmenote-firefox-dev",
-    "build": "npm run prod && npm run prod:ff",
-    "prod": "parcel build src/manifest.json --target pinmenote-prod --log-level verbose --no-cache --reporter @parcel/reporter-bundle-analyzer",
-    "prod:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --log-level verbose  --no-cache --reporter @parcel/reporter-bundle-analyzer",
+    "release:ch": "parcel build src/manifest.json --target pinmenote-prod --log-level verbose --no-cache --reporter @parcel/reporter-bundle-analyzer",
+    "release:test:ch": "parcel build src/manifest.json --target pinmenote-test --log-level verbose --no-cache --reporter @parcel/reporter-bundle-analyzer",
+    "release:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --log-level verbose  --no-cache --reporter @parcel/reporter-bundle-analyzer",
+    "release:test:ff": "parcel build src/manifest.json --target pinmenote-firefox-test --log-level verbose  --no-cache --reporter @parcel/reporter-bundle-analyzer",
     "lint": "eslint --ext .ts,.tsx  src/",
     "lint:fix": "eslint --ext .ts,.tsx  src/ --fix"
   },
@@ -19,6 +20,12 @@
   "targets": {
     "pinmenote-dev": {},
     "pinmenote-prod": {
+      "sourceMap": false
+    },
+    "pinmenote-test": {
+      "sourceMap": false
+    },
+    "pinmenote-firefox-test": {
       "sourceMap": false
     },
     "pinmenote-firefox-prod": {

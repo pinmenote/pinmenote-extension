@@ -17,7 +17,7 @@
       "24": "assets/icon/24.png",
       "32": "assets/icon/32.png"
     },
-    "default_title": "pinmenote",
+    "default_title": "pinmenote-dev",
     "default_popup": "default-popup/default-popup.html"
   },
   "permissions": ["activeTab", "storage", "unlimitedStorage", "scripting", "downloads"],

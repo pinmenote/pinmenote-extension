@@ -3,6 +3,6 @@ export NODE_ENV=development
 # swap manifests
 cp src/manifest.ch.json src/manifest.json
 # build
-npm run prod
+npm run release:ch
 # swap manifests back
 cp src/manifest.dev.json src/manifest.json
