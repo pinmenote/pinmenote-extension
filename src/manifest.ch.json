@@ -3,7 +3,7 @@
   "name": "pinmenote",
   "short_name": "pinmenote",
   "description": "Pin note, modify, draw, comment and archive websites.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "icons": {
     "16": "assets/icon/16.png",
     "32": "assets/icon/32.png",
