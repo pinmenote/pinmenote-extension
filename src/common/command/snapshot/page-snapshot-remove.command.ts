@@ -82,6 +82,6 @@ export class PageSnapshotRemoveCommand implements ICommand<Promise<void>> {
     ref.push(...cssRefs);
 
     // remove snapshot
-    await new PageSegmentRemoveListCommand([hash]).execute();
+    await new PageSegmentRemoveListCommand([...ref, hash]).execute();
   };
 }
