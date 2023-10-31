@@ -56,7 +56,7 @@ export class ActionDrawButton implements HtmlComponent<HTMLElement> {
       this.edit.startDraw();
       this.fillColor = '#ff0000';
     } else {
-      this.edit.stopDraw();
+      this.edit.cancelDraw();
       this.fillColor = '#000000';
     }
     (this.el.firstChild as HTMLElement).setAttribute('fill', this.fillColor);

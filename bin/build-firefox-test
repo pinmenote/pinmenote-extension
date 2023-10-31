@@ -1,6 +1,6 @@
 #!/bin/bash
 dir_name=pinmenote-firefox-test
-archive_name=fiefox-test
+archive_name=firefox-test
 
 if [ -e "dist/$archive_name.zip" ]
 then

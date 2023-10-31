@@ -39,7 +39,7 @@ export const PageNoteElement: FunctionComponent<Props> = (props) => {
 
   useEffect(() => {
     if (!ref.current) return;
-    ref.current.innerHTML = marked(props.dto.data.data.description);
+    ref.current.innerHTML = marked(props.dto.data.data.description).toString();
   }, []);
 
   const handleEdit = () => {

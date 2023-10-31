@@ -57,7 +57,7 @@ export class CommentComponent implements HtmlComponent<HTMLElement> {
     this.renderView();
     const comment = this.model.doc.document.createElement('div');
     const value = this.model.doc.document.createElement('div');
-    value.innerHTML = marked(this.comment.value);
+    value.innerHTML = marked(this.comment.value).toString();
     comment.appendChild(value);
     comment.appendChild(this.footer.render());
     comment.style.marginLeft = '5px';

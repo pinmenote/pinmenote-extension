@@ -1,6 +1,6 @@
 #!/bin/bash
 dir_name=pinmenote-firefox-prod
-archive_name=fiefox-prod
+archive_name=firefox-prod
 
 if [ -e "dist/$archive_name.zip" ]
 then
@@ -23,4 +23,4 @@ cp src/manifest.dev.json src/manifest.json
 
 # pack build
 cd dist/$dir_name
-zip -r ../$archive_name.zip *
+zip -r -X ../$archive_name.zip *

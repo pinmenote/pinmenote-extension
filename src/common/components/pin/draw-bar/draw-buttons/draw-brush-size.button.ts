@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import {HtmlInnerFactory} from "../../../../factory/html-inner.factory";
 import { HtmlComponent, HtmlComponentFocusable } from '../../model/pin-view.model';
 import { DrawBrushSize } from './draw-brush-size';
 import { PinEditModel } from '../../model/pin-edit.model';
@@ -34,9 +35,18 @@ export class DrawBrushSizeButton implements HtmlComponent<HTMLElement>, HtmlComp
 
   render(): HTMLElement {
     const fill = this.visible ? '#ff0000' : '#000000';
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-            <circle cx="12" cy="12" r="4" fill="${fill}" />
-        </svg>`;
+    HtmlInnerFactory.html(
+      HtmlInnerFactory.html(this.el, 'svg', {
+        height: '24',
+        viewBox: '0 0 24 24',
+        width: '24'
+      }, HtmlInnerFactory.SVG_NS),
+    'circle', {
+        cx: '12',
+        cy: '12',
+        r: '4',
+        fill,
+    }, HtmlInnerFactory.SVG_NS);
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 

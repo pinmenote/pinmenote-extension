@@ -16,6 +16,7 @@
  */
 import { HtmlComponent, HtmlComponentFocusable } from '../../model/pin-view.model';
 import { DrawColorPicker } from './draw-color-picker';
+import {HtmlInnerFactory} from "../../../../factory/html-inner.factory";
 import { PinEditModel } from '../../model/pin-edit.model';
 import { applyStylesToElement } from '../../../../style.utils';
 import { iconButtonStyles } from '../../styles/icon-button.styles';
@@ -34,11 +35,30 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
 
   render(): HTMLElement {
     const stroke = this.visible ? '#ff0000' : '#000000';
-    this.el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-        <g>
-            <rect fill="#00ff00" opacity="1" stroke="${stroke}" stroke-width="2" height="24" width="24"/>
-        </g>
-    </svg>`;
+    HtmlInnerFactory.html(
+        HtmlInnerFactory.html(
+            HtmlInnerFactory.html(this.el, 'svg', {
+              enabled: 'enabled',
+              background: 'new 0 0 24 24',
+              width: '24',
+              height: '24',
+              viewBox: '0 0 24 24',
+            }, HtmlInnerFactory.SVG_NS),
+        'g',
+            undefined,
+            HtmlInnerFactory.SVG_NS
+        ),
+        'rect',
+        {
+          fill: '#00ff00',
+          opacity: '1',
+          stroke: stroke,
+          'stroke-width': '2',
+          width: '24',
+          height: '24',
+        },
+        HtmlInnerFactory.SVG_NS
+    );
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 
@@ -49,7 +69,8 @@ export class DrawColorPickerButton implements HtmlComponent<HTMLElement>, HtmlCo
   }
 
   updateColor(attr: string, color: string) {
-    (this.el.firstChild?.childNodes[1].childNodes[1] as SVGRectElement).setAttribute(attr, color);
+    console.log(attr, color, this.el.firstChild?.firstChild?.firstChild);
+    (this.el.firstChild?.firstChild?.firstChild as SVGRectElement).setAttribute(attr, color);
     if (attr === 'fill') this.model.draw.color = color;
   }
 

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import {HtmlInnerFactory} from "../../../factory/html-inner.factory";
 import { PinDocument } from '../model/pin-view.model';
 import { applyStylesToElement } from '../../../style.utils';
 
@@ -31,7 +32,7 @@ export class ContentButton {
   private readonly btn: HTMLButtonElement;
   constructor(private doc: PinDocument, private html: string, private clickCallback: () => void) {
     this.btn = doc.document.createElement('button');
-    this.btn.innerHTML = html;
+    this.btn.innerText = html;
     this.btn.addEventListener('click', clickCallback);
   }
 
