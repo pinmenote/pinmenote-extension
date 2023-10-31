@@ -1,8 +1,26 @@
 #!/bin/bash
+dir_name=pinmenote-chrome-dev
+archive_name=chrome-dev
+
+if [ -e "dist/$archive_name.zip" ]
+then
+  echo "release file exists dist/$archive_name.zip"
+  exit 1
+fi
+
 export NODE_ENV=development
 # swap manifests
-cp src/manifest.ch.json src/manifest.json
+cp src/manifest.dev.json src/manifest.json
+
+# clean old dir
+rm -r dist/$dir_name
+
 # build
-npm run release:ch
+npm run dev:ch
+
 # swap manifests back
 cp src/manifest.dev.json src/manifest.json
+
+# pack build
+cd dist/$dir_name
+zip -r ../$archive_name.zip *

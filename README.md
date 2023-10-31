@@ -6,9 +6,20 @@ Browser extension
 
 - offline first with p2p in mind
 
+### Install
+```shell
+npm install
+```
+
 ### Run
-```bash
+```shell
 npm run dev
+```
+
+### Release Production
+```shell
+./bin/build-chrome-prod
+./bin/build-firefox-prod
 ```
 
 ### Website
@@ -18,18 +29,12 @@ npm run dev
 - select website area, add comment and draw on selected part
 - save website / part of website as single page for offline use
 - capture image / map / canvas
-- capture video time
 - download table as csv
 - add / manage note to any website or without website
-- encrypt / decrypt messages
 - html preview and board view
 - add and manage tags of any content you saved
 - automatic reverse index of saved content
 - smart search using levenshtein distance, dates, website addresses
-
-### In progress
-- add / manage calendar event (repeat in progress)
-- add / manage task
 
 ### Known issues
 

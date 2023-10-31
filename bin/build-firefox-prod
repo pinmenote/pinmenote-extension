@@ -1,8 +1,26 @@
 #!/bin/bash
+dir_name=pinmenote-firefox-prod
+archive_name=fiefox-prod
+
+if [ -e "dist/$archive_name.zip" ]
+then
+  echo "release file exists dist/$archive_name.zip"
+  exit 1
+fi
+
 export NODE_ENV=production
 # swap manifests
 cp src/manifest.ff.json src/manifest.json
+
+# clean old dir
+rm -r dist/$dir_name
+
 # build
 npm run release:ff
+
 # swap manifests back
 cp src/manifest.dev.json src/manifest.json
+
+# pack build
+cd dist/$dir_name
+zip -r ../$archive_name.zip *

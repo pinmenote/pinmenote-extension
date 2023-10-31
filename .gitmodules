@@ -4,6 +4,3 @@
 [submodule "src/vendor/stopwords-iso"]
 	path = src/vendor/stopwords-iso
 	url = https://github.com/vane/stopwords-iso
-[submodule "src/vendor/fetch-service"]
-	path = src/vendor/fetch-service
-	url = git@github.com:pinmenote/fetch-service.git

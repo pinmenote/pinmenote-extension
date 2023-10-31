@@ -138,7 +138,7 @@ const handleMessage = async (
     BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT,
     BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES
   ].includes(msg.type as any);
-  if (!skipMessage && environmentConfig.featureFlag.SYNC_ENABLED) {
+  if (environmentConfig.featureFlag.SYNC_ENABLED && !skipMessage) {
     await new SyncServerCommand().execute();
   }
   await TaskExecutor.dequeue();

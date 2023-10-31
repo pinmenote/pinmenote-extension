@@ -186,6 +186,7 @@ export class DocumentMediator {
 
       // Calculate canvas
       let canvas;
+      fnConsoleLog('handleOverlayClick->target', e.target);
       if (PinAddFactory.isCanvas) {
         // We have start point so now we just calculate canvas size
         if (PinAddFactory.startPoint) {

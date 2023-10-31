@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "parcel watch src/manifest.json --host localhost --target pinmenote-dev",
     "dev:ff": "parcel build src/manifest.json --target pinmenote-firefox-dev",
+    "dev:ch": "parcel build src/manifest.json --target pinmenote-chrome-dev",
     "release:ch": "parcel build src/manifest.json --target pinmenote-prod --log-level verbose --no-cache --reporter @parcel/reporter-bundle-analyzer",
     "release:test:ch": "parcel build src/manifest.json --target pinmenote-test --log-level verbose --no-cache --reporter @parcel/reporter-bundle-analyzer",
     "release:ff": "parcel build src/manifest.json --target pinmenote-firefox-prod --log-level verbose  --no-cache --reporter @parcel/reporter-bundle-analyzer",
@@ -19,6 +20,7 @@
   ],
   "targets": {
     "pinmenote-dev": {},
+    "pinmenote-chrome-dev": {},
     "pinmenote-prod": {
       "sourceMap": false
     },
@@ -31,9 +33,7 @@
     "pinmenote-firefox-prod": {
       "sourceMap": false
     },
-    "pinmenote-firefox-dev": {
-      "sourceMap": false
-    }
+    "pinmenote-firefox-dev": {}
   },
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.8.2",
@@ -71,9 +71,9 @@
     "@noble/ciphers": "^0.3.0",
     "@noble/curves": "^1.2.0",
     "@noble/hashes": "^1.3.2",
-    "@pinmenote/browser-api": "file:../browser-api",
-    "@pinmenote/fetch-service": "file:../fetch-service",
-    "@pinmenote/page-compute": "file:../page-compute",
+    "@pinmenote/browser-api": "^0.0.6",
+    "@pinmenote/fetch-service": "^0.0.5",
+    "@pinmenote/page-compute": "^0.1.5",
     "@pinmenote/tiny-dispatcher": "^0.0.4",
     "dayjs": "^1.11.7",
     "fastest-levenshtein": "^1.0.16",
