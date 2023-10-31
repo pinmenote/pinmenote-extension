@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { sha256 } from 'js-sha256';
+import { sha256 } from '@noble/hashes/sha256'
+import { bytesToHex } from '@noble/hashes/utils';
 
 export const fnSha256 = (value: string): string => {
-  return sha256(value);
+  return bytesToHex(sha256(value));
 };
 
 export const fnSha256Object = (value: any): string => {
-  return sha256(JSON.stringify(value));
+  return bytesToHex(sha256(JSON.stringify(value)));
 };
 
 export const fnHash = (value: string): number => {

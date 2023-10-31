@@ -16,8 +16,7 @@
     "lint": "eslint --ext .ts,.tsx  src/",
     "lint:fix": "eslint --ext .ts,.tsx  src/ --fix"
   },
-  "pre-commit": [
-  ],
+  "pre-commit": [],
   "targets": {
     "pinmenote-dev": {},
     "pinmenote-chrome-dev": {},
@@ -73,12 +72,11 @@
     "@noble/hashes": "^1.3.2",
     "@pinmenote/browser-api": "^0.0.6",
     "@pinmenote/fetch-service": "^0.0.5",
-    "@pinmenote/page-compute": "^0.1.5",
+    "@pinmenote/page-compute": "^0.1.6",
     "@pinmenote/tiny-dispatcher": "^0.0.4",
     "dayjs": "^1.11.7",
     "fastest-levenshtein": "^1.0.16",
     "html-prettify": "^1.0.7",
-    "js-sha256": "^0.9.0",
     "jwt-decode": "^3.1.2",
     "languagedetect": "^2.0.0",
     "marked": "^4.2.5",

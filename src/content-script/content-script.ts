@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import {fnSha256} from "../common/fn/fn-hash";
 /* URL-s Not transformed correctly
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -46,7 +47,7 @@ class PinMeScript {
 
   constructor(private readonly uid: string, private ms: number) {
     this.href = UrlFactory.normalizeHref(window.location.href);
-
+    console.log(fnSha256('aaa'));
     // @see iframe/iframe-script.ts for iframe
     ContentMessageHandler.start(this.href);
 

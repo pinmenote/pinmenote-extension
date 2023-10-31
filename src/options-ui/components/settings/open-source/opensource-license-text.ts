@@ -54,11 +54,6 @@ Copyright (c) 2020 Kasper Unn Weihe`;
 export const LICENSE_HTML_PRETTIFY = `Copyright (c) 2020 Dominik Michal
 `;
 
-export const LICENSE_JS_SHA256 = `Copyright (c) 2014-2023 Chen, Yi-Cyuan
-
-MIT License
-`;
-
 export const LICENSE_JWT_DECODE = `The MIT License (MIT)
  
 Copyright (c) 2015 Auth0, Inc. <support@auth0.com> (http://auth0.com)

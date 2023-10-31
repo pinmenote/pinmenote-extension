@@ -23,7 +23,6 @@ import {
   LICENSE_FASTEST_LEVENSTEIN,
   LICENSE_FONTSOURCE,
   LICENSE_HTML_PRETTIFY,
-  LICENSE_JS_SHA256,
   LICENSE_JWT_DECODE,
   LICENSE_MARKED,
   LICENSE_MATHML_TO_LATEX,
@@ -128,12 +127,6 @@ const ELEMENTS: OpensourceElement[] = [
     licenseHeader: LICENSE_HTML_PRETTIFY,
     license: LICENSE_MIT,
     url: 'https://github.com/Dmc0125/html-prettify'
-  },
-  {
-    title: 'js-sha256',
-    licenseHeader: LICENSE_JS_SHA256,
-    license: LICENSE_MIT,
-    url: 'https://github.com/emn178/js-sha256'
   },
   {
     title: 'jwt-decode',
