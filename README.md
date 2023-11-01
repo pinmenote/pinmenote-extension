@@ -1,4 +1,4 @@
-pinmenote-extension - alpha
+pinmenote-extension
 ---
 
 ### Description
