@@ -38,7 +38,7 @@ export class TextCommentListComponent implements HtmlComponent<HTMLElement> {
   }
 
   renderComments = (): void => {
-    while(this.el.firstChild) this.el.removeChild(this.el.firstChild);
+    while (this.el.firstChild) this.el.removeChild(this.el.firstChild);
     this.model.comments.data.forEach(async (hash, index) => {
       const comment = await new PinGetCommentCommand(hash).execute();
       if (comment) {

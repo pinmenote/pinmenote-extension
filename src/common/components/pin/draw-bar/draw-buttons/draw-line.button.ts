@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import {HtmlInnerFactory} from "../../../../factory/html-inner.factory";
+import { HtmlInnerFactory } from '../../../../factory/html-inner.factory';
 import { DrawBarComponent } from '../draw-bar.component';
 import { DrawToolDto } from '../../../../model/obj/obj-draw.dto';
 import { HtmlComponent } from '../../model/pin-view.model';
@@ -33,22 +33,32 @@ export class DrawLineButton implements HtmlComponent<HTMLElement> {
 
   render(): HTMLElement {
     const stroke = this.selected ? '#ff0000' : '#000000';
-    const svg = HtmlInnerFactory.html(this.el, 'svg', {
-      width: '24',
-      height: '24',
-      viewBox: '0 0 24 24',
-    }, HtmlInnerFactory.SVG_NS);
-    HtmlInnerFactory.html(svg, 'line', {
-      x1: '4',
-      x2: '18',
-      y1: '18',
-      y2: '4',
-      opacity: '1',
-      stroke,
-      'stroke-linecap': 'round',
-      'stroke-linejoin': 'miter',
-      'stroke-width': '2',
-    }, HtmlInnerFactory.SVG_NS);
+    const svg = HtmlInnerFactory.html(
+      this.el,
+      'svg',
+      {
+        width: '24',
+        height: '24',
+        viewBox: '0 0 24 24'
+      },
+      HtmlInnerFactory.SVG_NS
+    );
+    HtmlInnerFactory.html(
+      svg,
+      'line',
+      {
+        x1: '4',
+        x2: '18',
+        y1: '18',
+        y2: '4',
+        opacity: '1',
+        stroke,
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'miter',
+        'stroke-width': '2'
+      },
+      HtmlInnerFactory.SVG_NS
+    );
     this.el.addEventListener('click', this.handleClick);
     applyStylesToElement(this.el, iconButtonStyles);
 

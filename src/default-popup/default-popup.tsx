@@ -22,7 +22,6 @@ import '@fontsource/roboto/700.css';
 import '../css/prosemirror-popup.css';
 
 import React, { ReactElement, useEffect, useState } from 'react';
-import { AccountTabComponent } from './components/tabs/account-tab.component';
 import Box from '@mui/material/Box';
 import { LogManager } from '../common/popup/log.manager';
 import LogoDevIcon from '@mui/icons-material/LogoDev';
@@ -51,8 +50,6 @@ const getCurrentPanel = (selectedPanel: PanelEnum): ReactElement | undefined => 
   switch (selectedPanel) {
     case PanelEnum.MAIN:
       return <MainTabComponent />;
-    case PanelEnum.ACCOUNT:
-      return <AccountTabComponent />;
     case PanelEnum.LOGS:
       return <LogsTabComponent />;
   }

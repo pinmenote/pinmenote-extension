@@ -147,7 +147,7 @@ export const PdfPreviewComponent: FunctionComponent<Props> = (props) => {
   const handleClose = () => {
     document.title = 'pin board';
     window.location.hash = '';
-    if (pdfRef.current) while(pdfRef.current.firstChild) pdfRef.current.removeChild(pdfRef.current.firstChild);
+    if (pdfRef.current) while (pdfRef.current.firstChild) pdfRef.current.removeChild(pdfRef.current.firstChild);
   };
 
   return (

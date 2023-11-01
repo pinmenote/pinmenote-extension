@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import {HtmlInnerFactory} from "../../../factory/html-inner.factory";
+import { HtmlInnerFactory } from '../../../factory/html-inner.factory';
 import { DrawToolDto, ObjDrawDataDto } from '../../../model/obj/obj-draw.dto';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { DrawDataModel } from '../model/pin-draw-edit.model';
@@ -93,9 +93,15 @@ export class DrawAreaComponent {
     this.drawCanvas.style.width = `${width}px`;
     this.drawCanvas.style.height = `${height}px`;
     applyStylesToElement(this.drawCanvas, canvasStyles);
-    const el = HtmlInnerFactory.html(this.drawCanvas, 'h1', {
-      'style': 'background-color: #ffffff;color: #000000;font-size:4em;',
-    }, undefined, 'no javascript enabled - drawing not working');
+    HtmlInnerFactory.html(
+      this.drawCanvas,
+      'h1',
+      {
+        style: 'background-color: #ffffff;color: #000000;font-size:4em;'
+      },
+      undefined,
+      'no javascript enabled - drawing not working'
+    );
     if (this.drawCtx) this.drawCtx.imageSmoothingEnabled = false;
   }
 

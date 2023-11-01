@@ -109,7 +109,7 @@ export const BoardComponent: FunctionComponent = () => {
   }
 
   return (
-    <div style={{width: '100%'}}>
+    <div style={{ width: '100%' }}>
       <div
         ref={ref}
         style={{

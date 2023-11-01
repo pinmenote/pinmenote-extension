@@ -18,7 +18,6 @@ import { BrowserApi, BrowserGlobalSender, BusMessage } from '@pinmenote/browser-
 import { BusMessageType } from '../common/model/bus.model';
 import { ContentDownloadChromeCommand } from './command/content/content-download-chrome.command';
 import { ContentDownloadFirefoxCommand } from './command/content/content-download-firefox.command';
-import { ContentExtensionLoginCommand } from './command/content/content-extension-login.command';
 import { ContentFetchCssCommand } from './command/content/content-fetch-css.command';
 import { ContentFetchImageCommand } from './command/content/content-fetch-image.command';
 import { ContentFetchPDFCommand } from './command/content/content-fetch-pdf.command';
@@ -28,22 +27,10 @@ import { ContentTakeScreenshotCommand } from './command/content/content-take-scr
 import { ContentThemeCommand } from './command/content/content-theme.command';
 import { IframePassMessageCommand } from './command/iframe/iframe-pass-message.command';
 import { PageComputeMessage } from '@pinmenote/page-compute';
-import { PopupBugReportCommand } from './command/popup/popup-bug-report.command';
-import { PopupLoginCommand } from './command/popup/popup-login.command';
-import { PopupLoginSuccessCommand } from './command/popup/popup-login-success.command';
-import { PopupLogoutCommand } from './command/popup/popup-logout.command';
-import { PopupServerQuotaCommand } from './command/popup/popup-server-quota.command';
-import { PopupVerify2faCommand } from './command/popup/popup-verify-2fa.command';
 import { ScriptService } from './service/script.service';
 import { SwInitSettingsCommand } from './command/sw/sw-init-settings.command';
-import { SyncServerCommand } from './command/sync/sync-server.command';
 import { TaskExecutor } from './task/task.executor';
 import { fnConsoleLog } from '../common/fn/fn-console';
-import { SyncManualOutgoingCommand } from './command/sync/manual/sync-manual-outgoing.command';
-import { SyncServerIncomingCommand } from './command/sync/sync-server-incoming.command';
-import { SyncGetProgressCommand } from './command/sync/progress/sync-get-progress.command';
-import { SyncTxHelper } from './command/sync/sync-tx.helper';
-import { environmentConfig } from '../common/environment';
 
 const handleMessage = async (
   msg: BusMessage<any>,
@@ -58,9 +45,6 @@ const handleMessage = async (
   if (runtime.id !== BrowserApi.runtime.id) return;
 
   switch (msg.type) {
-    case BusMessageType.CONTENT_EXTENSION_LOGIN:
-      await new ContentExtensionLoginCommand(msg.data).execute();
-      break;
     case BusMessageType.CONTENT_DOWNLOAD_DATA_CHROME:
       await new ContentDownloadChromeCommand(msg.data).execute();
       break;
@@ -88,35 +72,6 @@ const handleMessage = async (
     case BusMessageType.CONTENT_FETCH_PDF:
       await new ContentFetchPDFCommand(msg.data, runtime.tab?.id).execute();
       break;
-    case BusMessageType.POPUP_BUG_REPORT:
-      await new PopupBugReportCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_LOGIN:
-      await new PopupLoginCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_LOGIN_SUCCESS:
-      await new PopupLoginSuccessCommand().execute();
-      break;
-    case BusMessageType.POPUP_VERIFY_2FA:
-      await new PopupVerify2faCommand(msg.data).execute();
-      break;
-    case BusMessageType.POPUP_LOGOUT:
-      await new PopupLogoutCommand().execute();
-      break;
-    case BusMessageType.POPUP_SERVER_QUOTA:
-      await new PopupServerQuotaCommand().execute();
-      break;
-    case BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT: {
-      await new SyncManualOutgoingCommand(msg.data).execute();
-      break;
-    }
-    case BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES: {
-      const sub = await SyncTxHelper.syncSub();
-      if (!sub) break;
-      const progress = await new SyncGetProgressCommand(sub).execute();
-      await new SyncServerIncomingCommand(progress).execute();
-      break;
-    }
     case BusMessageType.IFRAME_INDEX:
     case BusMessageType.IFRAME_INDEX_REGISTER:
     case BusMessageType.IFRAME_START_LISTENERS:
@@ -130,16 +85,6 @@ const handleMessage = async (
       await new IframePassMessageCommand(msg, runtime.tab?.id).execute();
       break;
     }
-  }
-  // Sync command
-  const skipMessage = [
-    PageComputeMessage.CONTENT_FETCH_CSS,
-    PageComputeMessage.CONTENT_FETCH_IMAGE,
-    BusMessageType.OPTIONS_SYNC_OUTGOING_OBJECT,
-    BusMessageType.OPTIONS_SYNC_INCOMING_CHANGES
-  ].includes(msg.type as any);
-  if (environmentConfig.featureFlag.SYNC_ENABLED && !skipMessage) {
-    await new SyncServerCommand().execute();
   }
   await TaskExecutor.dequeue();
 };

@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { FunctionComponent, useEffect, useRef } from 'react';
-import {fnConsoleLog} from "../../../common/fn/fn-console";
 import { ObjDto } from '../../../common/model/obj/obj.dto';
 import { ObjNoteDto } from '../../../common/model/obj/obj-note.dto';
 import { marked } from 'marked';

@@ -45,7 +45,7 @@ export class VideoTimeComponent {
 
   renderVideo = () => {
     if (!this.video) return;
-    while(this.el.firstChild) this.el.removeChild(this.el.firstChild);
+    while (this.el.firstChild) this.el.removeChild(this.el.firstChild);
     const title = this.model.doc.document.createElement('div');
     applyStylesToElement(title, titleStyle);
     title.innerText = 'video';

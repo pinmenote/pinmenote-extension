@@ -78,7 +78,7 @@ export class DrawBarMainComponent implements HtmlComponent<HTMLElement> {
   }
 
   reset() {
-    while(this.el.firstChild) this.el.removeChild(this.el.firstChild);
+    while (this.el.firstChild) this.el.removeChild(this.el.firstChild);
     this.editDraw = undefined;
     this.newDraw = undefined;
     this.removeDraw = undefined;

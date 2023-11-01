@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import {HtmlInnerFactory} from "../../../factory/html-inner.factory";
 import { PinDocument } from '../model/pin-view.model';
 import { applyStylesToElement } from '../../../style.utils';
 

@@ -23,7 +23,6 @@ import Button from '@mui/material/Button';
 import { OptionsConvertObjectsCommand } from '../../command/options-convert-objects.command';
 import { environmentConfig } from '../../../common/environment';
 import { OpenSourceListComponent } from './open-source/open-source-list.component';
-import { AccountSettingsComponent } from './account/account-settings.component';
 import { TokenStorageGetCommand } from '../../../common/command/server/token/token-storage-get.command';
 import { AccessTokenDto } from '../../../common/model/shared/token.dto';
 import { ConfigSettingsComponent } from './config/config-settings.component';
@@ -72,9 +71,6 @@ export const SettingsComponent: FunctionComponent = () => {
         </Typography>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto', height: 'calc(100vh - 160px)' }}>
-        <div style={{ display: tokenData ? 'flex' : 'none', ...containerStyle }}>
-          <AccountSettingsComponent token={tokenData} />
-        </div>
         <div style={containerStyle}>
           <ScreenshotSettingsComponent />
         </div>
