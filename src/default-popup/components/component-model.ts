@@ -17,7 +17,6 @@
 export enum MainViewEnum {
   CREATE_LIST = 1,
   PAGE_OBJECTS,
-  TASK,
   NOTE,
   CALENDAR,
   FUNCTION,

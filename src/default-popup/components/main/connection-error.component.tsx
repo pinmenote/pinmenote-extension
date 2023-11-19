@@ -41,7 +41,7 @@ const ExtensionMessage: FunctionComponent = () => {
   );
 };
 
-const messageStyle = { fontSize: '12pt', paddingTop: 10, margin: 0 };
+const messageStyle = { fontSize: '12pt', paddingTop: 5, margin: 0 };
 
 const NoUrlMessage: FunctionComponent = () => {
   const handleRefreshPage = async (): Promise<void> => {
@@ -51,9 +51,12 @@ const NoUrlMessage: FunctionComponent = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <div style={{ backgroundColor: '#d32f2f', color: '#ffffff', padding: 5, textAlign: 'center', width: '100%' }}>
-        <p style={{ fontSize: '24pt', marginTop: 20, marginBottom: 20 }}>Load failed</p>
+      <div style={{ backgroundColor: '#000000', color: '#ffffff', padding: 5, textAlign: 'center', width: '100%' }}>
+        <p style={{ fontSize: '12pt', marginTop: 20, marginBottom: 20 }}>communication problem</p>
         <p style={messageStyle}>refresh page to add and view pins</p>
+        <p style={{ fontSize: '12pt', marginLeft: 5, marginRight: 5 }}>
+          plugin won&apos;t work on browser configuration and specific browser company pages
+        </p>
         <p style={{ ...messageStyle, marginBottom: 20 }}>
           To allow access to search page results navigate to{' '}
           {BrowserApi.isChrome ? 'chrome://extensions' : 'about:addons'}

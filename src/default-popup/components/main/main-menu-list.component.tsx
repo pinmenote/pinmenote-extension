@@ -16,7 +16,6 @@
  */
 import { PopupPageCustomizeRequest, PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import AddTaskIcon from '@mui/icons-material/AddTask';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -27,6 +26,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { LogManager } from '../../../common/popup/log.manager';
 import { MainViewEnum } from '../component-model';
 import NoteOutlinedIcon from '@mui/icons-material/NoteOutlined';
 import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
@@ -83,6 +83,23 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
     window.close();
   };
 
+  const handleNewPin = async () => {
+    try {
+      if (!PopupActiveTabStore.url) return;
+      await BrowserApi.sendTabMessage<PopupPinStartRequest>({
+        type: BusMessageType.POPUP_PIN_START,
+        data: {
+          url: PopupActiveTabStore.url,
+          type: ObjTypeDto.PageElementPin
+        }
+      });
+    } catch (e) {
+      LogManager.log(JSON.stringify(e));
+    } finally {
+      window.close();
+    }
+  };
+
   const handleAlterPageClick = async (): Promise<void> => {
     if (!PopupActiveTabStore.url) return;
     await BrowserApi.sendTabMessage<PopupPageCustomizeRequest>({
@@ -100,19 +117,19 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
     <div style={{ marginTop: 10 }}>
       <List sx={zeroPad}>
         <ListItem sx={zeroPad} style={{ display: isPdf ? 'none' : 'inline-block' }}>
-          <ListItemButton onClick={handleSaveElementClick}>
-            <ListItemIcon>
-              <SaveElementIcon />
-            </ListItemIcon>
-            <ListItemText primary="Save Fragment" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem sx={zeroPad} style={{ display: isPdf ? 'none' : 'inline-block' }}>
           <ListItemButton onClick={handleSavePageClick}>
             <ListItemIcon>
               <WebOutlined />
             </ListItemIcon>
             <ListItemText primary="Save Page" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem sx={zeroPad} style={{ display: isPdf ? 'none' : 'inline-block' }}>
+          <ListItemButton onClick={handleSaveElementClick}>
+            <ListItemIcon>
+              <SaveElementIcon />
+            </ListItemIcon>
+            <ListItemText primary="Save Fragment" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: isPdf ? 'inline-block' : 'none' }}>
@@ -121,14 +138,6 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
               <PictureAsPdfIcon />
             </ListItemIcon>
             <ListItemText primary="Save PDF" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem sx={zeroPad}>
-          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS)}>
-            <ListItemIcon>
-              <PushPinIcon />
-            </ListItemIcon>
-            <ListItemText primary="On This Page" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad} style={{ display: 'none' }}>
@@ -155,12 +164,12 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
             <ListItemText primary="Calendar" />
           </ListItemButton>
         </ListItem>
-        <ListItem sx={zeroPad} style={{ display: 'none' }}>
-          <ListItemButton onClick={() => props.closeListCallback(MainViewEnum.TASK)}>
+        <ListItem sx={zeroPad}>
+          <ListItemButton onClick={() => handleNewPin()}>
             <ListItemIcon>
-              <AddTaskIcon />
+              <PushPinIcon />
             </ListItemIcon>
-            <ListItemText primary="Task" />
+            <ListItemText primary="Add pin" />
           </ListItemButton>
         </ListItem>
         <ListItem sx={zeroPad}>
@@ -168,7 +177,7 @@ export const MainMenuListComponent: FunctionComponent<Props> = (props) => {
             <ListItemIcon>
               <NoteOutlinedIcon />
             </ListItemIcon>
-            <ListItemText primary="Add Note" />
+            <ListItemText primary="New Note" />
           </ListItemButton>
         </ListItem>
       </List>

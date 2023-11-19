@@ -14,7 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import { BusMessageType } from '../../../common/model/bus.model';
+import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { MainFooterButton } from './main-footer.button';
 import { MainHeaderComponent } from './main-header.component';
 import { MainMenuListComponent } from './main-menu-list.component';
@@ -52,6 +55,12 @@ export const MainViewComponent: FunctionComponent = () => {
     setCurrentView(MainViewEnum.NOTE);
   };
 
+  const saveCancelNoteCallback = () => {
+    PopupActiveTabStore.isAdding = false;
+    setCurrentView(MainViewEnum.PAGE_OBJECTS);
+    TinyDispatcher.getInstance().dispatch(BusMessageType.POP_IS_ADDING, false);
+  };
+
   const getViewComponent = (viewType: MainViewEnum): ReactElement | undefined => {
     switch (viewType) {
       case MainViewEnum.CREATE_LIST:
@@ -63,8 +72,8 @@ export const MainViewComponent: FunctionComponent = () => {
           <NoteComponent
             currentView={'NOTE_ADD'}
             editNote={editNote}
-            addCallback={() => setCurrentView(MainViewEnum.PAGE_OBJECTS)}
-            cancelCallback={() => setCurrentView(MainViewEnum.PAGE_OBJECTS)}
+            addCallback={saveCancelNoteCallback}
+            cancelCallback={saveCancelNoteCallback}
           />
         );
       case MainViewEnum.SAVE_PROGRESS:

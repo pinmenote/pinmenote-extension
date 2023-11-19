@@ -124,7 +124,7 @@ export const ObjListComponent: FunctionComponent<Props> = (props) => {
           display: objRemove ? 'flex' : 'none',
           position: 'absolute',
           zIndex: 1000,
-          top: 105,
+          top: 102,
           left: 0,
           width: 300,
           height: 440

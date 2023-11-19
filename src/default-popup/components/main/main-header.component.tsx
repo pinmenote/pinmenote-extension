@@ -19,12 +19,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { BrowserApi } from '@pinmenote/browser-api';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import { LogManager } from '../../../common/popup/log.manager';
 import { MainViewEnum } from '../component-model';
-import { ObjTypeDto } from '../../../common/model/obj/obj.dto';
 import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
-import { PopupPinStartRequest } from '../../../common/model/obj-request.model';
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 
 interface Props {
@@ -47,58 +44,42 @@ export const MainHeaderComponent: FunctionComponent<Props> = (props) => {
       TinyDispatcher.getInstance().removeListener(BusMessageType.POP_IS_ADDING, addKey);
     };
   }, []);
-  const handleNewPin = async () => {
-    try {
-      if (!PopupActiveTabStore.url) return;
-      await BrowserApi.sendTabMessage<PopupPinStartRequest>({
-        type: BusMessageType.POPUP_PIN_START,
-        data: {
-          url: PopupActiveTabStore.url,
-          type: ObjTypeDto.PageElementPin
-        }
-      });
-    } catch (e) {
-      LogManager.log(JSON.stringify(e));
-    }
-    window.close();
-  };
 
-  const handlePinStop = async () => {
-    try {
-      await BrowserApi.sendRuntimeMessage({
-        type: BusMessageType.CONTENT_STOP_LISTENERS
-      });
-    } catch (e) {
-      LogManager.log(JSON.stringify(e));
+  const handleCancel = async () => {
+    if (isAdding) {
+      try {
+        await BrowserApi.sendRuntimeMessage({
+          type: BusMessageType.CONTENT_STOP_LISTENERS
+        });
+      } catch (e) {
+        LogManager.log(JSON.stringify(e));
+      }
+      setIsAdding(false);
     }
-    window.close();
+    props.changeMainTabCallback(MainViewEnum.PAGE_OBJECTS);
   };
-
-  const pinBtn = isAdding ? (
-    <Button sx={{ width: '100%' }} variant="outlined" onClick={handlePinStop}>
-      Cancel
-    </Button>
-  ) : (
-    <Button sx={{ width: '100%' }} variant="outlined" onClick={handleNewPin}>
-      <AddIcon /> New Pin
-    </Button>
-  );
 
   const handleAddElementClick = () => {
     LogManager.log(`handleAddElementClick ${props.currentView}`);
     if (props.currentView === MainViewEnum.CREATE_LIST) {
       props.changeMainTabCallback(props.previousView);
+      setIsAdding(false);
     } else {
       props.changeMainTabCallback(MainViewEnum.CREATE_LIST);
+      setIsAdding(true);
     }
   };
 
-  return (
-    <div style={{ display: 'flex' }}>
-      {pinBtn}
-      <IconButton title="Add Element" onClick={handleAddElementClick}>
-        <AddIcon />
-      </IconButton>
-    </div>
+  const pinBtn = isAdding ? (
+    <Button sx={{ width: '100%' }} variant="outlined" onClick={handleCancel}>
+      Cancel
+    </Button>
+  ) : (
+    <Button sx={{ width: '100%' }} variant="outlined" onClick={handleAddElementClick}>
+      <AddIcon />
+      NEW
+    </Button>
   );
+
+  return <div style={{ display: 'flex' }}>{pinBtn}</div>;
 };

@@ -27,11 +27,7 @@ export class PopupActiveTabStore {
   private static isError = false;
   private static extensionUrl = false;
 
-  private static isAddingValue = false;
-
-  static get isAdding(): boolean {
-    return this.isAddingValue;
-  }
+  static isAdding = false;
 
   static get url(): ObjUrlDto | undefined {
     return this.urlValue;
@@ -70,8 +66,8 @@ export class PopupActiveTabStore {
   static updateState = (initData?: ExtensionPopupInitData) => {
     LogManager.log(`PopupActiveTabStore->INIT - ${JSON.stringify(initData || {})}`);
     if (initData?.isAdding) {
-      this.isAddingValue = true;
-      TinyDispatcher.getInstance().dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAddingValue);
+      this.isAdding = true;
+      TinyDispatcher.getInstance().dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAdding);
     }
   };
 
