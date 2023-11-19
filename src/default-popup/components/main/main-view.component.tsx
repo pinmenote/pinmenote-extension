@@ -17,7 +17,6 @@
 import { TinyDispatcher } from '@pinmenote/tiny-dispatcher';
 import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { BusMessageType } from '../../../common/model/bus.model';
-import { PopupActiveTabStore } from '../../store/popup-active-tab.store';
 import { MainFooterButton } from './main-footer.button';
 import { MainHeaderComponent } from './main-header.component';
 import { MainMenuListComponent } from './main-menu-list.component';
@@ -39,7 +38,6 @@ export const MainViewComponent: FunctionComponent = () => {
       .execute()
       .then((note) => {
         if (note) {
-          PopupActiveTabStore.isAdding = true;
           setCurrentView(MainViewEnum.NOTE);
           TinyDispatcher.getInstance().dispatch(BusMessageType.POP_IS_ADDING, true);
         }
@@ -60,7 +58,6 @@ export const MainViewComponent: FunctionComponent = () => {
   };
 
   const saveCancelNoteCallback = () => {
-    PopupActiveTabStore.isAdding = false;
     setCurrentView(MainViewEnum.PAGE_OBJECTS);
     TinyDispatcher.getInstance().dispatch(BusMessageType.POP_IS_ADDING, false);
   };

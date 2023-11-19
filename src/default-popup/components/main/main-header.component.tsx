@@ -38,6 +38,7 @@ export const MainHeaderComponent: FunctionComponent<Props> = (props) => {
     const addKey = TinyDispatcher.getInstance().addListener<boolean>(
       BusMessageType.POP_IS_ADDING,
       (event, key, value) => {
+        PopupActiveTabStore.isAdding = value;
         setIsAdding(value);
       }
     );

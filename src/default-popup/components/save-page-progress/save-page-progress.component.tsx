@@ -34,7 +34,10 @@ export const SavePageProgressComponent: FunctionComponent<Props> = (props) => {
     dispatcher.addListener<string>(
       BusMessageType.POPUP_PAGE_SNAPSHOT_ADD,
       () => {
-        setTimeout(() => props.closeListCallback(MainViewEnum.PAGE_OBJECTS), 1);
+        setTimeout(() => {
+          props.closeListCallback(MainViewEnum.PAGE_OBJECTS);
+          TinyDispatcher.getInstance().dispatch(BusMessageType.POP_IS_ADDING, false);
+        }, 1);
       },
       true
     );

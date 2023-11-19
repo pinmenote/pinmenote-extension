@@ -66,8 +66,7 @@ export class PopupActiveTabStore {
   static updateState = (initData?: ExtensionPopupInitData) => {
     LogManager.log(`PopupActiveTabStore->INIT - ${JSON.stringify(initData || {})}`);
     if (initData?.isAdding) {
-      this.isAdding = true;
-      TinyDispatcher.getInstance().dispatch<boolean>(BusMessageType.POP_IS_ADDING, this.isAdding);
+      TinyDispatcher.getInstance().dispatch<boolean>(BusMessageType.POP_IS_ADDING, true);
     }
   };
 
