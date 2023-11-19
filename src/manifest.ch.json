@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "pinmenote",
   "short_name": "pinmenote",
-  "description": "Pin note, modify, draw, comment and archive websites.",
-  "version": "0.1.6",
+  "description": "Pin note, modify, draw, comment, archive and save website",
+  "version": "0.1.7",
   "icons": {
     "16": "assets/icon/16.png",
     "32": "assets/icon/32.png",
@@ -20,22 +20,39 @@
     "default_title": "pinmenote",
     "default_popup": "default-popup/default-popup.html"
   },
-  "permissions": ["activeTab", "storage", "unlimitedStorage", "scripting", "downloads"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "unlimitedStorage",
+    "scripting",
+    "downloads"
+  ],
   "background": {
     "service_worker": "service-worker/service-worker.ts",
     "type": "module"
   },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "all_frames": false,
-    "js": ["content-script/content-script.ts"],
-    "run_at": "document_start"
-  },{
-    "matches": ["<all_urls>"],
-    "all_frames": true,
-    "js": ["iframe/iframe-script.ts"],
-    "run_at": "document_idle"
-  }],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": false,
+      "js": [
+        "content-script/content-script.ts"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": true,
+      "js": [
+        "iframe/iframe-script.ts"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
   "options_ui": {
     "page": "options-ui/options-ui.html"
   }

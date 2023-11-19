@@ -7,9 +7,9 @@
   },
   "name": "pinmenote-test",
   "short_name": "pinmenote-test",
-  "description": "Pin note, modify, draw, comment and archive websites.",
+  "description": "Pin note, modify, draw, comment, archive and save website",
   "homepage_url": "https://test.pinmenote.com",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "icons": {
     "16": "assets/icon/16.png",
     "48": "assets/icon/48.png",
@@ -25,21 +25,43 @@
     "default_title": "pinmenote-test",
     "default_popup": "default-popup/default-popup.html"
   },
-  "permissions": ["activeTab", "storage", "unlimitedStorage", "scripting", "downloads", "http://*/*", "https://*/*", "<all_urls>"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "unlimitedStorage",
+    "scripting",
+    "downloads",
+    "http://*/*",
+    "https://*/*",
+    "<all_urls>"
+  ],
   "background": {
     "persistent": true,
-    "scripts": ["service-worker/service-worker.ts"]
+    "scripts": [
+      "service-worker/service-worker.ts"
+    ]
   },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["content-script/content-script.ts"],
-    "run_at": "document_start"
-  },{
-    "matches": ["<all_urls>"],
-    "all_frames": true,
-    "js": ["iframe/iframe-script.ts"],
-    "run_at": "document_idle"
-  }],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-script/content-script.ts"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": true,
+      "js": [
+        "iframe/iframe-script.ts"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
   "options_ui": {
     "page": "options-ui/options-ui.html"
   }
