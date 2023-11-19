@@ -55,6 +55,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
       .execute()
       .then((note) => {
         if (!ref.current) return;
+        setTitle(note?.title || '');
         create(ref.current, note);
       })
       .catch(() => {
@@ -87,6 +88,15 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
           });
       }
     });
+  };
+
+  const handleTitleChange = async (e: any) => {
+    setTitle(e.target.value);
+    await new PageNoteDraftSaveCommand({
+      title,
+      description: Store.description,
+      words: []
+    }).execute();
   };
 
   const handleAdd = async () => {
@@ -141,7 +151,7 @@ export const NoteAddComponent: FunctionComponent<Props> = (props) => {
           padding: '0px 5px 0px 5px'
         }}
       >
-        <StyledInput value={title} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
+        <StyledInput value={title} placeholder="Title" onChange={handleTitleChange} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
         <Button variant="outlined" onClick={handleCancel}>

@@ -38,7 +38,11 @@ export const MainViewComponent: FunctionComponent = () => {
     new PageNoteDraftGetCommand()
       .execute()
       .then((note) => {
-        if (note) setCurrentView(MainViewEnum.NOTE);
+        if (note) {
+          PopupActiveTabStore.isAdding = true;
+          setCurrentView(MainViewEnum.NOTE);
+          TinyDispatcher.getInstance().dispatch(BusMessageType.POP_IS_ADDING, true);
+        }
       })
       .catch(() => {
         /* IGNORE */

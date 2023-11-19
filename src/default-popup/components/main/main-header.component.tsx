@@ -17,6 +17,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { BrowserApi } from '@pinmenote/browser-api';
+import { PageNoteDraftRemoveCommand } from '../../../common/command/page-note/draft/page-note-draft-remove.command';
 import { BusMessageType } from '../../../common/model/bus.model';
 import Button from '@mui/material/Button';
 import { LogManager } from '../../../common/popup/log.manager';
@@ -54,6 +55,7 @@ export const MainHeaderComponent: FunctionComponent<Props> = (props) => {
       } catch (e) {
         LogManager.log(JSON.stringify(e));
       }
+      await new PageNoteDraftRemoveCommand().execute();
       setIsAdding(false);
     }
     props.changeMainTabCallback(MainViewEnum.PAGE_OBJECTS);
