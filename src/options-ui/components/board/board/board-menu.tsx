@@ -16,7 +16,6 @@
  */
 import React, { FunctionComponent } from 'react';
 import AppBar from '@mui/material/AppBar';
-import { BoardAddElementSearch } from '../search/board-add-element.search';
 import { BoardInputSearch } from '../search/board-input.search';
 import { BoardStore } from '../../../store/board.store';
 import Box from '@mui/material/Box';
